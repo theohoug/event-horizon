@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="description" content="Event Horizon — An Interactive Journey Into a Black Hole. Experience the cosmic sublime through your browser." />
+  <meta property="og:title" content="Event Horizon" />
+  <meta property="og:description" content="An Interactive Journey Into a Black Hole" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#050505" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>Event Horizon — An Interactive Journey Into a Black Hole</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <!-- Crafted by Cleanlystudio • cleanlystudio.com -->
+</head>
+<body>
+  <div id="app" role="main" aria-label="Event Horizon — Interactive Black Hole Experience">
+    <canvas id="experience" aria-hidden="true"></canvas>
+
+    <div id="scroll-container">
+      <section class="chapter" data-chapter="0" aria-label="Chapter: You Are Here"></section>
+      <section class="chapter" data-chapter="1" aria-label="Chapter: The Pull"></section>
+      <section class="chapter emotional" data-chapter="2" aria-label="Chapter: Awe"></section>
+      <section class="chapter" data-chapter="3" aria-label="Chapter: The Warp"></section>
+      <section class="chapter emotional" data-chapter="4" aria-label="Chapter: Light"></section>
+      <section class="chapter" data-chapter="5" aria-label="Chapter: The Fall"></section>
+      <section class="chapter emotional" data-chapter="6" aria-label="Chapter: Acceptance"></section>
+      <section class="chapter" data-chapter="7" aria-label="Chapter: Spaghettification"></section>
+      <section class="chapter emotional" data-chapter="8" aria-label="Chapter: Becoming"></section>
+      <section class="chapter emotional" data-chapter="9" aria-label="Chapter: Dissolution"></section>
+      <section class="chapter" data-chapter="10" aria-label="Chapter: Time Dilation"></section>
+      <section class="chapter emotional" data-chapter="11" aria-label="Chapter: Stillness"></section>
+      <section class="chapter" data-chapter="12" aria-label="Chapter: Singularity"></section>
+      <section class="chapter emotional" data-chapter="13" aria-label="Chapter: Transcendence"></section>
+      <section class="chapter" data-chapter="14" aria-label="Chapter: The Void"></section>
+      <section class="chapter emotional" data-chapter="15" aria-label="Chapter: Reflection"></section>
+      <section class="chapter emotional" data-chapter="16" aria-label="Chapter: Identity"></section>
+      <section class="chapter" data-chapter="17" aria-label="Chapter: What Remains"></section>
+    </div>
+
+    <div id="overlay" aria-hidden="true">
+      <div id="chapter-text" role="status" aria-live="polite"></div>
+
+      <div id="data-hud">
+        <div class="hud-col hud-left">
+          <div class="hud-item" data-tooltip="Current narrative chapter"><span class="hud-label">CHAPTER</span><span class="hud-value" id="hud-chapter">01 / 18</span></div>
+          <div class="hud-item" data-tooltip="Distance in Schwarzschild radii — the event horizon is at 1.0 Rs"><span class="hud-label">DISTANCE</span><span class="hud-value" id="hud-distance">38.00 Rs</span></div>
+          <div class="hud-item" data-tooltip="Gravitational redshift — light wavelength stretched by gravity"><span class="hud-label">REDSHIFT</span><span class="hud-value" id="hud-redshift">z = 0.000</span></div>
+          <div class="hud-item" data-tooltip="Proper time ratio — your clock runs slower near the black hole"><span class="hud-label">TIME DILATION</span><span class="hud-value" id="hud-timedil">τ = 1.000</span></div>
+        </div>
+        <div class="hud-col hud-right">
+          <div class="hud-item" data-tooltip="Accretion disk temperature in Kelvin"><span class="hud-label">DISK TEMP</span><span class="hud-value" id="hud-temp">1,500 K</span></div>
+          <div class="hud-item" data-tooltip="Tidal force — differential gravity stretching you apart"><span class="hud-label">TIDAL FORCE</span><span class="hud-value" id="hud-tidal">0.001 g</span></div>
+          <div class="hud-item" data-tooltip="Signal strength to outside observers"><span class="hud-label">SIGNAL</span><span class="hud-value" id="hud-signal">▓▓▓▓▓▓▓▓</span></div>
+          <div class="hud-item" data-tooltip="Time elapsed since entering the void"><span class="hud-label">ELAPSED</span><span class="hud-value" id="hud-elapsed">00:00</span></div>
+        </div>
+      </div>
+
+      <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-fill"></div></div>
+    </div>
+
+    <div id="intro-cinematic" aria-hidden="true">
+      <div id="intro-title-container">
+        <div id="intro-title">EVENT HORIZON</div>
+        <div id="intro-subtitle">An Interactive Journey Into a Black Hole</div>
+        <div id="intro-line"></div>
+      </div>
+    </div>
+
+    <div id="scroll-hint" aria-hidden="true">
+      <div class="scroll-text">Scroll to begin</div>
+      <div class="arrow"></div>
+    </div>
+
+    <div id="ambient-particles" aria-hidden="true"></div>
+
+    <div id="gravity-warning" aria-hidden="true">
+      <div id="gravity-warning-text"></div>
+      <div id="gravity-warning-sub"></div>
+    </div>
+
+    <div id="falling-figure" aria-hidden="true">
+      <svg id="figure-left" viewBox="0 0 200 500" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path class="arm-path" stroke-width="8" d="M100,500 C98,460 92,420 85,380 C78,340 70,300 60,265 C52,238 42,215 32,190 C24,170 18,150 14,130" />
+        <path class="forearm-detail" stroke-width="6" opacity="0.5" d="M85,380 C82,370 78,362 73,355 M60,265 C56,258 50,252 46,248" />
+        <path class="hand-path" stroke-width="5" d="M14,130 C10,115 8,100 10,82 C12,68 16,58 20,50 M14,130 C8,112 4,96 2,78 C0,62 2,48 6,38 M14,130 C14,110 16,92 22,74 C26,62 32,52 36,46 M14,130 C20,116 28,102 34,88 C38,78 42,68 44,60 M14,130 C24,120 34,112 42,100 C48,90 52,80 54,72" />
+        <path class="wrist-path" stroke-width="7" opacity="0.6" d="M32,190 C26,175 20,160 16,145 C14,138 14,134 14,130" />
+      </svg>
+      <svg id="figure-right" viewBox="0 0 200 500" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path class="arm-path" stroke-width="8" d="M100,500 C102,460 108,420 115,380 C122,340 130,300 140,265 C148,238 158,215 168,190 C176,170 182,150 186,130" />
+        <path class="forearm-detail" stroke-width="6" opacity="0.5" d="M115,380 C118,370 122,362 127,355 M140,265 C144,258 150,252 154,248" />
+        <path class="hand-path" stroke-width="5" d="M186,130 C190,115 192,100 190,82 C188,68 184,58 180,50 M186,130 C192,112 196,96 198,78 C200,62 198,48 194,38 M186,130 C186,110 184,92 178,74 C174,62 168,52 164,46 M186,130 C180,116 172,102 166,88 C162,78 158,68 156,60 M186,130 C176,120 166,112 158,100 C152,90 148,80 146,72" />
+        <path class="wrist-path" stroke-width="7" opacity="0.6" d="M168,190 C174,175 180,160 184,145 C186,138 186,134 186,130" />
+      </svg>
+    </div>
+
+    <div id="loader" role="alert" aria-label="Loading experience">
+      <div id="loader-inner">
+        <div id="loader-star" aria-hidden="true"></div>
+        <div id="loader-text">EVENT HORIZON</div>
+        <div id="loader-sub">Loading the void...</div>
+        <div id="loader-bar" role="progressbar"><div id="loader-bar-fill"></div></div>
+      </div>
+    </div>
+
+    <div id="sound-prompt" role="dialog" aria-label="Sound preference">
+      <div id="sound-prompt-inner">
+        <div id="sound-prompt-icon" aria-hidden="true">&#9835;</div>
+        <div id="sound-prompt-text">This experience is designed for sound</div>
+        <div id="sound-prompt-sub">Use headphones for full immersion</div>
+        <button id="sound-prompt-yes">Activate Sound</button>
+        <button id="sound-prompt-no">Continue without</button>
+      </div>
+    </div>
+
+    <div id="credits" aria-label="Credits">
+      <div id="credits-inner">
+        <div class="credits-line credits-title">EVENT HORIZON</div>
+        <div class="credits-line credits-sub">An Interactive Journey Into a Black Hole</div>
+        <div class="credits-line credits-spacer"></div>
+        <div class="credits-line credits-role">Design & Development</div>
+        <div class="credits-line credits-name">Cleanlystudio</div>
+        <div class="credits-line credits-spacer"></div>
+        <div class="credits-line credits-role">Sound Design</div>
+        <div class="credits-line credits-name">Procedural Web Audio API</div>
+        <div class="credits-line credits-spacer"></div>
+        <div class="credits-line credits-role">Physics</div>
+        <div class="credits-line credits-name">Schwarzschild Geometry</div>
+        <div class="credits-line credits-spacer"></div>
+        <div class="credits-line credits-footer">Crafted with precision by <a href="https://cleanlystudio.com" target="_blank" rel="noopener">Cleanlystudio</a></div>
+      </div>
+    </div>
+
+    <nav id="chapter-nav" aria-label="Chapter navigation">
+      <div class="nav-dot" data-nav="0" data-label="You Are Here"></div>
+      <div class="nav-dot" data-nav="1" data-label="The Pull"></div>
+      <div class="nav-dot" data-nav="2" data-label="Awe"></div>
+      <div class="nav-dot" data-nav="3" data-label="The Warp"></div>
+      <div class="nav-dot" data-nav="4" data-label="Light"></div>
+      <div class="nav-dot" data-nav="5" data-label="The Fall"></div>
+      <div class="nav-dot" data-nav="6" data-label="Acceptance"></div>
+      <div class="nav-dot" data-nav="7" data-label="Spaghettification"></div>
+      <div class="nav-dot" data-nav="8" data-label="Becoming"></div>
+      <div class="nav-dot" data-nav="9" data-label="Dissolution"></div>
+      <div class="nav-dot" data-nav="10" data-label="Time Dilation"></div>
+      <div class="nav-dot" data-nav="11" data-label="Stillness"></div>
+      <div class="nav-dot" data-nav="12" data-label="Singularity"></div>
+      <div class="nav-dot" data-nav="13" data-label="Transcendence"></div>
+      <div class="nav-dot" data-nav="14" data-label="The Void"></div>
+      <div class="nav-dot" data-nav="15" data-label="Reflection"></div>
+      <div class="nav-dot" data-nav="16" data-label="Identity"></div>
+      <div class="nav-dot" data-nav="17" data-label="What Remains"></div>
+    </nav>
+
+    <button id="mute-btn" aria-label="Toggle sound">
+      <svg id="mute-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M11 5L6 9H2v6h4l5 4V5z" /><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07" />
+      </svg>
+      <svg id="mute-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:none">
+        <path d="M11 5L6 9H2v6h4l5 4V5z" /><line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" />
+      </svg>
+    </button>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

@@ -10,6 +10,7 @@ import { PostProcessing } from './PostProcessing';
 import { disposeScene } from './disposeScene';
 import { BlackHole } from '../world/BlackHole';
 import { GPGPUParticles } from '../world/GPGPUParticles';
+import { Starfield } from '../world/Starfield';
 import { Timeline } from '../narrative/Timeline';
 import { TextReveal } from '../narrative/TextReveal';
 import { AudioEngine } from '../audio/AudioEngine';
@@ -40,6 +41,7 @@ export class Experience {
   private postProcessing!: PostProcessing;
   private blackHole!: BlackHole;
   private particles!: GPGPUParticles;
+  private starfield!: Starfield;
   private timeline!: Timeline;
   private textReveal!: TextReveal;
   private audio!: AudioEngine;
@@ -189,6 +191,7 @@ export class Experience {
 
     this.blackHole = new BlackHole(this.postProcessing.bgScene, this.state.quality, preset.pixelRatio);
     this.particles = new GPGPUParticles(this.renderer, this.postProcessing.particleScene, this.state.quality, preset.pixelRatio);
+    this.starfield = new Starfield(this.postProcessing.particleScene, this.state.quality);
 
     this.timeline = new Timeline();
     this.textReveal = new TextReveal();
@@ -1203,6 +1206,7 @@ export class Experience {
 
     this.blackHole.update(this.state);
     this.particles.update(this.state);
+    this.starfield.update(this.state);
     this.postProcessing.updateCamera(this.state.scroll, elapsed, this.state.introProgress, this.state.mouseSmooth.x, this.state.mouseSmooth.y);
 
     if (this.chapterZoomPulse > 0.01) {
@@ -1798,6 +1802,7 @@ export class Experience {
     this.audio.destroy();
     this.blackHole.destroy();
     this.particles.destroy();
+    this.starfield.destroy();
 
     disposeScene(this.postProcessing.bgScene);
     disposeScene(this.postProcessing.particleScene);

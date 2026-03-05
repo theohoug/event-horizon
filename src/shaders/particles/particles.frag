@@ -1,9 +1,9 @@
 /**
  * @file particles.frag
- * @description Particle fragment shader with soft glow, gravitational trails,
- *              absorption near black hole, and Void Sublime color palette
+ * @description Particle fragment shader with flyby speed-lines, soft glow,
+ *              gravitational trails, and absorption near black hole
  * @author Cleanlystudio
- * @version 2.0.0
+ * @version 3.0.0
  */
 
 precision highp float;
@@ -11,17 +11,32 @@ precision highp float;
 varying float vBrightness;
 varying float vDistToCenter;
 varying vec3 vColor;
+varying float vFlybySpeed;
 
 void main() {
   vec2 center = gl_PointCoord - 0.5;
   float dist = length(center);
   if (dist > 0.5) discard;
 
+  float flyStretch = vFlybySpeed * 4.0;
+  vec2 flyCenter = center;
+  flyCenter.y *= 1.0 + flyStretch;
+  float flyDist = length(flyCenter);
+
   float core = exp(-dist * dist * 50.0);
   float glow = exp(-dist * dist * 10.0);
   float outerGlow = exp(-dist * dist * 3.0);
 
+  float flyCore = exp(-flyDist * flyDist * max(12.0, 50.0 - flyStretch * 8.0));
+  float flyGlow = exp(-flyDist * flyDist * max(3.0, 10.0 - flyStretch * 2.0));
+  float flyBlend = min(vFlybySpeed * 1.8, 0.85);
+  core = mix(core, flyCore, flyBlend);
+  glow = mix(glow, flyGlow, flyBlend * 0.6);
+
   float alpha = (core * 0.55 + glow * 0.18 + outerGlow * 0.04) * vBrightness;
+
+  float flyTrail = exp(-flyDist * flyDist * max(1.5, 5.0 - flyStretch * 1.5)) * flyBlend * 0.08;
+  alpha += flyTrail * vBrightness;
 
   float absorption = smoothstep(4.0, 1.0, vDistToCenter);
   alpha *= 1.0 - absorption * 0.98;
@@ -51,6 +66,9 @@ void main() {
   float ignition = smoothstep(6.0, 3.0, vDistToCenter) * (1.0 - absorption);
   color += vec3(0.4, 0.15, 0.8) * ignition * core * 0.15;
   color += vec3(0.1, 0.3, 0.5) * ignition * glow * 0.06;
+
+  vec3 speedTint = vec3(0.6, 0.75, 1.0);
+  color = mix(color, color * speedTint, flyBlend * 0.3);
 
   if (alpha < 0.001) discard;
 

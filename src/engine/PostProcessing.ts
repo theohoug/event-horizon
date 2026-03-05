@@ -33,6 +33,7 @@ export class PostProcessing {
   private compositeMaterial: THREE.ShaderMaterial;
 
   private bloomPasses: number;
+  private shockwaves: { x: number; y: number; radius: number; strength: number; speed: number }[] = [];
 
   constructor(renderer: THREE.WebGLRenderer, quality: Quality) {
     this.renderer = renderer;
@@ -85,10 +86,11 @@ export class PostProcessing {
       uniforms: {
         tDiffuse: { value: null },
         uResolution: { value: new THREE.Vector2(w * pr * bloomScale, h * pr * bloomScale) },
-        uThreshold: { value: 0.8 },
+        uThreshold: { value: 0.92 },
         uIntensity: { value: 1.0 },
         uPass: { value: 0 },
         uDirection: { value: new THREE.Vector2(1.0, 0.0) },
+        uPassIndex: { value: 0 },
       },
       depthTest: false,
       depthWrite: false,
@@ -106,9 +108,18 @@ export class PostProcessing {
         uChromaticIntensity: { value: 0.8 },
         uGrainIntensity: { value: 0.04 },
         uVignetteIntensity: { value: 0.6 },
-        uBloomMix: { value: 0.4 },
+        uBloomMix: { value: 0.28 },
         uScrollVelocity: { value: 0 },
         uChapterFlash: { value: 0 },
+        uShockwaves: { value: [
+          new THREE.Vector4(0, 0, 0, 0),
+          new THREE.Vector4(0, 0, 0, 0),
+          new THREE.Vector4(0, 0, 0, 0),
+          new THREE.Vector4(0, 0, 0, 0),
+        ] },
+        uHoldStrength: { value: 0 },
+        uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+        uMotionBlur: { value: quality === 'medium' ? 0.0 : 1.0 },
       },
       depthTest: false,
       depthWrite: false,
@@ -121,21 +132,66 @@ export class PostProcessing {
     this.renderer.render(this.quadScene, this.quadCamera);
   }
 
-  update(state: { time: number; scroll: number; scrollVelocity: number; chapterFlash?: number; introProgress?: number }) {
+  triggerShockwave(x: number, y: number, speed?: number) {
+    this.shockwaves.push({ x, y, radius: 0, strength: 1, speed: speed ?? 0.8 });
+    if (this.shockwaves.length > 4) this.shockwaves.shift();
+  }
+
+  update(state: { time: number; deltaTime: number; scroll: number; scrollVelocity: number; chapterFlash?: number; introProgress?: number; holdStrength?: number }) {
     const intro = state.introProgress ?? 0;
     const introBloomBoost = intro > 0 && intro < 1 ? (1 - intro) * 0.3 : 0;
 
     const velBoost = Math.min(Math.abs(state.scrollVelocity) * 0.3, 1.5);
-    const chromatic = 0.4 + state.scroll * 2.5 + velBoost;
+    const s = state.scroll;
+
+    const climaxBoost = s > 0.65 ? Math.pow((s - 0.65) / 0.35, 1.5) : 0;
+    const singularityPeak = Math.exp(-Math.pow((s - 0.77) * 18, 2));
+
+    const hbActive = s > 0.33 ? 1 : 0;
+    const hbBpm = 50 + Math.max(s - 0.35, 0) * 200;
+    const hbPhase = state.time * hbBpm / 60 * Math.PI;
+    const hbPulse = hbActive * Math.pow(Math.max(Math.sin(hbPhase), 0), 12) * 0.08;
+
+    const breathZone1 = Math.exp(-Math.pow((s - 0.45) * 16, 2));
+    const breathZone2 = Math.exp(-Math.pow((s - 0.72) * 16, 2));
+    const breathCalm = Math.max(breathZone1, breathZone2) * 0.4;
+
+    const hbChroma = hbPulse * 3.5;
+    const chapterFlashChroma = (state.chapterFlash ?? 0) * 6;
+    const whiteOutFade = s > 0.82 ? Math.pow(Math.max(0, (s - 0.82) / 0.18), 2.0) : 0;
+    const chromatic = (0.25 + s * 1.8 + velBoost * 0.7 + climaxBoost * 1.2 + singularityPeak * 5.0 + hbChroma + chapterFlashChroma) * (1 - breathCalm) * Math.max(0, 1 - whiteOutFade * 1.1);
+
     this.compositeMaterial.uniforms.uTime.value = state.time;
-    this.compositeMaterial.uniforms.uScroll.value = state.scroll;
+    this.compositeMaterial.uniforms.uScroll.value = s;
     this.compositeMaterial.uniforms.uChromaticIntensity.value = chromatic;
-    this.compositeMaterial.uniforms.uGrainIntensity.value = 0.03 + state.scroll * 0.04;
-    this.compositeMaterial.uniforms.uVignetteIntensity.value = 0.4 + state.scroll * 0.7 + velBoost * 0.1;
-    this.compositeMaterial.uniforms.uBloomMix.value = 0.35 + state.scroll * 0.3 + introBloomBoost;
-    this.bloomMaterial.uniforms.uThreshold.value = Math.max(0.45, 0.85 - state.scroll * 0.3 - introBloomBoost * 0.2);
+    this.compositeMaterial.uniforms.uGrainIntensity.value = (0.035 + s * 0.04 + climaxBoost * 0.025) * (1 - breathCalm * 0.5);
+
+    const vignetteBase = s < 0.5 ? 0.3 + s * 0.35 : 0.475 + (s - 0.5) * 0.85;
+    this.compositeMaterial.uniforms.uVignetteIntensity.value = (vignetteBase + velBoost * 0.1 + hbPulse) * (1 - breathCalm * 0.3);
+    this.compositeMaterial.uniforms.uBloomMix.value = 0.30 + s * 0.30 + introBloomBoost + climaxBoost * 0.25;
+    this.bloomMaterial.uniforms.uThreshold.value = Math.max(0.38, 0.88 - s * 0.28 - introBloomBoost * 0.15 - climaxBoost * 0.15);
     this.compositeMaterial.uniforms.uScrollVelocity.value = state.scrollVelocity;
     this.compositeMaterial.uniforms.uChapterFlash.value = state.chapterFlash ?? 0;
+    this.compositeMaterial.uniforms.uHoldStrength.value = state.holdStrength ?? 0;
+    this.compositeMaterial.uniforms.uMouse.value.set(state.mouseSmooth?.x ?? 0.5, state.mouseSmooth?.y ?? 0.5);
+
+    const dt = state.deltaTime ?? 0.016;
+    for (let i = this.shockwaves.length - 1; i >= 0; i--) {
+      const sw = this.shockwaves[i];
+      sw.radius += sw.speed * dt;
+      sw.strength *= 0.96;
+      if (sw.strength < 0.01) this.shockwaves.splice(i, 1);
+    }
+
+    const swUniforms = this.compositeMaterial.uniforms.uShockwaves.value as THREE.Vector4[];
+    for (let i = 0; i < 4; i++) {
+      if (i < this.shockwaves.length) {
+        const sw = this.shockwaves[i];
+        swUniforms[i].set(sw.x, sw.y, sw.radius, sw.strength);
+      } else {
+        swUniforms[i].set(0, 0, 0, 0);
+      }
+    }
   }
 
   render() {
@@ -158,6 +214,7 @@ export class PostProcessing {
 
     for (let i = 0; i < this.bloomPasses; i++) {
       this.bloomMaterial.uniforms.uPass.value = 1;
+      this.bloomMaterial.uniforms.uPassIndex.value = i;
 
       this.bloomMaterial.uniforms.uDirection.value.set(1.0, 0.0);
       this.bloomMaterial.uniforms.tDiffuse.value = readTarget.texture;
@@ -181,10 +238,12 @@ export class PostProcessing {
     this.renderQuad(this.compositeMaterial, null);
   }
 
-  updateCamera(scroll: number, time?: number, introProgress?: number) {
+  updateCamera(scroll: number, time?: number, introProgress?: number, mouseX?: number, mouseY?: number) {
     const t = time ?? 0;
     const intro = introProgress ?? 0;
     const isInIntro = intro > 0 && intro < 1;
+    const mx = (mouseX ?? 0.5) - 0.5;
+    const my = (mouseY ?? 0.5) - 0.5;
 
     const introZoom = isInIntro ? (1 - intro) * 30 : 0;
     const introYOffset = isInIntro ? (1 - intro) * 5 : 0;
@@ -193,12 +252,16 @@ export class PostProcessing {
     const z = 38 - scrollPow * 35.5 + introZoom;
     const y = 7 - Math.pow(scroll, 1.2) * 6.94 + introYOffset;
 
+    const parallaxStrength = Math.max(0, 1 - scroll * 1.5) * 0.8;
+    const parallaxX = mx * parallaxStrength;
+    const parallaxY = my * parallaxStrength * 0.5;
+
     const drift = Math.sin(t * 0.15) * 0.08 * (1 - scroll * 0.5);
     const driftY = Math.cos(t * 0.12) * 0.05 * (1 - scroll * 0.5);
     const sway = Math.sin(scroll * 0.4) * 0.3;
 
-    this.particleCamera.position.set(sway + drift, y + driftY, z);
-    this.particleCamera.lookAt(drift * 0.3, driftY * 0.2, 0);
+    this.particleCamera.position.set(sway + drift + parallaxX, y + driftY + parallaxY, z);
+    this.particleCamera.lookAt(drift * 0.3 + parallaxX * 0.2, driftY * 0.2 + parallaxY * 0.2, 0);
 
     const rollAccel = Math.pow(scroll, 1.5);
     const roll = Math.sin(scroll * Math.PI * 2) * 0.03 * rollAccel;
@@ -207,8 +270,8 @@ export class PostProcessing {
     this.particleCamera.rotation.z = roll + Math.sin(t * 0.1) * 0.003 + introRoll + velocityRoll;
 
     const introFov = isInIntro ? (1 - intro) * 20 : 0;
-    const fovAccel = Math.pow(Math.max(0, scroll - 0.3) / 0.7, 1.5) * 10;
-    const fovTarget = 45 + scroll * 15 + fovAccel + introFov;
+    const fovAccel = Math.pow(Math.max(0, scroll - 0.35) / 0.65, 1.8) * 8;
+    const fovTarget = 45 + scroll * 12 + fovAccel + introFov;
     this.particleCamera.fov += (fovTarget - this.particleCamera.fov) * 0.05;
     this.particleCamera.updateProjectionMatrix();
   }

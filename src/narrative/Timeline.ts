@@ -24,8 +24,8 @@ interface Chapter {
 const CHAPTERS: Chapter[] = [
   {
     id: 0,
-    title: 'YOU ARE HERE',
-    subtitle: '13.8 billion years after the beginning — you are atoms, briefly alive, looking up',
+    title: 'YOU',
+    subtitle: '13.8 billion years after the beginning — atoms, briefly alive, looking up',
     triggerStart: 'top top',
     triggerEnd: 'bottom center',
     reveal: 'center-out',
@@ -33,21 +33,13 @@ const CHAPTERS: Chapter[] = [
   {
     id: 1,
     title: 'THE PULL',
-    subtitle: 'Something immense and invisible is pulling at the fabric of reality itself',
+    subtitle: 'Ten billion solar masses — silent, patient — bending spacetime like a hand closing around you',
     triggerStart: 'top center',
     triggerEnd: 'bottom center',
     reveal: 'char-rise',
   },
   {
     id: 2,
-    title: '',
-    subtitle: 'Have you ever stood at the edge of something vast and felt how small you are?',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'typewriter',
-  },
-  {
-    id: 3,
     title: 'THE WARP',
     subtitle: 'Light bends — stars stretch into arcs — straight lines no longer exist here',
     triggerStart: 'top center',
@@ -55,15 +47,7 @@ const CHAPTERS: Chapter[] = [
     reveal: 'char-rise',
   },
   {
-    id: 4,
-    title: '',
-    subtitle: 'You were told the universe was cold — but look at this light — it has been traveling for you',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'word-cascade',
-  },
-  {
-    id: 5,
+    id: 3,
     title: 'THE FALL',
     subtitle: 'You cross the point of no return — and the strange thing is — you feel nothing',
     triggerStart: 'top center',
@@ -71,15 +55,7 @@ const CHAPTERS: Chapter[] = [
     reveal: 'flash-bloom',
   },
   {
-    id: 6,
-    title: '',
-    subtitle: 'There is a kind of peace in letting go — in surrendering to something larger than yourself',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'typewriter',
-  },
-  {
-    id: 7,
+    id: 4,
     title: 'SPAGHETTIFICATION',
     subtitle: 'Tidal forces pull you apart — atom by atom — into threads thinner than light',
     triggerStart: 'top center',
@@ -87,23 +63,7 @@ const CHAPTERS: Chapter[] = [
     reveal: 'center-out',
   },
   {
-    id: 8,
-    title: '',
-    subtitle: 'You are not breaking — you are becoming something the universe has never seen before',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'word-cascade',
-  },
-  {
-    id: 9,
-    title: '',
-    subtitle: 'The boundary between you and the universe was always an illusion — feel it dissolve',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'typewriter',
-  },
-  {
-    id: 10,
+    id: 5,
     title: 'TIME DILATION',
     subtitle: 'One heartbeat here — outside, civilizations rise and fall — stars are born and die',
     triggerStart: 'top center',
@@ -111,15 +71,7 @@ const CHAPTERS: Chapter[] = [
     reveal: 'flash-bloom',
   },
   {
-    id: 11,
-    title: '',
-    subtitle: 'Close your eyes — time is not passing — it is pooling around you like water',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'typewriter',
-  },
-  {
-    id: 12,
+    id: 6,
     title: 'SINGULARITY',
     subtitle: 'Where physics breaks — where space becomes time — where infinity becomes a point',
     triggerStart: 'top center',
@@ -127,15 +79,7 @@ const CHAPTERS: Chapter[] = [
     reveal: 'center-out',
   },
   {
-    id: 13,
-    title: '',
-    subtitle: 'Every star that ever burned — every life that ever was — it all began from a point like this',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'word-cascade',
-  },
-  {
-    id: 14,
+    id: 7,
     title: 'THE VOID',
     subtitle: 'Beyond equations — beyond language — beyond thought — silence',
     triggerStart: 'top center',
@@ -143,23 +87,7 @@ const CHAPTERS: Chapter[] = [
     reveal: 'flash-bloom',
   },
   {
-    id: 15,
-    title: '',
-    subtitle: 'In the silence you hear it — not nothing — but everything you forgot to listen to',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'typewriter',
-  },
-  {
-    id: 16,
-    title: '',
-    subtitle: 'You came looking for answers — but the void only asks one question — who are you without everything?',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'word-cascade',
-  },
-  {
-    id: 17,
+    id: 8,
     title: 'WHAT REMAINS',
     subtitle: 'You have one life — one brief flicker in the dark — what will you do with it?',
     triggerStart: 'top center',
@@ -175,6 +103,7 @@ export class Timeline {
   private creditsVisible = false;
   private pendingChapter: Chapter | null = null;
   private currentPattern: RevealPattern = 'char-rise';
+  private creditsTl: gsap.core.Timeline | null = null;
 
   start(withSound: boolean) {
     if (this.started) return;
@@ -197,7 +126,7 @@ export class Timeline {
       });
     });
 
-    const lastSection = document.querySelector('[data-chapter="17"]');
+    const lastSection = document.querySelector('[data-chapter="8"]');
     if (lastSection) {
       ScrollTrigger.create({
         trigger: lastSection,
@@ -232,11 +161,51 @@ export class Timeline {
     if (dataHud) dataHud.classList.add('hidden');
 
     credits.classList.add('visible');
-    gsap.fromTo(
-      credits.querySelectorAll('.credits-line'),
-      { opacity: 0, y: 20, filter: 'blur(8px)' },
-      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, stagger: 0.12, delay: 0.6, ease: 'power3.out' }
-    );
+
+    if (this.creditsTl) this.creditsTl.kill();
+    this.creditsTl = gsap.timeline();
+
+    this.creditsTl.fromTo(credits, { opacity: 0 }, { opacity: 1, duration: 2.0, ease: 'power2.out' });
+
+    const lines = credits.querySelectorAll('.credits-line');
+    lines.forEach((line, i) => {
+      const isSpacer = line.classList.contains('credits-spacer');
+      const isTitle = line.classList.contains('credits-title');
+      const isSub = line.classList.contains('credits-sub');
+      const isFooter = line.classList.contains('credits-footer');
+
+      if (isTitle) {
+        this.creditsTl!.fromTo(line,
+          { opacity: 0, scale: 1.4, filter: 'blur(25px)', letterSpacing: '0.8em' },
+          { opacity: 1, scale: 1, filter: 'blur(0px)', letterSpacing: '0.3em', duration: 2.5, ease: 'power4.out' },
+          0.5
+        );
+      } else if (isSub) {
+        this.creditsTl!.fromTo(line,
+          { opacity: 0, y: 15, filter: 'blur(10px)', letterSpacing: '0.06em' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', letterSpacing: '0.04em', duration: 1.5, ease: 'power3.out' },
+          2.5
+        );
+      } else if (isSpacer) {
+        this.creditsTl!.fromTo(line,
+          { opacity: 0, scaleX: 0 },
+          { opacity: 1, scaleX: 1, duration: 1.2, ease: 'power2.out' },
+          3.0 + i * 0.25
+        );
+      } else if (isFooter) {
+        this.creditsTl!.fromTo(line,
+          { opacity: 0, y: 20, filter: 'blur(8px)' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.5, ease: 'power3.out' },
+          4.5 + i * 0.3
+        );
+      } else {
+        this.creditsTl!.fromTo(line,
+          { opacity: 0, y: 20, filter: 'blur(8px)', letterSpacing: '0.05em' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', letterSpacing: '0.02em', duration: 1.2, ease: 'power3.out' },
+          3.0 + i * 0.3
+        );
+      }
+    });
   }
 
   private hideCredits() {
@@ -246,6 +215,7 @@ export class Timeline {
     this.creditsVisible = false;
     this.activeChapter = -1;
     this.transitioning = false;
+    if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
     credits.classList.remove('visible');
     gsap.set(credits.querySelectorAll('.credits-line'), { opacity: 0, y: 20 });
     if (chapterText) {
@@ -401,17 +371,20 @@ export class Timeline {
     chars.forEach((c) => c.classList.add('revealed'));
   }
 
-  private revealCenterOut(chars: NodeListOf<Element>, tl: gsap.core.Timeline, delay: number, parent?: HTMLElement) {
+  private revealCenterOut(chars: NodeListOf<Element>, tl: gsap.core.Timeline, delay: number, parent?: HTMLElement, isOpening?: boolean) {
     if (parent) {
+      const startScale = isOpening ? 1.6 : 1.15;
+      const startBlur = isOpening ? 30 : 12;
+      const duration = isOpening ? 2.0 : 1.0;
       tl.fromTo(
         parent,
-        { opacity: 0, scale: 1.15, filter: 'blur(12px)' },
+        { opacity: 0, scale: startScale, filter: `blur(${startBlur}px)` },
         {
           opacity: 1,
           scale: 1,
           filter: 'blur(0px)',
-          duration: 1.0,
-          ease: 'power3.out',
+          duration,
+          ease: isOpening ? 'power4.out' : 'power3.out',
           delay,
         }
       );
@@ -475,84 +448,165 @@ export class Timeline {
     tl.add(() => this.markRevealed(chars), delay + 0.1);
   }
 
+  private static TEXT_OFFSETS: Record<number, { x: number; y: number; align: string }> = {
+    0: { x: 0, y: 0, align: 'center' },
+    1: { x: 0, y: 0, align: 'center' },
+    2: { x: -6, y: 0, align: 'left' },
+    3: { x: 0, y: 8, align: 'center' },
+    4: { x: 0, y: 0, align: 'center' },
+    5: { x: 5, y: -6, align: 'right' },
+    6: { x: 0, y: 0, align: 'center' },
+    7: { x: 0, y: 0, align: 'center' },
+    8: { x: 0, y: 0, align: 'center' },
+  };
+
   private createChapterContent(container: HTMLElement, chapter: Chapter) {
     container.innerHTML = '';
-    const isEmotional = chapter.title === '';
     const pattern = chapter.reveal;
     this.currentPattern = pattern;
 
+    const offset = Timeline.TEXT_OFFSETS[chapter.id] || { x: 0, y: 0, align: 'center' };
+    const baseTransform = offset.x !== 0 || offset.y !== 0
+      ? `translate(${offset.x}vw, ${offset.y}vh)`
+      : '';
+    container.dataset.baseTransform = baseTransform;
+    container.style.transform = baseTransform;
+    container.style.textAlign = offset.align;
+
     const tl = gsap.timeline();
 
-    if (!isEmotional) {
-      const titleLine = document.createElement('div');
-      titleLine.className = 'line';
-      container.appendChild(titleLine);
-      this.splitTextToChars(titleLine, chapter.title);
-
-      const titleChars = titleLine.querySelectorAll('.char');
-
-      switch (pattern) {
-        case 'center-out':
-          this.revealCenterOut(titleChars, tl, 0, titleLine);
-          break;
-        case 'flash-bloom':
-          this.revealFlashBloom(titleChars, tl, 0, titleLine);
-          break;
-        default:
-          tl.fromTo(
-            titleLine,
-            { opacity: 0, y: 15, filter: 'blur(8px)' },
-            {
-              opacity: 1,
-              y: 0,
-              filter: 'blur(0px)',
-              duration: 0.8,
-              ease: 'power3.out',
-            }
-          );
-          tl.set(titleChars, { opacity: 1 }, 0);
-          tl.add(() => this.markRevealed(titleChars), 0.1);
-          break;
-      }
+    if (chapter.id === 0) {
+      const poetryLine = document.createElement('div');
+      poetryLine.className = 'line chapter-poetry';
+      poetryLine.textContent = 'somewhere in the dark, something waits';
+      container.appendChild(poetryLine);
+      tl.fromTo(poetryLine,
+        { opacity: 0, filter: 'blur(12px)', y: 5 },
+        { opacity: 0.35, filter: 'blur(0px)', y: 0, duration: 2.5, ease: 'power2.out' },
+        0
+      );
+      tl.to(poetryLine,
+        { opacity: 0, filter: 'blur(6px)', y: -8, duration: 1.5, ease: 'power2.in' },
+        3.5
+      );
     }
 
-    const subtitleLine = document.createElement('div');
-    subtitleLine.className = isEmotional ? 'line emotional' : 'line data';
-    container.appendChild(subtitleLine);
-    this.splitTextToChars(subtitleLine, chapter.subtitle);
+    const chapterNum = document.createElement('div');
+    chapterNum.className = 'chapter-num-filigrane';
+    chapterNum.setAttribute('aria-hidden', 'true');
+    chapterNum.textContent = chapter.id === 5 ? '∞' : String(chapter.id + 1).padStart(2, '0');
+    container.appendChild(chapterNum);
+    const numDelay = chapter.id === 0 ? 1.5 : 0;
+    tl.fromTo(chapterNum,
+      { opacity: 0, scale: 1.5, filter: 'blur(8px)' },
+      { opacity: 0.06, scale: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power2.out' },
+      numDelay
+    );
 
-    const subChars = subtitleLine.querySelectorAll('.char');
-    const subDelay = isEmotional ? 0.4 : 0.6;
+    const titleLine = document.createElement('div');
+    let titleClass = 'line';
+    if (chapter.id === 0) titleClass = 'line chapter-opening';
+    else if (chapter.id === 4) titleClass = 'line chapter-wide';
+    else if (chapter.id === 6) titleClass = 'line chapter-impact';
+    else if (chapter.id === 7) titleClass = 'line chapter-void';
+    else if (chapter.id === 8) titleClass = 'line chapter-final';
+    titleLine.className = titleClass;
+    container.appendChild(titleLine);
+    this.splitTextToChars(titleLine, chapter.title);
 
-    switch (pattern) {
+    const titleChars = titleLine.querySelectorAll('.char');
+    const openingDelay = chapter.id === 0 ? 2.0 : 0;
+
+    if (chapter.id === 5) {
+      titleLine.className = 'line chapter-vertical';
+      tl.fromTo(
+        titleLine,
+        { opacity: 0, filter: 'blur(12px)', y: 30 },
+        { opacity: 1, filter: 'blur(0px)', y: 0, duration: 1.5, ease: 'power3.out' }
+      );
+      tl.set(titleChars, { opacity: 1 }, 0);
+      tl.add(() => this.markRevealed(titleChars), 0.1);
+    } else if (chapter.id === 8) {
+      tl.fromTo(
+        titleLine,
+        { opacity: 0, filter: 'blur(0px) brightness(3)', scale: 0.9 },
+        { opacity: 1, filter: 'blur(0px) brightness(1)', scale: 1, duration: 3.0, ease: 'power2.out' }
+      );
+      tl.set(titleChars, { opacity: 1 }, 0);
+      tl.add(() => this.markRevealed(titleChars), 0.1);
+    } else if (chapter.id === 6) {
+      tl.fromTo(
+        titleLine,
+        { opacity: 0, scale: 2.5, filter: 'blur(20px)', letterSpacing: '0.8em' },
+        { opacity: 1, scale: 1, filter: 'blur(0px)', letterSpacing: '0.35em', duration: 2.0, ease: 'power4.out' }
+      );
+      tl.set(titleChars, { opacity: 1 }, 0);
+      tl.add(() => this.markRevealed(titleChars), 0.1);
+    } else switch (pattern) {
       case 'center-out':
-        this.revealCenterOut(subChars, tl, subDelay, subtitleLine);
-        break;
-      case 'word-cascade':
-        this.revealWordCascade(subtitleLine, tl, subDelay);
+        this.revealCenterOut(titleChars, tl, openingDelay, titleLine, chapter.id === 0);
         break;
       case 'flash-bloom':
-        this.revealFlashBloom(subChars, tl, subDelay, subtitleLine);
-        break;
-      case 'typewriter':
-        this.revealTypewriter(subChars, tl, subDelay, subtitleLine);
+        this.revealFlashBloom(titleChars, tl, 0, titleLine);
         break;
       default:
         tl.fromTo(
-          subtitleLine,
-          { opacity: 0, y: 12, filter: 'blur(6px)' },
+          titleLine,
+          { opacity: 0, y: 15, filter: 'blur(8px)' },
           {
             opacity: 1,
             y: 0,
             filter: 'blur(0px)',
-            duration: 0.9,
-            ease: 'power2.out',
-            delay: subDelay,
+            duration: 0.8,
+            ease: 'power3.out',
           }
         );
-        tl.set(subChars, { opacity: 1 }, subDelay);
-        tl.add(() => this.markRevealed(subChars), subDelay + 0.1);
+        tl.set(titleChars, { opacity: 1 }, 0);
+        tl.add(() => this.markRevealed(titleChars), 0.1);
         break;
+    }
+
+    if (chapter.id === 7) {
+      tl.to(titleLine, { opacity: 0, filter: 'blur(8px)', duration: 3.0, ease: 'power2.in', delay: 2.0 });
+    } else {
+      const subtitleLine = document.createElement('div');
+      subtitleLine.className = chapter.id === 0 ? 'line data chapter-opening-sub' : chapter.id === 8 ? 'line data chapter-final-sub' : 'line data';
+      container.appendChild(subtitleLine);
+      this.splitTextToChars(subtitleLine, chapter.subtitle);
+
+      const subChars = subtitleLine.querySelectorAll('.char');
+      const subDelay = 0.6;
+
+      switch (pattern) {
+        case 'center-out':
+          this.revealCenterOut(subChars, tl, subDelay, subtitleLine);
+          break;
+        case 'word-cascade':
+          this.revealWordCascade(subtitleLine, tl, subDelay);
+          break;
+        case 'flash-bloom':
+          this.revealFlashBloom(subChars, tl, subDelay, subtitleLine);
+          break;
+        case 'typewriter':
+          this.revealTypewriter(subChars, tl, subDelay, subtitleLine);
+          break;
+        default:
+          tl.fromTo(
+            subtitleLine,
+            { opacity: 0, y: 12, filter: 'blur(6px)' },
+            {
+              opacity: 1,
+              y: 0,
+              filter: 'blur(0px)',
+              duration: 0.9,
+              ease: 'power2.out',
+              delay: subDelay,
+            }
+          );
+          tl.set(subChars, { opacity: 1 }, subDelay);
+          tl.add(() => this.markRevealed(subChars), subDelay + 0.1);
+          break;
+      }
     }
   }
 }

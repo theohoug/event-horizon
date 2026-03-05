@@ -15,6 +15,7 @@ varying vec3 vColor;
 void main() {
   vec2 center = gl_PointCoord - 0.5;
   float dist = length(center);
+  if (dist > 0.5) discard;
 
   float core = exp(-dist * dist * 50.0);
   float glow = exp(-dist * dist * 10.0);
@@ -41,7 +42,7 @@ void main() {
   vec3 violetShift = vec3(0.3, 0.05, 0.5) * spaghetti * 0.06;
   color += cyanShift + violetShift;
 
-  float hotCenter = pow(core, 5.0) * 0.12;
+  float _c2 = core * core; float hotCenter = _c2 * _c2 * core * 0.12;
   color += vec3(0.7, 0.85, 1.0) * hotCenter;
 
   float blueshift = smoothstep(5.0, 2.0, vDistToCenter);

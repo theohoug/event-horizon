@@ -100,7 +100,9 @@ export class TextReveal {
     if (scroll > 0.33) {
       const hbBpm = 50 + Math.max(scroll - 0.35, 0) * 200;
       const hbPhase = breatheTime * hbBpm / 60 * Math.PI;
-      const hbPulse = Math.pow(Math.max(Math.sin(hbPhase), 0), 12) * 0.008 * Math.min((scroll - 0.33) * 5, 1);
+      const hbSinTR = Math.max(Math.sin(hbPhase), 0);
+      const hbS2 = hbSinTR * hbSinTR; const hbS4 = hbS2 * hbS2; const hbS8 = hbS4 * hbS4;
+      const hbPulse = hbS8 * hbS4 * 0.008 * Math.min((scroll - 0.33) * 5, 1);
       const breathe = Math.sin(breatheTime * 0.6) * 0.003 * scroll;
       const totalScale = 1 + hbPulse + breathe;
       container.style.transform = `${baseTransform} scale(${totalScale.toFixed(5)})`;
@@ -217,7 +219,8 @@ export class TextReveal {
           const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
           const repR = 100;
           if (mDist < repR && mDist > 1) {
-            const str = Math.pow(1 - mDist / repR, 2) * 8 * Math.min(scroll * 4, 1);
+            const repT = 1 - mDist / repR;
+            const str = repT * repT * 8 * Math.min(scroll * 4, 1);
             char.style.transform = `translate(${(mdx / mDist * str).toFixed(1)}px, ${(mdy / mDist * str).toFixed(1)}px)`;
           } else {
             char.style.transform = '';

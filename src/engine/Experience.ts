@@ -882,11 +882,11 @@ export class Experience {
     const isScrollingUp = this.state.scrollVelocity < -0.3;
 
     let totalForce = 0;
-    totalForce += Math.pow(scroll, 2) * 2;
-    if (scroll > 0.15) totalForce += Math.pow((scroll - 0.15) / 0.85, 1.5) * 5;
-    if (scroll > 0.35) totalForce += Math.pow((scroll - 0.35) / 0.65, 1.5) * 12;
-    if (scroll > 0.55) totalForce += Math.pow((scroll - 0.55) / 0.45, 2) * 25;
-    if (scroll > 0.75) totalForce += Math.pow((scroll - 0.75) / 0.25, 2) * 40;
+    totalForce += scroll * scroll * 2;
+    if (scroll > 0.15) { const g1 = (scroll - 0.15) / 0.85; totalForce += g1 * Math.sqrt(g1) * 5; }
+    if (scroll > 0.35) { const g2 = (scroll - 0.35) / 0.65; totalForce += g2 * Math.sqrt(g2) * 12; }
+    if (scroll > 0.55) { const g3 = (scroll - 0.55) / 0.45; totalForce += g3 * g3 * 25; }
+    if (scroll > 0.75) { const g4 = (scroll - 0.75) / 0.25; totalForce += g4 * g4 * 40; }
 
     const extraVisits = Math.min(this.visitCount - 1, 4);
     if (extraVisits > 0) totalForce *= 1 + extraVisits * 0.2;
@@ -895,7 +895,8 @@ export class Experience {
       totalForce *= 1 - this.holdStrength * 0.6;
     }
 
-    const voidResistance = Math.exp(-Math.pow((scroll - 0.82) * 12.0, 2.0));
+    const voidDelta = (scroll - 0.82) * 12.0;
+    const voidResistance = Math.exp(-voidDelta * voidDelta);
     if (voidResistance > 0.01) {
       totalForce *= 1 - voidResistance * 0.7;
     }
@@ -1234,7 +1235,8 @@ export class Experience {
 
     const velocityShake = Math.min(Math.abs(this.state.scrollVelocity) * 0.0003, 0.002);
     const flashShake = this.chapterFlash * 0.004;
-    const singularityShake = Math.exp(-Math.pow((this.state.scroll - 0.77) * 12, 2)) * 0.012;
+    const singShakeDelta = (this.state.scroll - 0.77) * 12;
+    const singularityShake = Math.exp(-singShakeDelta * singShakeDelta) * 0.012;
     const deepShake = Math.max(0, this.state.scroll - 0.6) * 0.001;
     const shakeIntensity = velocityShake + flashShake + singularityShake + deepShake;
 
@@ -1469,7 +1471,8 @@ export class Experience {
       this.spawnTemporalEcho();
     }
 
-    const singularityGlitch = Math.exp(-Math.pow((scroll - 0.72) * 18.0, 2.0));
+    const glitchDelta = (scroll - 0.72) * 18.0;
+    const singularityGlitch = Math.exp(-glitchDelta * glitchDelta);
     if (singularityGlitch > 0.2 && Math.random() < singularityGlitch * 0.3) {
       const glitchTargets = [this.hudElements.distance, this.hudElements.temp, this.hudElements.timedil, this.hudElements.elapsed, this.hudElements.tidal];
       const target = glitchTargets[Math.floor(Math.random() * glitchTargets.length)];

@@ -253,9 +253,8 @@ export class PostProcessing {
     const introZoom = isInIntro ? (1 - intro) * 30 : 0;
     const introYOffset = isInIntro ? (1 - intro) * 5 : 0;
 
-    const scrollPow = Math.pow(scroll, 1.05);
-    const z = 38 - scrollPow * 35.5 + introZoom;
-    const y = 7 - Math.pow(scroll, 1.2) * 6.94 + introYOffset;
+    const z = 38 - scroll * 35.5 + introZoom;
+    const y = 7 - scroll * (0.8 + 0.2 * scroll) * 6.94 + introYOffset;
 
     const parallaxStrength = Math.max(0, 1 - scroll * 1.5) * 0.8;
     const parallaxX = mx * parallaxStrength;
@@ -268,14 +267,15 @@ export class PostProcessing {
     this.particleCamera.position.set(sway + drift + parallaxX, y + driftY + parallaxY, z);
     this.particleCamera.lookAt(drift * 0.3 + parallaxX * 0.2, driftY * 0.2 + parallaxY * 0.2, 0);
 
-    const rollAccel = Math.pow(scroll, 1.5);
+    const rollAccel = scroll * Math.sqrt(scroll);
     const roll = Math.sin(scroll * Math.PI * 2) * 0.03 * rollAccel;
     const introRoll = isInIntro ? Math.sin(t * 0.3) * 0.01 * (1 - intro) : 0;
     const velocityRoll = Math.sin(t * 2.5) * 0.004 * rollAccel;
     this.particleCamera.rotation.z = roll + Math.sin(t * 0.1) * 0.003 + introRoll + velocityRoll;
 
     const introFov = isInIntro ? (1 - intro) * 20 : 0;
-    const fovAccel = Math.pow(Math.max(0, scroll - 0.35) / 0.65, 1.8) * 8;
+    const fovBase = Math.max(0, scroll - 0.35) / 0.65;
+    const fovAccel = fovBase * fovBase * Math.sqrt(Math.sqrt(fovBase)) * 8;
     const fovTarget = 45 + scroll * 12 + fovAccel + introFov;
     this.particleCamera.fov += (fovTarget - this.particleCamera.fov) * 0.05;
     this.particleCamera.updateProjectionMatrix();

@@ -69,7 +69,7 @@ void main() {
   float barrelAccel = smoothstep(0.4, 1.0, uScroll);
   float singularityWarp = g2((uScroll - 0.77) * 20.0);
   float velDistort = min(absVel * 0.0015, 0.08) * uScroll;
-  float singularityShake = singularityWarp * 0.004 * sin(uTime * 25.0) * sin(uTime * 17.3 + 1.7);
+  float singularityShake = singularityWarp > 0.001 ? singularityWarp * 0.004 * sin(uTime * 25.0) * sin(uTime * 17.3 + 1.7) : 0.0;
   float whiteOutReduce = smoothstep(0.88, 0.98, uScroll);
   float barrelStrength = (uScroll * 0.07 + barrelAccel * 0.10 + singularityWarp * 0.22 + velDistort) * (1.0 - whiteOutReduce * 0.95);
   vec2 distortedUv = vUv + center * dist * dist * barrelStrength + vec2(singularityShake, singularityShake * 0.7);
@@ -136,19 +136,24 @@ void main() {
     : mix(bloomMid, bloomDeep, (uScroll - 0.6) / 0.4);
   color += bloom * bloomTint * uBloomMix;
 
-  float anamorphicStreak = exp(-abs(center.y) * 5.0);
-  float anamorphicBright = dot(bloom, vec3(0.33)) * anamorphicStreak;
   float anamorphicScroll = smoothstep(0.2, 0.6, uScroll);
-  vec3 anamorphicColor = mix(vec3(0.75, 0.82, 1.0), vec3(1.0, 0.7, 0.4), smoothstep(0.3, 0.8, uScroll));
-  color += anamorphicColor * anamorphicBright * 0.24 * anamorphicScroll;
-  float streak2 = exp(-abs(center.y) * 12.0);
-  vec3 streak2Color = mix(vec3(1.0, 0.95, 0.85), vec3(1.0, 0.6, 0.3), smoothstep(0.4, 0.9, uScroll));
-  color += streak2Color * dot(bloom, vec3(0.33)) * streak2 * 0.10 * anamorphicScroll;
+  if (anamorphicScroll > 0.01) {
+    float anamorphicStreak = exp(-abs(center.y) * 5.0);
+    float anamorphicBright = dot(bloom, vec3(0.33)) * anamorphicStreak;
+    vec3 anamorphicColor = mix(vec3(0.75, 0.82, 1.0), vec3(1.0, 0.7, 0.4), smoothstep(0.3, 0.8, uScroll));
+    color += anamorphicColor * anamorphicBright * 0.24 * anamorphicScroll;
+    float streak2 = exp(-abs(center.y) * 12.0);
+    vec3 streak2Color = mix(vec3(1.0, 0.95, 0.85), vec3(1.0, 0.6, 0.3), smoothstep(0.4, 0.9, uScroll));
+    color += streak2Color * dot(bloom, vec3(0.33)) * streak2 * 0.10 * anamorphicScroll;
+  }
 
-  float bloomLuma = dot(bloom, vec3(0.2126, 0.7152, 0.0722));
-  float halation = smoothstep(0.15, 0.6, bloomLuma);
-  vec3 halationColor = mix(vec3(1.0, 0.85, 0.65), vec3(0.8, 0.5, 1.0), uScroll);
-  color += halationColor * halation * 0.035 * smoothstep(0.1, 0.4, uScroll);
+  float halationPhase = smoothstep(0.1, 0.4, uScroll);
+  if (halationPhase > 0.01) {
+    float bloomLuma = dot(bloom, vec3(0.2126, 0.7152, 0.0722));
+    float halation = smoothstep(0.15, 0.6, bloomLuma);
+    vec3 halationColor = mix(vec3(1.0, 0.85, 0.65), vec3(0.8, 0.5, 1.0), uScroll);
+    color += halationColor * halation * 0.035 * halationPhase;
+  }
 
   color = acesFilm(color);
 

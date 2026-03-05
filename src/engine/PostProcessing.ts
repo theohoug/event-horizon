@@ -137,7 +137,7 @@ export class PostProcessing {
     if (this.shockwaves.length > 4) this.shockwaves.shift();
   }
 
-  update(state: { time: number; deltaTime: number; scroll: number; scrollVelocity: number; chapterFlash?: number; introProgress?: number; holdStrength?: number }) {
+  update(state: { time: number; deltaTime: number; scroll: number; scrollVelocity: number; chapterFlash?: number; introProgress?: number; holdStrength?: number; mouseSmooth?: { x: number; y: number } }) {
     const intro = state.introProgress ?? 0;
     const introBloomBoost = intro > 0 && intro < 1 ? (1 - intro) * 0.3 : 0;
 

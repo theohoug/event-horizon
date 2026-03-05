@@ -587,7 +587,7 @@ export class Experience {
       this.lastScrollActivity = performance.now();
       this.idleHintShown = false;
 
-      if (this.state.scroll > 0.38 && this.state.scroll < 0.85 && e.velocity < -80) {
+      if (this.state.scroll > 0.35 && this.state.scroll < 0.92 && e.velocity < -50) {
         this.showEscapeMessage();
       }
 
@@ -1239,6 +1239,7 @@ export class Experience {
 
     this.haptics.update(this.state.scroll);
     this.checkIdleHint();
+    this.checkEscapePrompt();
     this.updateMobileNav();
     this.updateHUD(this.state.scroll);
 
@@ -1290,6 +1291,7 @@ export class Experience {
   private idleHintEl: HTMLElement | null = null;
   private idleHintShown = false;
   private escapeBlocked = false;
+  private escapePromptShown = false;
   private echoTexts = ['YOU', 'THE PULL', 'no turning back', 'atom by atom', 'ten billion solar masses', 'spacetime curves'];
   private chapterIndicatorEl: HTMLElement | null = null;
   private chapterIndicatorNum: HTMLElement | null = null;
@@ -1750,6 +1752,23 @@ export class Experience {
     'The singularity calls',
     'There is more below',
   ];
+
+  private checkEscapePrompt() {
+    if (this.escapePromptShown) return;
+    const s = this.state.scroll;
+    if (s > 0.48 && s < 0.55 && Math.abs(this.state.scrollVelocity) < 2) {
+      this.escapePromptShown = true;
+      if (!this.idleHintEl) this.idleHintEl = document.getElementById('idle-hint');
+      if (!this.idleHintEl) return;
+      this.idleHintEl.textContent = 'Try scrolling back up...';
+      this.idleHintEl.classList.remove('fade-out');
+      this.idleHintEl.classList.add('visible');
+      window.setTimeout(() => {
+        this.idleHintEl?.classList.add('fade-out');
+        this.idleHintEl?.classList.remove('visible');
+      }, 4500);
+    }
+  }
 
   private showEscapeMessage() {
     if (this.escapeBlocked) return;

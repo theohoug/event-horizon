@@ -30,31 +30,25 @@ void main() {
     return;
   }
 
-  vec3 color = vec3(0.0);
-  float total = 0.0;
-
-  float weights[7];
-  weights[0] = 0.1964825502;
-  weights[1] = 0.2969069646;
-  weights[2] = 0.2969069646;
-  weights[3] = 0.0944703978;
-  weights[4] = 0.0944703978;
-  weights[5] = 0.0103813596;
-  weights[6] = 0.0103813596;
-
   float spread = 1.0 + uPassIndex * 0.8;
 
-  color += texture2D(tDiffuse, vUv).rgb * weights[0];
-  total += weights[0];
+  float w0 = 0.1964825502;
+  float w12 = 0.3913773624;
+  float w3 = 0.0103813596;
 
-  for (int i = 1; i <= 3; i++) {
-    float w1 = i == 1 ? weights[1] : i == 2 ? weights[3] : weights[5];
-    float w2 = i == 1 ? weights[2] : i == 2 ? weights[4] : weights[6];
-    vec2 offset = uDirection * texel * float(i) * 2.0 * spread;
-    color += texture2D(tDiffuse, vUv + offset).rgb * w1;
-    color += texture2D(tDiffuse, vUv - offset).rgb * w2;
-    total += w1 + w2;
-  }
+  float off1 = 1.2414 * 2.0 * spread;
+  float off2 = 3.0 * 2.0 * spread;
+
+  vec2 d1 = uDirection * texel * off1;
+  vec2 d2 = uDirection * texel * off2;
+
+  vec3 color = texture2D(tDiffuse, vUv).rgb * w0
+             + texture2D(tDiffuse, vUv + d1).rgb * w12
+             + texture2D(tDiffuse, vUv - d1).rgb * w12
+             + texture2D(tDiffuse, vUv + d2).rgb * w3
+             + texture2D(tDiffuse, vUv - d2).rgb * w3;
+
+  float total = w0 + w12 * 2.0 + w3 * 2.0;
 
   gl_FragColor = vec4(color / total * uIntensity, 1.0);
 }

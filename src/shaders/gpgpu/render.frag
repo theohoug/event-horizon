@@ -24,9 +24,8 @@ void main() {
   float core = exp(-dist * dist * 55.0);
   float glow = exp(-dist * dist * 12.0);
   float outerGlow = exp(-dist * dist * 3.0);
-  float ultraSoft = exp(-dist * dist * 1.2);
 
-  float alpha = (core * 0.6 + glow * 0.22 + outerGlow * 0.05 + ultraSoft * 0.01) * vBrightness;
+  float alpha = (core * 0.6 + glow * 0.22 + outerGlow * 0.06) * vBrightness;
 
   float absorption = smoothstep(4.0, 0.8, vDistToCenter);
   alpha *= 1.0 - absorption * 0.96;
@@ -56,7 +55,7 @@ void main() {
     alpha += sTrail * spaghetti * vBrightness * 0.05;
   }
 
-  vec3 color = vColor * (core * 0.55 + glow * 0.2 + outerGlow * 0.06 + ultraSoft * 0.015);
+  vec3 color = vColor * (core * 0.55 + glow * 0.2 + outerGlow * 0.075);
 
   float _rc2 = core * core; color += vec3(0.85, 0.92, 1.0) * _rc2 * _rc2 * core * 0.15;
 

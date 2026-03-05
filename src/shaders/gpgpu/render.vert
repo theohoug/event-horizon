@@ -46,10 +46,10 @@ void main() {
   vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
   gl_Position = projectionMatrix * mvPosition;
 
-  float diskWobble = sin(uTime * 0.4 + atan(pos.z, pos.x) * 2.0) * 0.15;
+  float diskAngle = atan(pos.z, pos.x);
+  float diskWobble = sin(uTime * 0.4 + diskAngle * 2.0) * 0.15;
   float diskPlane = 1.0 - smoothstep(0.0, 1.5, abs(pos.y + diskWobble));
   float diskRadius = smoothstep(1.2, 2.5, dist) * smoothstep(8.0, 4.0, dist);
-  float diskAngle = atan(pos.z, pos.x);
   float dustLane = smoothstep(0.3, 0.0, abs(sin(diskAngle * 3.0 + dist * 1.5)));
   float diskGlow = diskPlane * diskRadius * smoothstep(0.3, 0.6, uScroll) * (1.0 - dustLane * 0.3);
 
@@ -88,8 +88,7 @@ void main() {
   float deepScroll = smoothstep(0.5, 0.9, uScroll);
   vColor = mix(vColor, violetHot, deepScroll * nearShift * 0.3);
 
-  float orbitalAngle = atan(pos.z, pos.x);
-  float dopplerShift = sin(orbitalAngle + uTime * 0.3) * 0.5 + 0.5;
+  float dopplerShift = sin(diskAngle + uTime * 0.3) * 0.5 + 0.5;
   vec3 accretionBlue = vec3(0.4, 0.6, 1.3);
   vec3 accretionRed = vec3(1.4, 0.5, 0.15);
   vec3 accretionColor = mix(accretionBlue, accretionRed, dopplerShift);

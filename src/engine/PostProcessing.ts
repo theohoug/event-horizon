@@ -144,21 +144,26 @@ export class PostProcessing {
     const velBoost = Math.min(Math.abs(state.scrollVelocity) * 0.3, 1.5);
     const s = state.scroll;
 
-    const climaxBoost = s > 0.65 ? Math.pow((s - 0.65) / 0.35, 1.5) : 0;
-    const singularityPeak = Math.exp(-Math.pow((s - 0.77) * 18, 2));
+    const climaxT = s > 0.65 ? (s - 0.65) / 0.35 : 0;
+    const climaxBoost = climaxT * Math.sqrt(climaxT);
+    const singDelta = (s - 0.77) * 18;
+    const singularityPeak = Math.exp(-singDelta * singDelta);
 
     const hbActive = s > 0.33 ? 1 : 0;
     const hbBpm = 50 + Math.max(s - 0.35, 0) * 200;
     const hbPhase = state.time * hbBpm / 60 * Math.PI;
-    const hbPulse = hbActive * Math.pow(Math.max(Math.sin(hbPhase), 0), 12) * 0.08;
+    const hbSin = Math.max(Math.sin(hbPhase), 0);
+    const hbSin2 = hbSin * hbSin; const hbSin4 = hbSin2 * hbSin2; const hbSin8 = hbSin4 * hbSin4;
+    const hbPulse = hbActive * hbSin8 * hbSin4 * 0.08;
 
-    const breathZone1 = Math.exp(-Math.pow((s - 0.45) * 16, 2));
-    const breathZone2 = Math.exp(-Math.pow((s - 0.72) * 16, 2));
+    const breathD1 = (s - 0.45) * 16; const breathZone1 = Math.exp(-breathD1 * breathD1);
+    const breathD2 = (s - 0.72) * 16; const breathZone2 = Math.exp(-breathD2 * breathD2);
     const breathCalm = Math.max(breathZone1, breathZone2) * 0.4;
 
     const hbChroma = hbPulse * 3.5;
     const chapterFlashChroma = (state.chapterFlash ?? 0) * 6;
-    const whiteOutFade = s > 0.82 ? Math.pow(Math.max(0, (s - 0.82) / 0.18), 2.0) : 0;
+    const whiteOutT = s > 0.82 ? (s - 0.82) / 0.18 : 0;
+    const whiteOutFade = whiteOutT * whiteOutT;
     const chromatic = (0.25 + s * 1.8 + velBoost * 0.7 + climaxBoost * 1.2 + singularityPeak * 5.0 + hbChroma + chapterFlashChroma) * (1 - breathCalm) * Math.max(0, 1 - whiteOutFade * 1.1);
 
     this.compositeMaterial.uniforms.uTime.value = state.time;

@@ -299,8 +299,11 @@ export class PostProcessing {
   }
 
   destroy() {
+    this.sceneTarget.texture.dispose();
     this.sceneTarget.dispose();
+    this.bloomTargetA.texture.dispose();
     this.bloomTargetA.dispose();
+    this.bloomTargetB.texture.dispose();
     this.bloomTargetB.dispose();
     this.quad.geometry.dispose();
     this.bloomMaterial.dispose();

@@ -235,9 +235,13 @@ export class GPGPUParticles {
   }
 
   destroy() {
+    this.posRT[0].texture.dispose();
     this.posRT[0].dispose();
+    this.posRT[1].texture.dispose();
     this.posRT[1].dispose();
+    this.velRT[0].texture.dispose();
     this.velRT[0].dispose();
+    this.velRT[1].texture.dispose();
     this.velRT[1].dispose();
     this.simQuad.geometry.dispose();
     this.renderGeometry.dispose();

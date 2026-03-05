@@ -135,7 +135,7 @@ vec3 starfield(vec3 rd) {
   float n1 = snoise(rd * 2.5 + vec3(uTime * 0.008));
   float n2 = snoise(rd * 5.0 + vec3(uTime * 0.004, 17.0, 0.0));
   float n4 = snoise(rd * 3.8 + vec3(uTime * 0.006, 0.0, 42.0));
-  float nebula = pow(n1 * 0.5 + 0.5, 2.5) * 0.14;
+  float _nb1 = n1 * 0.5 + 0.5; float _nb1_2 = _nb1*_nb1; float nebula = _nb1_2 * sqrt(_nb1) * 0.14;
   float _nb2 = n2 * 0.5 + 0.5; float _nb2_2 = _nb2*_nb2; float nebula2 = _nb2_2 * _nb2_2 * 0.07;
   float _nb3 = n4 * 0.5 + 0.5; float nebula3 = _nb3 * _nb3 * _nb3 * 0.08;
 
@@ -143,23 +143,22 @@ vec3 starfield(vec3 rd) {
   col += vec3(0.03, 0.06, 0.14) * nebula2 * nebulaBoost;
   col += vec3(0.08, 0.03, 0.04) * nebula3 * nebulaBoost;
 
-  float _nn = snoise(rd * 4.2 + vec3(uTime * 0.005, 77.0, 0.0)) * 0.5 + 0.5; float _nn2 = _nn*_nn; float nurseryNoise = _nn2 * _nn2 * 0.06;
-  col += vec3(0.1, 0.05, 0.12) * nurseryNoise * nebulaBoost;
-  float coldNebula = pow(snoise(rd * 3.0 + vec3(0.0, uTime * 0.004, 55.0)) * 0.5 + 0.5, 3.5) * 0.04;
-  col += vec3(0.04, 0.08, 0.16) * coldNebula * nebulaBoost;
+  float _nn = n4 * 0.5 + 0.5; float _nn2 = _nn*_nn; float nurseryNoise = _nn2 * _nn2 * 0.06;
+  col += vec3(0.12, 0.06, 0.16) * nurseryNoise * nebulaBoost;
 
   float n3 = snoise(rd * 1.2 + vec3(0.0, uTime * 0.003, 31.0));
   float _dn = n3 * 0.5 + 0.5; float deepNebula = _dn * _dn * _dn * 0.08;
   col += vec3(0.05, 0.02, 0.06) * deepNebula * nebulaBoost;
 
-  float cosmicGlow = pow(max(1.0 - abs(rd.y - 0.1) * 1.2, 0.0), 2.5) * 0.04;
+  float _cg = max(1.0 - abs(rd.y - 0.1) * 1.2, 0.0); float _cg2 = _cg*_cg; float cosmicGlow = _cg2 * sqrt(_cg) * 0.04;
   col += vec3(0.06, 0.03, 0.08) * cosmicGlow * nebulaBoost;
 
-  float _an = snoise(rd * 1.8 + vec3(33.0, -17.0, 55.0)) * 0.5 + 0.5; float asymNebula = _an * _an * _an * 0.05;
+  float _an = n3 * 0.5 + 0.5; float asymNebula = _an * _an * _an * 0.05;
   col += vec3(0.07, 0.03, 0.1) * asymNebula * nebulaBoost * smoothstep(0.0, 0.3, rd.x + 0.2);
 
-  float milkyWay = pow(max(1.0 - abs(rd.y) * 1.6, 0.0), 2.8);
-  float milkyDetail = snoise(rd * 8.0) * 0.3 + snoise(rd * 16.0) * 0.15;
+  float _mw = max(1.0 - abs(rd.y) * 1.6, 0.0); float _mw2 = _mw*_mw; float milkyWay = _mw2 * _mw;
+  float milkySeed = dot(rd, vec3(127.1, 311.7, 74.7));
+  float milkyDetail = (hash(milkySeed * 8.0) - 0.5) * 0.5 + (hash(milkySeed * 16.0) - 0.5) * 0.25;
   float milkyBoost = 1.0 + smoothstep(0.2, 0.0, uScroll) * 0.8;
   col += vec3(0.04, 0.025, 0.05) * milkyWay * (0.5 + milkyDetail) * milkyBoost;
 
@@ -182,11 +181,12 @@ vec3 starfield(vec3 rd) {
   }
 
   float _dl = max(1.0 - abs(rd.y + 0.05) * 3.0, 0.0); float _dl2 = _dl*_dl; float dustLane = _dl2 * _dl2;
-  float dustNoise = snoise(rd * 12.0 + vec3(7.0)) * 0.5 + 0.5;
+  float dustSeed = dot(rd, vec3(127.1, 311.7, 74.7)) * 12.0 + 7.0;
+  float dustNoise = hash(dustSeed) * 0.7 + 0.15;
   col *= 1.0 - dustLane * dustNoise * 0.3;
 
-  float _sc6 = snoise(rd * 6.0 + vec3(99.0, 0.0, 0.0)) * 0.5 + 0.5;
-  float _sc6_2 = _sc6*_sc6; float starCluster = _sc6_2 * _sc6_2;
+  float clusterSeed = dot(rd, vec3(97.3, 41.7, 213.1)) * 6.0 + 99.0;
+  float _sc6 = hash(clusterSeed); float _sc6_2 = _sc6*_sc6; float starCluster = _sc6_2 * _sc6_2;
   float dustShimmer = sin(uTime * 2.0 + dot(rd, vec3(47.0, 13.0, 91.0))) * 0.5 + 0.5;
   col += vec3(0.7, 0.65, 0.85) * starCluster * dustShimmer * 0.05;
 
@@ -212,11 +212,10 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
 
   float turb1 = snoise(vec3(r * 2.5, rotAngle * 3.0, uTime * 0.25)) * 0.38;
   float turb2 = snoise(vec3(r * 6.0, rotAngle * 8.0, uTime * 0.4)) * 0.15;
-  float turb3 = snoise(vec3(r * 12.0, rotAngle * 16.0, uTime * 0.6)) * 0.08;
-  float turbulence = turb1 + turb2 + turb3;
+  float turbulence = turb1 + turb2;
 
   float spiralArm = sin(rotAngle * 3.0 + r * 1.8 + turbulence * 5.0) * 0.5 + 0.5;
-  spiralArm = pow(spiralArm, 0.45);
+  spiralArm = sqrt(spiralArm);
   float secondaryArm = sin(rotAngle * 7.0 + r * 3.5 - uTime * 0.3) * 0.5 + 0.5;
   float tertiaryArm = sin(rotAngle * 13.0 + r * 5.0 + uTime * 0.15) * 0.5 + 0.5;
   float quaternaryArm = sin(rotAngle * 19.0 + r * 8.0 + uTime * 0.1) * 0.5 + 0.5;

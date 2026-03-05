@@ -166,7 +166,7 @@ void main() {
   color += grainRaw * uGrainIntensity * grainMask;
 
   float v1 = 1.0 - smoothstep(0.25, 1.3, dist * 1.5);
-  v1 = pow(v1, 1.3);
+  v1 = v1 * sqrt(sqrt(v1));
   float v2 = mix(1.0, 1.0 - smoothstep(0.12, 0.65, dist), smoothstep(0.4, 1.0, uScroll) * 0.6);
   float velTunnel = min(absVel * 0.0006, 0.25) * uScroll;
   float v3 = 1.0 - smoothstep(0.15, 0.55, dist) * velTunnel;
@@ -219,7 +219,7 @@ void main() {
     float nebula1 = sin(nebAngle * 2.0 + uTime * 0.08) * 0.5 + 0.5;
     float nebula2 = sin(nebAngle * 3.0 - uTime * 0.05 + 1.5) * 0.5 + 0.5;
     float nebula3 = sin(nebAngle * 5.0 + uTime * 0.12 + 3.0) * 0.5 + 0.5;
-    float nebMask = pow(nebula1 * nebula2, 1.5) * smoothstep(0.08, 0.40, dist) * smoothstep(0.7, 0.45, dist);
+    float _nm = nebula1 * nebula2; float nebMask = _nm * sqrt(_nm) * smoothstep(0.08, 0.40, dist) * smoothstep(0.7, 0.45, dist);
     color += vec3(0.025, 0.012, 0.06) * nebMask * earlyPhase * 0.8;
     color += vec3(0.008, 0.03, 0.035) * nebula1 * smoothstep(0.25, 0.55, dist) * earlyPhase * 0.25;
     float nebWisp = nebula3*nebula3*nebula3 * smoothstep(0.15, 0.35, dist) * smoothstep(0.6, 0.45, dist);
@@ -295,7 +295,7 @@ void main() {
     color = mix(color, stretchedColor, timeDilPhase * 0.2);
 
     float clockRing = g2((dist - 0.25) * 20.0);
-    float clockTick = pow(fract(uTime * 0.15), 0.1) * 0.5;
+    float _ct = fract(uTime * 0.15); float clockTick = mix(1.0, _ct, 0.15) * 0.5;
     color += vec3(0.04, 0.02, 0.08) * clockRing * clockTick * timeDilPhase;
   }
 
@@ -379,7 +379,7 @@ void main() {
 
   float singularityEntry = g2((uScroll - 0.67) * 70.0);
   if (singularityEntry > 0.01) {
-    float sFlash = pow(singularityEntry, 2.5);
+    float sFlash = singularityEntry * singularityEntry * sqrt(singularityEntry);
     float sCenterBlast = exp(-dist * dist * 4.0);
     color = mix(color, vec3(1.0, 0.98, 0.95), sFlash * sCenterBlast * 0.45);
     color += vec3(0.3, 0.15, 0.6) * sFlash * (1.0 - sCenterBlast) * 0.2;
@@ -535,7 +535,7 @@ void main() {
     float singRipple2 = sin(dist * 30.0 + uTime * 2.0 + singAngle * 4.0) * 0.5 + 0.5;
     float rippleMask = exp(-dist * dist * 3.0);
     vec3 rippleColor = mix(vec3(0.6, 0.15, 1.0), vec3(1.0, 0.3, 0.05), singRipple2);
-    color += rippleColor * pow(singRipple * singRipple2, 2.5) * rippleMask * inversionPeak * 0.12;
+    float _sr = singRipple * singRipple2; float _sr2 = _sr*_sr; color += rippleColor * _sr2 * sqrt(_sr) * rippleMask * inversionPeak * 0.12;
 
     float distortRing1 = g2((dist - 0.15 - sin(uTime * 1.5) * 0.05) * 25.0);
     float distortRing2 = g2((dist - 0.30 + cos(uTime * 1.2) * 0.04) * 20.0);

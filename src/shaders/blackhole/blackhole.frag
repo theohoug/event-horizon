@@ -50,7 +50,7 @@ vec3 starfield(vec3 rd) {
   );
   vec3 stretchedRd = normalize(twistedRd + stretchDir * dot(twistedRd, stretchDir) * scrollStretch);
 
-  for (int layer = 0; layer < 5; layer++) {
+  for (int layer = 0; layer < 4; layer++) {
     float scale = 50.0 + float(layer) * 45.0;
     vec3 p = stretchedRd * scale;
     vec3 id = floor(p);
@@ -89,7 +89,7 @@ vec3 starfield(vec3 rd) {
     }
   }
 
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 3; i++) {
     float bScale = 18.0 + float(i) * 8.0;
     vec3 bp = stretchedRd * bScale;
     vec3 bId = floor(bp);
@@ -162,7 +162,7 @@ vec3 starfield(vec3 rd) {
   float milkyBoost = 1.0 + smoothstep(0.2, 0.0, uScroll) * 0.8;
   col += vec3(0.04, 0.025, 0.05) * milkyWay * (0.5 + milkyDetail) * milkyBoost;
 
-  for (int bgLayer = 0; bgLayer < 3; bgLayer++) {
+  for (int bgLayer = 0; bgLayer < 2; bgLayer++) {
     float bgScale = 160.0 + float(bgLayer) * 120.0;
     vec3 bgP = rd * bgScale;
     vec3 bgId = floor(bgP);
@@ -346,13 +346,11 @@ float photonRing(vec3 pos) {
   float ring1 = g2((r - PHOTON_SPHERE) * 12.0);
   float ring2 = g2((r - PHOTON_SPHERE * 1.02) * 18.0) * 0.7;
   float ring3 = g2((r - PHOTON_SPHERE * 0.98) * 22.0) * 0.35;
-  float ring4 = g2((r - PHOTON_SPHERE * 1.05) * 28.0) * 0.18;
-  float ring5 = g2((r - PHOTON_SPHERE) * 5.0) * 0.15;
+  float ringWide = g2((r - PHOTON_SPHERE) * 5.0) * 0.15;
 
   float angle = atan(pos.z, pos.x);
   float shimmer = sin(angle * 30.0 + uTime * 4.0) * 0.12;
   float shimmer2 = sin(angle * 50.0 - uTime * 6.0) * 0.05;
-  float shimmer3 = sin(angle * 80.0 + uTime * 8.0) * 0.03;
 
   float heartbeatPhase = uScroll > 0.35 ? 1.0 : 0.0;
   float hbSpeed = 50.0 + max(uScroll - 0.35, 0.0) * 200.0;
@@ -360,7 +358,7 @@ float photonRing(vec3 pos) {
   float pulse = sin(uTime * 1.5) * 0.08 + 1.0 + heartbeatPulse;
   float breathe = sin(uTime * 0.4) * 0.1 + 1.0;
 
-  return (ring1 + ring2 + ring3 + ring4 + ring5) * (1.0 + shimmer + shimmer2 + shimmer3) * pulse * breathe;
+  return (ring1 + ring2 + ring3 + ringWide) * (1.0 + shimmer + shimmer2) * pulse * breathe;
 }
 
 /* ─── Einstein Ring ─── */
@@ -452,17 +450,12 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
     pos += vel * adaptiveDt;
   }
 
-  vec3 stars = starfield(normalize(vel));
-  float starBoost2 = 1.0 + smoothstep(0.3, 0.0, uScroll) * 2.0;
-  stars *= starBoost2;
+  vec3 stars = starfield(normalize(vel)) * starBoostFactor;
   vec3 eRingP2 = einsteinRingColor(normalize(vel), ro);
   float eRingI2 = (eRingP2.r + eRingP2.g + eRingP2.b) / 3.0;
   vec3 eRingT2 = mix(vec3(0.9, 0.6, 0.2), vec3(0.5, 0.6, 1.0), eRingI2 * 2.0);
-  float eDimBell2 = g2((uScroll - 0.62) * 5.0);
-  float eRingDim2 = 1.0 - eDimBell2 * 0.5;
-  stars += eRingT2 * eRingP2 * 2.2 * eRingDim2;
-  float diskAlphaDim2 = 1.0 - eDimBell2 * 0.4;
-  color = accumulatedDiskColor * diskAlphaDim2 + stars * (1.0 - accumulatedDisk);
+  stars += eRingT2 * eRingP2 * 2.2 * (1.0 - dimBell * 0.5);
+  color = accumulatedDiskColor * (1.0 - dimBell * 0.4) + stars * (1.0 - accumulatedDisk);
 }
 
 /* ─── Main ─── */
@@ -560,11 +553,13 @@ void main() {
   float outerHalo = exp(-lensDist * lensDist * 2.5) * (1.0 - scrollEffect * 0.8) * 0.06;
   color += vec3(0.35, 0.15, 0.05) * outerHalo;
 
-  float warmHalo = exp(-lensDist * lensDist * 1.2) * smoothstep(0.35, 0.0, scrollEffect) * 0.06;
-  color += vec3(0.4, 0.18, 0.04) * warmHalo;
-
-  float cosmicAura = exp(-lensDist * lensDist * 0.6) * smoothstep(0.25, 0.0, scrollEffect) * 0.025;
-  color += vec3(0.2, 0.1, 0.05) * cosmicAura;
+  if (scrollEffect < 0.35) {
+    float earlyFade = smoothstep(0.35, 0.0, scrollEffect);
+    float warmHalo = exp(-lensDist * lensDist * 1.2) * earlyFade * 0.06;
+    color += vec3(0.4, 0.18, 0.04) * warmHalo;
+    float cosmicAura = exp(-lensDist * lensDist * 0.6) * earlyFade * 0.025;
+    color += vec3(0.2, 0.1, 0.05) * cosmicAura;
+  }
 
   float gravitationalRedshift = 1.0 + smoothstep(0.0, 1.5, 1.0 / (lensDist + 0.1)) * uDistortion * 0.02;
   color *= gravitationalRedshift;
@@ -572,9 +567,11 @@ void main() {
   float innerGlow = exp(-lensDist * lensDist * 8.0) * 0.05 * scrollGlowDim;
   color += vec3(0.6, 0.3, 0.08) * innerGlow;
 
-  float galacticCenter = exp(-lensDist * lensDist * 0.8) * smoothstep(0.4, 0.0, scrollEffect) * 0.015;
-  vec3 galacticColor = mix(vec3(0.12, 0.06, 0.02), vec3(0.08, 0.05, 0.15), sin(uTime * 0.2) * 0.5 + 0.5);
-  color += galacticColor * galacticCenter;
+  if (scrollEffect < 0.4) {
+    float galacticCenter = exp(-lensDist * lensDist * 0.8) * smoothstep(0.4, 0.0, scrollEffect) * 0.015;
+    vec3 galacticColor = mix(vec3(0.12, 0.06, 0.02), vec3(0.08, 0.05, 0.15), sin(uTime * 0.2) * 0.5 + 0.5);
+    color += galacticColor * galacticCenter;
+  }
 
   float blackHoleShadow = smoothstep(0.3, 0.0, lensDist) * (1.0 - scrollEffect * 0.5) * 0.2;
   color *= 1.0 - blackHoleShadow;

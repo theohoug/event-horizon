@@ -133,10 +133,10 @@ vec3 starfield(vec3 rd) {
   float nebulaBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 1.5;
 
   float n1 = snoise(rd * 2.5 + vec3(uTime * 0.008));
-  float n2 = snoise(rd * 5.0 + vec3(uTime * 0.004, 17.0, 0.0));
   float n4 = snoise(rd * 3.8 + vec3(uTime * 0.006, 0.0, 42.0));
   float _nb1 = n1 * 0.5 + 0.5; float _nb1_2 = _nb1*_nb1; float nebula = _nb1_2 * sqrt(_nb1) * 0.14;
-  float _nb2 = n2 * 0.5 + 0.5; float _nb2_2 = _nb2*_nb2; float nebula2 = _nb2_2 * _nb2_2 * 0.07;
+  float nebSeed2 = dot(rd * 5.0, vec3(127.1, 311.7, 74.7)) + uTime * 0.004;
+  float _nb2 = hash(nebSeed2); float _nb2_2 = _nb2*_nb2; float nebula2 = _nb2_2 * _nb2_2 * 0.07;
   float _nb3 = n4 * 0.5 + 0.5; float nebula3 = _nb3 * _nb3 * _nb3 * 0.08;
 
   col += vec3(0.14, 0.06, 0.06) * nebula * nebulaBoost;
@@ -374,11 +374,10 @@ vec3 einsteinRingColor(vec3 rd, vec3 camPos) {
   float ringG = g2((viewAngle - einsteinAngle) * 100.0) * 0.18 * breathe;
   float ringB = g2((viewAngle - einsteinAngle * (1.0 - chromaticSpread)) * 100.0) * 0.12 * breathe;
 
-  float glow = g2((viewAngle - einsteinAngle) * 40.0) * 0.1 * breathe2;
-  float outerGlow = g2((viewAngle - einsteinAngle) * 18.0) * 0.035;
+  float glow = g2((viewAngle - einsteinAngle) * 30.0) * 0.12 * breathe2;
   float shimmer = sin(viewAngle * 200.0 + uTime * 3.0) * 0.02 + 1.0;
 
-  vec3 ring = vec3(ringR, ringG, ringB) * shimmer + vec3(glow + outerGlow);
+  vec3 ring = vec3(ringR, ringG, ringB) * shimmer + vec3(glow);
   return ring;
 }
 

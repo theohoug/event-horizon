@@ -27,29 +27,35 @@ void main() {
   float glow = exp(-dist * dist * 10.0);
   float outerGlow = exp(-dist * dist * 3.0);
 
-  float flyCore = exp(-flyDist * flyDist * max(12.0, 50.0 - flyStretch * 8.0));
-  float flyGlow = exp(-flyDist * flyDist * max(3.0, 10.0 - flyStretch * 2.0));
   float flyBlend = min(vFlybySpeed * 1.8, 0.85);
-  core = mix(core, flyCore, flyBlend);
-  glow = mix(glow, flyGlow, flyBlend * 0.6);
+  if (flyBlend > 0.01) {
+    float flyCore = exp(-flyDist * flyDist * max(12.0, 50.0 - flyStretch * 8.0));
+    float flyGlow = exp(-flyDist * flyDist * max(3.0, 10.0 - flyStretch * 2.0));
+    core = mix(core, flyCore, flyBlend);
+    glow = mix(glow, flyGlow, flyBlend * 0.6);
+  }
 
   float alpha = (core * 0.55 + glow * 0.18 + outerGlow * 0.04) * vBrightness;
 
-  float flyTrail = exp(-flyDist * flyDist * max(1.5, 5.0 - flyStretch * 1.5)) * flyBlend * 0.08;
-  alpha += flyTrail * vBrightness;
+  if (flyBlend > 0.01) {
+    float flyTrail = exp(-flyDist * flyDist * max(1.5, 5.0 - flyStretch * 1.5)) * flyBlend * 0.08;
+    alpha += flyTrail * vBrightness;
+  }
 
   float absorption = smoothstep(4.0, 1.0, vDistToCenter);
   alpha *= 1.0 - absorption * 0.98;
 
   float spaghetti = smoothstep(3.0, 0.8, vDistToCenter);
-  vec2 stretch = center;
-  stretch.x *= 1.0 + spaghetti * 4.0;
-  stretch.y *= 1.0 - spaghetti * 0.3;
-  float stretchedDist = length(stretch);
-  float stretchedCore = exp(-stretchedDist * stretchedDist * 8.0);
-  float trail = exp(-stretchedDist * stretchedDist * 3.0);
-  core = mix(core, stretchedCore, spaghetti * 0.7);
-  alpha += trail * spaghetti * vBrightness * 0.04;
+  if (spaghetti > 0.01) {
+    vec2 stretch = center;
+    stretch.x *= 1.0 + spaghetti * 4.0;
+    stretch.y *= 1.0 - spaghetti * 0.3;
+    float stretchedDist = length(stretch);
+    float stretchedCore = exp(-stretchedDist * stretchedDist * 8.0);
+    float trail = exp(-stretchedDist * stretchedDist * 3.0);
+    core = mix(core, stretchedCore, spaghetti * 0.7);
+    alpha += trail * spaghetti * vBrightness * 0.04;
+  }
 
   vec3 color = vColor * (core * 0.5 + glow * 0.16 + outerGlow * 0.05);
 

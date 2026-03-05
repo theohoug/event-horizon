@@ -505,7 +505,7 @@ void main() {
   float glow;
   traceRay(camPos, rd, color, glow);
 
-  float scrollGlowDim = 1.0 - pow(scrollEffect, 0.55) * 0.88;
+  float scrollGlowDim = 1.0 - sqrt(scrollEffect) * 0.88;
   float glowBell = g2((scrollEffect - 0.62) * 5.0);
   scrollGlowDim *= 1.0 - glowBell * 0.4;
   float earlyGlowBoost = 1.0 + smoothstep(0.2, 0.0, scrollEffect) * 0.4;

@@ -257,13 +257,15 @@ void main() {
   }
 
   float hbActive = smoothstep(0.33, 0.38, uScroll);
-  float hbBpm = 50.0 + max(uScroll - 0.35, 0.0) * 200.0;
-  float hbPhase = uTime * hbBpm / 60.0 * 3.14159;
-  float _hb = max(sin(hbPhase), 0.0); float _hb2 = _hb*_hb; float _hb4 = _hb2*_hb2;
-  float hbPulse = _hb4 * _hb4 * _hb4 * hbActive;
-  float hbIntensity = smoothstep(0.33, 0.55, uScroll) * smoothstep(0.85, 0.70, uScroll);
-  color *= 1.0 + hbPulse * 0.06 * hbIntensity;
-  color *= max(1.0 - dist * hbPulse * 0.22 * hbIntensity, 0.88);
+  if (hbActive > 0.01) {
+    float hbBpm = 50.0 + max(uScroll - 0.35, 0.0) * 200.0;
+    float hbPhase = uTime * hbBpm / 60.0 * 3.14159;
+    float _hb = max(sin(hbPhase), 0.0); float _hb2 = _hb*_hb; float _hb4 = _hb2*_hb2;
+    float hbPulse = _hb4 * _hb4 * _hb4 * hbActive;
+    float hbIntensity = smoothstep(0.33, 0.55, uScroll) * smoothstep(0.85, 0.70, uScroll);
+    color *= 1.0 + hbPulse * 0.06 * hbIntensity;
+    color *= max(1.0 - dist * hbPulse * 0.22 * hbIntensity, 0.88);
+  }
 
   float spaghettiPhase = smoothstep(0.43, 0.48, uScroll) * smoothstep(0.58, 0.52, uScroll);
   if (spaghettiPhase > 0.01) {
@@ -318,12 +320,14 @@ void main() {
   }
 
   float flareActive = smoothstep(0.25, 0.35, uScroll) * smoothstep(0.82, 0.72, uScroll);
-  float _fl = max(sin(uTime * 0.7 + uScroll * 12.0), 0.0); float _fl2 = _fl*_fl; float _fl4 = _fl2*_fl2;
-  float flarePulse = _fl4 * _fl4 * _fl4;
-  float flareCenter = exp(-dist * dist * 5.0);
-  color += vec3(0.18, 0.10, 0.03) * flarePulse * flareActive * flareCenter * 0.35;
-  float flareStreak = exp(-abs(center.y) * 12.0) * flarePulse * flareActive * 0.08;
-  color += vec3(0.12, 0.06, 0.02) * flareStreak;
+  if (flareActive > 0.01) {
+    float _fl = max(sin(uTime * 0.7 + uScroll * 12.0), 0.0); float _fl2 = _fl*_fl; float _fl4 = _fl2*_fl2;
+    float flarePulse = _fl4 * _fl4 * _fl4;
+    float flareCenter = exp(-dist * dist * 5.0);
+    color += vec3(0.18, 0.10, 0.03) * flarePulse * flareActive * flareCenter * 0.35;
+    float flareStreak = exp(-abs(center.y) * 12.0) * flarePulse * flareActive * 0.08;
+    color += vec3(0.12, 0.06, 0.02) * flareStreak;
+  }
 
   float speedLinePhase = smoothstep(0.65, 0.80, uScroll);
   if (speedLinePhase > 0.01) {
@@ -660,7 +664,7 @@ void main() {
     float whiteMask = smoothstep(whiteRadius, max(0.0, whiteRadius - 0.45), dist);
     float whiteEdge = g2((dist - whiteRadius + 0.12) * 10.0);
     vec3 whiteTarget = vec3(0.96, 0.95, 0.93);
-    float whitePow = pow(whiteOutPhase, 1.2);
+    float whitePow = whiteOutPhase * sqrt(sqrt(whiteOutPhase));
     color = mix(color, whiteTarget, whiteMask * whitePow);
     color = mix(color, whiteTarget, whiteOutPhase*whiteOutPhase*whiteOutPhase * 0.5);
     color += whiteTarget * whiteEdge * whiteOutPhase * 0.15;
@@ -687,7 +691,7 @@ void main() {
       float starDist = length(starPixel - starCenter) / 1.5;
       float starShape = exp(-starDist * starDist * 2.0);
       float starTwinkle = sin(uTime * (2.0 + starSeed * 5.0) + starSeed * 100.0) * 0.4 + 0.6;
-      float starBright = pow(starSeed - 0.993, 0.4) * 180.0;
+      float starBright = sqrt(starSeed - 0.993) * 180.0;
       float starTemp = fract(starSeed * 73.19);
       vec3 starColor = starTemp > 0.8 ? vec3(1.0, 0.85, 0.6) : starTemp > 0.6 ? vec3(0.6, 0.7, 1.0) : vec3(0.85, 0.88, 1.0);
       color += starColor * starBright * starTwinkle * starField * starShape * 0.08;

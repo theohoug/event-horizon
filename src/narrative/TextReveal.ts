@@ -136,13 +136,20 @@ export class TextReveal {
       const containerRect = container.getBoundingClientRect();
       const containerCx = containerRect.left + containerRect.width * 0.5;
       const containerCy = containerRect.top + containerRect.height * 0.5;
-      this.chars.forEach((char) => {
-        const rect = char.getBoundingClientRect();
-        const cx = rect.left + rect.width * 0.5;
-        const cy = rect.top + rect.height * 0.5;
-        const dx = containerCx - cx;
-        const dy = containerCy - cy;
-        const pull = pullProgress * 0.08;
+      if (this.positionsDirty || this.charPositions.length !== this.chars.length) {
+        this.charPositions = [];
+        this.chars.forEach((char) => {
+          const rect = char.getBoundingClientRect();
+          this.charPositions.push({ cx: rect.left + rect.width * 0.5, cy: rect.top + rect.height * 0.5 });
+        });
+        this.positionsDirty = false;
+      }
+      const pull = pullProgress * 0.08;
+      this.chars.forEach((char, i) => {
+        const pos = this.charPositions[i];
+        if (!pos) return;
+        const dx = containerCx - pos.cx;
+        const dy = containerCy - pos.cy;
         char.style.transform = `translate(${(dx * pull).toFixed(1)}px, ${(dy * pull).toFixed(1)}px)`;
       });
     }
@@ -246,48 +253,58 @@ export class TextReveal {
     const gentlePhase = Math.min(effectiveGravity / 0.4, 1.0);
     const intensePhase = Math.max(0, (effectiveGravity - 0.4) / 0.6);
 
+    const maxDist = Math.sqrt(screenCx * screenCx + screenCy * screenCy);
+    const invMaxDist = 1 / maxDist;
+    const pullStrength = gentlePhase * 0.3 + intensePhase * intensePhase * 0.5;
+    const pullFactor = pullStrength * 0.08;
+    const mxPx = this.mouseX * window.innerWidth;
+    const myPx = this.mouseY * window.innerHeight;
+    const repulseRadius = 120;
+    const repulseScrollFactor = Math.min(scroll * 3, 1);
+    const rotDegFactor = pullStrength * 0.06 * (180 / Math.PI);
+
     this.chars.forEach((char, i) => {
       const pos = this.charPositions[i];
       if (!pos) return;
-      const charCx = pos.cx;
-      const charCy = pos.cy;
 
-      const dx = screenCx - charCx;
-      const dy = screenCy - charCy;
+      const dx = screenCx - pos.cx;
+      const dy = screenCy - pos.cy;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      const maxDist = Math.sqrt(screenCx * screenCx + screenCy * screenCy);
-      const normalizedDist = dist / maxDist;
+      const normalizedDist = dist * invMaxDist;
 
-      const pullStrength = gentlePhase * 0.3 + intensePhase * intensePhase * 0.5;
-      const pullX = dx * pullStrength * 0.08;
-      const pullY = dy * pullStrength * 0.08;
+      const pullX = dx * pullFactor;
+      const pullY = dy * pullFactor;
 
       const angle = Math.atan2(dy, dx);
-      const stretchRadial = 1 + pullStrength * (1.0 - normalizedDist) * 1.2;
-      const stretchPerp = Math.max(0.5, 1 - pullStrength * (1.0 - normalizedDist) * 0.3);
+      const distFactor = 1.0 - normalizedDist;
+      const stretchRadial = 1 + pullStrength * distFactor * 1.2;
+      const stretchPerp = Math.max(0.5, 1 - pullStrength * distFactor * 0.3);
 
       const wobbleX = Math.sin(time * 2.5 + i * 0.4) * pullStrength * 2;
       const wobbleY = Math.cos(time * 3.0 + i * 0.3) * pullStrength * 1.5;
 
-      const mxPx = this.mouseX * window.innerWidth;
-      const myPx = this.mouseY * window.innerHeight;
-      const mdx = charCx - mxPx;
-      const mdy = charCy - myPx;
+      const mdx = pos.cx - mxPx;
+      const mdy = pos.cy - myPx;
       const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
-      const repulseRadius = 120;
-      const repulseStrength = mDist < repulseRadius ? Math.pow(1 - mDist / repulseRadius, 2) * 15 * Math.min(scroll * 3, 1) : 0;
-      const repulseX = mDist > 1 ? (mdx / mDist) * repulseStrength : 0;
-      const repulseY = mDist > 1 ? (mdy / mDist) * repulseStrength : 0;
+      let repulseX = 0, repulseY = 0;
+      if (mDist < repulseRadius && mDist > 1) {
+        const t = 1 - mDist / repulseRadius;
+        const repulseStrength = t * t * 15 * repulseScrollFactor;
+        const invMDist = 1 / mDist;
+        repulseX = mdx * invMDist * repulseStrength;
+        repulseY = mdy * invMDist * repulseStrength;
+      }
 
       const blur = pullStrength * (1.0 - normalizedDist * 0.5) * 2;
       const opacity = Math.max(0.25, 1 - pullStrength * 0.6 * (1.0 - normalizedDist * 0.4));
-
-      const rotation = angle * (180 / Math.PI) * pullStrength * 0.06;
+      const rotation = angle * rotDegFactor;
 
       const cosA = Math.cos(angle);
       const sinA = Math.sin(angle);
-      const sx = Math.abs(cosA) * stretchRadial + Math.abs(sinA) * stretchPerp;
-      const sy = Math.abs(sinA) * stretchRadial + Math.abs(cosA) * stretchPerp;
+      const absCos = Math.abs(cosA);
+      const absSin = Math.abs(sinA);
+      const sx = absCos * stretchRadial + absSin * stretchPerp;
+      const sy = absSin * stretchRadial + absCos * stretchPerp;
 
       char.style.transform = `translate(${pullX + wobbleX + repulseX}px, ${pullY + wobbleY + repulseY}px) scale(${sx.toFixed(3)}, ${sy.toFixed(3)}) rotate(${rotation.toFixed(1)}deg)`;
       char.style.filter = `blur(${blur.toFixed(1)}px)`;

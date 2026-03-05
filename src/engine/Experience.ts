@@ -195,6 +195,7 @@ export class Experience {
     this.setupCursor();
     this.setupKeyboard();
     this.setupResize();
+    this.setupClickShockwave();
 
     await this.preload();
 
@@ -995,11 +996,36 @@ export class Experience {
     this.addTrackedListener(window, 'resize', onResize as EventListener);
     onResize();
 
+    let tabLeftAt = 0;
+    const TAB_MESSAGES = [
+      'You cannot leave the void',
+      'Time continued without you',
+      'The black hole waited',
+      'Nothing escapes — not even your attention',
+      'Gravity does not pause',
+    ];
     this.addTrackedListener(document, 'visibilitychange', (() => {
-      if (!document.hidden && this.state.scroll > 0.05) {
+      if (document.hidden) {
+        tabLeftAt = performance.now();
+      } else if (this.state.scroll > 0.05) {
         this.chapterFlash = 0.3;
         this.postProcessing.triggerShockwave(0.5, 0.5, 0.6);
+        const away = performance.now() - tabLeftAt;
+        if (away > 5000 && this.state.scroll > 0.15 && this.state.scroll < 0.9) {
+          this.showCosmicMessage(TAB_MESSAGES[Math.floor(Math.random() * TAB_MESSAGES.length)]);
+        }
       }
+    }) as EventListener);
+  }
+
+  private setupClickShockwave() {
+    this.addTrackedListener(this.canvas, 'dblclick', ((e: MouseEvent) => {
+      if (this.state.scroll < 0.03 || this.state.scroll > 0.95) return;
+      const nx = e.clientX / window.innerWidth;
+      const ny = 1 - e.clientY / window.innerHeight;
+      this.postProcessing.triggerShockwave(nx, ny, 0.8);
+      this.chapterFlash = 0.3;
+      if (this.state.soundEnabled) this.audio.triggerChapterTransition();
     }) as EventListener);
   }
 

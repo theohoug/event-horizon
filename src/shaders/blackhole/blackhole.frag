@@ -211,7 +211,8 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   float rotAngle = angle + uTime * uDiskSpeed * orbitalSpeed;
 
   float turb1 = snoise(vec3(r * 2.5, rotAngle * 3.0, uTime * 0.25)) * 0.38;
-  float turb2 = snoise(vec3(r * 6.0, rotAngle * 8.0, uTime * 0.4)) * 0.15;
+  float turbSeed = r * 6.0 + rotAngle * 8.0 + uTime * 0.4;
+  float turb2 = (hash(turbSeed) * 2.0 - 1.0) * 0.15;
   float turbulence = turb1 + turb2;
 
   float spiralArm = sin(rotAngle * 3.0 + r * 1.8 + turbulence * 5.0) * 0.5 + 0.5;
@@ -310,10 +311,8 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   float _hi = remap(r, DISK_INNER, DISK_INNER + 0.5, 1.0, 0.0); float _hi2 = _hi*_hi; float hotISCO = _hi2 * _hi2;
   float iscoScrollDim = 1.0 - smoothstep(0.4, 0.8, uScroll) * 0.6;
   diskColor += vec3(1.0, 0.85, 0.5) * hotISCO * 0.3 * iscoScrollDim;
-  float _ir = remap(r, DISK_INNER, DISK_INNER + 0.12, 1.0, 0.0); float _ir2 = _ir*_ir; float _ir4 = _ir2*_ir2; float _ir8 = _ir4*_ir4; float innerRim = _ir8 * _ir2;
-  diskColor += vec3(1.0, 0.9, 0.7) * innerRim * 0.25 * iscoScrollDim;
-  float _ig = remap(r, DISK_INNER, DISK_INNER + 0.25, 1.0, 0.0); float _ig2 = _ig*_ig; float innerGlowLine = _ig2 * _ig2 * _ig;
-  diskColor += vec3(1.0, 0.65, 0.2) * innerGlowLine * 0.1 * iscoScrollDim;
+  float _ir = remap(r, DISK_INNER, DISK_INNER + 0.18, 1.0, 0.0); float _ir2 = _ir*_ir; float _ir4 = _ir2*_ir2; float innerRim = _ir4 * _ir4;
+  diskColor += vec3(1.0, 0.85, 0.5) * innerRim * 0.3 * iscoScrollDim;
 
   float _er = max(sin(rotAngle * 1.0 + uTime * 0.08) * sin(uTime * 0.3 + r * 0.5), 0.0); float _er2 = _er*_er; float _er4 = _er2*_er2; float _er8 = _er4*_er4; float eruption = _er8 * _er8;
   float eruptionMask = smoothstep(DISK_INNER, DISK_INNER + 1.5, r) * smoothstep(DISK_INNER + 4.0, DISK_INNER + 2.0, r);

@@ -27,7 +27,7 @@ varying float vFlybySpeed;
 void main() {
   vec3 pos = position;
 
-  float cameraZ = 38.0 - pow(uScroll, 1.05) * 35.5;
+  float cameraZ = 38.0 - uScroll * 35.5;
 
   float r = length(pos - uBlackHolePos);
   vDistToCenter = r;
@@ -44,10 +44,10 @@ void main() {
   pos.z = sin(angle) * orbitR;
 
   float noiseFade = 1.0 - uScroll * 0.7;
-  vec3 noiseInput = pos * 0.1 + uTime * 0.05;
-  float nx = snoise(noiseInput);
-  float ny = snoise(noiseInput + vec3(31.416, 0.0, 0.0));
-  float nz = snoise(noiseInput + vec3(0.0, 0.0, 47.853));
+  float nSeed = dot(pos, vec3(127.1, 311.7, 74.7)) * 0.1 + uTime * 0.05;
+  float nx = hash(nSeed) * 2.0 - 1.0;
+  float ny = hash(nSeed + 31.416) * 2.0 - 1.0;
+  float nz = hash(nSeed + 47.853) * 2.0 - 1.0;
   pos += vec3(nx, ny, nz) * 0.2 * noiseFade;
 
   pos.y += sin(uTime * aSpeed * 0.3 + aRandomness.x * 6.28) * 0.1;
@@ -60,7 +60,7 @@ void main() {
   pos.y += mouseRepel * 0.3;
 
   float individualSpeed = 0.15 + aSpeed * 0.85;
-  float warpAccel = pow(uScroll, 1.3) * 42.0;
+  float warpAccel = uScroll * (0.7 + 0.3 * uScroll) * 42.0;
   float zFlow = warpAccel * individualSpeed;
   pos.z += zFlow;
 

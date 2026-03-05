@@ -467,8 +467,8 @@ void main() {
 
   vec3 camPos = vec3(
     sin(scrollEffect * 0.4) * 0.3 + sin(uTime * 0.03) * 0.02,
-    mix(7.0, 0.06, pow(scrollEffect, 1.2)) + sin(uTime * 0.08) * 0.03,
-    mix(38.0, 2.5, pow(scrollEffect, 1.05))
+    mix(7.0, 0.06, scrollEffect * (0.8 + 0.2 * scrollEffect)) + sin(uTime * 0.08) * 0.03,
+    mix(38.0, 2.5, scrollEffect)
   );
 
   vec3 target = vec3(0.0, 0.0, 0.0);

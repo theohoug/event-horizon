@@ -2367,6 +2367,105 @@ body::after {
   }
 }
 
+/* ─── Mobile Navigation Arrows ─── */
+
+#mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: calc(2.2rem + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  align-items: center;
+  gap: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+
+#mobile-nav.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#mobile-nav-up,
+#mobile-nav-down {
+  --nc: var(--nav-color, 0, 245, 212);
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(var(--nc), 0.18);
+  border-radius: 50%;
+  background: rgba(5, 5, 15, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: rgba(var(--nc), 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow:
+    0 0 15px rgba(var(--nc), 0.06),
+    inset 0 0 8px rgba(var(--nc), 0.03);
+  animation: mobile-nav-breathe 4s ease-in-out infinite;
+}
+
+#mobile-nav-up:active,
+#mobile-nav-down:active {
+  transform: scale(0.88);
+  border-color: rgba(var(--nc), 0.5);
+  color: rgba(var(--nc), 0.95);
+  box-shadow:
+    0 0 24px rgba(var(--nc), 0.25),
+    0 0 48px rgba(var(--nc), 0.1),
+    inset 0 0 14px rgba(var(--nc), 0.1);
+}
+
+#mobile-nav-up.disabled,
+#mobile-nav-down.disabled {
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+#mobile-nav-up svg,
+#mobile-nav-down svg {
+  width: 18px;
+  height: 18px;
+}
+
+#mobile-nav-chapter {
+  font-family: var(--font-mono);
+  font-size: 0.48rem;
+  color: rgba(var(--nav-color, 0, 245, 212), 0.3);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  min-width: 2rem;
+  text-align: center;
+  transition: color 0.5s ease;
+}
+
+@keyframes mobile-nav-breathe {
+  0%, 100% {
+    box-shadow:
+      0 0 15px rgba(var(--nc, 0, 245, 212), 0.06),
+      inset 0 0 8px rgba(var(--nc, 0, 245, 212), 0.03);
+    border-color: rgba(var(--nc, 0, 245, 212), 0.18);
+  }
+  50% {
+    box-shadow:
+      0 0 22px rgba(var(--nc, 0, 245, 212), 0.12),
+      inset 0 0 10px rgba(var(--nc, 0, 245, 212), 0.05);
+    border-color: rgba(var(--nc, 0, 245, 212), 0.28);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  #mobile-nav {
+    display: flex;
+  }
+}
+
 /* ─── Landscape Mobile ─── */
 
 @media (max-height: 500px) and (orientation: landscape) {

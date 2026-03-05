@@ -22,7 +22,7 @@ export class BlackHole {
 
     const defines: Record<string, string> = {};
     if (quality === 'medium') {
-      defines['MAX_STEPS'] = '64';
+      defines['MAX_STEPS'] = '96';
     }
 
     this.material = new THREE.ShaderMaterial({
@@ -69,7 +69,7 @@ export class BlackHole {
     this.material.uniforms.uTime.value = state.time;
     this.material.uniforms.uScroll.value = state.scroll;
     this.material.uniforms.uMouse.value.copy(state.mouseSmooth);
-    this.material.uniforms.uDistortion.value = state.scroll * 1.0;
+    this.material.uniforms.uDistortion.value = state.scroll;
     this.material.uniforms.uIntensity.value = 1.0 + state.scroll * 0.3;
   }
 

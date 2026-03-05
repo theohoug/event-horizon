@@ -96,24 +96,28 @@ export class Experience {
 
   private detectQuality(): 'ultra' | 'high' | 'medium' {
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-    if (isMobile) return 'medium';
 
     const tempCanvas = document.createElement('canvas');
     const gl = tempCanvas.getContext('webgl2') || tempCanvas.getContext('webgl');
     if (!gl) return 'medium';
 
     const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+    let gpuRenderer = '';
     if (debugInfo) {
-      const gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL).toLowerCase();
-      const ext = gl.getExtension('WEBGL_lose_context');
-      if (ext) ext.loseContext();
-
-      if (gpuRenderer.includes('apple m') || gpuRenderer.includes('rtx') || gpuRenderer.includes('rx 7')) return 'ultra';
-      if (gpuRenderer.includes('gtx') || gpuRenderer.includes('rx 6') || gpuRenderer.includes('intel arc')) return 'high';
-    } else {
-      const ext = gl.getExtension('WEBGL_lose_context');
-      if (ext) ext.loseContext();
+      gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL).toLowerCase();
     }
+    const ext = gl.getExtension('WEBGL_lose_context');
+    if (ext) ext.loseContext();
+
+    if (isMobile) {
+      if (gpuRenderer.includes('apple gpu') || gpuRenderer.includes('apple a1') || gpuRenderer.includes('apple m')) return 'high';
+      if (gpuRenderer.includes('adreno 7') || gpuRenderer.includes('adreno 6') || gpuRenderer.includes('mali-g7')) return 'high';
+      if (window.devicePixelRatio >= 3) return 'high';
+      return 'medium';
+    }
+
+    if (gpuRenderer.includes('apple m') || gpuRenderer.includes('rtx') || gpuRenderer.includes('rx 7')) return 'ultra';
+    if (gpuRenderer.includes('gtx') || gpuRenderer.includes('rx 6') || gpuRenderer.includes('intel arc')) return 'high';
 
     return 'high';
   }
@@ -159,10 +163,11 @@ export class Experience {
   }
 
   private async init() {
+    const isMobileDevice = /Android|iPhone|iPad/i.test(navigator.userAgent);
     const qualityPresets = {
       ultra: { pixelRatio: Math.min(window.devicePixelRatio, 2), antialias: true },
-      high: { pixelRatio: Math.min(window.devicePixelRatio, 1.5), antialias: true },
-      medium: { pixelRatio: 1, antialias: false },
+      high: { pixelRatio: Math.min(window.devicePixelRatio, isMobileDevice ? 2 : 1.5), antialias: !isMobileDevice },
+      medium: { pixelRatio: Math.min(window.devicePixelRatio, 1.5), antialias: false },
     };
     const preset = qualityPresets[this.state.quality];
 
@@ -196,6 +201,7 @@ export class Experience {
     this.setupKeyboard();
     this.setupResize();
     this.setupClickShockwave();
+    this.setupMobileNav();
 
     await this.preload();
 
@@ -1029,6 +1035,57 @@ export class Experience {
     }) as EventListener);
   }
 
+  private mobileNavEl: HTMLElement | null = null;
+  private mobileNavChapterEl: HTMLElement | null = null;
+
+  private setupMobileNav() {
+    if (!window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
+
+    this.mobileNavEl = document.getElementById('mobile-nav');
+    this.mobileNavChapterEl = document.getElementById('mobile-nav-chapter');
+    const upBtn = document.getElementById('mobile-nav-up');
+    const downBtn = document.getElementById('mobile-nav-down');
+    if (!this.mobileNavEl || !upBtn || !downBtn) return;
+
+    const navigateChapter = (direction: 1 | -1) => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const currentChapter = Math.min(8, Math.floor(this.state.scroll * 9));
+      const targetChapter = Math.max(0, Math.min(8, currentChapter + direction));
+      const targetScroll = (targetChapter + 0.5) / 9;
+      window.scrollTo({ top: maxScroll * targetScroll, behavior: 'smooth' });
+
+      if (this.state.soundEnabled) this.audio.triggerUIHover();
+    };
+
+    this.addTrackedListener(upBtn, 'click', () => navigateChapter(-1));
+    this.addTrackedListener(downBtn, 'click', () => navigateChapter(1));
+  }
+
+  private updateMobileNav() {
+    if (!this.mobileNavEl) return;
+
+    const isVisible = this.state.scroll > 0.01 && this.state.scroll < 0.95 && !this.state.introActive;
+    this.mobileNavEl.classList.toggle('visible', isVisible);
+
+    if (!isVisible) return;
+
+    const currentChapter = Math.min(8, Math.floor(this.state.scroll * 9));
+    const upBtn = document.getElementById('mobile-nav-up');
+    const downBtn = document.getElementById('mobile-nav-down');
+    if (upBtn) upBtn.classList.toggle('disabled', currentChapter <= 0);
+    if (downBtn) downBtn.classList.toggle('disabled', currentChapter >= 8);
+
+    if (this.mobileNavChapterEl) {
+      this.mobileNavChapterEl.textContent = `${currentChapter + 1}/9`;
+    }
+
+    const s = this.state.scroll;
+    const r = Math.round(s < 0.4 ? 0 : Math.min(255, (s - 0.4) * 425));
+    const g = Math.round(s < 0.4 ? 245 : Math.max(40, 245 - (s - 0.4) * 340));
+    const b = Math.round(s < 0.4 ? 212 : Math.max(20, 212 - (s - 0.4) * 320));
+    this.mobileNavEl.style.setProperty('--nav-color', `${r}, ${g}, ${b}`);
+  }
+
   private fpsFrames = 0;
   private fpsLastTime = 0;
   private fpsValue = 60;
@@ -1178,6 +1235,7 @@ export class Experience {
 
     this.haptics.update(this.state.scroll);
     this.checkIdleHint();
+    this.updateMobileNav();
     this.updateHUD(this.state.scroll);
 
     this.postProcessing.update({ ...this.state, chapterFlash: this.chapterFlash, introProgress: this.state.introProgress, holdStrength: this.holdStrength });

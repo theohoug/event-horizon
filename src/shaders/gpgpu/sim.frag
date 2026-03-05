@@ -62,8 +62,10 @@ void main() {
     float orbitalForce = sqrt(max(gravity * dist, 0.0)) * 0.35;
     orbitalForce *= smoothstep(1.2, 6.0, dist);
 
-    float secondarySpiral = sin(atan(pos.z, pos.x) * 3.0 + uTime * 0.4) * 0.15;
-    orbitalForce *= 1.0 + secondarySpiral;
+    if (orbitalForce > 0.001) {
+      float secondarySpiral = sin(atan(pos.z, pos.x) * 3.0 + uTime * 0.4) * 0.15;
+      orbitalForce *= 1.0 + secondarySpiral;
+    }
 
     float yDamping = 0.6 + uScroll * 3.0;
     float diskForce = -pos.y * yDamping;
@@ -76,14 +78,16 @@ void main() {
       hash(seed + uTime * 3.7) - 0.5,
       hash(seed + 17.0 + uTime * 2.9) - 0.5,
       hash(seed + 31.0 + uTime * 3.3) - 0.5
-    );
-    curl = normalize(curl + 0.001) * 0.6;
+    ) * 1.2;
 
-    vec3 microTurb = vec3(
-      hash(seed * 1.3 + uTime * 0.15) - 0.5,
-      hash(seed * 1.3 + 17.0 + uTime * 0.12) - 0.5,
-      hash(seed * 1.3 + 31.0 + uTime * 0.13) - 0.5
-    ) * 0.12 * smoothstep(2.0, 6.0, dist);
+    vec3 microTurb = vec3(0.0);
+    if (dist > 2.0) {
+      microTurb = vec3(
+        hash(seed * 1.3 + uTime * 0.15) - 0.5,
+        hash(seed * 1.3 + 17.0 + uTime * 0.12) - 0.5,
+        hash(seed * 1.3 + 31.0 + uTime * 0.13) - 0.5
+      ) * 0.12 * smoothstep(2.0, 6.0, dist);
+    }
 
     vec2 mouseWorld = (uMouse - 0.5) * vec2(55.0, 28.0);
     vec3 mousePos3D = vec3(mouseWorld.x, 0.0, mouseWorld.y);

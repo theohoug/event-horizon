@@ -47,24 +47,17 @@ float grain(vec2 uv, float t) {
   vec2 pixel = uv * uResolution;
   float n1 = hash12(pixel + frame * 17.13);
   float n2 = hash12(pixel * 1.7 + frame * 31.71 + 7.0);
-  float n3 = hash12(pixel * 0.5 + frame * 53.37 + 13.0);
-  float blueish = (n1 + n2 + n3) / 3.0;
-  float deviation = blueish - 0.5;
+  float deviation = (n1 + n2) * 0.5 - 0.5;
   return 0.5 + deviation * 1.4;
 }
 
 vec3 radialBlur(sampler2D tex, vec2 uv, vec2 blurCenter, float strength) {
-  vec3 accum = vec3(0.0);
   vec2 dir = uv - blurCenter;
-  float totalWeight = 0.0;
-  for (int i = 0; i < 6; i++) {
-    float t = float(i) / 6.0;
-    float weight = 1.0 - t * 0.5;
-    vec2 sampleUv = uv - dir * t * strength;
-    accum += texture2D(tex, sampleUv).rgb * weight;
-    totalWeight += weight;
-  }
-  return accum / totalWeight;
+  vec3 c0 = texture2D(tex, uv).rgb;
+  vec3 c1 = texture2D(tex, uv - dir * 0.25 * strength).rgb;
+  vec3 c2 = texture2D(tex, uv - dir * 0.50 * strength).rgb;
+  vec3 c3 = texture2D(tex, uv - dir * 0.75 * strength).rgb;
+  return c0 * 0.30 + c1 * 0.28 + c2 * 0.24 + c3 * 0.18;
 }
 
 void main() {

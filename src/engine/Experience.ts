@@ -1064,6 +1064,9 @@ export class Experience {
     this.addTrackedListener(downBtn, 'click', () => navigateChapter(1));
   }
 
+  private mobileNavFrame = 0;
+  private mobileNavLastChapter = -1;
+
   private updateMobileNav() {
     if (!this.mobileNavEl) return;
 
@@ -1073,6 +1076,12 @@ export class Experience {
     if (!isVisible) return;
 
     const currentChapter = Math.min(8, Math.floor(this.state.scroll * 9));
+    if (currentChapter === this.mobileNavLastChapter) {
+      this.mobileNavFrame++;
+      if (this.mobileNavFrame % 6 !== 0) return;
+    }
+    this.mobileNavLastChapter = currentChapter;
+
     const upBtn = document.getElementById('mobile-nav-up');
     const downBtn = document.getElementById('mobile-nav-down');
     if (upBtn) upBtn.classList.toggle('disabled', currentChapter <= 0);
@@ -1133,42 +1142,44 @@ export class Experience {
       if (this.ringEl) this.ringEl.style.opacity = hideCursor ? '0' : '';
       document.body.style.cursor = hideCursor ? 'none' : '';
 
-      const cursorSize = 5 + this.state.scroll * 6;
-      this.cursor.style.width = `${cursorSize}px`;
-      this.cursor.style.height = `${cursorSize}px`;
+      if (!hideCursor) {
+        const cursorSize = 5 + this.state.scroll * 6;
+        this.cursor.style.width = `${cursorSize}px`;
+        this.cursor.style.height = `${cursorSize}px`;
 
-      if (this.ringEl) {
-        const mx = this.state.mouseSmooth.x * window.innerWidth;
-        const my = (1 - this.state.mouseSmooth.y) * window.innerHeight;
-        const cx = window.innerWidth * 0.5;
-        const cy = window.innerHeight * 0.42;
-        const dx = cx - mx;
-        const dy = cy - my;
-        const distToCenter = Math.sqrt(dx * dx + dy * dy);
-        const maxDist = Math.sqrt(cx * cx + cy * cy);
-        const proximity = 1 - Math.min(distToCenter / maxDist, 1);
-        const earlyHint = this.state.scroll > 0.05 ? Math.min((this.state.scroll - 0.05) * 2.5, 1) : 0;
-        const gravPull = proximity * this.state.scroll + proximity * earlyHint * 0.08;
+        if (this.ringEl) {
+          const mx = this.state.mouseSmooth.x * window.innerWidth;
+          const my = (1 - this.state.mouseSmooth.y) * window.innerHeight;
+          const cx = window.innerWidth * 0.5;
+          const cy = window.innerHeight * 0.42;
+          const dx = cx - mx;
+          const dy = cy - my;
+          const distToCenter = Math.sqrt(dx * dx + dy * dy);
+          const maxDist = Math.sqrt(cx * cx + cy * cy);
+          const proximity = 1 - Math.min(distToCenter / maxDist, 1);
+          const earlyHint = this.state.scroll > 0.05 ? Math.min((this.state.scroll - 0.05) * 2.5, 1) : 0;
+          const gravPull = proximity * this.state.scroll + proximity * earlyHint * 0.08;
 
-        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-        const breathe = 1 + Math.sin(performance.now() * 0.002) * earlyHint * 0.03;
-        const stretch = (1 + gravPull * 1.5) * breathe;
-        const squeeze = Math.max(0.5, 1 - gravPull * 0.4) / breathe;
-        const orbitalSpin = elapsed * (0.5 + this.state.scroll * 6) * 57.2958 * proximity;
+          const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+          const breathe = 1 + Math.sin(performance.now() * 0.002) * earlyHint * 0.03;
+          const stretch = (1 + gravPull * 1.5) * breathe;
+          const squeeze = Math.max(0.5, 1 - gravPull * 0.4) / breathe;
+          const orbitalSpin = elapsed * (0.5 + this.state.scroll * 6) * 57.2958 * proximity;
 
-        this.ringEl.style.transform = `translate(-50%, -50%) rotate(${angle + orbitalSpin}deg) scale(${stretch}, ${squeeze})`;
-        this.ringEl.style.borderColor = `rgba(${Math.round(100 * gravPull)}, ${Math.round(245 * (1 - gravPull * 0.6))}, ${Math.round(212 * (1 - gravPull * 0.3))}, ${0.35 + gravPull * 0.3})`;
-        const frameDrag = gravPull * 0.3;
-        this.ringEl.style.borderRadius = frameDrag > 0.02 ? `${(50 - frameDrag * 20).toFixed(0)}% ${(50 + frameDrag * 15).toFixed(0)}% ${(50 - frameDrag * 10).toFixed(0)}% ${(50 + frameDrag * 20).toFixed(0)}%` : '';
+          this.ringEl.style.transform = `translate(-50%, -50%) rotate(${(angle + orbitalSpin).toFixed(1)}deg) scale(${stretch.toFixed(3)}, ${squeeze.toFixed(3)})`;
+          this.ringEl.style.borderColor = `rgba(${Math.round(100 * gravPull)}, ${Math.round(245 * (1 - gravPull * 0.6))}, ${Math.round(212 * (1 - gravPull * 0.3))}, ${(0.35 + gravPull * 0.3).toFixed(2)})`;
+          const frameDrag = gravPull * 0.3;
+          this.ringEl.style.borderRadius = frameDrag > 0.02 ? `${(50 - frameDrag * 20).toFixed(0)}% ${(50 + frameDrag * 15).toFixed(0)}% ${(50 - frameDrag * 10).toFixed(0)}% ${(50 + frameDrag * 20).toFixed(0)}%` : '';
 
-        this.cursor.style.background = gravPull > 0.3
-          ? `rgb(${Math.round(100 + 155 * gravPull)}, ${Math.round(245 * (1 - gravPull))}, ${Math.round(212 * (1 - gravPull * 0.5))})`
-          : '';
+          this.cursor.style.background = gravPull > 0.3
+            ? `rgb(${Math.round(100 + 155 * gravPull)}, ${Math.round(245 * (1 - gravPull))}, ${Math.round(212 * (1 - gravPull * 0.5))})`
+            : '';
+        }
+
+        const glowSize = 6 + this.state.scroll * 12;
+        const glowAlpha = 0.3 + this.state.scroll * 0.4;
+        this.cursor.style.boxShadow = `0 0 ${glowSize.toFixed(0)}px var(--cyan), 0 0 ${(glowSize * 2).toFixed(0)}px rgba(0, 245, 212, ${glowAlpha.toFixed(2)})`;
       }
-
-      const glowSize = 6 + this.state.scroll * 12;
-      const glowAlpha = 0.3 + this.state.scroll * 0.4;
-      this.cursor.style.boxShadow = `0 0 ${glowSize}px var(--cyan), 0 0 ${glowSize * 2}px rgba(0, 245, 212, ${glowAlpha.toFixed(2)})`;
     }
 
     const currentChapter = Math.min(8, Math.floor(this.state.scroll * 9));

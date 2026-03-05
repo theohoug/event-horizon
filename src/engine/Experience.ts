@@ -33,6 +33,8 @@ interface ExperienceState {
   quality: 'ultra' | 'high' | 'medium';
   introProgress: number;
   introActive: boolean;
+  chapterFlash: number;
+  holdStrength: number;
 }
 
 export class Experience {
@@ -79,6 +81,8 @@ export class Experience {
       quality: this.detectQuality(),
       introProgress: 0,
       introActive: false,
+      chapterFlash: 0,
+      holdStrength: 0,
     };
 
     this.visitCount = parseInt(localStorage.getItem('eh_visits') || '0', 10);
@@ -1254,7 +1258,9 @@ export class Experience {
     this.updateMobileNav();
     this.updateHUD(this.state.scroll);
 
-    this.postProcessing.update({ ...this.state, chapterFlash: this.chapterFlash, introProgress: this.state.introProgress, holdStrength: this.holdStrength });
+    this.state.chapterFlash = this.chapterFlash;
+    this.state.holdStrength = this.holdStrength;
+    this.postProcessing.update(this.state);
     this.postProcessing.render();
   }
 

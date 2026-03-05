@@ -15,6 +15,7 @@ varying float vLife;
 varying float vScroll;
 varying float vCursorProximity;
 varying float vDiskGlow;
+varying vec3 vScrollTint;
 
 void main() {
   vec2 center = gl_PointCoord - 0.5;
@@ -70,13 +71,7 @@ void main() {
   color += vec3(0.4, 0.15, 0.8) * ignition * core * 0.18;
   color += vec3(0.08, 0.25, 0.5) * ignition * glow * 0.07;
 
-  vec3 scrollTint;
-  if (vScroll < 0.2) scrollTint = vec3(0.9, 0.95, 1.0);
-  else if (vScroll < 0.4) scrollTint = mix(vec3(0.9, 0.95, 1.0), vec3(0.7, 0.8, 1.2), (vScroll - 0.2) * 5.0);
-  else if (vScroll < 0.6) scrollTint = mix(vec3(0.7, 0.8, 1.2), vec3(1.1, 0.6, 0.9), (vScroll - 0.4) * 5.0);
-  else if (vScroll < 0.8) scrollTint = mix(vec3(1.1, 0.6, 0.9), vec3(0.5, 0.3, 0.8), (vScroll - 0.6) * 5.0);
-  else scrollTint = mix(vec3(0.5, 0.3, 0.8), vec3(0.15, 0.12, 0.35), (vScroll - 0.8) * 5.0);
-  color *= scrollTint;
+  color *= vScrollTint;
 
   float deepDesaturate = smoothstep(0.82, 0.95, vScroll);
   if (deepDesaturate > 0.01) {

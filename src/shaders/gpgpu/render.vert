@@ -25,6 +25,7 @@ varying float vLife;
 varying float vScroll;
 varying float vCursorProximity;
 varying float vDiskGlow;
+varying vec3 vScrollTint;
 
 float localHash(float n) { return fract(sin(n) * 43758.5453123); }
 
@@ -101,4 +102,10 @@ void main() {
   vec2 mouseNdc = vec2(uMouse.x, uMouse.y);
   float cursorDist = length(screenPos - mouseNdc);
   vCursorProximity = smoothstep(0.22, 0.0, cursorDist);
+
+  if (uScroll < 0.2) vScrollTint = vec3(0.9, 0.95, 1.0);
+  else if (uScroll < 0.4) vScrollTint = mix(vec3(0.9, 0.95, 1.0), vec3(0.7, 0.8, 1.2), (uScroll - 0.2) * 5.0);
+  else if (uScroll < 0.6) vScrollTint = mix(vec3(0.7, 0.8, 1.2), vec3(1.1, 0.6, 0.9), (uScroll - 0.4) * 5.0);
+  else if (uScroll < 0.8) vScrollTint = mix(vec3(1.1, 0.6, 0.9), vec3(0.5, 0.3, 0.8), (uScroll - 0.6) * 5.0);
+  else vScrollTint = mix(vec3(0.5, 0.3, 0.8), vec3(0.15, 0.12, 0.35), (uScroll - 0.8) * 5.0);
 }

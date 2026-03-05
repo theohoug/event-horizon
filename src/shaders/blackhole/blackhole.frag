@@ -337,9 +337,7 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
 
 /* ─── Photon Ring ─── */
 
-float photonRing(vec3 pos) {
-  float r = length(pos);
-
+float photonRing(vec3 pos, float r) {
   float ring1 = g2((r - PHOTON_SPHERE) * 12.0);
   float ring2 = g2((r - PHOTON_SPHERE * 1.02) * 18.0) * 0.7;
   float ring3 = g2((r - PHOTON_SPHERE * 0.98) * 22.0) * 0.35;
@@ -423,7 +421,7 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
     }
 
     if (r < 3.0) {
-      float photon = photonRing(pos);
+      float photon = photonRing(pos, r);
       glow = min(glow + photon * 0.065 * (1.0 - dimBell * 0.4), 2.5);
     }
 

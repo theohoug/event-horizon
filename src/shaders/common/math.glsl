@@ -8,24 +8,9 @@
 #define TAU 6.28318530718
 #define HALF_PI 1.57079632679
 
-mat2 rot2(float a) {
-  float c = cos(a), s = sin(a);
-  return mat2(c, -s, s, c);
-}
-
 mat3 rotateX(float a) {
   float c = cos(a), s = sin(a);
   return mat3(1, 0, 0, 0, c, -s, 0, s, c);
-}
-
-mat3 rotateY(float a) {
-  float c = cos(a), s = sin(a);
-  return mat3(c, 0, s, 0, 1, 0, -s, 0, c);
-}
-
-mat3 rotateZ(float a) {
-  float c = cos(a), s = sin(a);
-  return mat3(c, -s, 0, s, c, 0, 0, 0, 1);
 }
 
 float remap(float value, float inMin, float inMax, float outMin, float outMax) {
@@ -61,11 +46,3 @@ vec3 temperatureToColor(float t) {
   return color;
 }
 
-float sdSphere(vec3 p, float r) {
-  return length(p) - r;
-}
-
-float sdTorus(vec3 p, vec2 t) {
-  vec2 q = vec2(length(p.xz) - t.x, p.y);
-  return length(q) - t.y;
-}

@@ -78,30 +78,3 @@ vec3 hash33(vec3 p) {
   return fract(sin(p) * 43758.5453123);
 }
 
-float fbm(vec3 p, int octaves) {
-  float value = 0.0;
-  float amplitude = 0.5;
-  float frequency = 1.0;
-  for (int i = 0; i < 6; i++) {
-    if (i >= octaves) break;
-    value += amplitude * snoise(p * frequency);
-    frequency *= 2.0;
-    amplitude *= 0.5;
-  }
-  return value;
-}
-
-vec3 curlNoise(vec3 p) {
-  float e = 0.1;
-  vec3 dx = vec3(e, 0.0, 0.0);
-  vec3 dy = vec3(0.0, e, 0.0);
-  vec3 dz = vec3(0.0, 0.0, e);
-
-  float x = snoise(p + dy) - snoise(p - dy);
-  float y = snoise(p + dz) - snoise(p - dz);
-  float z = snoise(p + dx) - snoise(p - dx);
-
-  vec3 curl = vec3(x, y, z) / (2.0 * e);
-  float len = length(curl);
-  return len > 0.0001 ? curl / len : vec3(0.0);
-}

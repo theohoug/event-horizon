@@ -41,7 +41,7 @@ vec3 starfield(vec3 rd) {
 
   float _ss = max(uScroll - 0.6, 0.0);
   float scrollStretch = uScroll * uScroll * 0.6 + _ss * _ss * 2.0;
-  vec3 stretchDir = normalize(vec3(0.0, 0.0, -1.0));
+  vec3 stretchDir = vec3(0.0, 0.0, -1.0);
   float spiralTwist = uScroll * uScroll * 0.3;
   vec3 twistedRd = vec3(
     rd.x * cos(spiralTwist) - rd.y * sin(spiralTwist),
@@ -76,13 +76,12 @@ vec3 starfield(vec3 rd) {
       brightness *= twinkle * twinkle2;
 
       float colorSeed = hash(dot(id, vec3(53.1, 97.3, 161.7)));
-      float colorTemp;
-      if (colorSeed < 0.08) colorTemp = 2800.0 + colorSeed * 5000.0;
-      else if (colorSeed < 0.22) colorTemp = 3500.0 + (colorSeed - 0.08) * 7000.0;
-      else if (colorSeed < 0.5) colorTemp = 5500.0 + (colorSeed - 0.22) * 4000.0;
-      else if (colorSeed < 0.78) colorTemp = 7500.0 + (colorSeed - 0.5) * 10000.0;
-      else colorTemp = 14000.0 + (colorSeed - 0.78) * 26000.0;
-      vec3 starColor = temperatureToColor(colorTemp);
+      vec3 starColor;
+      if (colorSeed < 0.08) starColor = mix(vec3(1.0, 0.67, 0.37), vec3(1.0, 0.72, 0.47), colorSeed * 12.5);
+      else if (colorSeed < 0.22) starColor = mix(vec3(1.0, 0.76, 0.54), vec3(1.0, 0.85, 0.72), (colorSeed - 0.08) * 7.14);
+      else if (colorSeed < 0.5) starColor = mix(vec3(1.0, 0.93, 0.86), vec3(1.0, 1.0, 1.0), (colorSeed - 0.22) * 3.57);
+      else if (colorSeed < 0.78) starColor = mix(vec3(0.88, 0.90, 1.0), vec3(0.80, 0.85, 1.0), (colorSeed - 0.5) * 3.57);
+      else starColor = mix(vec3(0.72, 0.81, 1.0), vec3(0.67, 0.79, 1.0), (colorSeed - 0.78) * 4.55);
 
       float layerScale = 0.7 / float(layer + 1);
       col += starColor * brightness * layerScale * 1.2;
@@ -110,8 +109,7 @@ vec3 starfield(vec3 rd) {
       brightness *= bTwinkle;
 
       float bColorSeed = hash(dot(bId, vec3(41.7, 199.3, 77.1)));
-      float bTemp = 4500.0 + bColorSeed * 25000.0;
-      vec3 bColor = temperatureToColor(bTemp);
+      vec3 bColor = mix(vec3(1.0, 0.85, 0.72), vec3(0.67, 0.79, 1.0), bColorSeed);
 
       vec2 starScreen = vec2(
         dot(bCenter - bFd, vec3(1.0, 0.0, 0.0)),

@@ -132,12 +132,14 @@ export class Experience {
     ['%c◈ CHAPTER 0 — YOU %c\nYou stand at the edge. The universe watches.', 'color:#00f5d4;font-size:14px;font-weight:bold;text-shadow:0 0 10px #00f5d4', 'color:#888;font-size:11px;font-style:italic'],
     ['%c◈ CHAPTER 1 — THE PULL %c\nGravity notices you. There is no ignoring it.', 'color:#00d4aa;font-size:14px;font-weight:bold;text-shadow:0 0 10px #00d4aa', 'color:#888;font-size:11px;font-style:italic'],
     ['%c◈ CHAPTER 2 — THE WARP %c\nSpacetime bends. Light follows curves you cannot see.', 'color:#00b4ff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #00b4ff', 'color:#888;font-size:11px;font-style:italic'],
-    ['%c◈ CHAPTER 3 — THE FALL %c\nYou crossed the boundary. The fall is eternal.', 'color:#6644ff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #6644ff', 'color:#888;font-size:11px;font-style:italic'],
-    ['%c◈ CHAPTER 4 — SPAGHETTIFICATION %c\nTidal forces stretch every atom. You become geometry.', 'color:#ff4488;font-size:14px;font-weight:bold;text-shadow:0 0 10px #ff4488', 'color:#888;font-size:11px;font-style:italic'],
-    ['%c◈ CHAPTER 5 — TIME DILATION %c\nA second here is an eternity outside. Time forgets you.', 'color:#ff6644;font-size:14px;font-weight:bold;text-shadow:0 0 10px #ff6644', 'color:#888;font-size:11px;font-style:italic'],
-    ['%c◈ CHAPTER 6 — SINGULARITY %c\nInfinite density. Zero volume. Physics surrenders.', 'color:#ff2222;font-size:14px;font-weight:bold;text-shadow:0 0 10px #ff2222', 'color:#888;font-size:11px;font-style:italic'],
-    ['%c◈ CHAPTER 7 — THE VOID %c\nBeyond mathematics. Beyond language. Beyond.', 'color:#440066;font-size:14px;font-weight:bold;text-shadow:0 0 10px #440066', 'color:#ccc;font-size:11px;font-style:italic'],
-    ['%c◈ CHAPTER 8 — WHAT REMAINS %c\nInformation persists. You were here.', 'color:#ffffff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #fff', 'color:#aaa;font-size:11px;font-style:italic'],
+    ['%c◈ CHAPTER 3 — THE PHOTON SPHERE %c\nPhoton capture orbit detected. Light cannot escape this radius.', 'color:#0088ff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #0088ff', 'color:#888;font-size:11px;font-style:italic'],
+    ['%c◈ CHAPTER 4 — THE FALL %c\nYou crossed the boundary. The fall is eternal.', 'color:#6644ff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #6644ff', 'color:#888;font-size:11px;font-style:italic'],
+    ['%c◈ CHAPTER 5 — SPAGHETTIFICATION %c\nTidal forces stretch every atom. You become geometry.', 'color:#ff4488;font-size:14px;font-weight:bold;text-shadow:0 0 10px #ff4488', 'color:#888;font-size:11px;font-style:italic'],
+    ['%c◈ CHAPTER 6 — TIME DILATION %c\nA second here is an eternity outside. Time forgets you.', 'color:#ff6644;font-size:14px;font-weight:bold;text-shadow:0 0 10px #ff6644', 'color:#888;font-size:11px;font-style:italic'],
+    ['%c◈ CHAPTER 7 — SINGULARITY %c\nInfinite density. Zero volume. Physics surrenders.', 'color:#ff2222;font-size:14px;font-weight:bold;text-shadow:0 0 10px #ff2222', 'color:#888;font-size:11px;font-style:italic'],
+    ['%c◈ CHAPTER 8 — THE VOID %c\nBeyond mathematics. Beyond language. Beyond.', 'color:#440066;font-size:14px;font-weight:bold;text-shadow:0 0 10px #440066', 'color:#ccc;font-size:11px;font-style:italic'],
+    ['%c◈ CHAPTER 9 — HAWKING RADIATION %c\nQuantum fluctuation detected. Thermal radiation T = 6.17×10⁻¹⁸ K.', 'color:#8844cc;font-size:14px;font-weight:bold;text-shadow:0 0 10px #8844cc', 'color:#888;font-size:11px;font-style:italic'],
+    ['%c◈ CHAPTER 10 — WHAT REMAINS %c\nInformation persists. You were here.', 'color:#ffffff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #fff', 'color:#aaa;font-size:11px;font-style:italic'],
   ];
 
   private logChapter(index: number) {

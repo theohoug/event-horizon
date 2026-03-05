@@ -48,6 +48,14 @@ const CHAPTERS: Chapter[] = [
   },
   {
     id: 3,
+    title: 'THE PHOTON SPHERE',
+    subtitle: 'At 1.5 Schwarzschild radii — light itself orbits — photons trapped in endless circles — a prison made of gravity',
+    triggerStart: 'top center',
+    triggerEnd: 'bottom center',
+    reveal: 'word-cascade',
+  },
+  {
+    id: 4,
     title: 'THE FALL',
     subtitle: 'You cross the point of no return — and the strange thing is — you feel nothing',
     triggerStart: 'top center',
@@ -55,7 +63,7 @@ const CHAPTERS: Chapter[] = [
     reveal: 'flash-bloom',
   },
   {
-    id: 4,
+    id: 5,
     title: 'SPAGHETTIFICATION',
     subtitle: 'Tidal forces pull you apart — atom by atom — into threads thinner than light',
     triggerStart: 'top center',
@@ -63,7 +71,7 @@ const CHAPTERS: Chapter[] = [
     reveal: 'center-out',
   },
   {
-    id: 5,
+    id: 6,
     title: 'TIME DILATION',
     subtitle: 'One heartbeat here — outside, civilizations rise and fall — stars are born and die',
     triggerStart: 'top center',
@@ -71,7 +79,7 @@ const CHAPTERS: Chapter[] = [
     reveal: 'flash-bloom',
   },
   {
-    id: 6,
+    id: 7,
     title: 'SINGULARITY',
     subtitle: 'Where physics breaks — where space becomes time — where infinity becomes a point',
     triggerStart: 'top center',
@@ -79,7 +87,7 @@ const CHAPTERS: Chapter[] = [
     reveal: 'center-out',
   },
   {
-    id: 7,
+    id: 8,
     title: 'THE VOID',
     subtitle: 'Beyond equations — beyond language — beyond thought — silence',
     triggerStart: 'top center',
@@ -87,7 +95,15 @@ const CHAPTERS: Chapter[] = [
     reveal: 'flash-bloom',
   },
   {
-    id: 8,
+    id: 9,
+    title: 'HAWKING RADIATION',
+    subtitle: 'Even darkness leaks — quantum whispers at the edge — the universe slowly reclaims what was taken',
+    triggerStart: 'top center',
+    triggerEnd: 'bottom center',
+    reveal: 'typewriter',
+  },
+  {
+    id: 10,
     title: 'WHAT REMAINS',
     subtitle: 'You have one life — one brief flicker in the dark — what will you do with it?',
     triggerStart: 'top center',
@@ -126,7 +142,7 @@ export class Timeline {
       });
     });
 
-    const lastSection = document.querySelector('[data-chapter="8"]');
+    const lastSection = document.querySelector('[data-chapter="10"]');
     if (lastSection) {
       ScrollTrigger.create({
         trigger: lastSection,
@@ -452,12 +468,14 @@ export class Timeline {
     0: { x: 0, y: 0, align: 'center' },
     1: { x: 0, y: 0, align: 'center' },
     2: { x: -6, y: 0, align: 'left' },
-    3: { x: 0, y: 8, align: 'center' },
-    4: { x: 0, y: 0, align: 'center' },
-    5: { x: 5, y: -6, align: 'right' },
-    6: { x: 0, y: 0, align: 'center' },
+    3: { x: 0, y: 0, align: 'center' },
+    4: { x: 0, y: 8, align: 'center' },
+    5: { x: 0, y: 0, align: 'center' },
+    6: { x: 5, y: -6, align: 'right' },
     7: { x: 0, y: 0, align: 'center' },
     8: { x: 0, y: 0, align: 'center' },
+    9: { x: 0, y: 0, align: 'center' },
+    10: { x: 0, y: 0, align: 'center' },
   };
 
   private createChapterContent(container: HTMLElement, chapter: Chapter) {
@@ -494,7 +512,7 @@ export class Timeline {
     const chapterNum = document.createElement('div');
     chapterNum.className = 'chapter-num-filigrane';
     chapterNum.setAttribute('aria-hidden', 'true');
-    chapterNum.textContent = chapter.id === 5 ? '∞' : String(chapter.id + 1).padStart(2, '0');
+    chapterNum.textContent = chapter.id === 6 ? '∞' : String(chapter.id + 1).padStart(2, '0');
     container.appendChild(chapterNum);
     const numDelay = chapter.id === 0 ? 1.5 : 0;
     tl.fromTo(chapterNum,
@@ -506,10 +524,10 @@ export class Timeline {
     const titleLine = document.createElement('div');
     let titleClass = 'line';
     if (chapter.id === 0) titleClass = 'line chapter-opening';
-    else if (chapter.id === 4) titleClass = 'line chapter-wide';
-    else if (chapter.id === 6) titleClass = 'line chapter-impact';
-    else if (chapter.id === 7) titleClass = 'line chapter-void';
-    else if (chapter.id === 8) titleClass = 'line chapter-final';
+    else if (chapter.id === 5) titleClass = 'line chapter-wide';
+    else if (chapter.id === 7) titleClass = 'line chapter-impact';
+    else if (chapter.id === 8) titleClass = 'line chapter-void';
+    else if (chapter.id === 10) titleClass = 'line chapter-final';
     titleLine.className = titleClass;
     container.appendChild(titleLine);
     this.splitTextToChars(titleLine, chapter.title);
@@ -517,7 +535,7 @@ export class Timeline {
     const titleChars = titleLine.querySelectorAll('.char');
     const openingDelay = chapter.id === 0 ? 2.0 : 0;
 
-    if (chapter.id === 5) {
+    if (chapter.id === 6) {
       titleLine.className = 'line chapter-vertical';
       tl.fromTo(
         titleLine,
@@ -526,7 +544,7 @@ export class Timeline {
       );
       tl.set(titleChars, { opacity: 1 }, 0);
       tl.add(() => this.markRevealed(titleChars), 0.1);
-    } else if (chapter.id === 8) {
+    } else if (chapter.id === 10) {
       tl.fromTo(
         titleLine,
         { opacity: 0, filter: 'blur(0px) brightness(3)', scale: 0.9 },
@@ -534,7 +552,7 @@ export class Timeline {
       );
       tl.set(titleChars, { opacity: 1 }, 0);
       tl.add(() => this.markRevealed(titleChars), 0.1);
-    } else if (chapter.id === 6) {
+    } else if (chapter.id === 7) {
       tl.fromTo(
         titleLine,
         { opacity: 0, scale: 2.5, filter: 'blur(20px)', letterSpacing: '0.8em' },
@@ -566,7 +584,7 @@ export class Timeline {
         break;
     }
 
-    if (chapter.id === 7) {
+    if (chapter.id === 8) {
       tl.to(titleLine, { opacity: 0, filter: 'blur(8px)', duration: 3.0, ease: 'power2.in', delay: 2.0 });
     } else {
       const subtitleLine = document.createElement('div');

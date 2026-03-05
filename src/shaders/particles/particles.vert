@@ -44,11 +44,13 @@ void main() {
   pos.z = sin(angle) * orbitR;
 
   float noiseFade = 1.0 - uScroll * 0.7;
-  float nSeed = dot(pos, vec3(127.1, 311.7, 74.7)) * 0.1 + uTime * 0.05;
-  float nx = hash(nSeed) * 2.0 - 1.0;
-  float ny = hash(nSeed + 31.416) * 2.0 - 1.0;
-  float nz = hash(nSeed + 47.853) * 2.0 - 1.0;
-  pos += vec3(nx, ny, nz) * 0.2 * noiseFade;
+  vec3 curlP = pos * 0.15 + vec3(uTime * 0.08);
+  float cn1 = snoise(curlP);
+  float cn2 = snoise(curlP + vec3(31.416, 47.853, 12.793));
+  float cn3 = snoise(curlP + vec3(113.5, 271.9, 124.6));
+  vec3 curlVel = cross(vec3(cn1, cn2, cn3), vec3(cn3, cn1, cn2));
+  float turbIntensity = mix(0.35, 1.2, smoothstep(8.0, 2.0, r));
+  pos += curlVel * turbIntensity * noiseFade;
 
   pos.y += sin(uTime * aSpeed * 0.3 + aRandomness.x * 6.28) * 0.1;
 

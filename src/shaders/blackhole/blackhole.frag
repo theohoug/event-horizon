@@ -30,7 +30,7 @@ float g2(float x) { return exp(-x * x); }
 #define SCHWARZSCHILD_RADIUS 1.0
 #define ISCO 3.0
 #define PHOTON_SPHERE 1.5
-#define DISK_INNER 2.6
+#define DISK_INNER 3.0
 #define DISK_OUTER 14.0
 #define DISK_HEIGHT 0.18
 
@@ -223,7 +223,10 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   spiralArm += tertiaryArm * tertiaryArm * tertiaryArm * mix(0.04, 0.1, highFreqFade);
   float _q2 = quaternaryArm * quaternaryArm; spiralArm += _q2 * _q2 * mix(0.01, 0.04, highFreqFade);
 
-  float density = diskMask * heightFade * (0.2 + 0.8 * spiralArm);
+  float viewIncidence = abs(dot(normalize(rd), vec3(0.0, 1.0, 0.0)));
+  float volumeOpacity = mix(2.5, 1.0, viewIncidence);
+
+  float density = diskMask * heightFade * (0.2 + 0.8 * spiralArm) * volumeOpacity;
   density *= 1.0 + turbulence * mix(1.0, 0.7, uScroll);
   float _ga = 1.0 - spiralArm; float gapDarkening = _ga * sqrt(_ga) * mix(0.25, 0.45, smoothstep(0.15, 0.40, uScroll));
   density *= 1.0 - gapDarkening;
@@ -237,35 +240,19 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   float iscoGlow = g2((r - ISCO) * iscoWidth) * 0.35;
   density += iscoGlow * heightFade;
 
-  float temp = remap(r, DISK_INNER, DISK_OUTER, 7000.0, 1200.0);
-  temp += turbulence * 1200.0;
-  temp += iscoGlow * 2500.0;
-  vec3 thermalColor = temperatureToColor(clamp(temp, 800.0, 12000.0));
+  float rRatio = ISCO / r;
+  float riseFromISCO = r > ISCO ? max(1.0 - sqrt(rRatio), 0.0) : 0.0;
+  float radialDecay = pow(rRatio, 0.75);
+  float tempProfile = pow(max(riseFromISCO, 0.0), 0.25) * radialDecay;
+  float baseTemp = 85000.0 * tempProfile / 0.1213;
+  if (r < ISCO) baseTemp = 2000.0;
+  baseTemp += turbulence * 3000.0;
+  baseTemp += iscoGlow * 5000.0;
+  baseTemp = clamp(baseTemp, 800.0, 100000.0);
 
-  float radialPos = smoothstep(DISK_INNER, DISK_OUTER, r);
-  vec3 diskColor = thermalColor;
-
-  vec3 whiteHot = vec3(1.0, 0.97, 0.92);
-  vec3 hotOrange = vec3(1.0, 0.55, 0.1);
-  vec3 warmAmber = vec3(0.9, 0.35, 0.06);
-  vec3 deepRed = vec3(0.5, 0.08, 0.02);
-  vec3 outerDark = vec3(0.08, 0.04, 0.12);
-
-  vec3 tint;
-  if (radialPos < 0.12) {
-    tint = mix(whiteHot, hotOrange, radialPos / 0.12);
-  } else if (radialPos < 0.3) {
-    tint = mix(hotOrange, warmAmber, (radialPos - 0.12) / 0.18);
-  } else if (radialPos < 0.55) {
-    tint = mix(warmAmber, deepRed, (radialPos - 0.3) / 0.25);
-  } else {
-    tint = mix(deepRed, outerDark, (radialPos - 0.55) / 0.45);
-  }
-
-  float lum = dot(diskColor, vec3(0.2126, 0.7152, 0.0722));
-  float tintStrength = mix(0.55, 0.85, smoothstep(0.3, 0.8, radialPos));
-  diskColor = mix(thermalColor, tint * lum * 4.5, tintStrength);
-  diskColor += whiteHot * iscoGlow * 0.5;
+  vec3 diskColor = temperatureToColor(baseTemp);
+  float _tn = baseTemp / 15000.0;
+  diskColor *= _tn * sqrt(_tn) * 0.45;
 
   float turbColor = (turb1 + turb2) * 0.8;
   diskColor *= 1.0 + turbColor * vec3(0.2, -0.05, -0.1);
@@ -290,34 +277,29 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   float flareMask = smoothstep(DISK_INNER + 0.5, DISK_INNER + 2.5, r) * smoothstep(DISK_OUTER - 2.0, DISK_INNER + 4.0, r);
   diskColor += vec3(1.0, 0.6, 0.15) * flareTrigger * flareMask * 0.15;
 
-  float velTangent = orbitalSpeed * r;
-  vec3 orbitalDir = vec3(-sin(angle), 0.0, cos(angle));
-  vec3 viewDir = normalize(rd);
-  float dopplerRaw = dot(orbitalDir, viewDir) * min(velTangent * 0.15, 1.0);
-  float dopplerBoost = 1.0 + dopplerRaw * 0.35;
-  diskColor *= dopplerBoost;
+  float beta = sqrt(SCHWARZSCHILD_RADIUS / (2.0 * r));
+  float _gamma = 1.0 / sqrt(max(1.0 - beta * beta, 0.001));
+  vec3 orbitalDir = normalize(vec3(-sin(angle), 0.0, cos(angle)));
+  float cosTheta = dot(orbitalDir, normalize(rd));
+  float D = 1.0 / (_gamma * (1.0 - beta * cosTheta));
 
-  vec3 blueShiftColor = vec3(0.7, 0.7, 1.2);
-  vec3 redShiftColor = vec3(1.3, 0.75, 0.6);
-  float dopplerColorMix = clamp(dopplerRaw * 2.0, -1.0, 1.0);
-  vec3 dopplerTint = dopplerColorMix > 0.0 ? mix(vec3(1.0), blueShiftColor, dopplerColorMix) : mix(vec3(1.0), redShiftColor, -dopplerColorMix);
+  float beaming = D * D * D * D;
+  diskColor *= beaming;
+
+  float dopplerShift = clamp((D - 1.0) * 2.5, -1.0, 1.0);
+  vec3 blueBoost = vec3(0.8, 0.9, 1.3);
+  vec3 redBoost = vec3(1.3, 0.8, 0.6);
+  vec3 dopplerTint = dopplerShift > 0.0 ? mix(vec3(1.0), blueBoost, dopplerShift) : mix(vec3(1.0), redBoost, -dopplerShift);
   diskColor *= dopplerTint;
 
-  float _ie = remap(r, DISK_INNER, DISK_INNER + 1.5, 1.0, 0.0); float innerEmission = _ie * _ie * sqrt(_ie);
-  diskColor += vec3(1.0, 0.55, 0.12) * innerEmission * 0.6;
-  diskColor += vec3(1.0, 0.85, 0.4) * innerEmission * 0.15;
-  float _hi = remap(r, DISK_INNER, DISK_INNER + 0.5, 1.0, 0.0); float _hi2 = _hi*_hi; float hotISCO = _hi2 * _hi2;
-  float iscoScrollDim = 1.0 - smoothstep(0.4, 0.8, uScroll) * 0.6;
-  diskColor += vec3(1.0, 0.85, 0.5) * hotISCO * 0.3 * iscoScrollDim;
-  float _ir = remap(r, DISK_INNER, DISK_INNER + 0.18, 1.0, 0.0); float _ir2 = _ir*_ir; float _ir4 = _ir2*_ir2; float innerRim = _ir4 * _ir4;
-  diskColor += vec3(1.0, 0.85, 0.5) * innerRim * 0.3 * iscoScrollDim;
+  float gravRedshiftDisk = sqrt(max(1.0 - SCHWARZSCHILD_RADIUS / r, 0.001));
+  diskColor *= gravRedshiftDisk;
+
 
   float _er = max(sin(rotAngle * 1.0 + uTime * 0.08) * sin(uTime * 0.3 + r * 0.5), 0.0); float _er2 = _er*_er; float _er4 = _er2*_er2; float _er8 = _er4*_er4; float eruption = _er8 * _er8;
   float eruptionMask = smoothstep(DISK_INNER, DISK_INNER + 1.5, r) * smoothstep(DISK_INNER + 4.0, DISK_INNER + 2.0, r);
   diskColor += vec3(1.0, 0.75, 0.3) * eruption * eruptionMask * 0.4;
 
-  float gravitationalRedshift = sqrt(max(1.0 - SCHWARZSCHILD_RADIUS / r, 0.01));
-  diskColor *= gravitationalRedshift;
 
   float scrollDim = 1.0 - sqrt(uScroll) * 0.5;
   float closeUpDim = 1.0 - smoothstep(0.4, 0.8, uScroll) * 0.45;
@@ -403,9 +385,9 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
     float r = length(pos);
 
     if (r < SCHWARZSCHILD_RADIUS) {
-      float proximity = smoothstep(SCHWARZSCHILD_RADIUS, SCHWARZSCHILD_RADIUS * 0.5, r);
-      color = accumulatedDiskColor * (1.0 - proximity * 0.9) * (1.0 - dimBell * 0.5);
-      glow += mix(0.4, 0.15, dimBell);
+      float captureRedshift = smoothstep(SCHWARZSCHILD_RADIUS, SCHWARZSCHILD_RADIUS * 0.3, r);
+      color = accumulatedDiskColor * (1.0 - captureRedshift);
+      glow = 0.0;
       return;
     }
 
@@ -436,11 +418,14 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
     }
     prevY = currentY;
 
-    float r3 = r * r * r;
-    vec3 gravity = -pos / max(r3, 0.001) * SCHWARZSCHILD_RADIUS * 1.5;
+    vec3 crossPV = cross(pos, vel);
+    float h2 = dot(crossPV, crossPV);
+    float r2 = r * r;
+    float r5 = r2 * r2 * r;
+    vec3 accel = -1.5 * h2 * pos / max(r5, 1e-8);
 
-    float adaptiveDt = dt * clamp(r * 0.4, 0.2, 2.0);
-    vel += gravity * adaptiveDt;
+    float adaptiveDt = dt * clamp((r - 1.0) * 0.5, 0.05, 2.0);
+    vel += accel * adaptiveDt;
     vel = normalize(vel);
     pos += vel * adaptiveDt;
   }
@@ -463,9 +448,10 @@ void main() {
   float approach = smootherstep(0.0, 1.0, scrollEffect);
   float fov = mix(1.4, 0.2, approach);
 
+  vec2 mouseParallax = (uMouse - 0.5);
   vec3 camPos = vec3(
-    sin(scrollEffect * 0.4) * 0.3 + sin(uTime * 0.03) * 0.02,
-    mix(7.0, 0.06, scrollEffect * (0.8 + 0.2 * scrollEffect)) + sin(uTime * 0.08) * 0.03,
+    sin(scrollEffect * 0.4) * 0.3 + sin(uTime * 0.03) * 0.02 + mouseParallax.x * mix(0.4, 0.1, scrollEffect),
+    mix(7.0, 0.06, scrollEffect * (0.8 + 0.2 * scrollEffect)) + sin(uTime * 0.08) * 0.03 + mouseParallax.y * mix(0.25, 0.05, scrollEffect),
     mix(38.0, 2.5, scrollEffect)
   );
 
@@ -546,8 +532,6 @@ void main() {
   float jetIntensity = jetCone * jetLength * jetFlicker * smoothstep(0.3, 0.6, scrollEffect) * 0.02;
   color += vec3(0.3, 0.5, 0.9) * jetIntensity;
 
-  float outerHalo = exp(-lensDist * lensDist * 2.5) * (1.0 - scrollEffect * 0.8) * 0.06;
-  color += vec3(0.35, 0.15, 0.05) * outerHalo;
 
   if (scrollEffect < 0.35) {
     float earlyFade = smoothstep(0.35, 0.0, scrollEffect);
@@ -560,32 +544,10 @@ void main() {
   float gravitationalRedshift = 1.0 + smoothstep(0.0, 1.5, 1.0 / (lensDist + 0.1)) * uDistortion * 0.02;
   color *= gravitationalRedshift;
 
-  float innerGlow = exp(-lensDist * lensDist * 8.0) * 0.05 * scrollGlowDim;
-  color += vec3(0.6, 0.3, 0.08) * innerGlow;
 
-  if (scrollEffect < 0.4) {
-    float galacticCenter = exp(-lensDist * lensDist * 0.8) * smoothstep(0.4, 0.0, scrollEffect) * 0.015;
-    vec3 galacticColor = mix(vec3(0.12, 0.06, 0.02), vec3(0.08, 0.05, 0.15), sin(uTime * 0.2) * 0.5 + 0.5);
-    color += galacticColor * galacticCenter;
-  }
 
-  float blackHoleShadow = smoothstep(0.3, 0.0, lensDist) * (1.0 - scrollEffect * 0.5) * 0.2;
-  color *= 1.0 - blackHoleShadow;
+  /* blackHoleShadow removed — darkness comes from traceRay hitting Schwarzschild radius */
 
-  float ehRadius = mix(0.06, 0.35, scrollEffect);
-  float ehRing = g2((lensDist - ehRadius) * mix(30.0, 12.0, scrollEffect));
-  float ehRingOuter = g2((lensDist - ehRadius) * mix(15.0, 6.0, scrollEffect));
-  float ehPulse = sin(uTime * 1.2) * 0.12 + 0.88;
-  float ehIntensity = ehRing * smoothstep(0.2, 0.5, scrollEffect) * 0.1 * ehPulse;
-  float ehOuterIntensity = ehRingOuter * smoothstep(0.3, 0.6, scrollEffect) * 0.04;
-  color += vec3(0.8, 0.4, 0.1) * ehIntensity;
-  color += vec3(0.4, 0.18, 0.05) * ehOuterIntensity;
-
-  color = min(color, vec3(1.0));
-
-  float lensShimmer = exp(-lensDist * lensDist * 6.0) * 0.03 * (1.0 - scrollEffect * 0.6);
-  float shimmerNoise = sin(uTime * 3.0 + lensDist * 40.0) * 0.5 + 0.5;
-  color += color * lensShimmer * shimmerNoise;
 
   float lum = dot(color, vec3(0.2126, 0.7152, 0.0722));
   float satBoost = 1.0 + uScroll * 0.35;

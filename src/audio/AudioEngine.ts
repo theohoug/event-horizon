@@ -167,7 +167,8 @@ export class AudioEngine {
 
       const gain = this.ctx.createGain();
       const normalizedPos = i / (numOctaves - 1);
-      const envelope = Math.exp(-Math.pow((normalizedPos - 0.5) * 3.0, 2));
+      const envDelta = (normalizedPos - 0.5) * 3.0;
+      const envelope = Math.exp(-envDelta * envDelta);
       gain.gain.value = envelope * 0.1;
 
       osc.connect(gain);
@@ -372,7 +373,8 @@ export class AudioEngine {
     const panIntensity = Math.min(scrollProgress * 2, 1);
     this.stereoPanner.pan.linearRampToValueAtTime(this.currentPan * panIntensity, now + 0.05);
 
-    const voidDip = 1.0 - Math.exp(-Math.pow((scrollProgress - 0.88) * 12.0, 2)) * 0.6;
+    const voidDipDelta = (scrollProgress - 0.88) * 12.0;
+    const voidDip = 1.0 - Math.exp(-voidDipDelta * voidDipDelta) * 0.6;
     const droneLevel = (0.08 + scrollProgress * 0.35) * voidDip;
     this.droneGain.gain.linearRampToValueAtTime(droneLevel, now + 0.1);
 
@@ -388,7 +390,8 @@ export class AudioEngine {
       const freq = baseFreq * Math.pow(2, wrappedOctave);
 
       const normalizedPos = wrappedOctave / 7;
-      const envelope = Math.exp(-Math.pow((normalizedPos - 0.5) * 3.0, 2));
+      const envDelta = (normalizedPos - 0.5) * 3.0;
+      const envelope = Math.exp(-envDelta * envDelta);
 
       osc.frequency.linearRampToValueAtTime(Math.max(20, freq), now + 0.15);
       if (i < this.shepardGains.length) {
@@ -456,7 +459,8 @@ export class AudioEngine {
 
     const heartbeatActive = scrollProgress > 0.35 && scrollProgress < 0.95;
     if (heartbeatActive) {
-      const heartbeatVolume = Math.pow((scrollProgress - 0.35) / 0.6, 1.5) * 0.7;
+      const hbBase = (scrollProgress - 0.35) / 0.6;
+      const heartbeatVolume = hbBase * Math.sqrt(hbBase) * 0.7;
       this.heartbeatGain.gain.linearRampToValueAtTime(heartbeatVolume * voidDip, now + 0.1);
 
       const bpm = 50 + (scrollProgress - 0.35) * 120;

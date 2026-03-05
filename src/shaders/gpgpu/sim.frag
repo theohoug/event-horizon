@@ -99,7 +99,7 @@ void main() {
     vec3 mouseVortex = vec3(0.0);
     if (mouseDist < 12.0 && mouseDist > 0.1) {
       vec3 mouseUp = vec3(0.0, 1.0, 0.0);
-      vec3 mouseTangent = normalize(cross(normalize(toMouse), mouseUp));
+      vec3 mouseTangent = normalize(cross(toMouse, mouseUp));
       mouseVortex = mouseTangent * exp(-mouseDist * 0.15) * 2.0 * (1.0 - uScroll * 0.6);
     }
 

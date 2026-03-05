@@ -412,8 +412,9 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
     }
 
     if (r > 60.0) {
-      vec3 stars = starfield(normalize(vel)) * starBoostFactor;
-      vec3 eRingPrismatic = einsteinRingColor(normalize(vel), ro);
+      vec3 velN = normalize(vel);
+      vec3 stars = starfield(velN) * starBoostFactor;
+      vec3 eRingPrismatic = einsteinRingColor(velN, ro);
       float eRingIntensity = (eRingPrismatic.r + eRingPrismatic.g + eRingPrismatic.b) / 3.0;
       vec3 eRingTint = mix(vec3(0.9, 0.6, 0.2), vec3(0.5, 0.6, 1.0), eRingIntensity * 2.0);
       stars += eRingTint * eRingPrismatic * 2.2 * (1.0 - dimBell * 0.5);
@@ -446,8 +447,9 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
     pos += vel * adaptiveDt;
   }
 
-  vec3 stars = starfield(normalize(vel)) * starBoostFactor;
-  vec3 eRingP2 = einsteinRingColor(normalize(vel), ro);
+  vec3 velN2 = normalize(vel);
+  vec3 stars = starfield(velN2) * starBoostFactor;
+  vec3 eRingP2 = einsteinRingColor(velN2, ro);
   float eRingI2 = (eRingP2.r + eRingP2.g + eRingP2.b) / 3.0;
   vec3 eRingT2 = mix(vec3(0.9, 0.6, 0.2), vec3(0.5, 0.6, 1.0), eRingI2 * 2.0);
   stars += eRingT2 * eRingP2 * 2.2 * (1.0 - dimBell * 0.5);

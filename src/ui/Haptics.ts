@@ -11,6 +11,9 @@ const PATTERNS = {
   heartbeat: [100, 200, 100, 800],
   disintegrate: [20, 10, 20, 10, 20, 10, 20, 10, 20, 10],
   silence: [0],
+  timeDilation: [50, 400, 50, 800, 50, 1600],
+  singularity: [200, 50, 300, 50, 500],
+  theVoid: [30, 500],
 } as const;
 
 export class Haptics {
@@ -59,6 +62,24 @@ export class Haptics {
     this.cooldown = 300;
   }
 
+  timeDilation() {
+    if (!this.canTrigger()) return;
+    navigator.vibrate([...PATTERNS.timeDilation]);
+    this.cooldown = 3000;
+  }
+
+  singularity() {
+    if (!this.canTrigger()) return;
+    navigator.vibrate([...PATTERNS.singularity]);
+    this.cooldown = 1500;
+  }
+
+  theVoid() {
+    if (!this.canTrigger()) return;
+    navigator.vibrate([...PATTERNS.theVoid]);
+    this.cooldown = 2000;
+  }
+
   stop() {
     if (this.supported) navigator.vibrate(0);
   }
@@ -74,11 +95,15 @@ export class Haptics {
       this.pulse(0.2 + scroll * 0.5);
     }
 
-    if (scroll > 0.4 && scroll < 0.6) {
+    if (scroll > 0.4 && scroll < 0.5) {
       this.disintegrate();
-    } else if (scroll > 0.7 && scroll < 0.85) {
-      this.approach();
-    } else if (scroll > 0.85 && scroll < 0.95) {
+    } else if (scroll > 0.55 && scroll < 0.65) {
+      this.timeDilation();
+    } else if (scroll > 0.65 && scroll < 0.75) {
+      this.singularity();
+    } else if (scroll > 0.78 && scroll < 0.88) {
+      this.theVoid();
+    } else if (scroll > 0.88 && scroll < 0.95) {
       this.heartbeat();
     } else if (scroll >= 0.95) {
       this.impact();

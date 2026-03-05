@@ -11,6 +11,11 @@
  * @version 2.0.0
  */
 
+function smoothstep(edge0: number, edge1: number, x: number): number {
+  const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
+}
+
 export class AudioEngine {
   private ctx: AudioContext | null = null;
   private masterGain!: GainNode;
@@ -38,6 +43,10 @@ export class AudioEngine {
   private isPlaying = false;
   private lastFrissonScroll = -1;
   private frissonTriggered = new Set<number>();
+  private stereoPanner!: StereoPannerNode;
+  private targetPan = 0;
+  private currentPan = 0;
+  private lastWhooshTime = 0;
 
   async init() {
     if (this.ctx) return;
@@ -55,9 +64,13 @@ export class AudioEngine {
     this.compressor.release.value = 0.25;
     this.compressor.connect(this.ctx.destination);
 
+    this.stereoPanner = this.ctx.createStereoPanner();
+    this.stereoPanner.pan.value = 0;
+    this.stereoPanner.connect(this.compressor);
+
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.value = 0;
-    this.masterGain.connect(this.compressor);
+    this.masterGain.connect(this.stereoPanner);
 
     this.droneGain = this.ctx.createGain();
     this.droneGain.gain.value = 0.12;
@@ -313,6 +326,9 @@ export class AudioEngine {
 
   triggerWhoosh(intensity: number) {
     if (!this.ctx || !this.isPlaying) return;
+    const elapsed = performance.now() - this.lastWhooshTime;
+    if (elapsed < 250) return;
+    this.lastWhooshTime = performance.now();
 
     const now = this.ctx.currentTime;
     const bufferSize = this.ctx.sampleRate;
@@ -344,9 +360,17 @@ export class AudioEngine {
     source.stop(now + 0.6);
   }
 
+  setMousePan(mouseX: number) {
+    this.targetPan = (mouseX - 0.5) * 0.3;
+  }
+
   update(scrollProgress: number, scrollVelocity: number) {
     if (!this.ctx || !this.isPlaying) return;
     const now = this.ctx.currentTime;
+
+    this.currentPan += (this.targetPan - this.currentPan) * 0.05;
+    const panIntensity = Math.min(scrollProgress * 2, 1);
+    this.stereoPanner.pan.linearRampToValueAtTime(this.currentPan * panIntensity, now + 0.05);
 
     const voidDip = 1.0 - Math.exp(-Math.pow((scrollProgress - 0.88) * 12.0, 2)) * 0.6;
     const droneLevel = (0.08 + scrollProgress * 0.35) * voidDip;
@@ -391,11 +415,24 @@ export class AudioEngine {
       this.noiseFilter.frequency.linearRampToValueAtTime(filterFreq, now + 0.1);
     }
 
-    if (scrollProgress > 0.20 && scrollProgress < 0.25) this.triggerFrisson(1);
-    if (scrollProgress > 0.40 && scrollProgress < 0.45) this.triggerFrisson(2);
-    if (scrollProgress > 0.60 && scrollProgress < 0.65) this.triggerFrisson(3);
-    if (scrollProgress > 0.78 && scrollProgress < 0.82) this.triggerFrisson(4);
-    if (scrollProgress > 0.92 && scrollProgress < 0.96) this.triggerFrisson(5);
+    if (scrollProgress > 0.15 && scrollProgress < 0.20) this.triggerFrisson(1);
+    if (scrollProgress > 0.33 && scrollProgress < 0.38) this.triggerFrisson(2);
+    if (scrollProgress > 0.55 && scrollProgress < 0.60) this.triggerFrisson(3);
+    if (scrollProgress > 0.75 && scrollProgress < 0.80) this.triggerFrisson(4);
+    if (scrollProgress > 0.90 && scrollProgress < 0.94) this.triggerFrisson(5);
+
+    const finalCrescendo = smoothstep(0.88, 0.96, scrollProgress);
+    const finalSilence = smoothstep(0.96, 1.0, scrollProgress);
+    if (finalCrescendo > 0.01 && finalSilence < 0.99) {
+      const crescendoLevel = finalCrescendo * 0.15 * (1 - finalSilence);
+      this.frissonGain.gain.linearRampToValueAtTime(crescendoLevel, now + 0.2);
+      this.droneGain.gain.linearRampToValueAtTime(droneLevel * (1 + finalCrescendo * 0.8) * (1 - finalSilence), now + 0.1);
+    }
+
+    if (finalSilence > 0.01) {
+      const silenceAmount = finalSilence * finalSilence;
+      this.masterGain.gain.linearRampToValueAtTime(0.55 * (1 - silenceAmount * 0.95), now + 0.3);
+    }
 
     const velocityFactor = Math.min(Math.abs(scrollVelocity) * 0.02, 1.0);
     const detuneAmount = scrollVelocity * -8;
@@ -440,6 +477,91 @@ export class AudioEngine {
     }
   }
 
+  triggerTextRevealShimmer() {
+    if (!this.ctx || !this.isPlaying) return;
+    const now = this.ctx.currentTime;
+    const freqs = [2000, 3000, 4500];
+    freqs.forEach((freq, i) => {
+      const osc = this.ctx!.createOscillator();
+      const gain = this.ctx!.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, now + i * 0.04);
+      gain.gain.linearRampToValueAtTime(0.03, now + i * 0.04 + 0.05);
+      gain.gain.linearRampToValueAtTime(0, now + 0.4 + i * 0.04);
+      osc.connect(gain).connect(this.sfxGain);
+      osc.start(now + i * 0.04);
+      osc.stop(now + 0.5 + i * 0.04);
+    });
+  }
+
+  triggerChapterTransition() {
+    if (!this.ctx || !this.isPlaying) return;
+    const now = this.ctx.currentTime;
+    const chord = [261.6, 329.6, 392.0];
+    chord.forEach((freq) => {
+      const osc = this.ctx!.createOscillator();
+      const gain = this.ctx!.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.04, now + 0.8);
+      gain.gain.linearRampToValueAtTime(0, now + 2.5);
+      osc.connect(gain).connect(this.sfxGain);
+      osc.start(now);
+      osc.stop(now + 2.6);
+    });
+  }
+
+  triggerPointOfNoReturn() {
+    if (!this.ctx || !this.isPlaying) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(80, now);
+    osc.frequency.exponentialRampToValueAtTime(20, now + 3);
+    gain.gain.setValueAtTime(0.12, now);
+    gain.gain.linearRampToValueAtTime(0.15, now + 0.3);
+    gain.gain.linearRampToValueAtTime(0, now + 3);
+    osc.connect(gain).connect(this.sfxGain);
+    osc.start(now);
+    osc.stop(now + 3.1);
+  }
+
+  triggerSingularity() {
+    if (!this.ctx || !this.isPlaying) return;
+    const now = this.ctx.currentTime;
+    const bufferSize = this.ctx.sampleRate * 4;
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+    const source = this.ctx.createBufferSource();
+    source.buffer = buffer;
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.2, now + 2.5);
+    gain.gain.setValueAtTime(0, now + 2.8);
+    source.connect(gain).connect(this.sfxGain);
+    source.start(now);
+    source.stop(now + 3);
+  }
+
+  triggerUIHover() {
+    if (!this.ctx || !this.isPlaying) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(2400, now);
+    osc.frequency.exponentialRampToValueAtTime(1800, now + 0.08);
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.015, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+    osc.connect(gain).connect(this.sfxGain);
+    osc.start(now);
+    osc.stop(now + 0.12);
+  }
+
   setMuted(muted: boolean) {
     if (!this.ctx) return;
     this.masterGain.gain.linearRampToValueAtTime(
@@ -450,12 +572,25 @@ export class AudioEngine {
 
   destroy() {
     if (this.heartbeatInterval) clearInterval(this.heartbeatInterval);
-    this.droneOscillators.forEach((o) => { try { o.stop(); } catch {} });
-    this.shepardOscillators.forEach((o) => { try { o.stop(); } catch {} });
-    this.frissonOscillators.forEach((o) => { try { o.stop(); } catch {} });
-    try { this.binauralOscLeft?.stop(); } catch {}
-    try { this.binauralOscRight?.stop(); } catch {}
-    try { this.noiseSource?.stop(); } catch {}
+    this.droneOscillators.forEach((o) => { try { o.stop(); o.disconnect(); } catch {} });
+    this.droneGains.forEach((g) => { try { g.disconnect(); } catch {} });
+    this.shepardOscillators.forEach((o) => { try { o.stop(); o.disconnect(); } catch {} });
+    this.shepardGains.forEach((g) => { try { g.disconnect(); } catch {} });
+    this.frissonOscillators.forEach((o) => { try { o.stop(); o.disconnect(); } catch {} });
+    try { this.binauralOscLeft?.stop(); this.binauralOscLeft?.disconnect(); } catch {}
+    try { this.binauralOscRight?.stop(); this.binauralOscRight?.disconnect(); } catch {}
+    try { this.noiseSource?.stop(); this.noiseSource?.disconnect(); } catch {}
+    try { this.noiseFilter?.disconnect(); } catch {}
+    try { this.stereoPanner?.disconnect(); } catch {}
+    try { this.droneGain?.disconnect(); } catch {}
+    try { this.shepardGain?.disconnect(); } catch {}
+    try { this.binauralGain?.disconnect(); } catch {}
+    try { this.noiseGain?.disconnect(); } catch {}
+    try { this.frissonGain?.disconnect(); } catch {}
+    try { this.sfxGain?.disconnect(); } catch {}
+    try { this.heartbeatGain?.disconnect(); } catch {}
+    try { this.compressor?.disconnect(); } catch {}
+    try { this.masterGain?.disconnect(); } catch {}
     this.ctx?.close();
     this.ctx = null;
     this.isPlaying = false;

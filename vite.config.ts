@@ -7,7 +7,7 @@ export default defineConfig({
     glsl({
       include: ['**/*.glsl', '**/*.vert', '**/*.frag', '**/*.comp'],
       defaultExtension: 'glsl',
-      compress: false,
+      compress: true,
     }),
   ],
   build: {

@@ -1,13 +1,21 @@
 const { chromium } = require('playwright');
 
 (async () => {
+  const isMobile = process.argv.includes('--mobile');
+  const vw = isMobile ? 390 : 1920;
+  const vh = isMobile ? 844 : 1080;
+
   const browser = await chromium.launch({
     headless: false,
-    args: ['--use-gl=angle', '--window-size=1920,1080']
+    args: ['--use-gl=angle', `--window-size=${vw},${vh}`]
   });
-  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+  const page = await browser.newPage({
+    viewport: { width: vw, height: vh },
+    isMobile: isMobile,
+    hasTouch: isMobile,
+  });
 
-  const prefix = process.argv[2] || 'loop';
+  const prefix = (process.argv[2] || 'loop') + (isMobile ? '_mobile' : '');
 
   await page.goto('http://localhost:4200', { waitUntil: 'networkidle', timeout: 30000 });
   await page.waitForTimeout(8000);
@@ -30,6 +38,18 @@ const { chromium } = require('playwright');
 
   const positions = [12, 25, 38, 50, 62, 75, 88, 100];
 
+  const holdPosition = async (pct, durationMs) => {
+    const intervalMs = 100;
+    const iterations = Math.ceil(durationMs / intervalMs);
+    for (let i = 0; i < iterations; i++) {
+      await page.evaluate((p) => {
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        window.scrollTo({ top: maxScroll * p / 100, behavior: 'instant' });
+      }, pct);
+      await page.waitForTimeout(intervalMs);
+    }
+  };
+
   let lastPct = 0;
   for (const pct of positions) {
     const steps = 8;
@@ -39,9 +59,9 @@ const { chromium } = require('playwright');
         const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         window.scrollTo({ top: maxScroll * p / 100, behavior: 'instant' });
       }, intermediatePct);
-      await page.waitForTimeout(150);
+      await page.waitForTimeout(100);
     }
-    await page.waitForTimeout(3000);
+    await holdPosition(pct, 3500);
     await page.screenshot({ path: `${dir}/${prefix}_${pct}.png` });
     lastPct = pct;
   }

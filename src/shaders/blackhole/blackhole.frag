@@ -404,37 +404,33 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
   float accumulatedDisk = 0.0;
   vec3 accumulatedDiskColor = vec3(0.0);
 
+  float dimBell = g2((uScroll - 0.62) * 5.0);
+  float starBoostFactor = 1.0 + smoothstep(0.3, 0.0, uScroll) * 2.0;
+
   for (int i = 0; i < MAX_STEPS; i++) {
     float r = length(pos);
 
     if (r < SCHWARZSCHILD_RADIUS) {
       float proximity = smoothstep(SCHWARZSCHILD_RADIUS, SCHWARZSCHILD_RADIUS * 0.5, r);
-      float shadowBell = g2((uScroll - 0.62) * 5.0);
-      float shadowDarken = 1.0 - shadowBell * 0.5;
-      color = accumulatedDiskColor * (1.0 - proximity * 0.9) * shadowDarken;
-      glow += mix(0.4, 0.15, shadowBell);
+      color = accumulatedDiskColor * (1.0 - proximity * 0.9) * (1.0 - dimBell * 0.5);
+      glow += mix(0.4, 0.15, dimBell);
       return;
     }
 
     if (r > 60.0) {
-      vec3 stars = starfield(normalize(vel));
-      float starBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 2.0;
-      stars *= starBoost;
+      vec3 stars = starfield(normalize(vel)) * starBoostFactor;
       vec3 eRingPrismatic = einsteinRingColor(normalize(vel), ro);
       float eRingIntensity = (eRingPrismatic.r + eRingPrismatic.g + eRingPrismatic.b) / 3.0;
       vec3 eRingTint = mix(vec3(0.9, 0.6, 0.2), vec3(0.5, 0.6, 1.0), eRingIntensity * 2.0);
-      float eDimBell = g2((uScroll - 0.62) * 5.0);
-      float eRingDim = 1.0 - eDimBell * 0.5;
-      stars += eRingTint * eRingPrismatic * 2.2 * eRingDim;
-      float diskAlphaDim = 1.0 - eDimBell * 0.4;
-      color = accumulatedDiskColor * diskAlphaDim + stars * (1.0 - accumulatedDisk);
+      stars += eRingTint * eRingPrismatic * 2.2 * (1.0 - dimBell * 0.5);
+      color = accumulatedDiskColor * (1.0 - dimBell * 0.4) + stars * (1.0 - accumulatedDisk);
       return;
     }
 
-    float photon = photonRing(pos);
-    float pDimBell = g2((uScroll - 0.62) * 5.0);
-    float photonDim = 1.0 - pDimBell * 0.4;
-    glow = min(glow + photon * 0.065 * photonDim, 2.5);
+    if (r < 3.0) {
+      float photon = photonRing(pos);
+      glow = min(glow + photon * 0.065 * (1.0 - dimBell * 0.4), 2.5);
+    }
 
     float currentY = pos.y;
     if (prevY * currentY < 0.0 || abs(currentY) < DISK_HEIGHT) {
@@ -442,6 +438,7 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
       if (disk.a > 0.001) {
         accumulatedDiskColor += disk.rgb * (1.0 - accumulatedDisk);
         accumulatedDisk = min(accumulatedDisk + disk.a * (1.0 - accumulatedDisk), 1.0);
+        if (accumulatedDisk > 0.95) break;
       }
     }
     prevY = currentY;

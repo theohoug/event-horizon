@@ -1,0 +1,16 @@
+{
+  "name": "Event Horizon — An Interactive Journey Into a Black Hole",
+  "short_name": "Event Horizon",
+  "description": "Scroll through 9 chapters of cosmic terror. Experience spaghettification, time dilation, and singularity.",
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -281,7 +281,7 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   float _gamma = 1.0 / sqrt(max(1.0 - beta * beta, 0.001));
   vec3 orbitalDir = normalize(vec3(-sin(angle), 0.0, cos(angle)));
   float cosTheta = dot(orbitalDir, normalize(rd));
-  float D = 1.0 / (_gamma * (1.0 - beta * cosTheta));
+  float D = min(1.0 / (_gamma * max(1.0 - beta * cosTheta, 0.01)), 5.0);
 
   float beaming = D * D * D * D;
   diskColor *= beaming;

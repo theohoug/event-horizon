@@ -2777,6 +2777,6 @@ body::after {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.7rem;
   font-weight: 300;
-  color: rgba(200, 215, 255, 0.35);
+  color: rgba(200, 215, 255, 0.50);
   letter-spacing: 0.2em;
 }

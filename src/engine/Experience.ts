@@ -85,7 +85,11 @@ export class Experience {
       holdStrength: 0,
     };
 
-    this.visitCount = parseInt(localStorage.getItem('eh_visits') || '0', 10);
+    try {
+      this.visitCount = parseInt(localStorage.getItem('eh_visits') || '0', 10);
+    } catch {
+      this.visitCount = 0;
+    }
 
     this.applyTimeOfDay();
     this.init().catch(() => {
@@ -222,9 +226,31 @@ export class Experience {
     this.creditsEl = document.getElementById('credits');
     this.themeColorMeta = document.querySelector('meta[name="theme-color"]');
 
+    this.setupContextLoss();
+
     this.state.isReady = true;
     this.onReady();
     this.animate();
+  }
+
+  private setupContextLoss() {
+    this.addTrackedListener(this.canvas, 'webglcontextlost', ((e: Event) => {
+      e.preventDefault();
+      cancelAnimationFrame(this.rafId);
+      const overlay = document.getElementById('overlay');
+      if (overlay) {
+        const msg = document.createElement('div');
+        msg.id = 'context-lost-msg';
+        msg.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#050505;color:rgba(232,232,255,0.7);font-family:"Space Grotesk",sans-serif;font-size:1rem;letter-spacing:0.1em;text-align:center;padding:2rem;';
+        msg.innerHTML = 'WebGL context lost.<br><span style="font-size:0.7rem;opacity:0.5;margin-top:0.5rem;display:block;">Click anywhere to reload.</span>';
+        msg.addEventListener('click', () => window.location.reload());
+        document.body.appendChild(msg);
+      }
+    }) as EventListener);
+
+    this.addTrackedListener(this.canvas, 'webglcontextrestored', (() => {
+      window.location.reload();
+    }) as EventListener);
   }
 
   private async preload() {
@@ -402,7 +428,7 @@ export class Experience {
 
     if (!intro || !titleContainer || !title) return;
 
-    localStorage.setItem('eh_visits', String(this.visitCount + 1));
+    try { localStorage.setItem('eh_visits', String(this.visitCount + 1)); } catch {}
 
     const isMobileDevice = /Android|iPhone|iPad/i.test(navigator.userAgent);
     const hintEl = document.getElementById('scroll-hint');

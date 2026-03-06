@@ -374,7 +374,7 @@ body::after {
   font-size: clamp(0.7rem, 1.2vw, 0.9rem);
   font-weight: 300;
   letter-spacing: 0.06em;
-  color: rgba(200, 220, 255, 0.50);
+  color: rgba(200, 220, 255, 0.65);
   margin-bottom: 2rem;
   text-transform: none;
   text-shadow: 0 0 30px rgba(200, 220, 255, 0.08);
@@ -414,7 +414,7 @@ body::after {
   font-size: clamp(0.6rem, 1.2vw, 0.9rem);
   font-weight: 100;
   letter-spacing: 0.5em;
-  color: rgba(200, 200, 220, 0.40);
+  color: rgba(200, 200, 220, 0.55);
   text-transform: lowercase;
   font-family: var(--font-serif);
   font-style: italic;
@@ -622,7 +622,7 @@ body::after {
   font-size: 0.55rem;
   font-weight: 300;
   letter-spacing: 0.18em;
-  color: rgba(200, 200, 220, 0.50);
+  color: rgba(200, 200, 220, 0.65);
   text-transform: uppercase;
 }
 
@@ -1106,7 +1106,7 @@ body::after {
   font-weight: 300;
   font-size: 0.65rem;
   letter-spacing: 0.12em;
-  color: rgba(200, 210, 255, 0.45);
+  color: rgba(200, 210, 255, 0.60);
   margin-bottom: 2.5rem;
   overflow: hidden;
   border-right: 1px solid rgba(200, 210, 255, 0.2);
@@ -1166,7 +1166,7 @@ body::after {
   font-size: 0.55rem;
   font-weight: 300;
   letter-spacing: 0.15em;
-  color: rgba(200, 210, 255, 0.45);
+  color: rgba(200, 210, 255, 0.60);
   margin-top: 1.2rem;
 }
 
@@ -1332,14 +1332,14 @@ body::after {
 }
 
 #sound-prompt-no {
-  color: rgba(200, 215, 255, 0.35);
+  color: rgba(200, 215, 255, 0.50);
   font-weight: 300;
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   letter-spacing: 0.15em;
 }
 
 #sound-prompt-no:hover {
-  color: rgba(200, 215, 255, 0.55);
+  color: rgba(200, 215, 255, 0.70);
 }
 
 /* ─── Mute Button ─── */
@@ -1512,7 +1512,7 @@ body::after {
   font-size: 0.65rem;
   font-weight: 300;
   letter-spacing: 0.15em;
-  color: rgba(232, 232, 255, 0.50);
+  color: rgba(232, 232, 255, 0.62);
   text-transform: uppercase;
   margin-bottom: 0.3rem;
   animation: credits-role-pulse 4s ease-in-out infinite;
@@ -1548,7 +1548,7 @@ body::after {
   font-size: 0.6rem;
   font-weight: 300;
   letter-spacing: 0.1em;
-  color: rgba(232, 232, 255, 0.45);
+  color: rgba(232, 232, 255, 0.58);
   margin-top: 3rem;
 }
 
@@ -2298,7 +2298,7 @@ body::after {
   }
 
   .nav-dot::before {
-    inset: -20px;
+    inset: -22px;
   }
 
   .nav-dot.active {
@@ -2689,7 +2689,7 @@ body::after {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.7rem;
   font-weight: 300;
-  color: rgba(200, 215, 255, 0.50);
+  color: rgba(200, 215, 255, 0.65);
   letter-spacing: 0.3em;
   text-transform: uppercase;
   pointer-events: none;

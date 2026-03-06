@@ -51,9 +51,13 @@ export class AudioEngine {
   async init() {
     if (this.ctx) return;
 
-    this.ctx = new AudioContext({ sampleRate: 44100 });
+    try {
+      this.ctx = new AudioContext({ sampleRate: 44100 });
+    } catch {
+      this.ctx = new AudioContext();
+    }
     if (this.ctx.state === 'suspended') {
-      await this.ctx.resume();
+      try { await this.ctx.resume(); } catch {}
     }
 
     this.compressor = this.ctx.createDynamicsCompressor();
@@ -581,6 +585,11 @@ export class AudioEngine {
     this.shepardOscillators.forEach((o) => { try { o.stop(); o.disconnect(); } catch {} });
     this.shepardGains.forEach((g) => { try { g.disconnect(); } catch {} });
     this.frissonOscillators.forEach((o) => { try { o.stop(); o.disconnect(); } catch {} });
+    this.droneOscillators.length = 0;
+    this.droneGains.length = 0;
+    this.shepardOscillators.length = 0;
+    this.shepardGains.length = 0;
+    this.frissonOscillators.length = 0;
     try { this.binauralOscLeft?.stop(); this.binauralOscLeft?.disconnect(); } catch {}
     try { this.binauralOscRight?.stop(); this.binauralOscRight?.disconnect(); } catch {}
     try { this.noiseSource?.stop(); this.noiseSource?.disconnect(); } catch {}

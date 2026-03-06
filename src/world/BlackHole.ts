@@ -75,6 +75,7 @@ export class BlackHole {
 
   destroy() {
     window.removeEventListener('resize', this.resizeHandler);
+    this.mesh.removeFromParent();
     this.mesh.geometry.dispose();
     this.material.dispose();
   }

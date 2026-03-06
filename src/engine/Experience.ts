@@ -614,7 +614,7 @@ export class Experience {
     const progressTicks = progressBar ? Array.from(progressBar.querySelectorAll('.progress-tick')) : [];
 
     this.lenis.on('scroll', (e: { scroll: number; limit: number; velocity: number }) => {
-      this.state.scroll = e.limit > 0 ? e.scroll / e.limit : 0;
+      this.state.scroll = Math.min(1, Math.max(0, e.limit > 0 ? e.scroll / e.limit : 0));
       this.state.scrollVelocity = e.velocity;
       this.lastScrollActivity = performance.now();
       this.idleHintShown = false;

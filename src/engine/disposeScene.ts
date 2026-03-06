@@ -18,8 +18,15 @@ function disposeMaterial(material: THREE.Material) {
     }
   }
 
-  if ('map' in material && (material as THREE.MeshStandardMaterial).map) {
-    (material as THREE.MeshStandardMaterial).map!.dispose();
+  const std = material as THREE.MeshStandardMaterial;
+  const texProps: (keyof THREE.MeshStandardMaterial)[] = [
+    'map', 'normalMap', 'roughnessMap', 'metalnessMap',
+    'aoMap', 'emissiveMap', 'alphaMap', 'envMap', 'lightMap', 'bumpMap',
+    'displacementMap',
+  ];
+  for (const prop of texProps) {
+    const tex = std[prop];
+    if (tex instanceof THREE.Texture) tex.dispose();
   }
 
   material.dispose();

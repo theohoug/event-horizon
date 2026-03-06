@@ -107,10 +107,14 @@
 
   /* ─── Font-size extensions ─── */
   --text-4xs: 0.38rem;  /* 6px — mobile micro */
+  --text-5xs: 0.42rem;  /* 6.7px — HUD micro */
   --text-3xs: 0.45rem;  /* 7.2px — mobile mini */
   --text-micro: 0.48rem; /* 7.7px — mobile small */
+  --text-half: 0.5rem;  /* 8px — mobile nav */
+  --text-nano: 0.52rem; /* 8.3px — HUD compact */
   --text-tiny: 0.6rem;  /* 9.6px — between xs and sm */
   --text-caption: 0.7rem;  /* 11.2px — between xs and sm */
+  --text-body: 1.1rem;     /* 17.6px — slightly above base */
 
   /* ─── Border Radius ─── */
   --radius-xs: 1px;
@@ -170,6 +174,9 @@
   --duration-cycle: 5s;
   --duration-ambient: 6s;
   --duration-orbit: 8s;
+  --duration-cosmic: 14s;
+  --duration-stellar: 20s;
+  --duration-rotate: 2.4s;
 }
 
 html {
@@ -582,7 +589,7 @@ body::after {
 }
 
 #chapter-text .line.chapter-final-sub {
-  font-size: clamp(var(--text-caption), 1.3vw, 1rem);
+  font-size: clamp(var(--text-caption), 1.3vw, var(--text-base));
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 300;
@@ -758,7 +765,7 @@ body::after {
 }
 
 .hud-distance .hud-value {
-  font-size: 1.1rem;
+  font-size: var(--text-body);
   font-weight: 400;
   letter-spacing: var(--ls-micro);
 }
@@ -983,7 +990,7 @@ body::after {
   width: 20px;
   height: 32px;
   border: 1.5px solid rgba(0, 232, 200, 0.4);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   position: relative;
   opacity: 0.7;
 }
@@ -1131,7 +1138,7 @@ body::after {
     radial-gradient(1px 1px at 48% 48%, rgba(232, 232, 255, 0.08) 0%, transparent 100%),
     radial-gradient(1px 1px at 22% 38%, rgba(0, 232, 200, 0.09) 0%, transparent 100%),
     radial-gradient(1px 1px at 67% 72%, rgba(232, 232, 255, 0.11) 0%, transparent 100%);
-  animation: loader-stars-drift 20s linear infinite;
+  animation: loader-stars-drift var(--duration-stellar) linear infinite;
   opacity: 0.6;
 }
 
@@ -1188,7 +1195,7 @@ body::after {
   transform: translate(-50%, -50%);
   border-radius: 50%;
   border: 1px solid rgba(200, 210, 255, 0.03);
-  animation: loader-orbit 14s linear infinite reverse;
+  animation: loader-orbit var(--duration-cosmic) linear infinite reverse;
 }
 
 @keyframes singularity-breathe {
@@ -2126,7 +2133,7 @@ body::after {
 #intro-subtitle {
   font-family: var(--font-mono);
   font-weight: 300;
-  font-size: clamp(0.55rem, 1.2vw, 0.85rem);
+  font-size: clamp(var(--text-xs), 1.2vw, 0.85rem);
   letter-spacing: var(--ls-expanded);
   color: var(--cyan);
   opacity: 0;
@@ -2326,7 +2333,7 @@ body::after {
   }
 
   #chapter-text .line.data {
-    font-size: clamp(0.55rem, 2.5vw, var(--text-sm));
+    font-size: clamp(var(--text-xs), 2.5vw, 0.8rem);
     letter-spacing: var(--ls-normal);
     line-height: var(--lh-relaxed);
   }
@@ -2338,12 +2345,12 @@ body::after {
   }
 
   .hud-label {
-    font-size: 0.42rem;
+    font-size: var(--text-5xs);
     letter-spacing: var(--ls-moderate);
   }
 
   .hud-value {
-    font-size: 0.52rem;
+    font-size: var(--text-nano);
   }
 
   .hud-tidal {
@@ -2386,7 +2393,7 @@ body::after {
   }
 
   #chapter-text .line.chapter-void {
-    font-size: clamp(0.5rem, 2vw, var(--text-caption));
+    font-size: clamp(var(--text-half), 2vw, var(--text-caption));
     letter-spacing: var(--ls-ultra);
   }
 
@@ -2457,7 +2464,7 @@ body::after {
   }
 
   #chapter-indicator-title {
-    font-size: 0.5rem;
+    font-size: var(--text-half);
     letter-spacing: var(--ls-spaced);
   }
 
@@ -2476,7 +2483,7 @@ body::after {
   }
 
   #chapter-text .line.data {
-    font-size: clamp(0.5rem, 2vw, var(--text-2xs));
+    font-size: clamp(var(--text-half), 2vw, var(--text-2xs));
   }
 
   #loader-text {
@@ -2626,7 +2633,7 @@ body::after {
   }
 
   #chapter-text .line.data {
-    font-size: clamp(0.5rem, 1.5vh, var(--text-caption));
+    font-size: clamp(var(--text-half), 1.5vh, var(--text-caption));
   }
 }
 
@@ -2851,7 +2858,7 @@ body::after {
   position: relative;
   width: 50px;
   height: 80px;
-  animation: rotatePhone 2.4s ease-in-out infinite;
+  animation: rotatePhone var(--duration-rotate) ease-in-out infinite;
 }
 
 .rotate-phone-body {
@@ -2870,7 +2877,7 @@ body::after {
   height: 22px;
   color: rgba(0, 232, 200, 0.5);
   opacity: 0;
-  animation: rotateArrowFade 2.4s ease-in-out infinite;
+  animation: rotateArrowFade var(--duration-rotate) ease-in-out infinite;
 }
 
 @keyframes rotatePhone {

@@ -462,7 +462,7 @@ export class Experience {
     const titleText = 'EVENT HORIZON';
     title.innerHTML = '';
     title.style.opacity = '1';
-    title.style.letterSpacing = '0.35em';
+    title.style.letterSpacing = 'var(--ls-cinematic)';
     title.style.filter = 'none';
     const letterSpans: HTMLElement[] = [];
     titleText.split('').forEach((ch) => {
@@ -861,7 +861,7 @@ export class Experience {
             p.style.boxShadow = `0 0 6px rgba(${tR}, ${tG}, ${tB}, 0.3), 0 0 14px rgba(${tR}, ${tG}, ${tB}, 0.1)`;
             p.style.opacity = `${Math.min(0.7, speed * 0.03)}`;
             p.style.transform = `translate(-50%, -50%) scale(${1 + s * 0.5})`;
-            p.style.transition = 'opacity 0.8s ease, transform 0.8s ease, width 0.8s ease, height 0.8s ease';
+            p.style.transition = 'opacity var(--duration-slow) ease, transform var(--duration-slow) ease, width var(--duration-slow) ease, height var(--duration-slow) ease';
             setTimeout(() => { p.style.opacity = '0'; p.style.transform = 'translate(-50%, -50%) scale(0)'; p.style.width = '1px'; p.style.height = '1px'; }, 80);
             this.trailIndex++;
           }

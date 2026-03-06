@@ -156,6 +156,10 @@
   /* ─── Transitions ─── */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0, 1);
+  --ease-fade: cubic-bezier(0.4, 0, 0.2, 1);        /* Material-style decelerate — opacity, fades */
+  --ease-out-soft: cubic-bezier(0.25, 0.8, 0.25, 1); /* gentle decelerate — color, text-shadow */
+  --ease-breathe: cubic-bezier(0.45, 0.05, 0.55, 0.95); /* organic sine — breathing loops */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);  /* overshoot — transform, scale pop */
   --duration-micro: 0.1s;
   --duration-fast: 0.25s;
   --duration-short: 0.3s;
@@ -232,7 +236,7 @@ body::after {
   z-index: var(--z-overlay-bg);
   filter: hue-rotate(calc(var(--tod-hue) * 1deg));
   opacity: var(--overlay-opacity, 1);
-  transition: opacity var(--duration-glacial) ease;
+  transition: opacity var(--duration-glacial) var(--ease-fade);
 }
 
 #app {
@@ -357,7 +361,7 @@ body::after {
     radial-gradient(ellipse 100% 70% at 50% 95%, rgba(40, 20, 60, 0.10) 0%, transparent 50%);
   pointer-events: none;
   opacity: var(--depth-glow-opacity, 1);
-  transition: opacity var(--duration-glacial) ease;
+  transition: opacity var(--duration-glacial) var(--ease-fade);
   transform: translate(var(--mouse-x, 0%), var(--mouse-y, 0%));
   will-change: transform;
 }
@@ -398,7 +402,7 @@ body::after {
   );
   pointer-events: none;
   z-index: -1;
-  animation: text-aura-pulse var(--duration-ambient) ease-in-out infinite;
+  animation: text-aura-pulse var(--duration-ambient) var(--ease-breathe) infinite;
 }
 
 @keyframes text-aura-pulse {
@@ -462,7 +466,7 @@ body::after {
     0 0 30px rgba(0, 0, 0, 1),
     0 0 60px rgba(0, 0, 0, 1),
     0 0 120px rgba(0, 0, 0, 0.8);
-  animation: opening-breathe var(--duration-cycle) ease-in-out infinite;
+  animation: opening-breathe var(--duration-cycle) var(--ease-breathe) infinite;
 }
 
 @keyframes opening-breathe {
@@ -483,7 +487,7 @@ body::after {
   pointer-events: none;
   z-index: -1;
   line-height: var(--lh-solid);
-  animation: filigrane-pulse var(--duration-orbit) ease-in-out infinite;
+  animation: filigrane-pulse var(--duration-orbit) var(--ease-breathe) infinite;
 }
 
 @keyframes filigrane-pulse {
@@ -560,7 +564,7 @@ body::after {
   text-shadow:
     0 0 40px rgba(255, 255, 255, 0.25),
     0 0 80px rgba(255, 255, 255, 0.1);
-  animation: final-pulse var(--duration-breath) ease-in-out infinite;
+  animation: final-pulse var(--duration-breath) var(--ease-breathe) infinite;
 }
 
 @keyframes final-pulse {
@@ -578,7 +582,7 @@ body::after {
     0 0 60px rgba(200, 180, 255, 0.05),
     0 0 20px rgba(0, 0, 0, 1),
     0 0 50px rgba(0, 0, 0, 1);
-  animation: time-stretch var(--duration-drift) ease-in-out infinite;
+  animation: time-stretch var(--duration-drift) var(--ease-breathe) infinite;
 }
 
 @keyframes time-stretch {
@@ -596,7 +600,7 @@ body::after {
   letter-spacing: var(--ls-subtle);
   color: rgba(255, 255, 255, 0.6);
   margin-top: var(--space-5);
-  animation: final-sub-breathe var(--duration-drift) ease-in-out infinite;
+  animation: final-sub-breathe var(--duration-drift) var(--ease-breathe) infinite;
 }
 
 @keyframes final-sub-breathe {
@@ -613,13 +617,13 @@ body::after {
   display: inline-block;
   opacity: 0;
   will-change: transform, opacity, filter;
-  animation: char-breathe var(--duration-drift) ease-in-out infinite;
+  animation: char-breathe var(--duration-drift) var(--ease-breathe) infinite;
   animation-delay: calc(var(--char-index, 0) * 0.08s);
   animation-play-state: paused;
 }
 
 #chapter-text .line.data .char.revealed {
-  animation: char-micro-drift var(--duration-ambient) ease-in-out infinite;
+  animation: char-micro-drift var(--duration-ambient) var(--ease-breathe) infinite;
   animation-delay: calc(var(--char-index, 0) * 0.15s);
   animation-play-state: running;
 }
@@ -640,7 +644,7 @@ body::after {
 }
 
 .chapter[data-chapter="4"] #chapter-text .line .char.revealed {
-  animation: char-spaghetti var(--duration-breath) ease-in-out infinite;
+  animation: char-spaghetti var(--duration-breath) var(--ease-breathe) infinite;
   animation-delay: calc(var(--char-index, 0) * 0.12s);
 }
 
@@ -652,7 +656,7 @@ body::after {
 }
 
 .chapter[data-chapter="5"] #chapter-text .line .char.revealed {
-  animation: char-dilate var(--duration-cycle) ease-in-out infinite;
+  animation: char-dilate var(--duration-cycle) var(--ease-breathe) infinite;
   animation-delay: calc(var(--char-index, 0) * 0.2s);
 }
 
@@ -662,7 +666,7 @@ body::after {
 }
 
 .chapter[data-chapter="6"] #chapter-text .line .char.revealed {
-  animation: char-singularity var(--duration-epic) ease-in-out infinite;
+  animation: char-singularity var(--duration-epic) var(--ease-breathe) infinite;
   animation-delay: calc(var(--char-index, 0) * 0.06s);
 }
 
@@ -674,7 +678,7 @@ body::after {
 }
 
 .chapter[data-chapter="7"] #chapter-text .line .char.revealed {
-  animation: char-void var(--duration-ambient) ease-in-out infinite;
+  animation: char-void var(--duration-ambient) var(--ease-breathe) infinite;
   animation-delay: calc(var(--char-index, 0) * 0.3s);
 }
 
@@ -696,7 +700,7 @@ body::after {
   animation: cursor-blink var(--duration-slow) step-end infinite;
   box-shadow: 0 0 4px rgba(0, 232, 200, 0.4);
   opacity: 0.8;
-  transition: opacity var(--duration-slow) ease;
+  transition: opacity var(--duration-slow) var(--ease-fade);
 }
 
 .typewriter-cursor.fade {
@@ -721,7 +725,7 @@ body::after {
   padding: 0 2.5rem;
   z-index: var(--z-hud);
   opacity: 0;
-  transition: opacity var(--duration-long) ease;
+  transition: opacity var(--duration-long) var(--ease-fade);
   pointer-events: none;
 }
 
@@ -759,7 +763,7 @@ body::after {
   font-weight: 400;
   letter-spacing: var(--ls-normal);
   color: rgba(180, 220, 255, 0.9);
-  transition: color var(--duration-medium) ease, text-shadow var(--duration-normal) ease;
+  transition: color var(--duration-medium) var(--ease-out-soft), text-shadow var(--duration-normal) var(--ease-out-soft);
   text-shadow: 0 0 10px rgba(180, 220, 255, 0.2);
   font-variant-numeric: tabular-nums;
 }
@@ -789,7 +793,7 @@ body::after {
   z-index: var(--z-progress);
   overflow: visible;
   opacity: 0.3;
-  transition: opacity var(--duration-slow) ease;
+  transition: opacity var(--duration-slow) var(--ease-fade);
 }
 
 #progress-bar.show {
@@ -822,7 +826,7 @@ body::after {
     0 0 6px var(--cyan),
     0 0 14px rgba(0, 232, 200, 0.5),
     0 0 28px rgba(0, 232, 200, 0.2);
-  animation: progress-cap-pulse var(--duration-glacial) ease-in-out infinite;
+  animation: progress-cap-pulse var(--duration-glacial) var(--ease-breathe) infinite;
 }
 
 #progress-fill::before {
@@ -860,7 +864,7 @@ body::after {
   width: 1px;
   height: 8px;
   background: rgba(232, 232, 255, 0.12);
-  transition: background var(--duration-medium) ease, box-shadow var(--duration-medium) ease;
+  transition: background var(--duration-medium) var(--ease-fade), box-shadow var(--duration-medium) var(--ease-fade);
   pointer-events: none;
 }
 
@@ -957,7 +961,7 @@ body::after {
 
 #interstitial.visible {
   opacity: 1;
-  animation: interstitial-breathe var(--duration-drift) ease-in-out infinite;
+  animation: interstitial-breathe var(--duration-drift) var(--ease-breathe) infinite;
 }
 
 @keyframes interstitial-breathe {
@@ -975,7 +979,7 @@ body::after {
   z-index: var(--z-nav-indicator);
   pointer-events: none;
   opacity: 0;
-  transition: opacity var(--duration-long) ease;
+  transition: opacity var(--duration-long) var(--ease-fade);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1005,7 +1009,7 @@ body::after {
   height: 6px;
   border-radius: var(--radius-xs);
   background: var(--cyan);
-  animation: scroll-wheel var(--duration-glacial) ease-in-out infinite;
+  animation: scroll-wheel var(--duration-glacial) var(--ease-breathe) infinite;
 }
 
 @keyframes scroll-wheel {
@@ -1020,7 +1024,7 @@ body::after {
   letter-spacing: var(--ls-ultra);
   color: rgba(0, 232, 200, 0.5);
   text-transform: uppercase;
-  animation: scroll-text-breathe var(--duration-breath) ease-in-out infinite;
+  animation: scroll-text-breathe var(--duration-breath) var(--ease-breathe) infinite;
 }
 
 @keyframes scroll-text-breathe {
@@ -1047,7 +1051,7 @@ body::after {
   height: 16px;
   border-radius: 50%;
   border: 1px solid rgba(0, 232, 200, 0.2);
-  animation: scroll-ring-pulse var(--duration-breath) ease-in-out infinite;
+  animation: scroll-ring-pulse var(--duration-breath) var(--ease-breathe) infinite;
 }
 
 #scroll-hint .arrow::after {
@@ -1169,7 +1173,7 @@ body::after {
     0 0 8px rgba(255, 255, 255, 0.6),
     0 0 25px rgba(200, 210, 255, 0.3),
     0 0 60px rgba(200, 210, 255, 0.1);
-  animation: singularity-breathe var(--duration-cycle) ease-in-out infinite;
+  animation: singularity-breathe var(--duration-cycle) var(--ease-breathe) infinite;
 }
 
 #loader-star::before {
@@ -1221,7 +1225,7 @@ body::after {
   letter-spacing: var(--ls-cinematic);
   color: var(--starlight);
   margin-bottom: 0.6rem;
-  animation: loader-text-breathe var(--duration-cycle) ease-in-out infinite;
+  animation: loader-text-breathe var(--duration-cycle) var(--ease-breathe) infinite;
 }
 
 @keyframes loader-text-breathe {
@@ -1281,7 +1285,7 @@ body::after {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 0 4px rgba(200, 210, 255, 0.4), 0 0 10px rgba(200, 210, 255, 0.15);
-  animation: fill-head-pulse var(--duration-glacial) ease-in-out infinite;
+  animation: fill-head-pulse var(--duration-glacial) var(--ease-breathe) infinite;
 }
 
 @keyframes fill-head-pulse {
@@ -1362,27 +1366,27 @@ body::after {
 
 .wave-bar:nth-child(1) {
   height: 12px;
-  animation: wave-pulse var(--duration-crawl) ease-in-out 0s infinite;
+  animation: wave-pulse var(--duration-crawl) var(--ease-breathe) 0s infinite;
 }
 
 .wave-bar:nth-child(2) {
   height: 24px;
-  animation: wave-pulse var(--duration-crawl) ease-in-out 0.15s infinite;
+  animation: wave-pulse var(--duration-crawl) var(--ease-breathe) 0.15s infinite;
 }
 
 .wave-bar:nth-child(3) {
   height: 36px;
-  animation: wave-pulse var(--duration-crawl) ease-in-out 0.3s infinite;
+  animation: wave-pulse var(--duration-crawl) var(--ease-breathe) 0.3s infinite;
 }
 
 .wave-bar:nth-child(4) {
   height: 24px;
-  animation: wave-pulse var(--duration-crawl) ease-in-out 0.45s infinite;
+  animation: wave-pulse var(--duration-crawl) var(--ease-breathe) 0.45s infinite;
 }
 
 .wave-bar:nth-child(5) {
   height: 12px;
-  animation: wave-pulse var(--duration-crawl) ease-in-out 0.6s infinite;
+  animation: wave-pulse var(--duration-crawl) var(--ease-breathe) 0.6s infinite;
 }
 
 @keyframes wave-pulse {
@@ -1485,7 +1489,7 @@ body::after {
   cursor: pointer;
   z-index: var(--z-mute);
   padding: 7px;
-  transition: border-color var(--duration-short) ease, color var(--duration-short) ease, transform var(--duration-short) ease, box-shadow var(--duration-short) ease;
+  transition: border-color var(--duration-short) var(--ease-fade), color var(--duration-short) var(--ease-out-soft), transform var(--duration-short) var(--ease-smooth), box-shadow var(--duration-short) var(--ease-fade);
   display: none;
 }
 
@@ -1521,7 +1525,7 @@ body::after {
 #mute-btn.sound-on {
   border-color: rgba(0, 232, 200, 0.25);
   box-shadow: 0 0 0 0 rgba(0, 232, 200, 0);
-  animation: mute-pulse var(--duration-breath) ease-in-out infinite;
+  animation: mute-pulse var(--duration-breath) var(--ease-breathe) infinite;
 }
 
 @keyframes mute-pulse {
@@ -1562,7 +1566,7 @@ body::after {
     transparent 65%
   );
   border-radius: 50%;
-  animation: credits-aura var(--duration-ambient) ease-in-out infinite;
+  animation: credits-aura var(--duration-ambient) var(--ease-breathe) infinite;
   pointer-events: none;
 }
 
@@ -1594,7 +1598,7 @@ body::after {
   color: var(--starlight);
   margin-bottom: 0.6rem;
   text-shadow: 0 0 30px rgba(200, 210, 255, 0.15), 0 0 60px rgba(200, 210, 255, 0.06);
-  animation: credits-title-glow var(--duration-ambient) ease-in-out infinite;
+  animation: credits-title-glow var(--duration-ambient) var(--ease-breathe) infinite;
 }
 
 @keyframes credits-title-glow {
@@ -1643,7 +1647,7 @@ body::after {
   color: rgba(232, 232, 255, 0.62);
   text-transform: uppercase;
   margin-bottom: 0.3rem;
-  animation: credits-role-pulse var(--duration-drift) ease-in-out infinite;
+  animation: credits-role-pulse var(--duration-drift) var(--ease-breathe) infinite;
 }
 
 @keyframes credits-role-pulse {
@@ -1658,7 +1662,7 @@ body::after {
   letter-spacing: var(--ls-subtle);
   color: var(--starlight);
   text-shadow: 0 0 10px rgba(232, 232, 255, 0.15);
-  animation: credits-shimmer var(--duration-breath) ease-in-out infinite;
+  animation: credits-shimmer var(--duration-breath) var(--ease-breathe) infinite;
   background: linear-gradient(90deg, var(--starlight) 0%, rgba(0, 232, 200, 0.7) 50%, var(--starlight) 100%);
   background-size: 200% 100%;
   -webkit-background-clip: text;
@@ -1683,7 +1687,7 @@ body::after {
 .credits-footer a {
   color: var(--cyan);
   text-decoration: none;
-  transition: color var(--duration-normal) ease, text-shadow var(--duration-normal) ease, letter-spacing var(--duration-normal) ease;
+  transition: color var(--duration-normal) var(--ease-out-soft), text-shadow var(--duration-normal) var(--ease-out-soft), letter-spacing var(--duration-normal) var(--ease-out-soft);
   position: relative;
 }
 
@@ -1711,7 +1715,7 @@ body::after {
 
 #credits.white-mode {
   background: rgba(245, 243, 238, 0.95);
-  transition: background var(--duration-glacial) ease;
+  transition: background var(--duration-glacial) var(--ease-fade);
 }
 
 #credits.white-mode .credits-title,
@@ -1720,7 +1724,7 @@ body::after {
 #credits.white-mode .credits-name,
 #credits.white-mode .credits-footer,
 #credits.white-mode .credits-footer a {
-  transition: color var(--duration-epic) ease, text-shadow var(--duration-epic) ease;
+  transition: color var(--duration-epic) var(--ease-out-soft), text-shadow var(--duration-epic) var(--ease-out-soft);
 }
 
 #credits.white-mode::after {
@@ -1774,7 +1778,7 @@ body::after {
   margin-top: var(--space-7);
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity var(--duration-long) ease 1s, transform var(--duration-long) ease 1s;
+  transition: opacity var(--duration-long) var(--ease-fade) 1s, transform var(--duration-long) var(--ease-smooth) 1s;
 }
 
 #credits.visible #share-section {
@@ -1806,7 +1810,7 @@ body::after {
   inset: 0;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
   transform: translateX(-100%);
-  transition: transform var(--duration-half) ease;
+  transition: transform var(--duration-half) var(--ease-smooth);
 }
 
 #share-btn:hover {
@@ -1892,7 +1896,7 @@ body::after {
   flex-direction: column;
   gap: var(--space-1);
   opacity: 0;
-  transition: opacity var(--duration-long) ease;
+  transition: opacity var(--duration-long) var(--ease-fade);
   pointer-events: auto;
 }
 
@@ -1944,7 +1948,7 @@ body::after {
   inset: -8px;
   border-radius: 50%;
   border: 1px solid transparent;
-  transition: border-color var(--duration-normal) ease, box-shadow var(--duration-normal) ease;
+  transition: border-color var(--duration-normal) var(--ease-fade), box-shadow var(--duration-normal) var(--ease-fade);
 }
 
 .nav-dot:hover::before {
@@ -1955,7 +1959,7 @@ body::after {
 .nav-dot.active::before {
   inset: -6px;
   border-color: rgba(0, 232, 200, 0.15);
-  animation: nav-ring-breathe var(--duration-breath) ease-in-out infinite;
+  animation: nav-ring-breathe var(--duration-breath) var(--ease-breathe) infinite;
 }
 
 @keyframes nav-ring-breathe {
@@ -1977,7 +1981,7 @@ body::after {
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--duration-short) ease, transform var(--duration-short) var(--ease-smooth);
+  transition: opacity var(--duration-short) var(--ease-fade), transform var(--duration-short) var(--ease-smooth);
   text-shadow: 0 0 10px rgba(0, 232, 200, 0.3);
 }
 
@@ -1998,7 +2002,7 @@ body::after {
   height: 14px;
   border-radius: 2.5px;
   box-shadow: 0 0 8px rgba(0, 232, 200, 0.4), 0 0 16px rgba(0, 232, 200, 0.15);
-  animation: nav-pulse var(--duration-epic) ease-in-out infinite;
+  animation: nav-pulse var(--duration-epic) var(--ease-breathe) infinite;
 }
 
 .nav-dot.active::after {
@@ -2034,7 +2038,7 @@ body::after {
   z-index: var(--z-cursor);
   transform: translate(-50%, -50%);
   mix-blend-mode: screen;
-  transition: width var(--duration-fast) var(--ease-smooth), height var(--duration-fast) var(--ease-smooth), opacity var(--duration-short) ease, background var(--duration-fast) ease;
+  transition: width var(--duration-fast) var(--ease-smooth), height var(--duration-fast) var(--ease-smooth), opacity var(--duration-short) var(--ease-fade), background var(--duration-fast) var(--ease-fade);
   opacity: 0;
   will-change: transform;
   box-shadow: 0 0 6px var(--cyan), 0 0 14px rgba(0, 232, 200, 0.3);
@@ -2059,7 +2063,7 @@ body::after {
   pointer-events: none;
   z-index: var(--z-cursor-ring);
   transform: translate(-50%, -50%);
-  transition: width var(--duration-short) var(--ease-smooth), height var(--duration-short) var(--ease-smooth), border-color var(--duration-short) ease, opacity var(--duration-short) ease;
+  transition: width var(--duration-short) var(--ease-smooth), height var(--duration-short) var(--ease-smooth), border-color var(--duration-short) var(--ease-fade), opacity var(--duration-short) var(--ease-fade);
   opacity: 0;
   will-change: transform;
   box-shadow: 0 0 8px rgba(0, 232, 200, 0.06);
@@ -2202,7 +2206,7 @@ body::after {
   font-size: var(--text-caption);
   letter-spacing: var(--ls-tracking);
   text-decoration: none;
-  transition: top var(--duration-short) ease;
+  transition: top var(--duration-short) var(--ease-smooth);
 }
 
 .skip-link:focus {
@@ -2538,7 +2542,7 @@ body::after {
   align-items: center;
   gap: 1.2rem;
   opacity: 0;
-  transition: opacity var(--duration-slow) ease;
+  transition: opacity var(--duration-slow) var(--ease-fade);
   pointer-events: none;
 }
 
@@ -2566,7 +2570,7 @@ body::after {
   box-shadow:
     0 0 15px rgba(var(--nc), 0.06),
     inset 0 0 8px rgba(var(--nc), 0.03);
-  animation: mobile-nav-breathe var(--duration-drift) ease-in-out infinite;
+  animation: mobile-nav-breathe var(--duration-drift) var(--ease-breathe) infinite;
 }
 
 #mobile-nav-up:active,
@@ -2601,7 +2605,7 @@ body::after {
   white-space: nowrap;
   min-width: 2rem;
   text-align: center;
-  transition: color var(--duration-half) ease;
+  transition: color var(--duration-half) var(--ease-out-soft);
 }
 
 @keyframes mobile-nav-breathe {
@@ -2803,11 +2807,11 @@ body::after {
   z-index: var(--z-skip);
   text-align: center;
   text-shadow: 0 0 20px rgba(255, 40, 20, 0.4);
-  transition: opacity var(--duration-medium) ease;
+  transition: opacity var(--duration-medium) var(--ease-fade);
   white-space: nowrap;
 }
 #escape-msg.visible { opacity: 1; }
-#escape-msg.fade-out { opacity: 0; transition: opacity var(--duration-crawl) ease; }
+#escape-msg.fade-out { opacity: 0; transition: opacity var(--duration-crawl) var(--ease-fade); }
 
 #idle-hint {
   position: fixed;
@@ -2823,10 +2827,10 @@ body::after {
   pointer-events: none;
   opacity: 0;
   z-index: var(--z-hint);
-  transition: opacity var(--duration-steady) ease;
+  transition: opacity var(--duration-steady) var(--ease-fade);
 }
 #idle-hint.visible { opacity: 1; }
-#idle-hint.fade-out { opacity: 0; transition: opacity var(--duration-glacial) ease; }
+#idle-hint.fade-out { opacity: 0; transition: opacity var(--duration-glacial) var(--ease-fade); }
 
 /* ─── Portrait Rotate Prompt ─── */
 
@@ -2858,7 +2862,7 @@ body::after {
   position: relative;
   width: 50px;
   height: 80px;
-  animation: rotatePhone var(--duration-rotate) ease-in-out infinite;
+  animation: rotatePhone var(--duration-rotate) var(--ease-breathe) infinite;
 }
 
 .rotate-phone-body {
@@ -2877,7 +2881,7 @@ body::after {
   height: 22px;
   color: rgba(0, 232, 200, 0.5);
   opacity: 0;
-  animation: rotateArrowFade var(--duration-rotate) ease-in-out infinite;
+  animation: rotateArrowFade var(--duration-rotate) var(--ease-breathe) infinite;
 }
 
 @keyframes rotatePhone {

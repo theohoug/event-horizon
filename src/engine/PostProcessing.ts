@@ -203,7 +203,7 @@ export class PostProcessing {
 
   render() {
     this.renderer.setRenderTarget(this.sceneTarget);
-    this.renderer.setClearColor(0x050505, 1);
+    this.renderer.setClearColor(0x050508, 1);
     this.renderer.clear();
 
     this.renderer.render(this.bgScene, this.bgCamera);

@@ -72,17 +72,27 @@
 
   /* Letter-spacing tokens */
   --ls-tight: 0.02em;
+  --ls-micro: 0.04em;
+  --ls-subtle: 0.06em;
   --ls-normal: 0.08em;
+  --ls-tracking: 0.1em;
   --ls-moderate: 0.12em;
+  --ls-spaced: 0.15em;
   --ls-wide: 0.18em;
   --ls-expanded: 0.2em;
+  --ls-headline: 0.25em;
   --ls-ultra: 0.3em;
+  --ls-cinematic: 0.35em;
   --ls-display: 0.4em;
+  --ls-extreme: 0.5em;
+  --ls-vertical: 0.6em;
 
   /* Line-height */
+  --lh-solid: 1;
   --lh-tight: 1.2;
   --lh-normal: 1.5;
   --lh-relaxed: 1.8;
+  --lh-double: 2;
 
   /* ─── Spacing Scale (4px base) ─── */
   --space-1: 0.25rem;   /* 4px */
@@ -95,8 +105,13 @@
   --space-8: 4rem;      /* 64px */
   --space-9: 6rem;      /* 96px */
 
+  /* ─── Font-size extensions ─── */
+  --text-caption: 0.7rem;  /* 11.2px — between xs and sm */
+
   /* ─── Border Radius ─── */
+  --radius-xs: 1px;
   --radius-sm: 2px;
+  --radius-pill: 4px;
   --radius-md: 8px;
   --radius-lg: 20px;
   --radius-full: 9999px;
@@ -131,11 +146,15 @@
   --z-rotate: 99999;
 
   /* ─── Transitions ─── */
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-expo: var(--ease-out-expo);
   --ease-smooth: cubic-bezier(0.4, 0, 0, 1);
+  --duration-micro: 0.1s;
   --duration-fast: 0.25s;
+  --duration-short: 0.3s;
   --duration-normal: 0.4s;
+  --duration-medium: 0.6s;
   --duration-slow: 0.8s;
+  --duration-long: 1.5s;
   --duration-glacial: 2s;
 }
 
@@ -192,7 +211,7 @@ body::after {
   z-index: var(--z-overlay-bg);
   filter: hue-rotate(calc(var(--tod-hue) * 1deg));
   opacity: var(--overlay-opacity, 1);
-  transition: opacity 2s ease;
+  transition: opacity var(--duration-glacial) ease;
 }
 
 #app {
@@ -317,7 +336,7 @@ body::after {
     radial-gradient(ellipse 100% 70% at 50% 95%, rgba(40, 20, 60, 0.10) 0%, transparent 50%);
   pointer-events: none;
   opacity: var(--depth-glow-opacity, 1);
-  transition: opacity 2s ease;
+  transition: opacity var(--duration-glacial) ease;
   transform: translate(var(--mouse-x, 0%), var(--mouse-y, 0%));
   will-change: transform;
 }
@@ -407,7 +426,7 @@ body::after {
     0 0 50px rgba(0, 0, 0, 1),
     0 0 80px rgba(0, 0, 0, 0.8);
   overflow-wrap: break-word;
-  line-height: 2;
+  line-height: var(--lh-double);
 }
 
 
@@ -427,7 +446,7 @@ body::after {
 
 @keyframes opening-breathe {
   0%, 100% { text-shadow: 0 0 60px rgba(200, 220, 255, 0.18), 0 0 120px rgba(200, 220, 255, 0.08), 0 0 30px rgba(0, 0, 0, 1), 0 0 60px rgba(0, 0, 0, 1); letter-spacing: 0.38em; }
-  50% { text-shadow: 0 0 90px rgba(200, 220, 255, 0.32), 0 0 180px rgba(200, 220, 255, 0.18), 0 0 30px rgba(0, 0, 0, 1), 0 0 60px rgba(0, 0, 0, 1); letter-spacing: 0.5em; }
+  50% { text-shadow: 0 0 90px rgba(200, 220, 255, 0.32), 0 0 180px rgba(200, 220, 255, 0.18), 0 0 30px rgba(0, 0, 0, 1), 0 0 60px rgba(0, 0, 0, 1); letter-spacing: var(--ls-extreme); }
 }
 
 .chapter-num-filigrane {
@@ -439,10 +458,10 @@ body::after {
   font-weight: 100;
   font-size: clamp(8rem, 20vw, 18rem);
   color: rgba(232, 232, 255, 0.06);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--ls-tracking);
   pointer-events: none;
   z-index: -1;
-  line-height: 1;
+  line-height: var(--lh-solid);
   animation: filigrane-pulse 8s ease-in-out infinite;
 }
 
@@ -460,9 +479,9 @@ body::after {
   font-style: italic;
   font-size: clamp(0.7rem, 1.2vw, 0.9rem);
   font-weight: 300;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ls-subtle);
   color: rgba(200, 220, 255, 0.65);
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-6);
   text-transform: none;
   text-shadow: 0 0 30px rgba(200, 220, 255, 0.08);
 }
@@ -470,7 +489,7 @@ body::after {
 #chapter-text .line.chapter-opening-sub {
   font-size: clamp(0.6rem, 1.1vw, 0.85rem);
   margin-top: 1.8rem;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--ls-moderate);
   color: rgba(200, 220, 255, 0.65);
   font-weight: 300;
   text-shadow:
@@ -482,13 +501,13 @@ body::after {
 #chapter-text .line.chapter-wide {
   font-size: clamp(1.2rem, 2.8vw, 2.4rem);
   font-weight: 200;
-  letter-spacing: 0.25em;
+  letter-spacing: var(--ls-headline);
 }
 
 #chapter-text .line.chapter-impact {
   font-size: clamp(2.2rem, 6vw, 5.5rem);
   font-weight: 100;
-  letter-spacing: 0.35em;
+  letter-spacing: var(--ls-cinematic);
   text-shadow:
     0 0 40px rgba(200, 180, 255, 0.15),
     0 0 80px rgba(200, 180, 255, 0.06),
@@ -500,7 +519,7 @@ body::after {
 #chapter-text .line.chapter-void {
   font-size: clamp(0.6rem, 1.2vw, 0.9rem);
   font-weight: 100;
-  letter-spacing: 0.5em;
+  letter-spacing: var(--ls-extreme);
   color: rgba(200, 200, 220, 0.55);
   text-transform: lowercase;
   font-family: var(--font-serif);
@@ -513,7 +532,7 @@ body::after {
 #chapter-text .line.chapter-final {
   font-size: clamp(2rem, 8vw, 5rem);
   font-weight: 200;
-  letter-spacing: 0.3em;
+  letter-spacing: var(--ls-ultra);
   font-family: var(--font-serif);
   font-style: italic;
   color: rgba(255, 255, 255, 0.95);
@@ -531,7 +550,7 @@ body::after {
 #chapter-text .line.chapter-vertical {
   font-size: clamp(1.6rem, 4vw, 3rem);
   font-weight: 200;
-  letter-spacing: 0.6em;
+  letter-spacing: var(--ls-vertical);
   display: inline-block;
   text-shadow:
     0 0 30px rgba(200, 180, 255, 0.12),
@@ -542,9 +561,9 @@ body::after {
 }
 
 @keyframes time-stretch {
-  0%, 100% { letter-spacing: 0.6em; transform: scaleX(1); filter: blur(0px); }
+  0%, 100% { letter-spacing: var(--ls-vertical); transform: scaleX(1); filter: blur(0px); }
   25% { letter-spacing: 0.9em; transform: scaleX(1.05); filter: blur(0.5px); }
-  50% { letter-spacing: 0.4em; transform: scaleX(0.97); filter: blur(0px); }
+  50% { letter-spacing: var(--ls-display); transform: scaleX(0.97); filter: blur(0px); }
   75% { letter-spacing: 1.1em; transform: scaleX(1.08); filter: blur(0.8px); }
 }
 
@@ -553,9 +572,9 @@ body::after {
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 300;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ls-subtle);
   color: rgba(255, 255, 255, 0.6);
-  margin-top: 1.5rem;
+  margin-top: var(--space-5);
   animation: final-sub-breathe 4s ease-in-out infinite;
 }
 
@@ -653,10 +672,10 @@ body::after {
   background: var(--cyan);
   margin-left: 2px;
   vertical-align: text-bottom;
-  animation: cursor-blink 0.8s step-end infinite;
+  animation: cursor-blink var(--duration-slow) step-end infinite;
   box-shadow: 0 0 4px rgba(0, 232, 200, 0.4);
   opacity: 0.8;
-  transition: opacity 0.8s ease;
+  transition: opacity var(--duration-slow) ease;
 }
 
 .typewriter-cursor.fade {
@@ -681,7 +700,7 @@ body::after {
   padding: 0 2.5rem;
   z-index: var(--z-hud);
   opacity: 0;
-  transition: opacity 1.5s ease;
+  transition: opacity var(--duration-long) ease;
   pointer-events: none;
 }
 
@@ -719,7 +738,7 @@ body::after {
   font-weight: 400;
   letter-spacing: var(--ls-normal);
   color: rgba(180, 220, 255, 0.9);
-  transition: color 0.6s ease, text-shadow 0.4s ease;
+  transition: color var(--duration-medium) ease, text-shadow var(--duration-normal) ease;
   text-shadow: 0 0 10px rgba(180, 220, 255, 0.2);
   font-variant-numeric: tabular-nums;
 }
@@ -727,7 +746,7 @@ body::after {
 .hud-distance .hud-value {
   font-size: 1.1rem;
   font-weight: 400;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--ls-micro);
 }
 
 .hud-temp,
@@ -749,7 +768,7 @@ body::after {
   z-index: var(--z-progress);
   overflow: visible;
   opacity: 0.3;
-  transition: opacity 0.8s ease;
+  transition: opacity var(--duration-slow) ease;
 }
 
 #progress-bar.show {
@@ -763,7 +782,7 @@ body::after {
   background: linear-gradient(90deg, var(--cyan), var(--nebula-light), var(--cyan));
   background-size: 200% 100%;
   animation: progress-shimmer 3s linear infinite;
-  transition: width 0.1s linear;
+  transition: width var(--duration-micro) linear;
   will-change: width;
   box-shadow: 0 0 8px var(--cyan), 0 0 16px rgba(0, 232, 200, 0.4), 0 0 30px rgba(0, 232, 200, 0.15);
 }
@@ -782,7 +801,7 @@ body::after {
     0 0 6px var(--cyan),
     0 0 14px rgba(0, 232, 200, 0.5),
     0 0 28px rgba(0, 232, 200, 0.2);
-  animation: progress-cap-pulse 2s ease-in-out infinite;
+  animation: progress-cap-pulse var(--duration-glacial) ease-in-out infinite;
 }
 
 #progress-fill::before {
@@ -820,7 +839,7 @@ body::after {
   width: 1px;
   height: 8px;
   background: rgba(232, 232, 255, 0.12);
-  transition: background 0.6s ease, box-shadow 0.6s ease;
+  transition: background var(--duration-medium) ease, box-shadow var(--duration-medium) ease;
   pointer-events: none;
 }
 
@@ -839,7 +858,7 @@ body::after {
   z-index: var(--z-nav-indicator);
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth);
+  transition: opacity var(--duration-medium) var(--ease-smooth), transform var(--duration-medium) var(--ease-smooth);
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -896,7 +915,7 @@ body::after {
   font-style: italic;
   font-weight: 300;
   color: rgba(232, 232, 255, 0.70);
-  letter-spacing: 0.1em;
+  letter-spacing: var(--ls-tracking);
   text-align: center;
   max-width: 450px;
   text-shadow:
@@ -909,7 +928,7 @@ body::after {
   content: '—';
   display: block;
   margin-bottom: 0.6em;
-  letter-spacing: 0.5em;
+  letter-spacing: var(--ls-extreme);
   font-style: normal;
   color: rgba(0, 232, 200, 0.15);
   font-size: 0.6em;
@@ -935,11 +954,11 @@ body::after {
   z-index: var(--z-nav-indicator);
   pointer-events: none;
   opacity: 0;
-  transition: opacity 1.5s ease;
+  transition: opacity var(--duration-long) ease;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 #scroll-hint.visible {
@@ -963,9 +982,9 @@ body::after {
   transform: translateX(-50%);
   width: 2px;
   height: 6px;
-  border-radius: 1px;
+  border-radius: var(--radius-xs);
   background: var(--cyan);
-  animation: scroll-wheel 2s ease-in-out infinite;
+  animation: scroll-wheel var(--duration-glacial) ease-in-out infinite;
 }
 
 @keyframes scroll-wheel {
@@ -975,17 +994,17 @@ body::after {
 
 #scroll-hint .scroll-text {
   font-family: var(--font-mono);
-  font-size: 0.55rem;
+  font-size: var(--text-xs);
   font-weight: 300;
-  letter-spacing: 0.3em;
+  letter-spacing: var(--ls-ultra);
   color: rgba(0, 232, 200, 0.5);
   text-transform: uppercase;
   animation: scroll-text-breathe 3s ease-in-out infinite;
 }
 
 @keyframes scroll-text-breathe {
-  0%, 100% { opacity: 0.4; letter-spacing: 0.3em; }
-  50% { opacity: 0.8; letter-spacing: 0.35em; }
+  0%, 100% { opacity: 0.4; letter-spacing: var(--ls-ultra); }
+  50% { opacity: 0.8; letter-spacing: var(--ls-cinematic); }
 }
 
 #scroll-hint .arrow {
@@ -1074,7 +1093,7 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 1.5s cubic-bezier(0.4, 0, 0, 1);
+  transition: opacity var(--duration-long) var(--ease-smooth);
   overflow: hidden;
 }
 
@@ -1123,7 +1142,7 @@ body::after {
   height: 16px;
   border-radius: 50%;
   position: relative;
-  margin: 0 auto 3rem;
+  margin: 0 auto var(--space-7);
   background: rgba(255, 255, 255, 0.9);
   box-shadow:
     0 0 8px rgba(255, 255, 255, 0.6),
@@ -1178,28 +1197,28 @@ body::after {
   font-family: var(--font-primary);
   font-weight: 200;
   font-size: clamp(1.2rem, 3vw, 2rem);
-  letter-spacing: 0.35em;
+  letter-spacing: var(--ls-cinematic);
   color: var(--starlight);
   margin-bottom: 0.6rem;
   animation: loader-text-breathe 5s ease-in-out infinite;
 }
 
 @keyframes loader-text-breathe {
-  0%, 100% { opacity: 0.6; letter-spacing: 0.35em; }
-  50% { opacity: 0.9; letter-spacing: 0.4em; }
+  0%, 100% { opacity: 0.6; letter-spacing: var(--ls-cinematic); }
+  50% { opacity: 0.9; letter-spacing: var(--ls-display); }
 }
 
 #loader-sub {
   font-family: var(--font-mono);
   font-weight: 300;
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
+  font-size: var(--text-2xs);
+  letter-spacing: var(--ls-moderate);
   color: rgba(200, 210, 255, 0.60);
   margin-bottom: 2.5rem;
   overflow: hidden;
   border-right: 1px solid rgba(200, 210, 255, 0.2);
   white-space: nowrap;
-  animation: loader-type 2s steps(20) forwards, loader-blink 0.8s step-end infinite;
+  animation: loader-type 2s steps(20) forwards, loader-blink var(--duration-slow) step-end infinite;
   max-width: 0;
 }
 
@@ -1225,7 +1244,7 @@ body::after {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, transparent 0%, rgba(200, 210, 255, 0.3) 40%, rgba(255, 255, 255, 0.7) 100%);
-  transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: width var(--duration-normal) cubic-bezier(0.25, 0.46, 0.45, 0.94);
   box-shadow: 0 0 6px rgba(200, 210, 255, 0.15), 0 0 15px rgba(200, 210, 255, 0.06);
   position: relative;
 }
@@ -1241,7 +1260,7 @@ body::after {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.8);
   box-shadow: 0 0 4px rgba(200, 210, 255, 0.4), 0 0 10px rgba(200, 210, 255, 0.15);
-  animation: fill-head-pulse 2s ease-in-out infinite;
+  animation: fill-head-pulse var(--duration-glacial) ease-in-out infinite;
 }
 
 @keyframes fill-head-pulse {
@@ -1251,9 +1270,9 @@ body::after {
 
 #loader-pct {
   font-family: var(--font-mono);
-  font-size: 0.55rem;
+  font-size: var(--text-xs);
   font-weight: 300;
-  letter-spacing: 0.15em;
+  letter-spacing: var(--ls-spaced);
   color: rgba(200, 210, 255, 0.60);
   margin-top: 1.2rem;
 }
@@ -1282,7 +1301,7 @@ body::after {
 
 #sound-prompt.visible {
   display: flex;
-  animation: prompt-reveal 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: prompt-reveal 1.4s var(--ease-out-expo) forwards;
 }
 
 @keyframes prompt-reveal {
@@ -1292,12 +1311,12 @@ body::after {
 
 #sound-prompt-inner {
   text-align: center;
-  padding: 0 2rem;
+  padding: 0 var(--space-6);
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: prompt-content-rise 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+  animation: prompt-content-rise 1.4s var(--ease-out-expo) 0.4s both;
 }
 
 @keyframes prompt-content-rise {
@@ -1317,7 +1336,7 @@ body::after {
   display: block;
   width: 1.5px;
   background: rgba(200, 215, 255, 0.5);
-  border-radius: 1px;
+  border-radius: var(--radius-xs);
 }
 
 .wave-bar:nth-child(1) {
@@ -1354,7 +1373,7 @@ body::after {
   font-family: var(--font-primary);
   font-weight: 200;
   font-size: clamp(0.65rem, 1.2vw, 0.8rem);
-  letter-spacing: 0.4em;
+  letter-spacing: var(--ls-display);
   color: rgba(200, 215, 255, 0.4);
   text-transform: uppercase;
   margin-bottom: 2.5rem;
@@ -1371,7 +1390,7 @@ body::after {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: var(--space-5);
 }
 
 #sound-prompt button {
@@ -1380,7 +1399,7 @@ body::after {
   font-family: var(--font-primary);
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all var(--duration-medium) var(--ease-out-expo);
   background: transparent;
   padding: 0;
 }
@@ -1388,8 +1407,8 @@ body::after {
 #sound-prompt-yes {
   color: rgba(200, 215, 255, 0.7);
   font-weight: 300;
-  font-size: 0.7rem;
-  letter-spacing: 0.25em;
+  font-size: var(--text-caption);
+  letter-spacing: var(--ls-headline);
   position: relative;
   padding: 0.8rem 2rem;
 }
@@ -1403,12 +1422,12 @@ body::after {
   width: 0;
   height: 1px;
   background: rgba(200, 215, 255, 0.3);
-  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width var(--duration-medium) var(--ease-out-expo);
 }
 
 #sound-prompt-yes:hover {
   color: rgba(220, 225, 255, 0.95);
-  letter-spacing: 0.3em;
+  letter-spacing: var(--ls-ultra);
 }
 
 #sound-prompt-yes:hover::before {
@@ -1422,8 +1441,8 @@ body::after {
 #sound-prompt-no {
   color: rgba(200, 215, 255, 0.50);
   font-weight: 300;
-  font-size: 0.65rem;
-  letter-spacing: 0.15em;
+  font-size: var(--text-2xs);
+  letter-spacing: var(--ls-spaced);
 }
 
 #sound-prompt-no:hover {
@@ -1445,7 +1464,7 @@ body::after {
   cursor: pointer;
   z-index: var(--z-mute);
   padding: 7px;
-  transition: border-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color var(--duration-short) ease, color var(--duration-short) ease, transform var(--duration-short) ease, box-shadow var(--duration-short) ease;
   display: none;
 }
 
@@ -1463,7 +1482,7 @@ body::after {
 #mute-btn svg {
   width: 100%;
   height: 100%;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0, 1);
+  transition: transform var(--duration-normal) var(--ease-smooth);
 }
 
 #mute-btn:hover svg {
@@ -1504,7 +1523,7 @@ body::after {
   justify-content: center;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 2s cubic-bezier(0.4, 0, 0, 1);
+  transition: opacity var(--duration-glacial) var(--ease-smooth);
 }
 
 #credits::after {
@@ -1538,7 +1557,7 @@ body::after {
 
 #credits-inner {
   text-align: center;
-  padding: 0 1.5rem;
+  padding: 0 var(--space-5);
 }
 
 .credits-line {
@@ -1550,7 +1569,7 @@ body::after {
   font-family: var(--font-primary);
   font-weight: 200;
   font-size: clamp(2.2rem, 6vw, 5rem);
-  letter-spacing: 0.3em;
+  letter-spacing: var(--ls-ultra);
   color: var(--starlight);
   margin-bottom: 0.6rem;
   text-shadow: 0 0 30px rgba(200, 210, 255, 0.15), 0 0 60px rgba(200, 210, 255, 0.06);
@@ -1567,7 +1586,7 @@ body::after {
   font-size: clamp(0.6rem, 1vw, 0.8rem);
   font-weight: 300;
   font-style: italic;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ls-subtle);
   color: rgba(200, 210, 255, 0.4);
   margin-bottom: 2.5rem;
 }
@@ -1597,9 +1616,9 @@ body::after {
 
 .credits-role {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: var(--text-2xs);
   font-weight: 300;
-  letter-spacing: 0.15em;
+  letter-spacing: var(--ls-spaced);
   color: rgba(232, 232, 255, 0.62);
   text-transform: uppercase;
   margin-bottom: 0.3rem;
@@ -1607,15 +1626,15 @@ body::after {
 }
 
 @keyframes credits-role-pulse {
-  0%, 100% { opacity: 0.5; letter-spacing: 0.15em; }
-  50% { opacity: 0.7; letter-spacing: 0.18em; }
+  0%, 100% { opacity: 0.5; letter-spacing: var(--ls-spaced); }
+  50% { opacity: 0.7; letter-spacing: var(--ls-wide); }
 }
 
 .credits-name {
   font-family: var(--font-primary);
   font-weight: 300;
   font-size: clamp(0.85rem, 1.5vw, 1.2rem);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ls-subtle);
   color: var(--starlight);
   text-shadow: 0 0 10px rgba(232, 232, 255, 0.15);
   animation: credits-shimmer 3s ease-in-out infinite;
@@ -1635,15 +1654,15 @@ body::after {
   font-family: var(--font-mono);
   font-size: 0.6rem;
   font-weight: 300;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--ls-tracking);
   color: rgba(232, 232, 255, 0.58);
-  margin-top: 3rem;
+  margin-top: var(--space-7);
 }
 
 .credits-footer a {
   color: var(--cyan);
   text-decoration: none;
-  transition: color 0.4s ease, text-shadow 0.4s ease, letter-spacing 0.4s ease;
+  transition: color var(--duration-normal) ease, text-shadow var(--duration-normal) ease, letter-spacing var(--duration-normal) ease;
   position: relative;
 }
 
@@ -1655,14 +1674,14 @@ body::after {
   width: 0;
   height: 1px;
   background: var(--cyan);
-  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: width var(--duration-normal) cubic-bezier(0.25, 0.8, 0.25, 1);
   box-shadow: 0 0 4px var(--cyan);
 }
 
 .credits-footer a:hover {
   color: var(--starlight);
   text-shadow: 0 0 8px rgba(0, 232, 200, 0.4), 0 0 20px rgba(0, 232, 200, 0.15);
-  letter-spacing: 0.15em;
+  letter-spacing: var(--ls-spaced);
 }
 
 .credits-footer a:hover::after {
@@ -1671,7 +1690,7 @@ body::after {
 
 #credits.white-mode {
   background: rgba(245, 243, 238, 0.95);
-  transition: background 2s ease;
+  transition: background var(--duration-glacial) ease;
 }
 
 #credits.white-mode .credits-title,
@@ -1731,10 +1750,10 @@ body::after {
 
 #share-section {
   text-align: center;
-  margin-top: 3rem;
+  margin-top: var(--space-7);
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity 1.5s ease 1s, transform 1.5s ease 1s;
+  transition: opacity var(--duration-long) ease 1s, transform var(--duration-long) ease 1s;
 }
 
 #credits.visible #share-section {
@@ -1751,11 +1770,11 @@ body::after {
   color: rgba(232, 232, 255, 0.5);
   font-family: var(--font-primary);
   font-weight: 400;
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
+  font-size: var(--text-sm);
+  letter-spacing: var(--ls-spaced);
   text-transform: uppercase;
   cursor: pointer;
-  transition: border-color 0.4s cubic-bezier(0.4, 0, 0, 1), color 0.4s cubic-bezier(0.4, 0, 0, 1), transform 0.4s cubic-bezier(0.4, 0, 0, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0, 1), letter-spacing 0.4s cubic-bezier(0.4, 0, 0, 1);
+  transition: border-color var(--duration-normal) var(--ease-smooth), color var(--duration-normal) var(--ease-smooth), transform var(--duration-normal) var(--ease-smooth), box-shadow var(--duration-normal) var(--ease-smooth), letter-spacing var(--duration-normal) var(--ease-smooth);
   position: relative;
   overflow: hidden;
 }
@@ -1774,7 +1793,7 @@ body::after {
   color: var(--cyan);
   transform: translateY(-2px);
   box-shadow: 0 4px 20px rgba(0, 232, 200, 0.2), 0 0 40px rgba(0, 232, 200, 0.08);
-  letter-spacing: 0.2em;
+  letter-spacing: var(--ls-expanded);
 }
 
 #share-btn:hover::after {
@@ -1818,10 +1837,10 @@ body::after {
   font-family: var(--font-mono);
   font-weight: 300;
   font-size: 0.6rem;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--ls-moderate);
   text-transform: uppercase;
   cursor: pointer;
-  transition: border-color 0.4s cubic-bezier(0.4, 0, 0, 1), color 0.4s cubic-bezier(0.4, 0, 0, 1);
+  transition: border-color var(--duration-normal) var(--ease-smooth), color var(--duration-normal) var(--ease-smooth);
   margin-top: 0.8rem;
 }
 
@@ -1852,7 +1871,7 @@ body::after {
   flex-direction: column;
   gap: var(--space-1);
   opacity: 0;
-  transition: opacity 1.5s ease;
+  transition: opacity var(--duration-long) ease;
   pointer-events: auto;
 }
 
@@ -1868,7 +1887,7 @@ body::after {
   width: 1px;
   transform: translateX(-50%);
   background: rgba(232, 232, 255, 0.06);
-  border-radius: 1px;
+  border-radius: var(--radius-xs);
   overflow: hidden;
   pointer-events: none;
 }
@@ -1880,8 +1899,8 @@ body::after {
   width: 100%;
   height: 0%;
   background: linear-gradient(180deg, var(--cyan) 0%, rgba(0, 232, 200, 0.3) 100%);
-  border-radius: 1px;
-  transition: height 0.6s cubic-bezier(0.4, 0, 0, 1);
+  border-radius: var(--radius-xs);
+  transition: height var(--duration-medium) var(--ease-smooth);
   box-shadow: 0 0 6px rgba(0, 232, 200, 0.3);
 }
 
@@ -1894,7 +1913,7 @@ body::after {
   padding: 0;
   font: inherit;
   cursor: pointer;
-  transition: background 0.4s cubic-bezier(0.4, 0, 0, 1), transform 0.4s cubic-bezier(0.4, 0, 0, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0, 1), width 0.4s cubic-bezier(0.4, 0, 0, 1), height 0.4s cubic-bezier(0.4, 0, 0, 1);
+  transition: background var(--duration-normal) var(--ease-smooth), transform var(--duration-normal) var(--ease-smooth), box-shadow var(--duration-normal) var(--ease-smooth), width var(--duration-normal) var(--ease-smooth), height var(--duration-normal) var(--ease-smooth);
   position: relative;
 }
 
@@ -1904,7 +1923,7 @@ body::after {
   inset: -8px;
   border-radius: 50%;
   border: 1px solid transparent;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  transition: border-color var(--duration-normal) ease, box-shadow var(--duration-normal) ease;
 }
 
 .nav-dot:hover::before {
@@ -1930,14 +1949,14 @@ body::after {
   top: 50%;
   transform: translateY(-50%) translateX(4px);
   font-family: var(--font-mono);
-  font-size: 0.55rem;
+  font-size: var(--text-xs);
   font-weight: 300;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--ls-normal);
   color: var(--cyan);
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0, 1);
+  transition: opacity var(--duration-short) ease, transform var(--duration-short) var(--ease-smooth);
   text-shadow: 0 0 10px rgba(0, 232, 200, 0.3);
 }
 
@@ -1994,7 +2013,7 @@ body::after {
   z-index: var(--z-cursor);
   transform: translate(-50%, -50%);
   mix-blend-mode: screen;
-  transition: width 0.25s cubic-bezier(0.4, 0, 0, 1), height 0.25s cubic-bezier(0.4, 0, 0, 1), opacity 0.3s ease, background 0.25s ease;
+  transition: width var(--duration-fast) var(--ease-smooth), height var(--duration-fast) var(--ease-smooth), opacity var(--duration-short) ease, background var(--duration-fast) ease;
   opacity: 0;
   will-change: transform;
   box-shadow: 0 0 6px var(--cyan), 0 0 14px rgba(0, 232, 200, 0.3);
@@ -2019,7 +2038,7 @@ body::after {
   pointer-events: none;
   z-index: var(--z-cursor-ring);
   transform: translate(-50%, -50%);
-  transition: width 0.35s cubic-bezier(0.4, 0, 0, 1), height 0.35s cubic-bezier(0.4, 0, 0, 1), border-color 0.3s ease, opacity 0.3s ease;
+  transition: width 0.35s var(--ease-smooth), height 0.35s var(--ease-smooth), border-color var(--duration-short) ease, opacity var(--duration-short) ease;
   opacity: 0;
   will-change: transform;
   box-shadow: 0 0 8px rgba(0, 232, 200, 0.06);
@@ -2068,7 +2087,7 @@ body::after {
 
 #intro-cinematic.fade-out {
   opacity: 0;
-  transition: opacity 2s cubic-bezier(0.4, 0, 0, 1);
+  transition: opacity var(--duration-glacial) var(--ease-smooth);
 }
 
 #intro-title-container {
@@ -2081,7 +2100,7 @@ body::after {
   font-family: var(--font-primary);
   font-weight: 200;
   font-size: clamp(var(--text-xl), 8vw, 7rem);
-  letter-spacing: 0.35em;
+  letter-spacing: var(--ls-cinematic);
   color: var(--starlight);
   text-shadow:
     0 0 40px rgba(0, 232, 200, 0.15),
@@ -2094,10 +2113,10 @@ body::after {
   font-family: var(--font-mono);
   font-weight: 300;
   font-size: clamp(0.55rem, 1.2vw, 0.85rem);
-  letter-spacing: 0.2em;
+  letter-spacing: var(--ls-expanded);
   color: var(--cyan);
   opacity: 0;
-  margin-top: 1.5rem;
+  margin-top: var(--space-5);
   will-change: transform, opacity;
 }
 
@@ -2159,17 +2178,17 @@ body::after {
   color: var(--cyan);
   border: 1px solid var(--cyan);
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
+  font-size: var(--text-caption);
+  letter-spacing: var(--ls-tracking);
   text-decoration: none;
-  transition: top 0.3s ease;
+  transition: top var(--duration-short) ease;
 }
 
 .skip-link:focus {
   top: 1rem;
   outline: 2px solid var(--cyan);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: var(--radius-pill);
 }
 
 /* ─── Focus Visible ─── */
@@ -2233,7 +2252,7 @@ body::after {
 
   #progress-fill {
     animation: none !important;
-    transition: width 0.3s linear !important;
+    transition: width var(--duration-short) linear !important;
   }
 
   #loader-star {
@@ -2283,19 +2302,19 @@ body::after {
   }
 
   #chapter-text {
-    padding: 0 1rem;
+    padding: 0 var(--space-4);
   }
 
   #chapter-text .line {
     font-size: clamp(0.9rem, 5.5vw, 1.6rem);
-    letter-spacing: 0.04em;
-    line-height: 1.5;
+    letter-spacing: var(--ls-micro);
+    line-height: var(--lh-normal);
   }
 
   #chapter-text .line.data {
     font-size: clamp(0.55rem, 2.5vw, 0.75rem);
-    letter-spacing: 0.08em;
-    line-height: 1.8;
+    letter-spacing: var(--ls-normal);
+    line-height: var(--lh-relaxed);
   }
 
   #data-hud {
@@ -2306,7 +2325,7 @@ body::after {
 
   .hud-label {
     font-size: 0.42rem;
-    letter-spacing: 0.12em;
+    letter-spacing: var(--ls-moderate);
   }
 
   .hud-value {
@@ -2325,46 +2344,46 @@ body::after {
   }
 
   .credits-title {
-    letter-spacing: 0.12em;
+    letter-spacing: var(--ls-moderate);
   }
 
   #sound-prompt-yes {
-    font-size: 0.65rem;
+    font-size: var(--text-2xs);
   }
 
   #chapter-text .line.chapter-opening {
     font-size: clamp(2.5rem, 14vw, 5rem);
-    letter-spacing: 0.25em;
+    letter-spacing: var(--ls-headline);
   }
 
   #chapter-text .line.chapter-opening-sub {
     font-size: clamp(0.45rem, 2.5vw, 0.65rem);
-    margin-top: 1rem;
+    margin-top: var(--space-4);
   }
 
   #chapter-text .line.chapter-wide {
     font-size: clamp(0.8rem, 3.5vw, 1.4rem);
-    letter-spacing: 0.15em;
+    letter-spacing: var(--ls-spaced);
   }
 
   #chapter-text .line.chapter-impact {
     font-size: clamp(1.6rem, 8vw, 3.5rem);
-    letter-spacing: 0.2em;
+    letter-spacing: var(--ls-expanded);
   }
 
   #chapter-text .line.chapter-void {
     font-size: clamp(0.5rem, 2vw, 0.7rem);
-    letter-spacing: 0.3em;
+    letter-spacing: var(--ls-ultra);
   }
 
   #chapter-text .line.chapter-vertical {
     font-size: clamp(1rem, 3vw, 1.8rem);
-    letter-spacing: 0.4em;
+    letter-spacing: var(--ls-display);
   }
 
   #chapter-text .line.chapter-final {
     font-size: clamp(1.4rem, 6vw, 3rem);
-    letter-spacing: 0.15em;
+    letter-spacing: var(--ls-spaced);
   }
 
   .chapter-num-filigrane {
@@ -2372,7 +2391,7 @@ body::after {
   }
 
   .hud-distance .hud-value {
-    font-size: 0.7rem;
+    font-size: var(--text-caption);
   }
 
   #chapter-nav {
@@ -2407,7 +2426,7 @@ body::after {
   }
 
   #intro-title {
-    letter-spacing: 0.2em;
+    letter-spacing: var(--ls-expanded);
   }
 
   #intro-subtitle {
@@ -2416,7 +2435,7 @@ body::after {
 
   #chapter-indicator {
     top: 1.5rem;
-    gap: 0.5rem;
+    gap: var(--space-2);
   }
 
   #chapter-indicator-num {
@@ -2425,14 +2444,14 @@ body::after {
 
   #chapter-indicator-title {
     font-size: 0.5rem;
-    letter-spacing: 0.15em;
+    letter-spacing: var(--ls-spaced);
   }
 
   #interstitial {
     bottom: 12%;
     font-size: clamp(0.6rem, 3vw, 0.8rem);
     max-width: 280px;
-    padding: 0 1rem;
+    padding: 0 var(--space-4);
   }
 
 }
@@ -2447,22 +2466,22 @@ body::after {
   }
 
   #loader-text {
-    letter-spacing: 0.15em;
+    letter-spacing: var(--ls-spaced);
   }
 
   #chapter-text .line.chapter-opening {
     font-size: clamp(2rem, 16vw, 4rem);
-    letter-spacing: 0.2em;
+    letter-spacing: var(--ls-expanded);
   }
 
   #data-hud {
-    padding: 0 0.5rem;
+    padding: 0 var(--space-2);
     gap: 0.2rem;
   }
 
   .hud-label {
     font-size: 0.38rem;
-    letter-spacing: 0.08em;
+    letter-spacing: var(--ls-normal);
   }
 
   .hud-value {
@@ -2470,7 +2489,7 @@ body::after {
   }
 
   .hud-distance .hud-value {
-    font-size: 0.55rem;
+    font-size: var(--text-xs);
   }
 
   .hud-tidal {
@@ -2498,7 +2517,7 @@ body::after {
   align-items: center;
   gap: 1.2rem;
   opacity: 0;
-  transition: opacity 0.8s ease;
+  transition: opacity var(--duration-slow) ease;
   pointer-events: none;
 }
 
@@ -2522,7 +2541,7 @@ body::after {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all var(--duration-normal) var(--ease-out-expo);
   box-shadow:
     0 0 15px rgba(var(--nc), 0.06),
     inset 0 0 8px rgba(var(--nc), 0.03);
@@ -2556,7 +2575,7 @@ body::after {
   font-family: var(--font-mono);
   font-size: 0.48rem;
   color: rgba(var(--nav-color, 0, 232, 200), 0.3);
-  letter-spacing: 0.18em;
+  letter-spacing: var(--ls-wide);
   text-transform: uppercase;
   white-space: nowrap;
   min-width: 2rem;
@@ -2763,7 +2782,7 @@ body::after {
   z-index: var(--z-skip);
   text-align: center;
   text-shadow: 0 0 20px rgba(255, 40, 20, 0.4);
-  transition: opacity 0.6s ease;
+  transition: opacity var(--duration-medium) ease;
   white-space: nowrap;
 }
 #escape-msg.visible { opacity: 1; }
@@ -2786,7 +2805,7 @@ body::after {
   transition: opacity 1.2s ease;
 }
 #idle-hint.visible { opacity: 1; }
-#idle-hint.fade-out { opacity: 0; transition: opacity 2s ease; }
+#idle-hint.fade-out { opacity: 0; transition: opacity var(--duration-glacial) ease; }
 
 /* ─── Portrait Rotate Prompt ─── */
 
@@ -2854,17 +2873,17 @@ body::after {
 
 #rotate-text {
   font-family: var(--font-primary);
-  font-size: 1rem;
+  font-size: var(--text-base);
   font-weight: 400;
   color: rgba(232, 232, 255, 0.8);
-  letter-spacing: 0.15em;
+  letter-spacing: var(--ls-spaced);
   text-transform: uppercase;
 }
 
 #rotate-sub {
   font-family: var(--font-primary);
-  font-size: 0.7rem;
+  font-size: var(--text-caption);
   font-weight: 300;
   color: rgba(200, 215, 255, 0.50);
-  letter-spacing: 0.2em;
+  letter-spacing: var(--ls-expanded);
 }

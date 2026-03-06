@@ -193,7 +193,7 @@ export class Experience {
     });
     this.renderer.setPixelRatio(preset.pixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setClearColor(0x050505, 1);
+    this.renderer.setClearColor(0x050508, 1);
     this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     this.renderer.toneMapping = THREE.NoToneMapping;
 
@@ -241,7 +241,7 @@ export class Experience {
       if (overlay) {
         const msg = document.createElement('div');
         msg.id = 'context-lost-msg';
-        msg.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#050505;color:rgba(232,232,255,0.7);font-family:"Space Grotesk",sans-serif;font-size:1rem;letter-spacing:0.1em;text-align:center;padding:2rem;';
+        msg.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#050508;color:rgba(232,232,255,0.7);font-family:"Space Grotesk",sans-serif;font-size:1rem;letter-spacing:0.1em;text-align:center;padding:2rem;';
         msg.innerHTML = 'WebGL context lost.<br><span style="font-size:0.7rem;opacity:0.5;margin-top:0.5rem;display:block;">Click anywhere to reload.</span>';
         msg.addEventListener('click', () => window.location.reload());
         document.body.appendChild(msg);
@@ -1753,7 +1753,7 @@ export class Experience {
     const ringR = Math.round(s < 0.4 ? 0 : Math.min(255, (s - 0.4) * 425));
     const ringG = Math.round(s < 0.4 ? 245 : Math.max(40, 245 - (s - 0.4) * 340));
     const ringB = Math.round(s < 0.4 ? 212 : Math.max(20, 212 - (s - 0.4) * 320));
-    grad.addColorStop(0, '#050505');
+    grad.addColorStop(0, '#050508');
     grad.addColorStop(0.5, `rgba(${ringR}, ${ringG}, ${ringB}, 0.8)`);
     grad.addColorStop(0.7, `rgba(89, 33, 135, 0.4)`);
     grad.addColorStop(1, 'transparent');
@@ -1765,7 +1765,7 @@ export class Experience {
 
     ctx.beginPath();
     ctx.arc(16, 16, ehR, 0, Math.PI * 2);
-    ctx.fillStyle = '#050505';
+    ctx.fillStyle = '#050508';
     ctx.fill();
 
     ctx.save();

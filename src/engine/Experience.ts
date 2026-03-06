@@ -542,7 +542,7 @@ export class Experience {
         onComplete: () => {
           for (let p = 0; p < 6; p++) {
             const spark = document.createElement('div');
-            spark.style.cssText = `position:absolute;width:2px;height:2px;border-radius:50%;background:rgba(0,245,212,0.8);box-shadow:0 0 4px rgba(0,245,212,0.6);pointer-events:none;z-index:100;`;
+            spark.style.cssText = `position:absolute;width:2px;height:2px;border-radius:50%;background:rgba(0,232,200,0.8);box-shadow:0 0 4px rgba(0,232,200,0.6);pointer-events:none;z-index:100;`;
             const rect = span.getBoundingClientRect();
             const tcRect = titleContainer!.getBoundingClientRect();
             spark.style.left = `${rect.left - tcRect.left + rect.width * 0.5}px`;
@@ -707,7 +707,7 @@ export class Experience {
         if (touchHintShown || this.state.scroll < 0.05) return;
         touchHintShown = true;
         const hint = document.createElement('div');
-        hint.style.cssText = 'position:fixed;bottom:6rem;left:50%;transform:translateX(-50%);z-index:50;font-family:var(--font-mono);font-size:0.55rem;color:rgba(0,245,212,0.4);letter-spacing:0.1em;pointer-events:none;opacity:0;transition:opacity 1s ease';
+        hint.style.cssText = 'position:fixed;bottom:6rem;left:50%;transform:translateX(-50%);z-index:50;font-family:var(--font-mono);font-size:0.55rem;color:rgba(0,232,200,0.4);letter-spacing:0.1em;pointer-events:none;opacity:0;transition:opacity 1s ease';
         hint.textContent = 'Double-tap for shockwave';
         document.body.appendChild(hint);
         requestAnimationFrame(() => { hint.style.opacity = '1'; });
@@ -828,8 +828,8 @@ export class Experience {
         trail.className = 'cursor-trail';
         trail.style.width = '3px';
         trail.style.height = '3px';
-        trail.style.background = 'rgba(0, 245, 212, 0.4)';
-        trail.style.boxShadow = '0 0 6px rgba(0, 245, 212, 0.25), 0 0 12px rgba(0, 245, 212, 0.1)';
+        trail.style.background = 'rgba(0, 232, 200, 0.4)';
+        trail.style.boxShadow = '0 0 6px rgba(0, 232, 200, 0.25), 0 0 12px rgba(0, 232, 200, 0.1)';
         trail.style.opacity = '0';
         document.body.appendChild(trail);
         this.trailParticles.push(trail);
@@ -1212,7 +1212,7 @@ export class Experience {
 
         const glowSize = 6 + this.state.scroll * 12;
         const glowAlpha = 0.3 + this.state.scroll * 0.4;
-        this.cursor.style.boxShadow = `0 0 ${glowSize.toFixed(0)}px var(--cyan), 0 0 ${(glowSize * 2).toFixed(0)}px rgba(0, 245, 212, ${glowAlpha.toFixed(2)})`;
+        this.cursor.style.boxShadow = `0 0 ${glowSize.toFixed(0)}px var(--cyan), 0 0 ${(glowSize * 2).toFixed(0)}px rgba(0, 232, 200, ${glowAlpha.toFixed(2)})`;
       }
     }
 
@@ -1588,7 +1588,7 @@ export class Experience {
       this.hudContainerEl.style.opacity = scroll > 0.85 ? `${Math.max(0, 1 - (scroll - 0.85) * 6)}` : '';
       if (this.hudChapterPulse > 0.3) {
         const pulseAlpha = (this.hudChapterPulse * 0.25).toFixed(2);
-        this.hudContainerEl.style.boxShadow = `inset 0 0 20px rgba(0, 245, 212, ${pulseAlpha}), 0 0 10px rgba(0, 245, 212, ${(this.hudChapterPulse * 0.1).toFixed(2)})`;
+        this.hudContainerEl.style.boxShadow = `inset 0 0 20px rgba(0, 232, 200, ${pulseAlpha}), 0 0 10px rgba(0, 232, 200, ${(this.hudChapterPulse * 0.1).toFixed(2)})`;
       } else {
         this.hudContainerEl.style.boxShadow = '';
       }
@@ -1700,7 +1700,7 @@ export class Experience {
     }
     const overlay = document.createElement('div');
     overlay.id = 'keyboard-overlay';
-    overlay.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:998;background:rgba(5,5,5,0.92);border:1px solid rgba(0,245,212,0.15);padding:2rem 3rem;font-family:var(--font-mono);font-size:0.7rem;color:rgba(232,232,255,0.6);letter-spacing:0.05em;line-height:2.2;pointer-events:none;opacity:0;transition:opacity 0.5s ease;backdrop-filter:blur(8px)';
+    overlay.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:998;background:rgba(5,5,5,0.92);border:1px solid rgba(0,232,200,0.15);padding:2rem 3rem;font-family:var(--font-mono);font-size:0.7rem;color:rgba(232,232,255,0.6);letter-spacing:0.05em;line-height:2.2;pointer-events:none;opacity:0;transition:opacity 0.5s ease;backdrop-filter:blur(8px)';
     overlay.innerHTML = [
       '<div style="color:var(--cyan);font-size:0.8rem;letter-spacing:0.2em;margin-bottom:1rem">CONTROLS</div>',
       '<div>↑ ↓  Navigate chapters</div>',
@@ -1721,7 +1721,7 @@ export class Experience {
     const msg = document.createElement('div');
     msg.id = 'cosmic-msg';
     msg.textContent = text;
-    msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;font-family:var(--font-serif);font-style:italic;font-size:clamp(0.8rem,1.5vw,1.1rem);color:rgba(0,245,212,0.6);letter-spacing:0.1em;text-shadow:0 0 20px rgba(0,245,212,0.3);pointer-events:none;opacity:0;transition:opacity 1s ease';
+    msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;font-family:var(--font-serif);font-style:italic;font-size:clamp(0.8rem,1.5vw,1.1rem);color:rgba(0,232,200,0.6);letter-spacing:0.1em;text-shadow:0 0 20px rgba(0,232,200,0.3);pointer-events:none;opacity:0;transition:opacity 1s ease';
     document.body.appendChild(msg);
     requestAnimationFrame(() => { msg.style.opacity = '1'; });
     setTimeout(() => { msg.style.opacity = '0'; }, 3000);

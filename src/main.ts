@@ -19,7 +19,7 @@ console.log(
   ' ║   cleanlystudio.com                  ║\n' +
   ' ║                                      ║\n' +
   ' ╚══════════════════════════════════════╝',
-  'color: #00F5D4; font-family: monospace; font-size: 11px; line-height: 1.5'
+  'color: #00E8C8; font-family: monospace; font-size: 11px; line-height: 1.5'
 );
 
 console.log(

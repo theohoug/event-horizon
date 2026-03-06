@@ -59,7 +59,7 @@ void main() {
 
   vec3 color = vColor * (core * 0.5 + glow * 0.16 + outerGlow * 0.05);
 
-  vec3 cyanShift = vec3(0.0, 0.96, 0.83) * absorption * 0.1;
+  vec3 cyanShift = vec3(0.0, 0.91, 0.784) * absorption * 0.1;
   vec3 violetShift = vec3(0.3, 0.05, 0.5) * spaghetti * 0.06;
   color += cyanShift + violetShift;
 

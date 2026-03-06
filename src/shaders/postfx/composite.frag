@@ -637,7 +637,7 @@ void main() {
     float holdLuma = dot(color, vec3(0.2126, 0.7152, 0.0722));
     color = mix(color, vec3(holdLuma), uHoldStrength * 0.3);
     float holdRing = g2((dist - 0.3 - uHoldStrength * 0.1) * 15.0);
-    color += vec3(0.0, 0.96, 0.83) * holdRing * uHoldStrength * 0.2;
+    color += vec3(0.0, 0.91, 0.784) * holdRing * uHoldStrength * 0.2;
   }
 
   float deepGlitch = smoothstep(0.65, 0.78, uScroll) * smoothstep(0.90, 0.82, uScroll);

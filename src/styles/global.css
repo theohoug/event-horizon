@@ -60,6 +60,7 @@
 
   /* Modular Type Scale — Perfect Fourth (1.333) */
   --text-xs: 0.563rem;   /* 9px */
+  --text-2xs: 0.65rem;   /* 10.4px */
   --text-sm: 0.75rem;    /* 12px */
   --text-base: 1rem;     /* 16px */
   --text-md: 1.333rem;   /* 21px */
@@ -72,7 +73,9 @@
   /* Letter-spacing tokens */
   --ls-tight: 0.02em;
   --ls-normal: 0.08em;
-  --ls-wide: 0.15em;
+  --ls-moderate: 0.12em;
+  --ls-wide: 0.18em;
+  --ls-expanded: 0.2em;
   --ls-ultra: 0.3em;
   --ls-display: 0.4em;
 
@@ -857,7 +860,7 @@ body::after {
 #chapter-indicator-num {
   font-size: var(--text-xs);
   font-weight: 300;
-  letter-spacing: var(--ls-normal);
+  letter-spacing: var(--ls-moderate);
   color: var(--cyan);
   opacity: 0.65;
 }
@@ -869,9 +872,9 @@ body::after {
 }
 
 #chapter-indicator-title {
-  font-size: var(--text-sm);
+  font-size: var(--text-2xs);
   font-weight: 300;
-  letter-spacing: var(--ls-wide);
+  letter-spacing: var(--ls-expanded);
   color: rgba(232, 232, 255, 0.65);
   text-transform: uppercase;
 }

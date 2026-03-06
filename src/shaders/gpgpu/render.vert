@@ -75,7 +75,7 @@ void main() {
   vec3 coldStar = vec3(0.6, 0.75, 1.0);
   vec3 warmStar = vec3(1.0, 0.85, 0.7);
   vec3 hotStar = vec3(0.85, 0.92, 1.0);
-  vec3 cyanAccent = vec3(0.0, 0.96, 0.83);
+  vec3 cyanAccent = vec3(0.0, 0.91, 0.784);
   vec3 violetHot = vec3(0.6, 0.3, 1.0);
 
   vColor = mix(coldStar, mix(warmStar, hotStar, temp), temp);

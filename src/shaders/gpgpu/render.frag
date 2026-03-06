@@ -60,7 +60,7 @@ void main() {
 
   float _rc2 = core * core; color += vec3(0.85, 0.92, 1.0) * _rc2 * _rc2 * core * 0.15;
 
-  vec3 cyanShift = vec3(0.0, 0.96, 0.83) * absorption * 0.12;
+  vec3 cyanShift = vec3(0.0, 0.91, 0.784) * absorption * 0.12;
   vec3 violetShift = vec3(0.35, 0.08, 0.55) * spaghetti * 0.08;
   color += cyanShift + violetShift;
 

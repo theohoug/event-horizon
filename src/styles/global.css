@@ -373,7 +373,7 @@ body::after {
   color: var(--text-color, var(--starlight));
   opacity: 0;
   transform: translateY(20px);
-  letter-spacing: var(--ls-normal);
+  letter-spacing: var(--ls-moderate);
   line-height: var(--lh-normal);
   text-transform: uppercase;
   will-change: transform, opacity, filter;
@@ -389,7 +389,7 @@ body::after {
 
 #chapter-text .line.data {
   font-family: var(--font-serif);
-  font-size: clamp(var(--text-sm), 1.6vw, var(--text-base));
+  font-size: clamp(0.85rem, 1.6vw, 1.2rem);
   font-weight: 300;
   font-style: italic;
   font-feature-settings: 'onum' 1, 'liga' 1;
@@ -407,12 +407,12 @@ body::after {
     0 0 50px rgba(0, 0, 0, 1),
     0 0 80px rgba(0, 0, 0, 0.8);
   overflow-wrap: break-word;
-  line-height: var(--lh-relaxed);
+  line-height: 2;
 }
 
 
 #chapter-text .line.chapter-opening {
-  font-size: clamp(var(--text-3xl), 12vw, var(--text-4xl));
+  font-size: clamp(var(--text-3xl), 12vw, 10rem);
   font-weight: 100;
   letter-spacing: var(--ls-display);
   text-shadow:
@@ -839,12 +839,12 @@ body::after {
   z-index: var(--z-nav-indicator);
   pointer-events: none;
   opacity: 0;
-  transition: opacity var(--duration-slow) var(--ease-smooth), transform var(--duration-slow) var(--ease-smooth);
+  transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth);
   display: flex;
   align-items: center;
   gap: var(--space-3);
   font-family: var(--font-mono);
-  padding: var(--space-1) var(--space-4);
+  padding: 0.4rem var(--space-4);
   border-radius: var(--radius-lg);
   backdrop-filter: blur(8px) saturate(1.2);
   -webkit-backdrop-filter: blur(8px) saturate(1.2);
@@ -891,7 +891,7 @@ body::after {
   opacity: 0;
   transition: opacity var(--duration-glacial) var(--ease-smooth);
   font-family: var(--font-serif);
-  font-size: clamp(var(--text-sm), 1.4vw, var(--text-base));
+  font-size: clamp(0.8rem, 1.4vw, 1.05rem);
   font-feature-settings: 'onum' 1, 'liga' 1;
   font-style: italic;
   font-weight: 300;
@@ -950,7 +950,7 @@ body::after {
   width: 20px;
   height: 32px;
   border: 1.5px solid rgba(0, 232, 200, 0.4);
-  border-radius: var(--radius-md);
+  border-radius: 10px;
   position: relative;
   opacity: 0.7;
 }
@@ -2080,8 +2080,8 @@ body::after {
 #intro-title {
   font-family: var(--font-primary);
   font-weight: 200;
-  font-size: clamp(var(--text-xl), 8vw, var(--text-4xl));
-  letter-spacing: var(--ls-ultra);
+  font-size: clamp(var(--text-xl), 8vw, 7rem);
+  letter-spacing: 0.35em;
   color: var(--starlight);
   text-shadow:
     0 0 40px rgba(0, 232, 200, 0.15),
@@ -2169,7 +2169,7 @@ body::after {
   top: 1rem;
   outline: 2px solid var(--cyan);
   outline-offset: 2px;
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
 }
 
 /* ─── Focus Visible ─── */
@@ -2752,7 +2752,7 @@ body::after {
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: var(--font-serif);
-  font-size: clamp(var(--text-base), 2.5vw, var(--text-md));
+  font-size: clamp(var(--text-base), 2.5vw, 1.6rem);
   font-weight: 300;
   font-style: italic;
   color: rgba(255, 80, 60, 0.85);

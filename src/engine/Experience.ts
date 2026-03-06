@@ -779,6 +779,7 @@ export class Experience {
       setTimeout(() => {
         this.cursor?.classList.add('visible');
         ring.classList.add('visible');
+        document.body.classList.add('cursor-ready');
       }, 2000);
 
       const ringPos = { x: 0, y: 0 };

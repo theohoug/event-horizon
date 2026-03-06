@@ -68,11 +68,6 @@ html {
   color: #fff;
 }
 
-::-moz-selection {
-  background: rgba(0, 245, 212, 0.25);
-  color: #fff;
-}
-
 html::-webkit-scrollbar {
   display: none;
 }
@@ -379,7 +374,7 @@ body::after {
   font-size: clamp(0.7rem, 1.2vw, 0.9rem);
   font-weight: 300;
   letter-spacing: 0.06em;
-  color: rgba(200, 220, 255, 0.35);
+  color: rgba(200, 220, 255, 0.50);
   margin-bottom: 2rem;
   text-transform: none;
   text-shadow: 0 0 30px rgba(200, 220, 255, 0.08);
@@ -419,7 +414,7 @@ body::after {
   font-size: clamp(0.6rem, 1.2vw, 0.9rem);
   font-weight: 100;
   letter-spacing: 0.5em;
-  color: rgba(200, 200, 220, 0.25);
+  color: rgba(200, 200, 220, 0.40);
   text-transform: lowercase;
   font-family: var(--font-serif);
   font-style: italic;
@@ -627,7 +622,7 @@ body::after {
   font-size: 0.55rem;
   font-weight: 300;
   letter-spacing: 0.18em;
-  color: rgba(200, 200, 220, 0.30);
+  color: rgba(200, 200, 220, 0.50);
   text-transform: uppercase;
 }
 
@@ -780,7 +775,7 @@ body::after {
   font-weight: 300;
   letter-spacing: 0.12em;
   color: var(--cyan);
-  opacity: 0.5;
+  opacity: 0.65;
 }
 
 #chapter-indicator-num::after {
@@ -793,7 +788,7 @@ body::after {
   font-size: 0.65rem;
   font-weight: 300;
   letter-spacing: 0.2em;
-  color: rgba(232, 232, 255, 0.5);
+  color: rgba(232, 232, 255, 0.65);
   text-transform: uppercase;
 }
 
@@ -812,7 +807,7 @@ body::after {
   font-size: clamp(0.8rem, 1.4vw, 1.05rem);
   font-style: italic;
   font-weight: 300;
-  color: rgba(232, 232, 255, 0.55);
+  color: rgba(232, 232, 255, 0.70);
   letter-spacing: 0.1em;
   text-align: center;
   max-width: 450px;
@@ -1111,7 +1106,7 @@ body::after {
   font-weight: 300;
   font-size: 0.65rem;
   letter-spacing: 0.12em;
-  color: rgba(200, 210, 255, 0.25);
+  color: rgba(200, 210, 255, 0.45);
   margin-bottom: 2.5rem;
   overflow: hidden;
   border-right: 1px solid rgba(200, 210, 255, 0.2);
@@ -1171,7 +1166,7 @@ body::after {
   font-size: 0.55rem;
   font-weight: 300;
   letter-spacing: 0.15em;
-  color: rgba(200, 210, 255, 0.2);
+  color: rgba(200, 210, 255, 0.45);
   margin-top: 1.2rem;
 }
 
@@ -1337,14 +1332,14 @@ body::after {
 }
 
 #sound-prompt-no {
-  color: rgba(200, 215, 255, 0.12);
+  color: rgba(200, 215, 255, 0.35);
   font-weight: 300;
-  font-size: 0.5rem;
+  font-size: 0.6rem;
   letter-spacing: 0.15em;
 }
 
 #sound-prompt-no:hover {
-  color: rgba(200, 215, 255, 0.3);
+  color: rgba(200, 215, 255, 0.55);
 }
 
 /* ─── Mute Button ─── */
@@ -1517,15 +1512,15 @@ body::after {
   font-size: 0.65rem;
   font-weight: 300;
   letter-spacing: 0.15em;
-  color: rgba(232, 232, 255, 0.3);
+  color: rgba(232, 232, 255, 0.50);
   text-transform: uppercase;
   margin-bottom: 0.3rem;
   animation: credits-role-pulse 4s ease-in-out infinite;
 }
 
 @keyframes credits-role-pulse {
-  0%, 100% { opacity: 0.3; letter-spacing: 0.15em; }
-  50% { opacity: 0.5; letter-spacing: 0.18em; }
+  0%, 100% { opacity: 0.5; letter-spacing: 0.15em; }
+  50% { opacity: 0.7; letter-spacing: 0.18em; }
 }
 
 .credits-name {
@@ -1553,7 +1548,7 @@ body::after {
   font-size: 0.6rem;
   font-weight: 300;
   letter-spacing: 0.1em;
-  color: rgba(232, 232, 255, 0.25);
+  color: rgba(232, 232, 255, 0.45);
   margin-top: 3rem;
 }
 
@@ -1587,7 +1582,7 @@ body::after {
 }
 
 #credits.white-mode {
-  background: transparent;
+  background: rgba(245, 243, 238, 0.95);
   transition: background 2s ease;
 }
 
@@ -1807,6 +1802,9 @@ body::after {
   height: 5px;
   border-radius: 50%;
   background: rgba(232, 232, 255, 0.18);
+  border: none;
+  padding: 0;
+  font: inherit;
   cursor: pointer;
   transition: background 0.4s cubic-bezier(0.4, 0, 0, 1), transform 0.4s cubic-bezier(0.4, 0, 0, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0, 1), width 0.4s cubic-bezier(0.4, 0, 0, 1), height 0.4s cubic-bezier(0.4, 0, 0, 1);
   position: relative;
@@ -1893,7 +1891,7 @@ body::after {
 /* ─── Cursor ─── */
 
 @media (pointer: fine) {
-  * {
+  body.cursor-ready * {
     cursor: none !important;
   }
 }
@@ -2086,11 +2084,6 @@ body::after {
   border-radius: 4px;
 }
 
-::selection {
-  background: var(--cyan);
-  color: var(--void);
-}
-
 /* ─── Focus Visible ─── */
 
 :focus-visible {
@@ -2126,10 +2119,12 @@ body::after {
     transition-duration: 0.01ms !important;
   }
 
+  .dust,
   .cursor-trail,
   #custom-cursor,
   #custom-cursor-ring,
-  #dust-layer {
+  #dust-layer,
+  #noise-grain {
     display: none !important;
   }
 
@@ -2151,6 +2146,15 @@ body::after {
   #progress-fill {
     animation: none !important;
     transition: width 0.3s linear !important;
+  }
+
+  #loader-star {
+    animation: none !important;
+  }
+
+  #loader-star::before,
+  #loader-star::after {
+    animation: none !important;
   }
 
   @media (pointer: fine) {
@@ -2291,6 +2295,10 @@ body::after {
   .nav-dot {
     width: 3px;
     height: 3px;
+  }
+
+  .nav-dot::before {
+    inset: -20px;
   }
 
   .nav-dot.active {
@@ -2649,37 +2657,6 @@ body::after {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  .dust,
-  .cursor-trail,
-  #custom-cursor,
-  #custom-cursor-ring,
-  #noise-grain {
-    display: none !important;
-  }
-
-  #loader-star {
-    animation: none !important;
-  }
-
-  #loader-star::before,
-  #loader-star::after {
-    animation: none !important;
-  }
-
-  #chapter-text .line .char {
-    animation: none !important;
-    opacity: 1 !important;
-  }
-}
 
 #escape-msg {
   position: fixed;
@@ -2712,7 +2689,7 @@ body::after {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.7rem;
   font-weight: 300;
-  color: rgba(200, 215, 255, 0.35);
+  color: rgba(200, 215, 255, 0.50);
   letter-spacing: 0.3em;
   text-transform: uppercase;
   pointer-events: none;

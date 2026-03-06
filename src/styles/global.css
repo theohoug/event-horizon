@@ -17,7 +17,7 @@
   inset: -100%;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 256px 256px;
-  animation: grain 0.5s steps(4) infinite;
+  animation: grain var(--duration-half) steps(4) infinite;
 }
 @keyframes grain {
   0%, 100% { transform: translate(0, 0); }
@@ -106,6 +106,10 @@
   --space-9: 6rem;      /* 96px */
 
   /* ─── Font-size extensions ─── */
+  --text-4xs: 0.38rem;  /* 6px — mobile micro */
+  --text-3xs: 0.45rem;  /* 7.2px — mobile mini */
+  --text-micro: 0.48rem; /* 7.7px — mobile small */
+  --text-tiny: 0.6rem;  /* 9.6px — between xs and sm */
   --text-caption: 0.7rem;  /* 11.2px — between xs and sm */
 
   /* ─── Border Radius ─── */
@@ -146,16 +150,26 @@
   --z-rotate: 99999;
 
   /* ─── Transitions ─── */
-  --ease-out-expo: var(--ease-out-expo);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0, 1);
   --duration-micro: 0.1s;
   --duration-fast: 0.25s;
   --duration-short: 0.3s;
   --duration-normal: 0.4s;
+  --duration-half: 0.5s;
   --duration-medium: 0.6s;
   --duration-slow: 0.8s;
+  --duration-steady: 1.2s;
+  --duration-reveal: 1.4s;
   --duration-long: 1.5s;
+  --duration-crawl: 1.8s;
   --duration-glacial: 2s;
+  --duration-epic: 2.5s;
+  --duration-breath: 3s;
+  --duration-drift: 4s;
+  --duration-cycle: 5s;
+  --duration-ambient: 6s;
+  --duration-orbit: 8s;
 }
 
 html {
@@ -377,7 +391,7 @@ body::after {
   );
   pointer-events: none;
   z-index: -1;
-  animation: text-aura-pulse 6s ease-in-out infinite;
+  animation: text-aura-pulse var(--duration-ambient) ease-in-out infinite;
 }
 
 @keyframes text-aura-pulse {
@@ -441,7 +455,7 @@ body::after {
     0 0 30px rgba(0, 0, 0, 1),
     0 0 60px rgba(0, 0, 0, 1),
     0 0 120px rgba(0, 0, 0, 0.8);
-  animation: opening-breathe 5s ease-in-out infinite;
+  animation: opening-breathe var(--duration-cycle) ease-in-out infinite;
 }
 
 @keyframes opening-breathe {
@@ -462,7 +476,7 @@ body::after {
   pointer-events: none;
   z-index: -1;
   line-height: var(--lh-solid);
-  animation: filigrane-pulse 8s ease-in-out infinite;
+  animation: filigrane-pulse var(--duration-orbit) ease-in-out infinite;
 }
 
 @keyframes filigrane-pulse {
@@ -477,7 +491,7 @@ body::after {
 #chapter-text .line.chapter-poetry {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+  font-size: clamp(var(--text-caption), 1.2vw, 0.9rem);
   font-weight: 300;
   letter-spacing: var(--ls-subtle);
   color: rgba(200, 220, 255, 0.65);
@@ -487,7 +501,7 @@ body::after {
 }
 
 #chapter-text .line.chapter-opening-sub {
-  font-size: clamp(0.6rem, 1.1vw, 0.85rem);
+  font-size: clamp(var(--text-tiny), 1.1vw, 0.85rem);
   margin-top: 1.8rem;
   letter-spacing: var(--ls-moderate);
   color: rgba(200, 220, 255, 0.65);
@@ -517,7 +531,7 @@ body::after {
 }
 
 #chapter-text .line.chapter-void {
-  font-size: clamp(0.6rem, 1.2vw, 0.9rem);
+  font-size: clamp(var(--text-tiny), 1.2vw, 0.9rem);
   font-weight: 100;
   letter-spacing: var(--ls-extreme);
   color: rgba(200, 200, 220, 0.55);
@@ -539,7 +553,7 @@ body::after {
   text-shadow:
     0 0 40px rgba(255, 255, 255, 0.25),
     0 0 80px rgba(255, 255, 255, 0.1);
-  animation: final-pulse 3s ease-in-out infinite;
+  animation: final-pulse var(--duration-breath) ease-in-out infinite;
 }
 
 @keyframes final-pulse {
@@ -557,7 +571,7 @@ body::after {
     0 0 60px rgba(200, 180, 255, 0.05),
     0 0 20px rgba(0, 0, 0, 1),
     0 0 50px rgba(0, 0, 0, 1);
-  animation: time-stretch 4s ease-in-out infinite;
+  animation: time-stretch var(--duration-drift) ease-in-out infinite;
 }
 
 @keyframes time-stretch {
@@ -568,14 +582,14 @@ body::after {
 }
 
 #chapter-text .line.chapter-final-sub {
-  font-size: clamp(0.7rem, 1.3vw, 1rem);
+  font-size: clamp(var(--text-caption), 1.3vw, 1rem);
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 300;
   letter-spacing: var(--ls-subtle);
   color: rgba(255, 255, 255, 0.6);
   margin-top: var(--space-5);
-  animation: final-sub-breathe 4s ease-in-out infinite;
+  animation: final-sub-breathe var(--duration-drift) ease-in-out infinite;
 }
 
 @keyframes final-sub-breathe {
@@ -592,13 +606,13 @@ body::after {
   display: inline-block;
   opacity: 0;
   will-change: transform, opacity, filter;
-  animation: char-breathe 4s ease-in-out infinite;
+  animation: char-breathe var(--duration-drift) ease-in-out infinite;
   animation-delay: calc(var(--char-index, 0) * 0.08s);
   animation-play-state: paused;
 }
 
 #chapter-text .line.data .char.revealed {
-  animation: char-micro-drift 6s ease-in-out infinite;
+  animation: char-micro-drift var(--duration-ambient) ease-in-out infinite;
   animation-delay: calc(var(--char-index, 0) * 0.15s);
   animation-play-state: running;
 }
@@ -619,7 +633,7 @@ body::after {
 }
 
 .chapter[data-chapter="4"] #chapter-text .line .char.revealed {
-  animation: char-spaghetti 3s ease-in-out infinite;
+  animation: char-spaghetti var(--duration-breath) ease-in-out infinite;
   animation-delay: calc(var(--char-index, 0) * 0.12s);
 }
 
@@ -631,7 +645,7 @@ body::after {
 }
 
 .chapter[data-chapter="5"] #chapter-text .line .char.revealed {
-  animation: char-dilate 5s ease-in-out infinite;
+  animation: char-dilate var(--duration-cycle) ease-in-out infinite;
   animation-delay: calc(var(--char-index, 0) * 0.2s);
 }
 
@@ -641,7 +655,7 @@ body::after {
 }
 
 .chapter[data-chapter="6"] #chapter-text .line .char.revealed {
-  animation: char-singularity 2.5s ease-in-out infinite;
+  animation: char-singularity var(--duration-epic) ease-in-out infinite;
   animation-delay: calc(var(--char-index, 0) * 0.06s);
 }
 
@@ -653,7 +667,7 @@ body::after {
 }
 
 .chapter[data-chapter="7"] #chapter-text .line .char.revealed {
-  animation: char-void 6s ease-in-out infinite;
+  animation: char-void var(--duration-ambient) ease-in-out infinite;
   animation-delay: calc(var(--char-index, 0) * 0.3s);
 }
 
@@ -781,7 +795,7 @@ body::after {
   position: relative;
   background: linear-gradient(90deg, var(--cyan), var(--nebula-light), var(--cyan));
   background-size: 200% 100%;
-  animation: progress-shimmer 3s linear infinite;
+  animation: progress-shimmer var(--duration-breath) linear infinite;
   transition: width var(--duration-micro) linear;
   will-change: width;
   box-shadow: 0 0 8px var(--cyan), 0 0 16px rgba(0, 232, 200, 0.4), 0 0 30px rgba(0, 232, 200, 0.15);
@@ -886,7 +900,7 @@ body::after {
 
 #chapter-indicator-num::after {
   content: '·';
-  margin-left: 0.5rem;
+  margin-left: var(--space-2);
   color: rgba(0, 232, 200, 0.3);
 }
 
@@ -936,7 +950,7 @@ body::after {
 
 #interstitial.visible {
   opacity: 1;
-  animation: interstitial-breathe 4s ease-in-out infinite;
+  animation: interstitial-breathe var(--duration-drift) ease-in-out infinite;
 }
 
 @keyframes interstitial-breathe {
@@ -999,7 +1013,7 @@ body::after {
   letter-spacing: var(--ls-ultra);
   color: rgba(0, 232, 200, 0.5);
   text-transform: uppercase;
-  animation: scroll-text-breathe 3s ease-in-out infinite;
+  animation: scroll-text-breathe var(--duration-breath) ease-in-out infinite;
 }
 
 @keyframes scroll-text-breathe {
@@ -1026,7 +1040,7 @@ body::after {
   height: 16px;
   border-radius: 50%;
   border: 1px solid rgba(0, 232, 200, 0.2);
-  animation: scroll-ring-pulse 3s ease-in-out infinite;
+  animation: scroll-ring-pulse var(--duration-breath) ease-in-out infinite;
 }
 
 #scroll-hint .arrow::after {
@@ -1038,7 +1052,7 @@ body::after {
   border-radius: 50%;
   background: var(--cyan);
   box-shadow: 0 0 6px var(--cyan), 0 0 12px rgba(0, 232, 200, 0.3);
-  animation: scroll-orb 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: scroll-orb var(--duration-breath) cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes scroll-ring-pulse {
@@ -1148,7 +1162,7 @@ body::after {
     0 0 8px rgba(255, 255, 255, 0.6),
     0 0 25px rgba(200, 210, 255, 0.3),
     0 0 60px rgba(200, 210, 255, 0.1);
-  animation: singularity-breathe 5s ease-in-out infinite;
+  animation: singularity-breathe var(--duration-cycle) ease-in-out infinite;
 }
 
 #loader-star::before {
@@ -1161,7 +1175,7 @@ body::after {
   transform: translate(-50%, -50%);
   border-radius: 50%;
   border: 1px solid rgba(200, 210, 255, 0.06);
-  animation: loader-orbit 8s linear infinite;
+  animation: loader-orbit var(--duration-orbit) linear infinite;
 }
 
 #loader-star::after {
@@ -1200,7 +1214,7 @@ body::after {
   letter-spacing: var(--ls-cinematic);
   color: var(--starlight);
   margin-bottom: 0.6rem;
-  animation: loader-text-breathe 5s ease-in-out infinite;
+  animation: loader-text-breathe var(--duration-cycle) ease-in-out infinite;
 }
 
 @keyframes loader-text-breathe {
@@ -1218,7 +1232,7 @@ body::after {
   overflow: hidden;
   border-right: 1px solid rgba(200, 210, 255, 0.2);
   white-space: nowrap;
-  animation: loader-type 2s steps(20) forwards, loader-blink var(--duration-slow) step-end infinite;
+  animation: loader-type var(--duration-glacial) steps(20) forwards, loader-blink var(--duration-slow) step-end infinite;
   max-width: 0;
 }
 
@@ -1301,7 +1315,7 @@ body::after {
 
 #sound-prompt.visible {
   display: flex;
-  animation: prompt-reveal 1.4s var(--ease-out-expo) forwards;
+  animation: prompt-reveal var(--duration-reveal) var(--ease-out-expo) forwards;
 }
 
 @keyframes prompt-reveal {
@@ -1316,7 +1330,7 @@ body::after {
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: prompt-content-rise 1.4s var(--ease-out-expo) 0.4s both;
+  animation: prompt-content-rise var(--duration-reveal) var(--ease-out-expo) 0.4s both;
 }
 
 @keyframes prompt-content-rise {
@@ -1341,27 +1355,27 @@ body::after {
 
 .wave-bar:nth-child(1) {
   height: 12px;
-  animation: wave-pulse 1.8s ease-in-out 0s infinite;
+  animation: wave-pulse var(--duration-crawl) ease-in-out 0s infinite;
 }
 
 .wave-bar:nth-child(2) {
   height: 24px;
-  animation: wave-pulse 1.8s ease-in-out 0.15s infinite;
+  animation: wave-pulse var(--duration-crawl) ease-in-out 0.15s infinite;
 }
 
 .wave-bar:nth-child(3) {
   height: 36px;
-  animation: wave-pulse 1.8s ease-in-out 0.3s infinite;
+  animation: wave-pulse var(--duration-crawl) ease-in-out 0.3s infinite;
 }
 
 .wave-bar:nth-child(4) {
   height: 24px;
-  animation: wave-pulse 1.8s ease-in-out 0.45s infinite;
+  animation: wave-pulse var(--duration-crawl) ease-in-out 0.45s infinite;
 }
 
 .wave-bar:nth-child(5) {
   height: 12px;
-  animation: wave-pulse 1.8s ease-in-out 0.6s infinite;
+  animation: wave-pulse var(--duration-crawl) ease-in-out 0.6s infinite;
 }
 
 @keyframes wave-pulse {
@@ -1372,7 +1386,7 @@ body::after {
 #sound-prompt-text {
   font-family: var(--font-primary);
   font-weight: 200;
-  font-size: clamp(0.65rem, 1.2vw, 0.8rem);
+  font-size: clamp(var(--text-2xs), 1.2vw, 0.8rem);
   letter-spacing: var(--ls-display);
   color: rgba(200, 215, 255, 0.4);
   text-transform: uppercase;
@@ -1500,7 +1514,7 @@ body::after {
 #mute-btn.sound-on {
   border-color: rgba(0, 232, 200, 0.25);
   box-shadow: 0 0 0 0 rgba(0, 232, 200, 0);
-  animation: mute-pulse 3s ease-in-out infinite;
+  animation: mute-pulse var(--duration-breath) ease-in-out infinite;
 }
 
 @keyframes mute-pulse {
@@ -1541,7 +1555,7 @@ body::after {
     transparent 65%
   );
   border-radius: 50%;
-  animation: credits-aura 6s ease-in-out infinite;
+  animation: credits-aura var(--duration-ambient) ease-in-out infinite;
   pointer-events: none;
 }
 
@@ -1573,7 +1587,7 @@ body::after {
   color: var(--starlight);
   margin-bottom: 0.6rem;
   text-shadow: 0 0 30px rgba(200, 210, 255, 0.15), 0 0 60px rgba(200, 210, 255, 0.06);
-  animation: credits-title-glow 6s ease-in-out infinite;
+  animation: credits-title-glow var(--duration-ambient) ease-in-out infinite;
 }
 
 @keyframes credits-title-glow {
@@ -1583,7 +1597,7 @@ body::after {
 
 .credits-sub {
   font-family: var(--font-serif);
-  font-size: clamp(0.6rem, 1vw, 0.8rem);
+  font-size: clamp(var(--text-tiny), 1vw, 0.8rem);
   font-weight: 300;
   font-style: italic;
   letter-spacing: var(--ls-subtle);
@@ -1606,7 +1620,7 @@ body::after {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(0, 232, 200, 0.25), rgba(200, 210, 255, 0.35), rgba(0, 232, 200, 0.25), transparent);
   box-shadow: 0 0 12px rgba(0, 232, 200, 0.12), 0 0 25px rgba(0, 232, 200, 0.05);
-  animation: credits-line-grow 2.5s ease-out forwards;
+  animation: credits-line-grow var(--duration-epic) ease-out forwards;
   animation-delay: inherit;
 }
 
@@ -1622,7 +1636,7 @@ body::after {
   color: rgba(232, 232, 255, 0.62);
   text-transform: uppercase;
   margin-bottom: 0.3rem;
-  animation: credits-role-pulse 4s ease-in-out infinite;
+  animation: credits-role-pulse var(--duration-drift) ease-in-out infinite;
 }
 
 @keyframes credits-role-pulse {
@@ -1637,7 +1651,7 @@ body::after {
   letter-spacing: var(--ls-subtle);
   color: var(--starlight);
   text-shadow: 0 0 10px rgba(232, 232, 255, 0.15);
-  animation: credits-shimmer 3s ease-in-out infinite;
+  animation: credits-shimmer var(--duration-breath) ease-in-out infinite;
   background: linear-gradient(90deg, var(--starlight) 0%, rgba(0, 232, 200, 0.7) 50%, var(--starlight) 100%);
   background-size: 200% 100%;
   -webkit-background-clip: text;
@@ -1652,7 +1666,7 @@ body::after {
 
 .credits-footer {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: var(--text-tiny);
   font-weight: 300;
   letter-spacing: var(--ls-tracking);
   color: rgba(232, 232, 255, 0.58);
@@ -1699,7 +1713,7 @@ body::after {
 #credits.white-mode .credits-name,
 #credits.white-mode .credits-footer,
 #credits.white-mode .credits-footer a {
-  transition: color 2.5s ease, text-shadow 2.5s ease;
+  transition: color var(--duration-epic) ease, text-shadow var(--duration-epic) ease;
 }
 
 #credits.white-mode::after {
@@ -1785,7 +1799,7 @@ body::after {
   inset: 0;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
   transform: translateX(-100%);
-  transition: transform 0.5s ease;
+  transition: transform var(--duration-half) ease;
 }
 
 #share-btn:hover {
@@ -1836,7 +1850,7 @@ body::after {
   color: rgba(232, 232, 255, 0.3);
   font-family: var(--font-mono);
   font-weight: 300;
-  font-size: 0.6rem;
+  font-size: var(--text-tiny);
   letter-spacing: var(--ls-moderate);
   text-transform: uppercase;
   cursor: pointer;
@@ -1934,7 +1948,7 @@ body::after {
 .nav-dot.active::before {
   inset: -6px;
   border-color: rgba(0, 232, 200, 0.15);
-  animation: nav-ring-breathe 3s ease-in-out infinite;
+  animation: nav-ring-breathe var(--duration-breath) ease-in-out infinite;
 }
 
 @keyframes nav-ring-breathe {
@@ -1977,7 +1991,7 @@ body::after {
   height: 14px;
   border-radius: 2.5px;
   box-shadow: 0 0 8px rgba(0, 232, 200, 0.4), 0 0 16px rgba(0, 232, 200, 0.15);
-  animation: nav-pulse 2.5s ease-in-out infinite;
+  animation: nav-pulse var(--duration-epic) ease-in-out infinite;
 }
 
 .nav-dot.active::after {
@@ -2038,7 +2052,7 @@ body::after {
   pointer-events: none;
   z-index: var(--z-cursor-ring);
   transform: translate(-50%, -50%);
-  transition: width 0.35s var(--ease-smooth), height 0.35s var(--ease-smooth), border-color var(--duration-short) ease, opacity var(--duration-short) ease;
+  transition: width var(--duration-short) var(--ease-smooth), height var(--duration-short) var(--ease-smooth), border-color var(--duration-short) ease, opacity var(--duration-short) ease;
   opacity: 0;
   will-change: transform;
   box-shadow: 0 0 8px rgba(0, 232, 200, 0.06);
@@ -2154,7 +2168,7 @@ body::after {
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 200px 200px;
-  animation: grain-drift 8s linear infinite;
+  animation: grain-drift var(--duration-orbit) linear infinite;
 }
 
 @keyframes grain-drift {
@@ -2312,7 +2326,7 @@ body::after {
   }
 
   #chapter-text .line.data {
-    font-size: clamp(0.55rem, 2.5vw, 0.75rem);
+    font-size: clamp(0.55rem, 2.5vw, var(--text-sm));
     letter-spacing: var(--ls-normal);
     line-height: var(--lh-relaxed);
   }
@@ -2357,7 +2371,7 @@ body::after {
   }
 
   #chapter-text .line.chapter-opening-sub {
-    font-size: clamp(0.45rem, 2.5vw, 0.65rem);
+    font-size: clamp(var(--text-3xs), 2.5vw, var(--text-2xs));
     margin-top: var(--space-4);
   }
 
@@ -2372,7 +2386,7 @@ body::after {
   }
 
   #chapter-text .line.chapter-void {
-    font-size: clamp(0.5rem, 2vw, 0.7rem);
+    font-size: clamp(0.5rem, 2vw, var(--text-caption));
     letter-spacing: var(--ls-ultra);
   }
 
@@ -2430,7 +2444,7 @@ body::after {
   }
 
   #intro-subtitle {
-    font-size: clamp(0.45rem, 2.5vw, 0.65rem);
+    font-size: clamp(var(--text-3xs), 2.5vw, var(--text-2xs));
   }
 
   #chapter-indicator {
@@ -2439,7 +2453,7 @@ body::after {
   }
 
   #chapter-indicator-num {
-    font-size: 0.45rem;
+    font-size: var(--text-3xs);
   }
 
   #chapter-indicator-title {
@@ -2449,7 +2463,7 @@ body::after {
 
   #interstitial {
     bottom: 12%;
-    font-size: clamp(0.6rem, 3vw, 0.8rem);
+    font-size: clamp(var(--text-tiny), 3vw, 0.8rem);
     max-width: 280px;
     padding: 0 var(--space-4);
   }
@@ -2462,7 +2476,7 @@ body::after {
   }
 
   #chapter-text .line.data {
-    font-size: clamp(0.5rem, 2vw, 0.65rem);
+    font-size: clamp(0.5rem, 2vw, var(--text-2xs));
   }
 
   #loader-text {
@@ -2480,12 +2494,12 @@ body::after {
   }
 
   .hud-label {
-    font-size: 0.38rem;
+    font-size: var(--text-4xs);
     letter-spacing: var(--ls-normal);
   }
 
   .hud-value {
-    font-size: 0.48rem;
+    font-size: var(--text-micro);
   }
 
   .hud-distance .hud-value {
@@ -2497,7 +2511,7 @@ body::after {
   }
 
   #scroll-hint .scroll-text {
-    font-size: 0.45rem;
+    font-size: var(--text-3xs);
   }
 
   #scroll-hint .arrow {
@@ -2545,7 +2559,7 @@ body::after {
   box-shadow:
     0 0 15px rgba(var(--nc), 0.06),
     inset 0 0 8px rgba(var(--nc), 0.03);
-  animation: mobile-nav-breathe 4s ease-in-out infinite;
+  animation: mobile-nav-breathe var(--duration-drift) ease-in-out infinite;
 }
 
 #mobile-nav-up:active,
@@ -2573,14 +2587,14 @@ body::after {
 
 #mobile-nav-chapter {
   font-family: var(--font-mono);
-  font-size: 0.48rem;
+  font-size: var(--text-micro);
   color: rgba(var(--nav-color, 0, 232, 200), 0.3);
   letter-spacing: var(--ls-wide);
   text-transform: uppercase;
   white-space: nowrap;
   min-width: 2rem;
   text-align: center;
-  transition: color 0.5s ease;
+  transition: color var(--duration-half) ease;
 }
 
 @keyframes mobile-nav-breathe {
@@ -2612,7 +2626,7 @@ body::after {
   }
 
   #chapter-text .line.data {
-    font-size: clamp(0.5rem, 1.5vh, 0.7rem);
+    font-size: clamp(0.5rem, 1.5vh, var(--text-caption));
   }
 }
 
@@ -2786,7 +2800,7 @@ body::after {
   white-space: nowrap;
 }
 #escape-msg.visible { opacity: 1; }
-#escape-msg.fade-out { opacity: 0; transition: opacity 1.8s ease; }
+#escape-msg.fade-out { opacity: 0; transition: opacity var(--duration-crawl) ease; }
 
 #idle-hint {
   position: fixed;
@@ -2802,7 +2816,7 @@ body::after {
   pointer-events: none;
   opacity: 0;
   z-index: var(--z-hint);
-  transition: opacity 1.2s ease;
+  transition: opacity var(--duration-steady) ease;
 }
 #idle-hint.visible { opacity: 1; }
 #idle-hint.fade-out { opacity: 0; transition: opacity var(--duration-glacial) ease; }

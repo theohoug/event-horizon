@@ -241,8 +241,8 @@ export class Experience {
       if (overlay) {
         const msg = document.createElement('div');
         msg.id = 'context-lost-msg';
-        msg.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#050508;color:rgba(232,232,255,0.7);font-family:"Space Grotesk",sans-serif;font-size:1rem;letter-spacing:0.1em;text-align:center;padding:2rem;';
-        msg.innerHTML = 'WebGL context lost.<br><span style="font-size:0.7rem;opacity:0.5;margin-top:0.5rem;display:block;">Click anywhere to reload.</span>';
+        msg.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:var(--void);color:var(--starlight);opacity:0.7;font-family:var(--font-primary);font-size:var(--text-base);letter-spacing:var(--ls-tracking);text-align:center;padding:var(--space-6);';
+        msg.innerHTML = 'WebGL context lost.<br><span style="font-size:var(--text-caption);opacity:0.5;margin-top:var(--space-2);display:block;">Click anywhere to reload.</span>';
         msg.addEventListener('click', () => window.location.reload());
         document.body.appendChild(msg);
       }
@@ -542,7 +542,7 @@ export class Experience {
         onComplete: () => {
           for (let p = 0; p < 6; p++) {
             const spark = document.createElement('div');
-            spark.style.cssText = `position:absolute;width:2px;height:2px;border-radius:50%;background:rgba(0,232,200,0.8);box-shadow:0 0 4px rgba(0,232,200,0.6);pointer-events:none;z-index:100;`;
+            spark.style.cssText = `position:absolute;width:2px;height:2px;border-radius:50%;background:var(--cyan);opacity:0.8;box-shadow:0 0 4px var(--cyan);pointer-events:none;z-index:100;`;
             const rect = span.getBoundingClientRect();
             const tcRect = titleContainer!.getBoundingClientRect();
             spark.style.left = `${rect.left - tcRect.left + rect.width * 0.5}px`;
@@ -707,7 +707,7 @@ export class Experience {
         if (touchHintShown || this.state.scroll < 0.05) return;
         touchHintShown = true;
         const hint = document.createElement('div');
-        hint.style.cssText = 'position:fixed;bottom:6rem;left:50%;transform:translateX(-50%);z-index:50;font-family:var(--font-mono);font-size:0.55rem;color:rgba(0,232,200,0.4);letter-spacing:0.1em;pointer-events:none;opacity:0;transition:opacity 1s ease';
+        hint.style.cssText = 'position:fixed;bottom:var(--space-9);left:50%;transform:translateX(-50%);z-index:50;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--cyan);opacity:0;letter-spacing:var(--ls-tracking);pointer-events:none;transition:opacity 1s ease';
         hint.textContent = 'Double-tap for shockwave';
         document.body.appendChild(hint);
         requestAnimationFrame(() => { hint.style.opacity = '1'; });
@@ -1667,7 +1667,7 @@ export class Experience {
         if (this.postCreditsTimer > 20) {
           this.postCreditsShown = true;
           const msg = document.createElement('div');
-          msg.style.cssText = 'position:fixed;bottom:8%;left:50%;transform:translateX(-50%);z-index:16;font-family:var(--font-serif);font-style:italic;font-size:clamp(0.55rem,0.9vw,0.75rem);color:rgba(100,100,120,0.3);letter-spacing:0.08em;pointer-events:none;opacity:0;transition:opacity 4s ease;text-align:center;max-width:280px;line-height:1.8';
+          msg.style.cssText = 'position:fixed;bottom:8%;left:50%;transform:translateX(-50%);z-index:16;font-family:var(--font-serif);font-style:italic;font-size:clamp(var(--text-xs),0.9vw,var(--text-sm));color:rgba(100,100,120,0.3);letter-spacing:var(--ls-normal);pointer-events:none;opacity:0;transition:opacity 4s ease;text-align:center;max-width:280px;line-height:var(--lh-relaxed)';
           msg.textContent = 'Some journeys end where they began. Press Home to return.';
           document.body.appendChild(msg);
           requestAnimationFrame(() => { msg.style.opacity = '1'; });
@@ -1684,7 +1684,7 @@ export class Experience {
     const isLeft = Math.random() > 0.5;
     const vPos = 15 + Math.random() * 70;
     echo.textContent = text;
-    echo.style.cssText = `position:fixed;top:${vPos}%;${isLeft ? 'left:3%' : 'right:3%'};z-index:14;font-family:var(--font-serif);font-style:italic;font-size:clamp(0.6rem,1.2vw,0.9rem);color:rgba(200,220,255,0.06);letter-spacing:0.15em;pointer-events:none;opacity:0;transition:opacity 1.5s ease;text-shadow:0 0 30px rgba(89,33,135,0.15);writing-mode:${Math.random() > 0.7 ? 'vertical-rl' : 'horizontal-tb'};transform:scale(${0.8 + Math.random() * 0.4})`;
+    echo.style.cssText = `position:fixed;top:${vPos}%;${isLeft ? 'left:3%' : 'right:3%'};z-index:14;font-family:var(--font-serif);font-style:italic;font-size:clamp(var(--text-tiny),1.2vw,0.9rem);color:rgba(200,220,255,0.06);letter-spacing:var(--ls-spaced);pointer-events:none;opacity:0;transition:opacity var(--duration-long) ease;text-shadow:0 0 30px rgba(89,33,135,0.15);writing-mode:${Math.random() > 0.7 ? 'vertical-rl' : 'horizontal-tb'};transform:scale(${0.8 + Math.random() * 0.4})`;
     document.body.appendChild(echo);
     requestAnimationFrame(() => { echo.style.opacity = '1'; echo.style.color = 'rgba(200,220,255,0.12)'; });
     setTimeout(() => { echo.style.opacity = '0'; echo.style.color = 'rgba(200,220,255,0)'; }, 1500 + Math.random() * 1500);
@@ -1700,7 +1700,7 @@ export class Experience {
     }
     const overlay = document.createElement('div');
     overlay.id = 'keyboard-overlay';
-    overlay.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:998;background:rgba(5,5,5,0.92);border:1px solid rgba(0,232,200,0.15);padding:2rem 3rem;font-family:var(--font-mono);font-size:0.7rem;color:rgba(232,232,255,0.6);letter-spacing:0.05em;line-height:2.2;pointer-events:none;opacity:0;transition:opacity 0.5s ease;backdrop-filter:blur(8px)';
+    overlay.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:998;background:rgba(5,5,8,0.92);border:1px solid rgba(0,232,200,0.15);padding:var(--space-6) var(--space-7);font-family:var(--font-mono);font-size:var(--text-caption);color:rgba(232,232,255,0.6);letter-spacing:0.05em;line-height:2.2;pointer-events:none;opacity:0;transition:opacity var(--duration-half) ease;backdrop-filter:blur(8px)';
     overlay.innerHTML = [
       '<div style="color:var(--cyan);font-size:0.8rem;letter-spacing:0.2em;margin-bottom:1rem">CONTROLS</div>',
       '<div>↑ ↓  Navigate chapters</div>',
@@ -1721,7 +1721,7 @@ export class Experience {
     const msg = document.createElement('div');
     msg.id = 'cosmic-msg';
     msg.textContent = text;
-    msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;font-family:var(--font-serif);font-style:italic;font-size:clamp(0.8rem,1.5vw,1.1rem);color:rgba(0,232,200,0.6);letter-spacing:0.1em;text-shadow:0 0 20px rgba(0,232,200,0.3);pointer-events:none;opacity:0;transition:opacity 1s ease';
+    msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;font-family:var(--font-serif);font-style:italic;font-size:clamp(0.8rem,1.5vw,1.1rem);color:rgba(0,232,200,0.6);letter-spacing:var(--ls-tracking);text-shadow:0 0 20px rgba(0,232,200,0.3);pointer-events:none;opacity:0;transition:opacity 1s ease';
     document.body.appendChild(msg);
     requestAnimationFrame(() => { msg.style.opacity = '1'; });
     setTimeout(() => { msg.style.opacity = '0'; }, 3000);

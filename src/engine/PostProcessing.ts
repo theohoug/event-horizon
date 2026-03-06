@@ -164,17 +164,19 @@ export class PostProcessing {
     const chapterFlashChroma = (state.chapterFlash ?? 0) * 6;
     const whiteOutT = s > 0.82 ? (s - 0.82) / 0.18 : 0;
     const whiteOutFade = whiteOutT * whiteOutT;
-    const chromatic = (0.25 + s * 1.8 + velBoost * 0.7 + climaxBoost * 1.2 + singularityPeak * 5.0 + hbChroma + chapterFlashChroma) * (1 - breathCalm) * Math.max(0, 1 - whiteOutFade * 1.1);
+    const earlyChromBreath = Math.max(0, 1 - s * 4) * Math.sin(state.time * 0.4) * 0.12;
+    const chromatic = (0.25 + earlyChromBreath + s * 1.8 + velBoost * 0.7 + climaxBoost * 1.2 + singularityPeak * 5.0 + hbChroma + chapterFlashChroma) * (1 - breathCalm) * Math.max(0, 1 - whiteOutFade * 1.1);
 
     this.compositeMaterial.uniforms.uTime.value = state.time;
     this.compositeMaterial.uniforms.uScroll.value = s;
     this.compositeMaterial.uniforms.uChromaticIntensity.value = chromatic;
     this.compositeMaterial.uniforms.uGrainIntensity.value = (0.035 + s * 0.04 + climaxBoost * 0.025) * (1 - breathCalm * 0.5);
 
-    const vignetteBase = s < 0.5 ? 0.3 + s * 0.35 : 0.475 + (s - 0.5) * 0.85;
+    const vignetteBase = s < 0.5 ? 0.38 + s * 0.29 : 0.475 + (s - 0.5) * 0.85;
     this.compositeMaterial.uniforms.uVignetteIntensity.value = (vignetteBase + velBoost * 0.1 + hbPulse) * (1 - breathCalm * 0.3);
-    this.compositeMaterial.uniforms.uBloomMix.value = 0.30 + s * 0.30 + introBloomBoost + climaxBoost * 0.25;
-    this.bloomMaterial.uniforms.uThreshold.value = Math.max(0.38, 0.88 - s * 0.28 - introBloomBoost * 0.15 - climaxBoost * 0.15);
+    const earlyBloomBoost = Math.max(0, 1 - s * 5) * 0.12;
+    this.compositeMaterial.uniforms.uBloomMix.value = 0.30 + s * 0.30 + introBloomBoost + climaxBoost * 0.25 + earlyBloomBoost;
+    this.bloomMaterial.uniforms.uThreshold.value = Math.max(0.38, 0.88 - s * 0.28 - introBloomBoost * 0.15 - climaxBoost * 0.15 - earlyBloomBoost * 0.20);
     this.compositeMaterial.uniforms.uScrollVelocity.value = state.scrollVelocity;
     this.compositeMaterial.uniforms.uChapterFlash.value = state.chapterFlash ?? 0;
     this.compositeMaterial.uniforms.uHoldStrength.value = state.holdStrength ?? 0;

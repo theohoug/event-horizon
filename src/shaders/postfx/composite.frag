@@ -175,7 +175,7 @@ void main() {
   color += vec3(0.03, 0.01, 0.005) * edgeGlow * 0.15;
 
   float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
-  vec3 earlyTint = vec3(0.98, 0.94, 1.06);
+  vec3 earlyTint = vec3(0.95, 0.90, 1.12);
   vec3 deepTint = vec3(0.88, 0.72, 1.12);
   vec3 colorTint = mix(earlyTint, deepTint, uScroll);
   color = mix(color, color * colorTint, smoothstep(0.2, 0.8, luma) * 0.35);
@@ -191,9 +191,10 @@ void main() {
   color += shadowTint * shadowMask * 0.3 * uScroll;
   color += highlightTint * highlightMask * 0.2 * uScroll;
 
-  float earlyCool = smoothstep(0.25, 0.0, uScroll) * 0.04;
+  float earlyCool = smoothstep(0.25, 0.0, uScroll) * 0.06;
   color.r -= earlyCool * 0.5;
   color.b += earlyCool;
+  color.g -= earlyCool * 0.2;
 
   vec3 earlyAmbient = vec3(0.012, 0.010, 0.032);
   vec3 deepAmbient = vec3(0.014, 0.003, 0.032);
@@ -201,27 +202,42 @@ void main() {
   float ambientMask = (1.0 - dist * 0.6) * (1.0 + sin(uTime * 0.15 + dist * 3.0) * 0.15);
   color = max(color, ambientTint * ambientMask);
 
-  float arrivalPulse = smoothstep(0.06, 0.0, uScroll);
+  float arrivalPulse = smoothstep(0.15, 0.0, uScroll);
   if (arrivalPulse > 0.01) {
     float pulseRing = g2((dist - 0.35 + sin(uTime * 0.3) * 0.05) * 8.0);
     float pulseRing2 = g2((dist - 0.55 + cos(uTime * 0.25) * 0.04) * 6.0);
-    color += vec3(0.03, 0.02, 0.08) * pulseRing * arrivalPulse * 0.8;
-    color += vec3(0.01, 0.04, 0.06) * pulseRing2 * arrivalPulse * 0.5;
+    float pulseRing3 = g2((dist - 0.18 + sin(uTime * 0.15) * 0.06) * 5.0);
+    color += vec3(0.03, 0.02, 0.08) * pulseRing * arrivalPulse * 1.2;
+    color += vec3(0.01, 0.04, 0.06) * pulseRing2 * arrivalPulse * 0.8;
+    color += vec3(0.015, 0.012, 0.04) * pulseRing3 * arrivalPulse * 0.6;
     float arrivalGlow = exp(-dist * dist * 3.0) * arrivalPulse;
-    color += vec3(0.02, 0.015, 0.05) * arrivalGlow * 0.6;
+    color += vec3(0.02, 0.015, 0.05) * arrivalGlow * 1.0;
   }
 
-  float earlyPhase = smoothstep(0.18, 0.0, uScroll);
+  float diskGlowPhase = smoothstep(0.25, 0.0, uScroll);
+  if (diskGlowPhase > 0.01) {
+    float diskBand = exp(-center.y * center.y * 25.0);
+    float diskFalloff = exp(-dist * dist * 3.5);
+    float diskPulse = 0.85 + sin(uTime * 0.3) * 0.15;
+    vec3 diskWarm = vec3(0.12, 0.06, 0.02);
+    vec3 diskCool = vec3(0.04, 0.03, 0.08);
+    vec3 diskColor = mix(diskCool, diskWarm, diskBand);
+    color += diskColor * diskBand * diskFalloff * diskGlowPhase * diskPulse * 0.35;
+  }
+
+  float earlyPhase = smoothstep(0.25, 0.0, uScroll);
   if (earlyPhase > 0.01) {
     float nebAngle = centerAngle;
     float nebula1 = sin(nebAngle * 2.0 + uTime * 0.08) * 0.5 + 0.5;
     float nebula2 = sin(nebAngle * 3.0 - uTime * 0.05 + 1.5) * 0.5 + 0.5;
     float nebula3 = sin(nebAngle * 5.0 + uTime * 0.12 + 3.0) * 0.5 + 0.5;
     float _nm = nebula1 * nebula2; float nebMask = _nm * sqrt(_nm) * smoothstep(0.08, 0.40, dist) * smoothstep(0.7, 0.45, dist);
-    color += vec3(0.025, 0.012, 0.06) * nebMask * earlyPhase * 0.8;
-    color += vec3(0.008, 0.03, 0.035) * nebula1 * smoothstep(0.25, 0.55, dist) * earlyPhase * 0.25;
+    color += vec3(0.025, 0.012, 0.06) * nebMask * earlyPhase * 1.2;
+    color += vec3(0.008, 0.03, 0.035) * nebula1 * smoothstep(0.25, 0.55, dist) * earlyPhase * 0.4;
     float nebWisp = nebula3*nebula3*nebula3 * smoothstep(0.15, 0.35, dist) * smoothstep(0.6, 0.45, dist);
-    color += vec3(0.04, 0.015, 0.05) * nebWisp * earlyPhase * 0.3;
+    color += vec3(0.04, 0.015, 0.05) * nebWisp * earlyPhase * 0.5;
+    float warmWisp = nebula2 * nebula2 * smoothstep(0.20, 0.40, dist) * smoothstep(0.55, 0.40, dist);
+    color += vec3(0.05, 0.025, 0.01) * warmWisp * earlyPhase * 0.35;
   }
 
   float diskEnhance = smoothstep(0.12, 0.22, uScroll) * smoothstep(0.42, 0.30, uScroll);
@@ -244,14 +260,14 @@ void main() {
     color = mix(color, color * vec3(1.08, 0.95, 0.85), diskMask * diskEnhance * 0.3);
   }
 
-  float cosmicBreath = smoothstep(0.05, 0.15, uScroll) * smoothstep(0.50, 0.35, uScroll);
+  float cosmicBreath = smoothstep(0.02, 0.10, uScroll) * smoothstep(0.50, 0.35, uScroll);
   if (cosmicBreath > 0.01) {
     float breathWave = sin(uTime * 0.25) * 0.5 + 0.5;
     float breathWave2 = sin(uTime * 0.18 + 2.0) * 0.5 + 0.5;
     float breathMask = smoothstep(0.15, 0.40, dist) * smoothstep(0.65, 0.50, dist);
     float breathGlow = breathWave * breathMask * cosmicBreath;
-    color += vec3(0.01, 0.008, 0.025) * breathGlow * 0.5;
-    color *= 1.0 + breathWave2 * breathMask * cosmicBreath * 0.04;
+    color += vec3(0.015, 0.012, 0.035) * breathGlow * 0.7;
+    color *= 1.0 + breathWave2 * breathMask * cosmicBreath * 0.06;
   }
 
   float hbActive = smoothstep(0.33, 0.38, uScroll);
@@ -578,17 +594,18 @@ void main() {
 
   float ch = uScroll * 9.0;
   vec3 chAtmo;
-  if (ch < 1.0) chAtmo = vec3(0.02, 0.02, 0.06);
-  else if (ch < 2.0) chAtmo = mix(vec3(0.02, 0.02, 0.06), vec3(0.04, 0.01, 0.06), fract(ch));
-  else if (ch < 3.0) chAtmo = mix(vec3(0.04, 0.01, 0.06), vec3(0.06, 0.02, 0.04), fract(ch));
-  else if (ch < 4.0) chAtmo = mix(vec3(0.06, 0.02, 0.04), vec3(0.08, 0.01, 0.02), fract(ch));
+  if (ch < 1.0) chAtmo = vec3(0.04, 0.03, 0.09);
+  else if (ch < 2.0) chAtmo = mix(vec3(0.04, 0.03, 0.09), vec3(0.06, 0.02, 0.08), fract(ch));
+  else if (ch < 3.0) chAtmo = mix(vec3(0.06, 0.02, 0.08), vec3(0.08, 0.03, 0.06), fract(ch));
+  else if (ch < 4.0) chAtmo = mix(vec3(0.08, 0.03, 0.06), vec3(0.10, 0.02, 0.04), fract(ch));
   else if (ch < 5.0) chAtmo = mix(vec3(0.08, 0.01, 0.02), vec3(0.06, 0.0, 0.08), fract(ch));
   else if (ch < 6.0) chAtmo = mix(vec3(0.06, 0.0, 0.08), vec3(0.04, 0.0, 0.10), fract(ch));
   else if (ch < 7.0) chAtmo = mix(vec3(0.04, 0.0, 0.10), vec3(0.02, 0.0, 0.04), fract(ch));
   else if (ch < 8.0) chAtmo = mix(vec3(0.02, 0.0, 0.04), vec3(0.0, 0.0, 0.0), fract(ch));
   else chAtmo = vec3(0.0);
   float chAtmoMask = 1.0 - smoothstep(0.0, 0.5, dist);
-  color += chAtmo * chAtmoMask * 0.3;
+  float chAtmoBoost = 1.0 + smoothstep(0.35, 0.0, uScroll) * 0.5;
+  color += chAtmo * chAtmoMask * 0.3 * chAtmoBoost;
 
   float chapterFlash = uChapterFlash;
   color += vec3(0.12, 0.15, 0.35) * chapterFlash * 0.3;

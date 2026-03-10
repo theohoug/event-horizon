@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "file": "honoree-vs-soty.json",
+    "description": "What separates each tier of Awwwards recognition — from regular site to SOTY, with gap analysis for Event Horizon",
+    "lastUpdated": "2026-03-09",
+    "version": "1.0.0"
+  },
+  "tierProgression": [
+    {
+      "tier": "Regular Site → Honoree",
+      "scoreRange": "Below 7.0 → 7.0+",
+      "description": "Minimum viable quality for Awwwards recognition",
+      "requirements": {
+        "design": "Professional design. Cohesive color palette. Readable typography. Clean layout.",
+        "usability": "Functional navigation. Works on desktop and mobile. Loads in reasonable time.",
+        "creativity": "At least one creative element that shows effort beyond a template.",
+        "content": "Meaningful content, not placeholder text."
+      },
+      "whatMost sites lack": "Most rejected sites fail on mobile experience, performance, or professional design quality. The bar is 'professional agency quality,' not 'weekend project.'",
+      "examplesOfHonorees": [
+        "Well-designed agency portfolios with smooth animations",
+        "E-commerce sites with strong visual identity",
+        "Corporate sites with creative storytelling elements",
+        "Personal portfolios with attention to detail"
+      ],
+      "gapBetweenRegularAndHonoree": "The gap is PROFESSIONAL POLISH. Honorees look like money was spent. Details matter: consistent spacing, proper font loading, smooth hover states, no visual bugs."
+    },
+    {
+      "tier": "Honoree → SOTD",
+      "scoreRange": "7.0 → 8.0+",
+      "description": "Standout execution that makes it the best nominee of the day",
+      "requirements": {
+        "design": "Design that makes you stop scrolling. Memorable visual identity. Strong art direction.",
+        "usability": "Smooth experience throughout. Mobile works well. Fast loading.",
+        "creativity": "A clear creative concept. Something that distinguishes this from other professional sites.",
+        "content": "Content that supports and enhances the design. Not filler."
+      },
+      "whatMostHonoreesLack": "Honorees are professional but not MEMORABLE. SOTD winners have at least one moment that makes you say 'oh, that's clever.' A single standout interaction, a beautiful transition, a unique visual treatment — something that elevates beyond 'well-made.'",
+      "examplesOfSOTDs": [
+        "Agency portfolios with creative case study presentations",
+        "Product launches with innovative scroll storytelling",
+        "Experimental sites with novel interaction models",
+        "E-commerce with unique browsing experience"
+      ],
+      "gapBetweenHonoreeAndSOTD": "The gap is MEMORABILITY. SOTD winners have something you'd share with a colleague. Honorees are good but forgettable."
+    },
+    {
+      "tier": "SOTD → SOTM",
+      "scoreRange": "8.0 → 8.5+",
+      "description": "The month's best — consistent excellence across all dimensions",
+      "requirements": {
+        "design": "Near-flawless design. Every section, every page, every state is considered.",
+        "usability": "Excellent UX. Mobile experience is strong, not just acceptable. Performance solid.",
+        "creativity": "Clear innovation — a technique, concept, or execution that pushes beyond the norm.",
+        "content": "Content that gives meaning to the design. The 'why' behind the 'wow.'"
+      },
+      "whatMostSOTDsLack": "Most SOTDs have one standout element but inconsistent quality elsewhere. The hero section is amazing but the footer is generic. The desktop is stunning but mobile is just okay. SOTM winners maintain quality THROUGHOUT — from loading to last section, from desktop to mobile, from visuals to performance.",
+      "examplesOfSOTMs": [
+        "See 2024-highlights.json for specific SOTM examples",
+        "Projects where every detail is polished to the same standard",
+        "Sites that work beautifully on every device and browser",
+        "Experiences that are both technically impressive and well-designed"
+      ],
+      "gapBetweenSOTDAndSOTM": "The gap is CONSISTENCY. SOTM winners don't have weak sections. The quality is sustained from first pixel to last. No 'yeah but the mobile version...' or 'yeah but it lags in that one section...'"
+    },
+    {
+      "tier": "SOTM → SOTY",
+      "scoreRange": "8.5+ → 9.0+",
+      "description": "Yearly best — lasting impact, genuine innovation, industry influence",
+      "requirements": {
+        "design": "Design that will be referenced for years. A visual language that influences the industry.",
+        "usability": "Usability that doesn't sacrifice for innovation. Users ENJOY the interaction, not tolerate it.",
+        "creativity": "At least one GENUINELY NOVEL element — something that hasn't been done before in a browser.",
+        "content": "Content that is as memorable as the design. The story and the spectacle are inseparable."
+      },
+      "whatMostSOTMsLack": "SOTM winners are excellent but they may not PUSH THE MEDIUM FORWARD. SOTY winners introduce something new to the web — a technique, a concept, an approach that didn't exist before. They don't just do existing things better; they do NEW things.",
+      "examplesCompared": {
+        "sotmLevel": "A beautifully designed site with smooth WebGL transitions and excellent mobile — professional excellence",
+        "sotyLevel": "A site that makes you question what a browser can do. That introduces a technique the community will study. That you remember months later and still show to people."
+      },
+      "gapBetweenSOTMAndSOTY": "The gap is INNOVATION + IMPACT. SOTY winners change the conversation. After Pioneer, agencies started making corporate sites more cinematic. After Lusion, developers started thinking about ArrayBuffer as a creative tool. After Igloo, the DOM/WebGL boundary was questioned. SOTY winners leave a mark."
+    }
+  ],
+  "theXFactor": {
+    "definition": "The indefinable quality that separates SOTY from merely excellent. It's the moment when all the jury members, despite different backgrounds and preferences, agree: THIS ONE.",
+    "components": [
+      {
+        "component": "Emotional resonance",
+        "description": "The site makes you FEEL something beyond admiration. Wonder, awe, curiosity, joy, surprise. Emotion that persists after you close the tab.",
+        "how": "Through narrative, through scale, through surprise, through beauty. It's not about making people cry — it's about making them CARE.",
+        "eventHorizon": "The sublime terror of cosmic insignificance. Approaching something from which nothing escapes. The beauty of physics at its most extreme. The wonder of seeing the impossible in a browser."
+      },
+      {
+        "component": "Conceptual cohesion",
+        "description": "Every element serves the concept. The technology choice, the color palette, the typography, the interaction model, the sound, the loading screen — ALL express the same idea.",
+        "how": "Start with the concept, not the technology. 'What is this about?' should be answerable in one sentence. Everything else derives from that answer.",
+        "eventHorizon": "Concept: gravity as the ultimate force. EVERYTHING should express gravity: particles attracted to center, text warped by spacetime, scroll accelerating toward singularity, sound deepening with proximity, time itself slowing down. One concept, expressed through every channel."
+      },
+      {
+        "component": "Technical-creative unity",
+        "description": "The technology isn't separate from the design — it IS the design. The innovation enables the visual/emotional impact. You can't separate the tech from the experience.",
+        "how": "The tech choice should be inevitable given the concept. 'Of course they used raymarching — how else would you render a black hole?' The technology is the only way to achieve the vision.",
+        "eventHorizon": "GPGPU N-body simulation creates the accretion disk FROM PHYSICS. Raymarching creates the gravitational lensing FROM MATH. Time dilation UX creates the emotional experience FROM EQUATIONS. The tech IS the experience."
+      },
+      {
+        "component": "Lasting impression",
+        "description": "Months later, jury members still remember the experience. They bring it up in conversations. They share the link. It becomes a reference point.",
+        "how": "Create a moment so powerful that it becomes a MEMORY, not just a viewing. The 'holy shit' moment that the jury member tells their colleagues about.",
+        "eventHorizon": "The moment of crossing the event horizon — when everything inverts, time stops, and the user realizes they can't scroll back. This should be the 'remember when...' moment."
+      },
+      {
+        "component": "Community value",
+        "description": "The project gives something back to the community. A technique others can learn. A concept others can build on. Open-source contributions. Educational articles.",
+        "how": "Publish the technical details. Open-source components where possible. Write case studies. Present at conferences.",
+        "eventHorizon": "Technical writeup about GPGPU gravitational simulation and raymarched lensing. Potentially open-source the black hole shader. Share the adaptive quality system approach."
+      }
+    ],
+    "canYouEngineerTheXFactor": "No. You can create the conditions for it (polish everything, innovate genuinely, tell a story, create a 'wow' moment). But the X factor is what happens when all these elements combine and TRANSCEND their individual quality. It's the emergent property of doing everything right AND having a vision that resonates."
+  },
+  "gapAnalysisFramework": {
+    "description": "A structured framework to evaluate where Event Horizon stands relative to each SOTY tier",
+    "dimensions": [
+      {
+        "dimension": "Visual Quality",
+        "honoree": "Professional, clean",
+        "sotd": "Memorable, strong identity",
+        "sotm": "Near-flawless, consistent throughout",
+        "soty": "Industry-defining, referenced for years",
+        "eventHorizonCurrent": "TBD — depends on execution of raymarched black hole visual",
+        "eventHorizonGap": "Must look like Interstellar, not like a WebGL demo. The visual quality of the black hole IS the first impression."
+      },
+      {
+        "dimension": "Technical Innovation",
+        "honoree": "Uses modern tech appropriately",
+        "sotd": "One notable technical achievement",
+        "sotm": "Clear technical innovation beyond standard approaches",
+        "soty": "Genuinely novel technique that pushes the medium",
+        "eventHorizonCurrent": "Strong — GPGPU N-body + raymarching + time dilation UX",
+        "eventHorizonGap": "Innovation exists but must be VISIBLE. Technical novelty hidden behind poor visuals is wasted."
+      },
+      {
+        "dimension": "Narrative / Content",
+        "honoree": "Has content",
+        "sotd": "Content supports design",
+        "sotm": "Content enhances experience",
+        "soty": "Content IS the experience — inseparable from design",
+        "eventHorizonCurrent": "Needs work — astrophysics content not yet fully developed",
+        "eventHorizonGap": "Write the narrative. What is a black hole? What happens at the event horizon? What's inside? Each section teaches AND amazes."
+      },
+      {
+        "dimension": "Mobile Experience",
+        "honoree": "Works on mobile",
+        "sotd": "Good mobile experience",
+        "sotm": "Strong mobile — designed, not just responsive",
+        "soty": "Mobile stands on its own as a quality experience",
+        "eventHorizonCurrent": "Critical risk — GPGPU + raymarching are GPU-heavy",
+        "eventHorizonGap": "Dedicated mobile version: mesh-based black hole, fewer particles, native scroll, touch interaction."
+      },
+      {
+        "dimension": "Performance",
+        "honoree": "Loads, doesn't crash",
+        "sotd": "Smooth experience, minor lag acceptable",
+        "sotm": "Consistent 60fps desktop, 30fps mobile",
+        "soty": "60fps everywhere with adaptive quality — performance IS quality",
+        "eventHorizonCurrent": "High risk — heaviest GPU load of any potential SOTY candidate",
+        "eventHorizonGap": "Adaptive quality system with frame budget monitoring. Progressive particle reduction. Resolution scaling. The judge must NEVER see a frame drop."
+      },
+      {
+        "dimension": "Sound Design",
+        "honoree": "Optional",
+        "sotd": "Nice to have",
+        "sotm": "Expected for immersive sites",
+        "soty": "Integrated, synchronized, enhancing (or intentionally absent like Pangram)",
+        "eventHorizonCurrent": "Not implemented",
+        "eventHorizonGap": "Must implement. Physics-based sound: gravitational hum, accretion disk, particle collisions, time dilation audio, event horizon bass drop."
+      },
+      {
+        "dimension": "Loading Experience",
+        "honoree": "Has a loader",
+        "sotd": "Designed loader",
+        "sotm": "Loader sets the tone",
+        "soty": "Loader IS part of the experience",
+        "eventHorizonCurrent": "Unknown",
+        "eventHorizonGap": "Design a loader that is the beginning of the journey: void → stars appearing → black hole silhouette in distance. The load IS the first chapter."
+      },
+      {
+        "dimension": "Emotional Impact",
+        "honoree": "Appreciation",
+        "sotd": "Admiration",
+        "sotm": "Genuine impression",
+        "soty": "Lasting emotion — awe, wonder, inspiration",
+        "eventHorizonCurrent": "Highest potential of any dimension",
+        "eventHorizonGap": "Black holes evoke cosmic awe like nothing else. The potential is there. Execution must match the emotional weight of the subject."
+      }
+    ],
+    "eventHorizonOverallPosition": {
+      "currentTier": "SOTM potential (with significant execution risks)",
+      "targetTier": "SOTY",
+      "keyBlockers": [
+        "Mobile experience (must be designed and optimized)",
+        "Performance guarantee (adaptive quality is non-negotiable)",
+        "Sound design (must be implemented and integrated)",
+        "Narrative content (must be written and designed)",
+        "Loading experience (must be designed as part of the journey)"
+      ],
+      "keyStrengths": [
+        "Technical innovation (SOTY-caliber already)",
+        "Emotional potential (universal fascination with black holes)",
+        "Visual concept (Interstellar-quality in a browser if executed well)",
+        "Compound innovation (multiple novel techniques, like Igloo)"
+      ],
+      "verdict": "Event Horizon has the CORE INNOVATION of a SOTY winner. The gaps are in EXECUTION COMPLETENESS — mobile, sound, narrative, performance, loading. These are all solvable with focused work. The innovation cannot be added later — it's already there. The polish can be."
+    }
+  },
+  "finalAdvice": {
+    "topPriorities": [
+      {
+        "priority": 1,
+        "item": "Make the black hole look like Interstellar, not like a WebGL demo",
+        "why": "Visual quality is the first impression. 40% of the score is design. If the black hole doesn't take someone's breath away, nothing else matters."
+      },
+      {
+        "priority": 2,
+        "item": "60fps adaptive quality — ZERO frame drops during jury evaluation",
+        "why": "A single lag spike during the jury's 3-5 minute evaluation can drop the score by 0.5+. Adaptive quality is insurance."
+      },
+      {
+        "priority": 3,
+        "item": "Mobile experience that stands on its own",
+        "why": "~40% of jury tests on mobile. A broken mobile experience is a -1.0 penalty in practice."
+      },
+      {
+        "priority": 4,
+        "item": "Sound design synchronized with physics",
+        "why": "4 of 5 recent SOTY winners had sound. It's expected. And Event Horizon's theme DEMANDS it."
+      },
+      {
+        "priority": 5,
+        "item": "Narrative content — teach about black holes",
+        "why": "Content is only 10% of the score weight, but it's the difference between 'tech demo' and 'experience.' And it prevents the 'cool but what's it about?' jury reaction."
+      },
+      {
+        "priority": 6,
+        "item": "Technical writeup published before submission",
+        "why": "Developer Award requires judges to understand the innovation. A published writeup is the clearest way to communicate it."
+      },
+      {
+        "priority": 7,
+        "item": "Loading experience as first chapter",
+        "why": "First 10 seconds determine scoring trajectory. The preloader sets the emotional tone."
+      }
+    ],
+    "ultimateQuestion": "When a jury member closes the tab after 5 minutes with Event Horizon, will they immediately open Slack and share the link with their team? If yes → SOTY territory. If they think 'cool' and move on → SOTM at best."
+  }
+}

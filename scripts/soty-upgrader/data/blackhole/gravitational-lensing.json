@@ -1,0 +1,361 @@
+{
+  "metadata": {
+    "title": "Gravitational Lensing Physics for Black Holes",
+    "description": "Comprehensive database of gravitational lensing formulas, photon trajectories, shadow geometry, and observational predictions for Schwarzschild and Kerr black holes",
+    "version": "1.0.0",
+    "lastUpdated": "2026-03-09"
+  },
+  "weakFieldLensing": {
+    "description": "Gravitational lensing in the weak-field regime (far from the black hole, r >> Rs)",
+    "deflectionAngle": {
+      "formula": "α = 4GM/(c²b)",
+      "formulaLatex": "\\alpha = \\frac{4GM}{c^2 b}",
+      "where": {
+        "b": "Impact parameter (closest approach distance for the undeflected ray)",
+        "M": "Mass of the lensing object",
+        "alpha": "Deflection angle in radians"
+      },
+      "note": "This is twice the Newtonian prediction; Einstein's correction was confirmed during the 1919 solar eclipse",
+      "solarDeflection_arcsec": 1.75,
+      "solarDeflection_note": "For light grazing the Sun's limb"
+    },
+    "einsteinAngle": {
+      "formula": "θ_E = √(4GM D_LS / (c² D_L D_S))",
+      "formulaLatex": "\\theta_E = \\sqrt{\\frac{4GM}{c^2} \\frac{D_{LS}}{D_L D_S}}",
+      "where": {
+        "D_L": "Distance from observer to lens",
+        "D_S": "Distance from observer to source",
+        "D_LS": "Distance from lens to source"
+      },
+      "pointSourceLens": {
+        "imagePositions": "Two images at θ± = (θ_S ± √(θ_S² + 4θ_E²)) / 2",
+        "magnification_total": "μ = (u² + 2) / (u√(u² + 4)) where u = θ_S/θ_E",
+        "einsteinRingCondition": "θ_S = 0 (perfect alignment) produces a ring of angular radius θ_E"
+      }
+    },
+    "einsteinAngleExamples": [
+      {
+        "lens": "Stellar mass BH (10 M_sun)",
+        "D_L_kpc": 4.0,
+        "D_S_kpc": 8.0,
+        "D_LS_kpc": 4.0,
+        "einsteinAngle_mas": 2.85,
+        "einsteinAngle_uas": 2850,
+        "method": "Microlensing — detectable via magnification"
+      },
+      {
+        "lens": "Intermediate mass BH (1000 M_sun)",
+        "D_L_kpc": 50,
+        "D_S_kpc": 100,
+        "D_LS_kpc": 50,
+        "einsteinAngle_mas": 1.0,
+        "method": "Milli-lensing"
+      },
+      {
+        "lens": "Sgr A* (4×10⁶ M_sun)",
+        "D_L_kpc": 8.178,
+        "D_S_kpc": 16.4,
+        "D_LS_kpc": 8.2,
+        "einsteinAngle_arcsec": 1.77,
+        "note": "Much larger than the shadow (~52 μas) because this is the weak-field Einstein angle for background sources"
+      },
+      {
+        "lens": "Galaxy cluster (10¹⁴ M_sun)",
+        "D_L_Mpc": 500,
+        "D_S_Mpc": 2000,
+        "D_LS_Mpc": 1700,
+        "einsteinAngle_arcsec": 30,
+        "note": "Produces giant arcs and multiple images of background galaxies"
+      }
+    ]
+  },
+  "strongFieldLensing": {
+    "description": "Gravitational lensing in the strong-field regime (near the photon sphere, r ~ 1.5 Rs)",
+    "photonSphere": {
+      "schwarzschild": {
+        "radius_over_M": 3.0,
+        "radius_over_Rs": 1.5,
+        "description": "At this radius, photons can orbit the black hole on unstable circular orbits. Any perturbation causes the photon to either fall in or escape.",
+        "orbitalVelocity": "c (photons always travel at c)",
+        "orbitalPeriod": "T = 2π × 3√3 × GM/c³",
+        "instability": "Lyapunov exponent λ = c/(3√3 GM) — orbits diverge exponentially"
+      }
+    },
+    "criticalImpactParameter": {
+      "schwarzschild": {
+        "formula": "b_c = 3√3 × GM/c² = 3√3/2 × Rs",
+        "value_over_Rs": 2.598076,
+        "value_over_M": 5.196152,
+        "description": "The critical impact parameter separating capture from escape. Photons with b < b_c are captured; b > b_c escape.",
+        "derivation": "b_c = r_ph / √(1 - Rs/r_ph) = 3M/√(1-2/3) = 3√3 M"
+      },
+      "kerr": {
+        "description": "The critical impact parameter depends on the photon's angular momentum relative to the BH spin",
+        "valuesForPrograde": [
+          { "spinParameter": 0.0, "b_c_over_M": 5.196 },
+          { "spinParameter": 0.3, "b_c_over_M": 4.879 },
+          { "spinParameter": 0.5, "b_c_over_M": 4.586 },
+          { "spinParameter": 0.7, "b_c_over_M": 4.239 },
+          { "spinParameter": 0.9, "b_c_over_M": 3.742 },
+          { "spinParameter": 0.95, "b_c_over_M": 3.482 },
+          { "spinParameter": 0.99, "b_c_over_M": 3.072 },
+          { "spinParameter": 0.998, "b_c_over_M": 2.752 },
+          { "spinParameter": 1.0, "b_c_over_M": 2.0, "note": "Extremal Kerr" }
+        ],
+        "valuesForRetrograde": [
+          { "spinParameter": 0.0, "b_c_over_M": 5.196 },
+          { "spinParameter": 0.3, "b_c_over_M": 5.512 },
+          { "spinParameter": 0.5, "b_c_over_M": 5.810 },
+          { "spinParameter": 0.7, "b_c_over_M": 6.147 },
+          { "spinParameter": 0.9, "b_c_over_M": 6.598 },
+          { "spinParameter": 0.95, "b_c_over_M": 6.818 },
+          { "spinParameter": 0.99, "b_c_over_M": 7.065 },
+          { "spinParameter": 1.0, "b_c_over_M": 7.0, "note": "Extremal Kerr" }
+        ]
+      }
+    },
+    "deflectionAngleStrongField": {
+      "formula_nearPhotonSphere": "α(b) = -π + b_m × log(b/b_c - 1) + b_R + O(b-b_c)",
+      "description": "Near the critical impact parameter, the deflection angle diverges logarithmically",
+      "bozza_coefficients": {
+        "description": "Strong-field lensing coefficients from Bozza (2002)",
+        "schwarzschild": {
+          "a_bar": 1.0,
+          "b_bar": -0.4002,
+          "b_c_over_M": 5.196
+        },
+        "note": "α = -a_bar × log(θ/θ_c - 1) + b_bar"
+      },
+      "valuesNearCriticalImpactParameter": [
+        { "b_over_bc_minus_1": 1e-1, "deflectionAngle_deg": 352, "loops": 0.978 },
+        { "b_over_bc_minus_1": 1e-2, "deflectionAngle_deg": 489, "loops": 1.358 },
+        { "b_over_bc_minus_1": 1e-3, "deflectionAngle_deg": 621, "loops": 1.725 },
+        { "b_over_bc_minus_1": 1e-4, "deflectionAngle_deg": 753, "loops": 2.092 },
+        { "b_over_bc_minus_1": 1e-5, "deflectionAngle_deg": 885, "loops": 2.458 },
+        { "b_over_bc_minus_1": 1e-6, "deflectionAngle_deg": 1017, "loops": 2.825 },
+        { "b_over_bc_minus_1": 1e-7, "deflectionAngle_deg": 1149, "loops": 3.192 },
+        { "b_over_bc_minus_1": 1e-8, "deflectionAngle_deg": 1281, "loops": 3.558 },
+        { "b_over_bc_minus_1": 1e-10, "deflectionAngle_deg": 1545, "loops": 4.292 },
+        { "b_over_bc_minus_1": 0, "deflectionAngle_deg": "infinity", "loops": "infinity", "note": "At exactly b = b_c, photon orbits forever" }
+      ]
+    },
+    "relativisticImages": {
+      "description": "Strong lensing near a black hole produces an infinite sequence of relativistic images",
+      "primaryImage": {
+        "order": 1,
+        "deflection_range_deg": [0, 180],
+        "description": "Light passes on one side without looping around the BH"
+      },
+      "secondaryImage": {
+        "order": 2,
+        "deflection_range_deg": [180, 360],
+        "description": "Light passes on the opposite side and loops partway around"
+      },
+      "higherOrderImages": {
+        "description": "An infinite sequence of images with decreasing brightness, accumulating near the shadow edge",
+        "magnificationRatio": "Each successive image is demagnified by a factor of exp(-2π/√3) ≈ 0.0272",
+        "angularSeparation": "All higher-order images are exponentially close to the shadow edge"
+      },
+      "einsteinRing": {
+        "description": "When source, lens, and observer are perfectly aligned, the source is imaged as a ring",
+        "condition": "β = 0 (source directly behind lens)",
+        "ringRadius_schwarzschild": "θ_ring ≈ b_c / D_L = 3√3 GM/(c² D_L)",
+        "note": "In practice, alignment is never perfect, but near-alignment produces arcs"
+      }
+    }
+  },
+  "blackHoleShadow": {
+    "description": "The black hole shadow is the apparent silhouette of the black hole as seen by a distant observer. It corresponds to the capture cross-section of photons.",
+    "schwarzschild": {
+      "shadowRadius_formula": "r_shadow = b_c = 3√3/2 × Rs ≈ 2.598 Rs",
+      "shadowRadius_over_M": 5.196,
+      "shadowRadius_over_Rs": 2.598,
+      "shape": "Perfect circle",
+      "solidAngle_formula": "Ω = π b_c² / D² = 27π (GM/c²)² / D²",
+      "captureArea": "σ = π b_c² = 27π (GM/c²)²",
+      "note": "The shadow is NOT the event horizon — it is √27/2 ≈ 2.6 times larger than Rs"
+    },
+    "kerr": {
+      "description": "The shadow of a rotating black hole is NOT a perfect circle — it is distorted by frame-dragging",
+      "shapeDescription": "The shadow is approximately circular for low spin but becomes increasingly D-shaped (flattened on the approaching side) for high spin",
+      "dependsOn": ["Spin parameter a/M", "Inclination angle θ (observer's viewing angle relative to spin axis)"],
+      "shadowBoundary": {
+        "parametricForm": "The shadow boundary is given by the celestial coordinates (α, β) of photons with b = b_c(r_ph)",
+        "alpha_formula": "α = -b_c / sin(θ_obs)",
+        "beta_formula": "β = ±√(η + a² cos²(θ_obs) - b_c² cot²(θ_obs))",
+        "where": {
+          "b_c": "Impact parameter of photon orbit at radius r_ph (varies with r_ph for Kerr)",
+          "eta": "Carter constant divided by energy² for photon orbit",
+          "theta_obs": "Observer's inclination angle"
+        }
+      },
+      "shadowSizesForDifferentSpins": {
+        "edgeOn_theta90": [
+          { "spin": 0.0, "diameter_over_M": 10.392, "asymmetry": 0.0, "shape": "Circle" },
+          { "spin": 0.3, "diameter_over_M": 10.362, "asymmetry": 0.013, "shape": "Slightly D-shaped" },
+          { "spin": 0.5, "diameter_over_M": 10.296, "asymmetry": 0.036, "shape": "Mildly D-shaped" },
+          { "spin": 0.7, "diameter_over_M": 10.162, "asymmetry": 0.076, "shape": "Noticeably D-shaped" },
+          { "spin": 0.9, "diameter_over_M": 9.880, "asymmetry": 0.158, "shape": "Clearly D-shaped" },
+          { "spin": 0.95, "diameter_over_M": 9.678, "asymmetry": 0.213, "shape": "Strongly D-shaped" },
+          { "spin": 0.99, "diameter_over_M": 9.362, "asymmetry": 0.305, "shape": "Very D-shaped" },
+          { "spin": 0.998, "diameter_over_M": 9.140, "asymmetry": 0.375, "shape": "Extremely D-shaped" },
+          { "spin": 0.9999, "diameter_over_M": 8.872, "asymmetry": 0.420, "shape": "Near-extremal D-shape" }
+        ],
+        "faceOn_theta0": {
+          "note": "When viewed along the spin axis, the shadow is always circular regardless of spin",
+          "diameter_over_M": "Slightly smaller than Schwarzschild but always circular"
+        }
+      },
+      "shadowDisplacement": {
+        "description": "The shadow center is displaced from the BH position due to frame-dragging",
+        "direction": "Displaced toward the approaching side (where matter co-rotates with BH)",
+        "displacement_over_M": [
+          { "spin": 0.0, "displacement": 0.0 },
+          { "spin": 0.5, "displacement": 0.17 },
+          { "spin": 0.9, "displacement": 0.60 },
+          { "spin": 0.99, "displacement": 1.30 },
+          { "spin": 0.9999, "displacement": 1.88 }
+        ]
+      }
+    },
+    "observationalTests": {
+      "M87star": {
+        "predicted_shadow_uas": 40.5,
+        "observed_ring_uas": 42,
+        "uncertainty_uas": 3,
+        "consistent": true,
+        "note": "The ring corresponds to the photon ring (light bent around the shadow edge) not the shadow edge itself. The ring is slightly larger than the shadow."
+      },
+      "SgrAstar": {
+        "predicted_shadow_uas": 51.8,
+        "observed_ring_uas": 51.8,
+        "uncertainty_uas": 2.3,
+        "consistent": true
+      }
+    }
+  },
+  "photonRing": {
+    "description": "The photon ring is the bright ring of light formed by photons that orbit the black hole one or more times before escaping",
+    "structure": {
+      "description": "The photon ring is actually a nested set of sub-rings (n=1, 2, 3, ...) corresponding to photons that orbit n times",
+      "subRings": [
+        {
+          "n": 0,
+          "description": "Direct image — photons that reach the observer without orbiting",
+          "contribution": "Dominant (most of the observed flux)"
+        },
+        {
+          "n": 1,
+          "description": "First photon ring — photons that orbit the BH once (half-orbit on far side)",
+          "demagnification": 5.22,
+          "widthRatio_to_n0": 0.19,
+          "note": "Should be detectable by space VLBI"
+        },
+        {
+          "n": 2,
+          "description": "Second photon ring — photons that orbit twice",
+          "demagnification_from_n1": "exp(π) ≈ 23.14",
+          "totalDemagnification": 121,
+          "widthRatio_to_n0": 0.008
+        },
+        {
+          "n": 3,
+          "description": "Third photon ring — photons orbit three times",
+          "demagnification_from_n2": "exp(π) ≈ 23.14",
+          "totalDemagnification": 2800
+        }
+      ],
+      "universalDemagnification": {
+        "formula": "Each successive sub-ring is demagnified by exp(π) ≈ 23.14 (for Schwarzschild)",
+        "kerrModification": "The demagnification factor depends on the Lyapunov exponent of the photon orbit, which varies with spin and inclination",
+        "source": "Johnson et al., Science Advances 6, eaaz1310 (2020)"
+      }
+    },
+    "photonRingAutocorrelation": {
+      "description": "Each sub-ring carries an increasingly sharp (self-similar) image of the entire universe, delayed in time",
+      "timeDelay_formula": "Δt_n = 2π n × 3√3 GM/c³ (for Schwarzschild)",
+      "SgrA_timeDelay_per_orbit_min": 18.1,
+      "M87_timeDelay_per_orbit_days": 20.3,
+      "note": "In principle, the photon ring encodes the complete history of the universe as seen from the BH"
+    }
+  },
+  "rayTracingFormalism": {
+    "description": "Mathematical formalism for tracing photon trajectories in curved spacetime",
+    "geodesicEquation": {
+      "formula": "d²xμ/dλ² + Γμ_αβ (dxα/dλ)(dxβ/dλ) = 0",
+      "formulaLatex": "\\frac{d^2 x^\\mu}{d\\lambda^2} + \\Gamma^\\mu_{\\alpha\\beta} \\frac{dx^\\alpha}{d\\lambda} \\frac{dx^\\beta}{d\\lambda} = 0",
+      "description": "Photons follow null geodesics (ds² = 0) in the curved spacetime"
+    },
+    "conservedQuantities_schwarzschild": {
+      "energy": "E = (1 - Rs/r) dt/dλ",
+      "angularMomentum": "L = r² dφ/dλ",
+      "impactParameter": "b = L/E"
+    },
+    "conservedQuantities_kerr": {
+      "energy": "E (from time translation symmetry)",
+      "angularMomentum": "L_z (from axial symmetry)",
+      "carterConstant": "Q (from hidden symmetry of Kerr metric)",
+      "note": "The existence of the Carter constant makes the Kerr geodesic equation integrable"
+    },
+    "effectivePotential_schwarzschild": {
+      "formula": "V_eff(r) = (1 - Rs/r)(L²/r² + ε) where ε=0 for photons, ε=1 for massive particles",
+      "photonCapture_condition": "b < b_c = 3√3/2 Rs"
+    },
+    "backwardRayTracing": {
+      "description": "Standard technique for generating BH images: trace rays backward from the observer's camera to the source",
+      "steps": [
+        "Define observer's camera (position, field of view, pixel grid)",
+        "For each pixel, compute initial photon direction",
+        "Integrate geodesic equation backward in time",
+        "Determine where each ray intersects the accretion disk (or escapes to infinity, or is captured)",
+        "Compute observed intensity including redshift, beaming, and emission model"
+      ],
+      "integrationMethods": ["4th-order Runge-Kutta", "Verlet", "Implicit midpoint", "Semi-analytic (elliptic integrals for Schwarzschild)"],
+      "GPUacceleration": "Modern codes use GPU parallelism — each pixel is an independent ray trace"
+    }
+  },
+  "lensingByRealBlackHoles": {
+    "accretionDiskAppearance": {
+      "description": "How a thin accretion disk appears around a black hole due to gravitational lensing",
+      "features": [
+        {
+          "name": "Direct image of disk",
+          "description": "The part of the disk facing the observer, seen directly with moderate lensing distortion"
+        },
+        {
+          "name": "Lensed back-side image (top)",
+          "description": "Light from the far side of the disk is bent OVER the top of the BH and appears above the shadow",
+          "note": "This is what creates the 'halo' or 'ring' around the shadow — it's the back of the disk, not a separate ring"
+        },
+        {
+          "name": "Lensed back-side image (bottom)",
+          "description": "Light from the far side of the disk is bent UNDER the bottom of the BH and appears below the shadow"
+        },
+        {
+          "name": "Photon ring",
+          "description": "A thin bright ring at the shadow boundary from photons that orbited the BH before escaping"
+        },
+        {
+          "name": "Doppler asymmetry",
+          "description": "The approaching side of the disk is brighter (Doppler beamed) and the receding side is dimmer"
+        }
+      ],
+      "interstellarMovieNote": "The bright ring in Interstellar is NOT the edge of the accretion disk — it is the gravitationally lensed image of the BACK of the disk wrapped around the shadow"
+    }
+  },
+  "sources": [
+    "Einstein, Science 84, 506 (1936)",
+    "Schwarzschild, Sitzungsberichte der Preussischen Akademie der Wissenschaften (1916)",
+    "Bardeen, in 'Black Holes' ed. DeWitt & DeWitt (1973) — Shadow of Kerr BH",
+    "Bozza, Physical Review D 66, 103001 (2002) — Strong field lensing",
+    "Virbhadra & Ellis, Physical Review D 62, 084003 (2000)",
+    "Perlick, Living Reviews in Relativity 7, 9 (2004)",
+    "Johnson et al., Science Advances 6, eaaz1310 (2020) — Photon ring sub-structure",
+    "Gralla, Holz & Wald, Physical Review D 100, 024018 (2019) — BH shadow vs photon ring",
+    "James, von Tunzelmann, Franklin & Thorne, CQG 32, 065001 (2015) — Interstellar rendering",
+    "Luminet, A&A 75, 228 (1979) — First BH image computation",
+    "Cunningham & Bardeen, ApJ 183, 237 (1973)",
+    "Event Horizon Telescope Collaboration Papers I-VI (2019)",
+    "Psaltis et al., PRL 125, 141104 (2020)"
+  ]
+}

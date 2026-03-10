@@ -42,8 +42,9 @@ void main() {
       float theta = h1 * 6.28318;
       float r = 10.0 + h3 * 40.0;
       float orbSpeed = 0.7 / sqrt(r);
-      vel = vec3(-sin(theta) * orbSpeed, 0.0, cos(theta) * orbSpeed);
-      vel += vec3(hash(seed + 13.0) - 0.5, hash(seed + 29.0) - 0.5, hash(seed + 41.0) - 0.5) * 0.08;
+      float nearBH = smoothstep(20.0, 5.0, r);
+      vel = vec3(-sin(theta) * orbSpeed * nearBH, 0.0, cos(theta) * orbSpeed * nearBH);
+      vel += vec3(hash(seed + 13.0) - 0.5, hash(seed + 29.0) - 0.5, hash(seed + 41.0) - 0.5) * (0.08 + (1.0 - nearBH) * 0.4);
       gl_FragColor = vec4(vel, mass);
       return;
     }
@@ -60,16 +61,17 @@ void main() {
     vec3 up = vec3(0.0, 1.0, 0.0);
     vec3 tangent = length(cross(gravDir, up)) > 0.01 ? normalize(cross(gravDir, up)) : vec3(1.0, 0.0, 0.0);
     float orbitalForce = sqrt(max(gravity * dist, 0.0)) * 0.35;
-    orbitalForce *= smoothstep(1.2, 6.0, dist);
+    orbitalForce *= smoothstep(1.2, 6.0, dist) * smoothstep(20.0, 5.0, dist);
 
     if (orbitalForce > 0.001) {
       float secondarySpiral = sin(atan(pos.z, pos.x) * 3.0 + uTime * 0.4) * 0.15;
       orbitalForce *= 1.0 + secondarySpiral;
     }
 
-    float yDamping = 0.6 + uScroll * 3.0;
+    float diskRegion = smoothstep(8.0, 3.0, dist);
+    float yDamping = (0.6 + uScroll * 3.0) * diskRegion;
     float diskForce = -pos.y * yDamping;
-    float diskThickness = smoothstep(8.0, 3.0, dist) * 0.8;
+    float diskThickness = diskRegion * 0.8;
     diskForce *= 1.0 + diskThickness;
 
     float turbStrength = 0.5 * smoothstep(1.5, 12.0, dist) * (1.0 - uScroll * 0.4);
@@ -144,7 +146,7 @@ void main() {
       float r = 10.0 + h3 * 40.0;
 
       pos.x = r * sin(phi) * cos(theta);
-      pos.y = (h3 - 0.5) * r * 0.12;
+      pos.y = r * cos(phi) * 0.6 + (h2 - 0.5) * 4.0;
       pos.z = r * sin(phi) * sin(theta);
       life = 0.6 + h1 * 0.4;
       gl_FragColor = vec4(pos, life);

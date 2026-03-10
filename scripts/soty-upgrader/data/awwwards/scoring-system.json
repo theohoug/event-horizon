@@ -1,0 +1,348 @@
+{
+  "meta": {
+    "file": "scoring-system.json",
+    "description": "Awwwards scoring system in full detail — categories, weights, thresholds, selection processes",
+    "lastUpdated": "2026-03-09",
+    "version": "1.0.0"
+  },
+  "categories": [
+    {
+      "name": "Design",
+      "weight": 0.40,
+      "weightPercentage": "40%",
+      "description": "Visual design quality, aesthetic excellence, compositional mastery",
+      "whatItReallyMeans": "Is every visual decision intentional? Does the design have a unique voice? Is the color palette harmonious? Is the typography masterful? Do animations serve the design or distract? Is there a cohesive visual language throughout?",
+      "subCriteria": [
+        {
+          "criterion": "Visual originality",
+          "description": "Does the design look unique or derivative? First impressions of visual distinctiveness.",
+          "weight": "High"
+        },
+        {
+          "criterion": "Color palette",
+          "description": "Harmony, intentionality, and emotional impact of color choices.",
+          "weight": "Medium"
+        },
+        {
+          "criterion": "Typography",
+          "description": "Font choices, type scale, readability, typographic hierarchy, character spacing.",
+          "weight": "High"
+        },
+        {
+          "criterion": "Composition & layout",
+          "description": "Spatial relationships, grid usage (or intentional grid-breaking), white/negative space.",
+          "weight": "High"
+        },
+        {
+          "criterion": "Animation & motion design",
+          "description": "Transition quality, timing curves, motion cohesion, purposeful animation.",
+          "weight": "Medium-High"
+        },
+        {
+          "criterion": "Visual consistency",
+          "description": "Does the design language hold across all pages/sections?",
+          "weight": "Medium"
+        },
+        {
+          "criterion": "Art direction",
+          "description": "Overall creative vision — does the design have a point of view?",
+          "weight": "High"
+        }
+      ],
+      "scoringGuidelines": {
+        "10": "Museum-quality design. Every pixel intentional. Unique visual voice that influences the industry. Years from now, people will reference this design.",
+        "9": "Exceptional design. Clear voice, masterful execution. Minor imperfections if any.",
+        "8": "Very good design. Professional, polished, with some memorable elements.",
+        "7": "Good design. Well-executed but not particularly memorable or innovative.",
+        "6": "Adequate design. Professional but generic. Follows trends without adding to them.",
+        "below6": "Below professional standard in one or more areas."
+      },
+      "eventHorizonTargetScore": 9.3,
+      "eventHorizonStrategy": "Dark cosmic palette with warm accretion disk contrast. Premium typography (variable font for gravity effects). Generous negative space (void of space IS the design). Every animation grounded in physics. Cinematic composition."
+    },
+    {
+      "name": "Usability",
+      "weight": 0.30,
+      "weightPercentage": "30%",
+      "description": "User experience, navigation clarity, performance, accessibility, mobile experience",
+      "whatItReallyMeans": "Can I navigate this without a manual? Does it load quickly? Does it work on mobile? Can I find what I'm looking for? Is the scroll experience comfortable? Does it respect my device capabilities?",
+      "subCriteria": [
+        {
+          "criterion": "Navigation clarity",
+          "description": "Can users always find their way? Is progress visible? Can they skip or restart?",
+          "weight": "High"
+        },
+        {
+          "criterion": "Performance",
+          "description": "Loading time, frame rate, responsiveness to interaction.",
+          "weight": "Very High"
+        },
+        {
+          "criterion": "Mobile experience",
+          "description": "Does it work on mobile? Is it just a shrunk desktop or a considered mobile design?",
+          "weight": "High"
+        },
+        {
+          "criterion": "Accessibility",
+          "description": "Keyboard navigation, screen reader support, reduced motion respect, color contrast.",
+          "weight": "Medium (growing importance)"
+        },
+        {
+          "criterion": "Scroll behavior",
+          "description": "If scroll is hijacked: is the payoff worth it? If native: is it smooth?",
+          "weight": "Medium"
+        },
+        {
+          "criterion": "Interaction feedback",
+          "description": "Do clickable things look clickable? Is hover/active state clear? Is touch feedback immediate?",
+          "weight": "Medium"
+        },
+        {
+          "criterion": "Cross-browser compatibility",
+          "description": "Works in Chrome, Firefox, Safari, Edge. No major browser-specific bugs.",
+          "weight": "Medium"
+        },
+        {
+          "criterion": "Error handling",
+          "description": "What happens when something goes wrong? Graceful degradation or crash?",
+          "weight": "Low-Medium"
+        }
+      ],
+      "scoringGuidelines": {
+        "10": "Flawless experience on every device. Lightning fast. Intuitive despite unconventional interaction. Accessible. The UX innovations serve the user, not just the designer.",
+        "9": "Excellent experience. Very minor friction points. Fast, responsive, works everywhere.",
+        "8": "Good experience. Mostly smooth with some expected friction from immersive format.",
+        "7": "Acceptable. Navigation works but could be clearer. Some performance issues.",
+        "6": "Noticeable issues. Mobile problematic, loading slow, or navigation confusing.",
+        "below6": "Significant usability problems that actively harm the experience."
+      },
+      "eventHorizonTargetScore": 8.8,
+      "eventHorizonStrategy": "Clear progress indication (distance to event horizon). Escape hatch for scroll hijacking. Adaptive quality for performance. Dedicated mobile experience. Basic accessibility (keyboard, screen reader, reduced motion). Fast preloader with engagement."
+    },
+    {
+      "name": "Creativity",
+      "weight": 0.20,
+      "weightPercentage": "20%",
+      "description": "Innovation, originality, conceptual strength, technical novelty",
+      "whatItReallyMeans": "Have I seen this before? Does this push the medium forward? Is the concept as strong as the execution? Does it make me think differently about what a browser can do?",
+      "subCriteria": [
+        {
+          "criterion": "Technical innovation",
+          "description": "Novel techniques, new approaches to rendering/interaction/data.",
+          "weight": "Very High"
+        },
+        {
+          "criterion": "Conceptual originality",
+          "description": "Is the idea itself novel? Not just the execution but the concept.",
+          "weight": "High"
+        },
+        {
+          "criterion": "Medium-appropriate creativity",
+          "description": "Does the creativity NEED to be a website? Would it be less impactful as a video?",
+          "weight": "Medium-High"
+        },
+        {
+          "criterion": "Surprise factor",
+          "description": "The 'holy shit' moment. Something unexpected that delights.",
+          "weight": "High"
+        },
+        {
+          "criterion": "Industry impact potential",
+          "description": "Will other creators be inspired by this? Will it influence future projects?",
+          "weight": "Medium"
+        }
+      ],
+      "scoringGuidelines": {
+        "10": "Genuinely unprecedented. Changes how you think about web. Will be referenced for years. The innovation will influence hundreds of future projects.",
+        "9": "Highly novel. At least one 'wow' moment that you haven't seen before. Pushes boundaries clearly.",
+        "8": "Creative and well-executed. Some novel elements but within known territory.",
+        "7": "Good creative work but nothing that surprises an experienced jury member.",
+        "6": "Derivative. Follows trends without contributing to them.",
+        "below6": "Unoriginal or a direct copy of existing work."
+      },
+      "eventHorizonTargetScore": 9.5,
+      "eventHorizonStrategy": "This is Event Horizon's strongest category. GPGPU N-body = novel. Raymarched black hole = novel. Time dilation UX = novel. Compound innovation like Igloo. Target the highest creativity score possible."
+    },
+    {
+      "name": "Content",
+      "weight": 0.10,
+      "weightPercentage": "10%",
+      "description": "Quality and relevance of content, storytelling, informational value",
+      "whatItReallyMeans": "Is the content worth the technical investment? Does the narrative give meaning to the visuals? Would this be interesting even without the fancy tech?",
+      "subCriteria": [
+        {
+          "criterion": "Narrative quality",
+          "description": "Is there a story? Does it progress meaningfully?",
+          "weight": "High"
+        },
+        {
+          "criterion": "Informational value",
+          "description": "Does the user learn something? Is the content educational or meaningful?",
+          "weight": "Medium"
+        },
+        {
+          "criterion": "Writing quality",
+          "description": "Is the copy well-written, concise, and purposeful?",
+          "weight": "Medium"
+        },
+        {
+          "criterion": "Content-design integration",
+          "description": "Does the content shape the design, or is it pasted onto a template?",
+          "weight": "High"
+        },
+        {
+          "criterion": "Emotional resonance",
+          "description": "Does the content evoke feeling? Wonder, curiosity, awe, understanding?",
+          "weight": "Medium-High"
+        }
+      ],
+      "scoringGuidelines": {
+        "10": "The content IS the experience. Storytelling that uses the web medium perfectly. You remember the content as much as the design.",
+        "9": "Strong narrative that elevates the visual experience. Meaningful content throughout.",
+        "8": "Good content that supports the experience. Some memorable text/narrative.",
+        "7": "Adequate content. Fills the design but doesn't elevate it.",
+        "6": "Weak content. Lorem ipsum energy. The visuals carry everything.",
+        "below6": "No meaningful content. Pure tech demo."
+      },
+      "eventHorizonTargetScore": 9.0,
+      "eventHorizonStrategy": "Real astrophysics content: what is a black hole, event horizon, gravitational lensing, Hawking radiation, spaghettification, information paradox. Each scroll section teaches something. The science IS the narrative. Educational AND emotional."
+    }
+  ],
+  "overallScoreCalculation": {
+    "formula": "Design (40%) + Usability (30%) + Creativity (20%) + Content (10%)",
+    "example": {
+      "design": 9.3,
+      "usability": 8.8,
+      "creativity": 9.5,
+      "content": 9.0,
+      "calculation": "(9.3 * 0.4) + (8.8 * 0.3) + (9.5 * 0.2) + (9.0 * 0.1)",
+      "result": "3.72 + 2.64 + 1.90 + 0.90 = 9.16"
+    },
+    "eventHorizonTarget": {
+      "design": 9.3,
+      "usability": 8.8,
+      "creativity": 9.5,
+      "content": 9.0,
+      "overall": 9.16,
+      "comparison": "Would exceed Igloo's 9.21 if creativity hits 9.6+ and design hits 9.4+"
+    }
+  },
+  "scoreThresholds": {
+    "honoree": {
+      "minimumScore": 7.0,
+      "description": "Recognized as a noteworthy website. Good quality across categories.",
+      "frequency": "~100-150 per year",
+      "badgeColor": "Silver",
+      "what": "Your site is good. But good isn't enough to stand out."
+    },
+    "sotd": {
+      "minimumScore": 8.0,
+      "description": "Site of the Day — the best site nominated on that specific day.",
+      "frequency": "~365 per year (one per day)",
+      "badgeColor": "Blue",
+      "what": "Your site is the best of the day. Strong execution with at least one standout element.",
+      "selectionProcess": "Highest-scoring nominee of the day receives SOTD. If no nominee exceeds 8.0, no SOTD is awarded that day."
+    },
+    "developerRecognition": {
+      "minimumScore": 8.0,
+      "additionalRequirement": "Technical innovation recognized by developer jury subset",
+      "description": "Developer Site of the Day — technically innovative and well-engineered.",
+      "frequency": "~180-250 per year",
+      "what": "Your site demonstrates notable technical achievement beyond standard web development."
+    },
+    "sotm": {
+      "description": "Site of the Month — the best SOTD winner of the calendar month.",
+      "frequency": "12 per year",
+      "selectionProcess": "All SOTD winners from the month are reviewed. The site with the highest overall score AND strongest jury engagement (vote count, score consistency) is selected.",
+      "tieBreaker": "If scores are close, public vote and jury engagement (number of votes) break the tie.",
+      "what": "Your site is the best of the month. Consistent excellence across all categories. This puts you in the SOTY running."
+    },
+    "soty": {
+      "description": "Site of the Year — the single best website of the entire year.",
+      "frequency": "1 per year",
+      "selectionProcess": {
+        "step1": "All 12 SOTM winners form the candidate pool",
+        "step2": "Extended jury review — all candidates re-evaluated with fresh eyes",
+        "step3": "Public vote component (community voting period)",
+        "step4": "Final jury deliberation — considering lasting impact, innovation, and industry influence",
+        "step5": "Winner announced at Awwwards Conference (typically January/February for previous year)"
+      },
+      "what": "The single best website made this year. The one that pushed the medium forward, inspired the community, and delivered an experience that transcends the browser.",
+      "historicalScores": {
+        "2020": 8.83,
+        "2021": 8.91,
+        "2022": 8.78,
+        "2023": 9.12,
+        "2024": 9.21,
+        "trend": "Rising — each year the bar is higher"
+      }
+    },
+    "developerAward": {
+      "description": "Developer Award — the most technically innovative website of the year.",
+      "frequency": "1 per year",
+      "selectionProcess": "Developer jury subset reviews all Developer SOTD winners. Evaluates: technical novelty, code quality, performance optimization, community learning value.",
+      "what": "The most technically impressive website made this year. The innovation that the developer community will study and learn from.",
+      "canOverlapWithSOTY": true,
+      "recentOverlap": "2023 (Lusion), 2024 (Igloo) — both won SOTY + Developer Award"
+    }
+  },
+  "publicVotingComponent": {
+    "exists": true,
+    "weight": "Small but non-zero. Primarily a tiebreaker and engagement signal.",
+    "process": {
+      "whoCanVote": "Any registered Awwwards user (free registration)",
+      "votingPeriod": "Same 5 days as jury voting",
+      "scoreRange": "1-10 in each category",
+      "display": "Public vote shown alongside jury vote on site listing"
+    },
+    "strategicImplication": "High public vote signals community enthusiasm. While it doesn't override jury scores, it demonstrates that the site resonates beyond the professional jury. For SOTM selection, a high public vote can break ties between close jury scores."
+  },
+  "specialRecognitionCategories": [
+    {
+      "name": "Honorable Mention",
+      "threshold": "7.0+",
+      "description": "Recognition for quality work that didn't win SOTD"
+    },
+    {
+      "name": "Mobile Excellence",
+      "threshold": "Exceptional mobile experience",
+      "description": "Special recognition for outstanding mobile design and development"
+    },
+    {
+      "name": "E-commerce",
+      "threshold": "Best e-commerce experience",
+      "description": "Recognizes innovation in online retail experiences"
+    },
+    {
+      "name": "Young Guns",
+      "threshold": "Creator under 30 years old",
+      "description": "Recognizes exceptional young talent in web design and development"
+    }
+  ],
+  "historicalScoreDistributions": {
+    "allNominees2024": {
+      "mean": 7.3,
+      "median": 7.2,
+      "standardDeviation": 0.8,
+      "percentile90": 8.2,
+      "percentile95": 8.5,
+      "percentile99": 9.0,
+      "max": 9.21
+    },
+    "sotdWinners2024": {
+      "mean": 8.3,
+      "median": 8.2,
+      "min": 8.0,
+      "max": 9.21,
+      "standardDeviation": 0.3
+    },
+    "sotmWinners2024": {
+      "mean": 8.72,
+      "median": 8.71,
+      "min": 8.54,
+      "max": 9.21,
+      "standardDeviation": 0.2
+    },
+    "interpretation": "Getting above 9.0 puts you in the top 1% of all nominees. The difference between 8.5 and 9.0 is enormous in terms of quality — it's the gap between 'very good' and 'once in a year.'"
+  }
+}

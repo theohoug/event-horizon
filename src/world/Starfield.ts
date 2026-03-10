@@ -12,15 +12,17 @@ import particlesFrag from '../shaders/particles/particles.frag';
 type Quality = 'ultra' | 'high' | 'medium';
 
 const PARTICLE_COUNT = {
-  ultra: 42000,
-  high: 24000,
-  medium: 10000,
+  ultra: 12000,
+  high: 8000,
+  medium: 4000,
 };
 
 export class Starfield {
   private points: THREE.Points;
   private material: THREE.ShaderMaterial;
   private geometry: THREE.BufferGeometry;
+  private accumulatedFlow = 0;
+  private lastScroll = 0;
 
   constructor(scene: THREE.Scene, quality: Quality) {
     const count = PARTICLE_COUNT[quality];
@@ -33,29 +35,20 @@ export class Starfield {
     const speeds = new Float32Array(count);
     const randomness = new Float32Array(count * 3);
 
-    const clusterCount = Math.floor(count * 0.2);
-
     for (let i = 0; i < count; i++) {
       const i3 = i * 3;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = 4 + Math.pow(Math.random(), 0.6) * 45;
 
-      if (i < clusterCount) {
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(2 * Math.random() - 1);
-        const r = 3 + Math.pow(Math.random(), 0.5) * 14;
-        positions[i3] = r * Math.sin(phi) * Math.cos(theta);
-        positions[i3 + 1] = (Math.random() - 0.5) * r * 0.18;
-        positions[i3 + 2] = r * Math.sin(phi) * Math.sin(theta);
-      } else {
-        const angle = Math.random() * Math.PI * 2;
-        const radius = 2 + Math.pow(Math.random(), 0.55) * 24;
-        positions[i3] = Math.cos(angle) * radius;
-        positions[i3 + 1] = (Math.random() - 0.5) * radius * 0.3;
-        positions[i3 + 2] = Math.random() * 55 - 5;
-      }
+      positions[i3] = r * Math.sin(phi) * Math.cos(theta);
+      positions[i3 + 1] = r * Math.cos(phi) * 0.7;
+      positions[i3 + 2] = r * Math.sin(phi) * Math.sin(theta);
 
-      sizes[i] = 0.3 + Math.random() * 2.0;
-      brightness[i] = 0.12 + Math.pow(Math.random(), 2.5) * 0.55;
-      speeds[i] = 0.15 + Math.random() * 1.6;
+      const mag = Math.pow(Math.random(), 2.5);
+      sizes[i] = 0.3 + mag * 3.5;
+      brightness[i] = 0.06 + mag * 0.6;
+      speeds[i] = 0.2 + Math.random() * 1.5;
 
       randomness[i3] = Math.random();
       randomness[i3 + 1] = Math.random();
@@ -74,6 +67,7 @@ export class Starfield {
       uniforms: {
         uTime: { value: 0 },
         uScroll: { value: 0 },
+        uFlow: { value: 0 },
         uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
         uBlackHolePos: { value: new THREE.Vector3(0, 0, 0) },
         uMouse: { value: new THREE.Vector2(0.5, 0.5) },
@@ -90,9 +84,15 @@ export class Starfield {
     scene.add(this.points);
   }
 
-  update(state: { time: number; scroll: number; mouseSmooth: THREE.Vector2 }) {
+  update(state: { time: number; scroll: number; deltaTime: number; mouseSmooth: THREE.Vector2 }) {
+    const dt = Math.min(state.deltaTime, 0.05);
+    const s = state.scroll;
+    const flowSpeed = 0.3 + s * 18.0 + s * s * 25.0;
+    this.accumulatedFlow += dt * flowSpeed;
+
     this.material.uniforms.uTime.value = state.time;
-    this.material.uniforms.uScroll.value = state.scroll;
+    this.material.uniforms.uScroll.value = s;
+    this.material.uniforms.uFlow.value = this.accumulatedFlow;
     this.material.uniforms.uMouse.value.copy(state.mouseSmooth);
   }
 

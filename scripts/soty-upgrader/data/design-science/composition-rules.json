@@ -1,0 +1,521 @@
+{
+  "meta": {
+    "title": "Visual Composition Rules for SOTY Event Horizon",
+    "version": "1.0.0",
+    "author": "Cleanlystudio",
+    "description": "Comprehensive composition database including classical rules, cinematic framing, and WebGL-specific techniques"
+  },
+  "rule_of_thirds": {
+    "description": "Divide the frame into a 3x3 grid. Place key elements along grid lines or at intersection points (power points).",
+    "grid": {
+      "vertical_lines": ["33.33%", "66.67%"],
+      "horizontal_lines": ["33.33%", "66.67%"],
+      "power_points": [
+        {"position": "top-left", "x": "33.33%", "y": "33.33%", "strength": "Strong — primary focus in Western left-to-right reading"},
+        {"position": "top-right", "x": "66.67%", "y": "33.33%", "strength": "Strong — secondary focus, natural eye movement end"},
+        {"position": "bottom-left", "x": "33.33%", "y": "66.67%", "strength": "Moderate — grounding position"},
+        {"position": "bottom-right", "x": "66.67%", "y": "66.67%", "strength": "Moderate — terminal position for eye movement"}
+      ]
+    },
+    "application": {
+      "web_design": [
+        "Place the black hole center slightly off-center (rule of thirds position) for dynamic tension",
+        "Align text blocks to the left or right third",
+        "Place key interactive elements at power points",
+        "Horizon lines (if any) along horizontal thirds, not center"
+      ],
+      "when_to_break": [
+        "Centered composition creates symmetry and stability — intentional for 'singularity' moments",
+        "Full-bleed elements that fill the entire viewport (immersive scenes)",
+        "When the subject IS the center (the black hole itself)"
+      ]
+    }
+  },
+  "golden_ratio": {
+    "value": 1.618033988749895,
+    "symbol": "φ (phi)",
+    "description": "Found throughout nature (nautilus shells, sunflower seeds, galaxy spirals). Creates compositions that feel naturally balanced.",
+    "applications": {
+      "layout_proportions": {
+        "description": "Divide layout widths/heights by φ for balanced proportions",
+        "examples": [
+          {"total": 1440, "major": 890, "minor": 550, "usage": "Content area vs sidebar"},
+          {"total": 900, "major": 556, "minor": 344, "usage": "Image height vs text area"},
+          {"total_height": "100vh", "major": "61.8vh", "minor": "38.2vh", "usage": "Hero section vs content below"}
+        ]
+      },
+      "spacing": {
+        "description": "Use φ to create harmonious spacing scales",
+        "scale": [4, 6, 10, 16, 26, 42, 68, 110],
+        "unit": "px",
+        "note": "Each value ≈ previous × 1.618"
+      },
+      "typography": {
+        "description": "Font sizes based on golden ratio",
+        "example": "If body is 16px: heading = 16 × 1.618 = 25.89 ≈ 26px"
+      }
+    },
+    "event_horizon_specific": {
+      "black_hole_placement": "The center of the black hole at φ intersection creates more dynamic composition than dead center",
+      "accretion_disk_proportions": "Inner ring radius to outer ring radius should approximate 1:φ",
+      "text_placement": "Narrative text positioned at φ distance from the focal black hole"
+    }
+  },
+  "golden_spiral": {
+    "description": "A logarithmic spiral with growth factor of φ. Guides the eye from the largest element to the smallest along a natural curve.",
+    "construction": "Based on golden rectangles: subdivide a golden rectangle and draw quarter-circle arcs through each subdivision",
+    "application": {
+      "general": [
+        "Place the most important element (black hole) at the spiral's focal point (smallest rectangle)",
+        "Arrange secondary elements along the spiral path — the eye follows naturally",
+        "Use the spiral as a guide for particle flow and light trails"
+      ],
+      "event_horizon_specific": [
+        "The accretion disk naturally follows a spiral — align visual elements to golden spiral overlay",
+        "Text blocks can be positioned along the spiral's outer curve",
+        "Light bending (gravitational lensing) follows spiral-like paths around the black hole",
+        "The spiral termination point = the singularity = the void = maximum emotional impact"
+      ]
+    }
+  },
+  "fibonacci_sequence": {
+    "sequence": [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987],
+    "description": "Each number is the sum of the two preceding. Ratio between consecutive numbers approaches φ.",
+    "design_applications": [
+      "Spacing scale: 8, 13, 21, 34, 55px for padding/margin",
+      "Column widths in grid systems",
+      "Animation timing stagger: 0, 100, 100, 200, 300, 500, 800ms",
+      "Particle distribution patterns (sunflower algorithm for even distribution)",
+      "Sound frequency ratios for harmonic relationships"
+    ]
+  },
+  "visual_hierarchy": {
+    "description": "The order in which the human eye perceives elements. Establish clear hierarchy so users process information in the intended order.",
+    "techniques": {
+      "size": {
+        "principle": "Larger elements are perceived as more important",
+        "implementation": "Use type scale ratios. Hero text 4-6x body size.",
+        "effectiveness": "Highest — size is the strongest hierarchy signal",
+        "example": "Chapter title at 90px, body text at 16px — 5.6x ratio"
+      },
+      "color_and_contrast": {
+        "principle": "High-contrast and saturated colors draw attention first",
+        "implementation": "Key elements in high contrast (white/cyan on black). Secondary in lower contrast (gray on dark gray).",
+        "effectiveness": "Very high — especially on dark backgrounds where light elements pop",
+        "example": "Primary text #E0E0E0, secondary text #757575, accent #00E5FF"
+      },
+      "position": {
+        "principle": "Elements at the top and left are seen first (Western reading). Center for focused layouts.",
+        "implementation": "Critical info top-left or center. Supporting info below or in periphery.",
+        "effectiveness": "High — follows natural scanning patterns",
+        "example": "Chapter number top-left, title center, description below"
+      },
+      "whitespace": {
+        "principle": "Elements with more surrounding space feel more important (they 'breathe')",
+        "implementation": "Give key elements generous padding. Pack secondary items tighter.",
+        "effectiveness": "High — whitespace signals luxury and importance",
+        "example": "Chapter title with 20vh top padding vs data readouts packed in a HUD corner"
+      },
+      "motion": {
+        "principle": "Moving elements attract attention before static ones",
+        "implementation": "Animate the element you want users to notice first. Static for secondary.",
+        "effectiveness": "Highest immediate attention but can be distracting if overused",
+        "example": "Text reveal animation draws attention to narrative while particles orbit passively"
+      },
+      "depth_and_blur": {
+        "principle": "Sharp elements feel closer and more important; blurred elements recede",
+        "implementation": "Depth of field effect — foreground sharp, background soft",
+        "effectiveness": "Medium — works best in combination with other techniques",
+        "example": "Text in focus, background particles slightly blurred"
+      },
+      "texture_and_detail": {
+        "principle": "Detailed/textured elements attract more attention than flat ones",
+        "implementation": "Use grain, noise, or shimmer on key elements. Clean/flat for background.",
+        "effectiveness": "Low-medium — subtle but contributes to premium feel"
+      }
+    },
+    "hierarchy_order_for_event_horizon": [
+      "1. The black hole visualization (always dominant — it IS the experience)",
+      "2. Chapter title text (dramatic reveal, large size)",
+      "3. Narrative body text (readable, clearly positioned)",
+      "4. HUD data elements (persistent but non-intrusive)",
+      "5. Navigation/progress indicators (always available, never distracting)",
+      "6. Background star field and particles (ambient, atmospheric)"
+    ]
+  },
+  "focal_point_placement": {
+    "description": "The single most important element in the composition where the eye should land first.",
+    "techniques_to_create_focal_point": [
+      "Contrast: the brightest or most saturated element in the frame",
+      "Isolation: surrounded by empty space",
+      "Convergence: leading lines pointing toward it",
+      "Detail: most detailed element in a simple scene",
+      "Motion: the only moving element (or the stillest in a moving scene)",
+      "Anomaly: the one element that breaks the pattern"
+    ],
+    "placement_strategies": [
+      {"position": "Center", "effect": "Maximum stability, authority, confrontation. The viewer faces it directly.", "when": "The singularity reveal, confrontation moments"},
+      {"position": "Rule of thirds", "effect": "Dynamic, natural, creates implied direction/movement.", "when": "Most chapters, narrative progression"},
+      {"position": "Off-screen (implied)", "effect": "Tension, anticipation, the unknown beyond the frame.", "when": "Before the black hole is revealed, building suspense"}
+    ],
+    "event_horizon_focal_progression": [
+      {"chapter": "Opening", "focal": "Centered starfield → eye drawn to brightest star", "technique": "Contrast isolation"},
+      {"chapter": "Approach", "focal": "Black hole at rule-of-thirds position → approaching", "technique": "Scale + convergence"},
+      {"chapter": "Event Horizon", "focal": "Black hole moves to center → confrontation", "technique": "Center + maximum size"},
+      {"chapter": "Crossing", "focal": "Everything collapses to center point", "technique": "Convergence to singularity"},
+      {"chapter": "Beyond", "focal": "Void → dispersal → new focal point emerges", "technique": "Anomaly in emptiness"}
+    ]
+  },
+  "leading_lines": {
+    "description": "Visual elements that guide the viewer's eye along a path toward the focal point.",
+    "types": [
+      {"name": "Explicit lines", "examples": "Particle trails, accretion disk streaks, HUD grid lines", "strength": "Strong and direct"},
+      {"name": "Implied lines", "examples": "Alignment of scattered elements, text alignment, eye gaze direction", "strength": "Subtle but effective"},
+      {"name": "Curved lines", "examples": "Gravitational lensing arcs, orbital paths, spiral arms", "strength": "Graceful, natural, draws eye along"},
+      {"name": "Converging lines", "examples": "Perspective lines converging at black hole, light rays bending inward", "strength": "Dramatic, creates depth"},
+      {"name": "Diagonal lines", "examples": "Particle streams at angles, slanted text reveal", "strength": "Dynamic, energetic, unstable (tension)"}
+    ],
+    "event_horizon_applications": [
+      "Particle streams flowing toward the black hole = leading lines to the singularity",
+      "Gravitational lensing creates curved light paths that circle the focal point",
+      "Accretion disk acts as a massive circular leading line around the center",
+      "HUD data readout lines can converge toward the data source",
+      "Star streaks during approach sequence lead toward the destination"
+    ]
+  },
+  "symmetry_vs_asymmetry": {
+    "symmetry": {
+      "types": [
+        {"name": "Bilateral", "description": "Mirror image across a vertical axis", "effect": "Stability, formality, power, confrontation"},
+        {"name": "Radial", "description": "Elements radiate from a center point", "effect": "Unity, wholeness, cosmic, mandala-like"},
+        {"name": "Translational", "description": "Repeated elements at regular intervals", "effect": "Pattern, rhythm, endlessness"}
+      ],
+      "psychological_effect": "Humans are wired to find symmetry beautiful (facial symmetry preference). Creates feelings of balance, order, completeness.",
+      "event_horizon_use": "The black hole IS radially symmetric. This natural symmetry creates a hypnotic, almost spiritual visual. Kubrick used bilateral symmetry for HAL 9000 and the Stargate."
+    },
+    "asymmetry": {
+      "description": "Balanced but not mirrored. Creates dynamic tension and visual interest.",
+      "techniques": [
+        "Balance large element on one side with smaller detailed elements on the other",
+        "Use color intensity to balance visual weight across asymmetric layout",
+        "Text blocks on one side balanced by visual elements on the other"
+      ],
+      "psychological_effect": "More dynamic and engaging than symmetry. Feels modern, active, alive.",
+      "event_horizon_use": "Text positioned asymmetrically against the centered black hole creates tension between order (the void) and chaos (human narrative)"
+    }
+  },
+  "negative_space": {
+    "description": "The empty space around and between elements. Not 'nothing' — it's an active design element.",
+    "principles": [
+      "Negative space defines the shape of positive space — they are inseparable",
+      "More negative space = more premium, luxurious, contemplative feel",
+      "Less negative space = more dense, urgent, information-rich feel",
+      "In dark themes, negative space IS the void — it has psychological weight",
+      "Active negative space: intentionally shaped to create meaning (FedEx arrow)"
+    ],
+    "application_for_event_horizon": [
+      "The void of space IS the negative space — it's not decorative, it's the experience",
+      "Allow the blackness to breathe. Don't fill every pixel with particles or effects",
+      "Text floating in vast darkness creates intimacy (small human words in infinite void)",
+      "Chapter transitions should use PURE negative space (blackout moments) for emotional reset",
+      "The black hole's shadow is the ultimate negative space — absence as the main character"
+    ],
+    "ratios": {
+      "luxury_design": "70-80% negative space, 20-30% content",
+      "editorial_design": "50-60% negative space, 40-50% content",
+      "dashboard_design": "30-40% negative space, 60-70% content",
+      "event_horizon_target": "75-85% negative space during narrative, 40-60% during data displays"
+    }
+  },
+  "depth_cues": {
+    "description": "Visual techniques that create the illusion of three-dimensional depth on a 2D screen.",
+    "monocular_cues": [
+      {
+        "name": "Relative size",
+        "description": "Smaller objects appear farther away",
+        "implementation": "Particles further from camera rendered smaller. Stars in background are pinpoints.",
+        "strength": "Very strong depth cue"
+      },
+      {
+        "name": "Overlap (occlusion)",
+        "description": "Objects in front partially hide objects behind",
+        "implementation": "Accretion disk occluding stars behind it. Text floating in front of particles.",
+        "strength": "Strongest monocular depth cue"
+      },
+      {
+        "name": "Atmospheric perspective",
+        "description": "Distant objects are desaturated, lower contrast, and blueshift",
+        "implementation": "Far stars: blue-shifted, low opacity. Near elements: full saturation and contrast.",
+        "strength": "Strong — creates vast sense of distance"
+      },
+      {
+        "name": "Blur (depth of field)",
+        "description": "Objects at the focus distance are sharp; others are blurred",
+        "implementation": "Post-processing bokeh/DOF effect in the shader pipeline",
+        "strength": "Strong — mimics how the human eye works"
+      },
+      {
+        "name": "Linear perspective",
+        "description": "Parallel lines converge at a vanishing point",
+        "implementation": "Grid lines, light rays converging toward the black hole",
+        "strength": "Very strong in scenes with straight lines"
+      },
+      {
+        "name": "Texture gradient",
+        "description": "Texture becomes finer and denser with distance",
+        "implementation": "Star field density increases toward the horizon. Particle detail decreases with distance.",
+        "strength": "Medium — subtle but effective"
+      },
+      {
+        "name": "Motion parallax",
+        "description": "Near objects move faster across the view than far objects",
+        "implementation": "Multi-layer parallax in star field. Near particles orbit faster than distant ones.",
+        "strength": "Very strong — especially during scroll/movement"
+      },
+      {
+        "name": "Height in picture plane",
+        "description": "Objects higher in the frame appear farther away",
+        "implementation": "Less applicable in space scenes (no ground plane) but useful for HUD layering",
+        "strength": "Moderate — context dependent"
+      }
+    ],
+    "depth_stacking_for_event_horizon": [
+      {"layer": 0, "name": "Background stars", "depth": "Farthest", "characteristics": "Pinpoint white, no motion, lowest opacity"},
+      {"layer": 1, "name": "Nebula/dust clouds", "depth": "Far", "characteristics": "Soft, low opacity, subtle color, slow drift"},
+      {"layer": 2, "name": "Distant particles", "depth": "Mid-far", "characteristics": "Small, slow orbit, medium opacity"},
+      {"layer": 3, "name": "Black hole + accretion", "depth": "Center", "characteristics": "Main focal point, full detail"},
+      {"layer": 4, "name": "Near particles", "depth": "Mid-near", "characteristics": "Larger, faster orbit, higher opacity"},
+      {"layer": 5, "name": "Foreground debris", "depth": "Near", "characteristics": "Occasional, large, blurred (DOF)"},
+      {"layer": 6, "name": "Text and HUD", "depth": "Closest", "characteristics": "Sharp, readable, floating above scene"}
+    ]
+  },
+  "reading_patterns": {
+    "f_pattern": {
+      "description": "Users scan the top left, move right, drop down, scan left to right again (shorter), continue down the left edge",
+      "application": "Content-heavy pages, articles, documentation",
+      "relevance_to_event_horizon": "Low — F-pattern applies to text-heavy pages, not immersive experiences"
+    },
+    "z_pattern": {
+      "description": "Eye moves from top-left → top-right → diagonal to bottom-left → bottom-right",
+      "application": "Simple pages with limited content, landing pages",
+      "relevance_to_event_horizon": "Medium — useful for chapter title layouts with minimal elements"
+    },
+    "gutenberg_diagram": {
+      "description": "The page is divided into quadrants. Primary optical area (top-left), strong fallow area (top-right), weak fallow area (bottom-left), terminal area (bottom-right). Eye naturally flows from primary to terminal.",
+      "application": "Pages with uniform content distribution",
+      "relevance_to_event_horizon": "Low-medium — mostly for balanced layouts"
+    },
+    "center_focus_pattern": {
+      "description": "In immersive/cinematic experiences, the eye is drawn to the center first, then explores outward",
+      "application": "Full-screen visuals, video, WebGL experiences",
+      "relevance_to_event_horizon": "HIGH — the black hole at center draws all attention. Everything else is explored from center outward.",
+      "design_implication": "Place the most important visual (black hole) at or near center. Position text where the eye naturally moves after center (left or right sides, below center)."
+    }
+  },
+  "gestalt_principles": {
+    "proximity": {
+      "description": "Elements close to each other are perceived as a group",
+      "application": "Group related data points in the HUD. Related text blocks should be closer than unrelated ones.",
+      "spacing_rule": "Space within groups < space between groups. Ratio should be at least 1:2."
+    },
+    "similarity": {
+      "description": "Elements that look similar are perceived as related",
+      "application": "Use consistent styling for all HUD data elements. Same font for all narrative text. Same color for all interactive elements.",
+      "examples": "All clickable elements in cyan. All chapter titles in Space Grotesk Bold. All measurements in JetBrains Mono."
+    },
+    "closure": {
+      "description": "The mind fills in missing information to perceive complete shapes",
+      "application": "The black hole's event horizon can be implied by the accretion disk — you don't need to draw the actual edge. Partial UI frames suggest complete structures.",
+      "examples": "HUD corner brackets suggest a complete frame without drawing all edges. Partial circle of particles implies the full orbit."
+    },
+    "continuity": {
+      "description": "The eye follows smooth paths and lines, even through intersections",
+      "application": "Particle trails should flow smoothly. Scroll animations should have continuous motion. Transitions should carry visual momentum.",
+      "examples": "Accretion disk material flows in smooth orbits. Text reveal follows a consistent direction."
+    },
+    "figure_ground": {
+      "description": "The eye separates elements into figure (foreground subject) and ground (background)",
+      "application": "Ensure clear separation between the black hole (figure) and space (ground). Text (figure) must be clearly distinguishable from the WebGL canvas (ground).",
+      "challenges": "In dark themes, figure-ground separation relies heavily on luminance contrast since color cues are limited."
+    },
+    "common_fate": {
+      "description": "Elements moving in the same direction are perceived as a group",
+      "application": "Particles orbiting the same direction form a unified disk. Staggered text animation where all text moves the same direction feels cohesive."
+    },
+    "pragnanz": {
+      "description": "The mind prefers the simplest interpretation of visual information",
+      "application": "Keep compositions clean. Remove any element that doesn't serve a purpose. The black hole's circular form is already the simplest — don't overcomplicate it."
+    }
+  },
+  "grid_systems": {
+    "twelve_column_grid": {
+      "description": "The standard responsive grid — 12 columns divide evenly by 1, 2, 3, 4, 6, 12",
+      "application": "Layout of text blocks, HUD panels, and UI elements overlaying the WebGL canvas",
+      "event_horizon_adaptation": "Use 12-column grid for text overlay positioning but allow the WebGL scene to break the grid freely"
+    },
+    "modular_grid": {
+      "description": "Both columns and rows create a matrix of modules",
+      "application": "Dashboard-style HUD layouts, data-heavy sections",
+      "module_sizes": "Based on base unit (typically 8px or line-height). Modules are multiples of the base unit."
+    },
+    "baseline_grid": {
+      "description": "All text sits on a consistent baseline rhythm — typically the body line-height",
+      "application": "Ensures vertical rhythm across all text elements",
+      "implementation": "If body line-height is 24px, all spacing values should be multiples of 24 (or 12 for half-line)"
+    },
+    "full_screen_composition_grid": {
+      "description": "For immersive full-viewport experiences, use a flexible composition grid",
+      "zones": [
+        {"name": "Safe area", "inset": "5-10%", "description": "Content must stay within this area for all screen sizes"},
+        {"name": "Title zone", "position": "center or top-third", "description": "Chapter titles and primary text"},
+        {"name": "Narrative zone", "position": "lower-left or lower-right third", "description": "Story text and descriptions"},
+        {"name": "HUD zone", "position": "corners and edges", "description": "Data readouts, navigation, progress"},
+        {"name": "Bleed zone", "position": "full viewport", "description": "WebGL canvas — no content restrictions"}
+      ]
+    }
+  },
+  "cinematic_composition": {
+    "kubrick_symmetry": {
+      "description": "Stanley Kubrick's signature one-point perspective with bilateral symmetry",
+      "effect": "Creates unease, perfection, artificial order, the sublime",
+      "films": ["2001: A Space Odyssey (HAL 9000, Stargate)", "The Shining (corridors)", "Full Metal Jacket"],
+      "application": "Center the black hole perfectly. Use bilateral symmetry for the most powerful, unsettling moments. The Stargate sequence from 2001 is the direct ancestor of Event Horizon's visual language.",
+      "technique": "Camera (viewport) aimed directly at the vanishing point. All elements mirrored left-right."
+    },
+    "villeneuve_sci_fi_framing": {
+      "description": "Denis Villeneuve's approach to sci-fi — vast scale with human smallness",
+      "effect": "Awe, insignificance, sublimity, existential contemplation",
+      "films": ["Arrival (the ship's wall)", "Blade Runner 2049 (empty landscapes)", "Dune (desert vastness)"],
+      "application": "Make the black hole MASSIVE relative to any human-scale elements. Use extreme scale contrast — tiny text against infinite void. Let emptiness tell the story.",
+      "technique": "Extreme wide shots. Subject occupies < 10% of frame. Vast empty space creates meaning."
+    },
+    "nolan_time_distortion": {
+      "description": "Christopher Nolan's use of time manipulation as a visual and narrative device",
+      "effect": "Disorientation, urgency, the malleability of reality",
+      "films": ["Interstellar (time dilation near black hole)", "Inception (nested time)", "Tenet (time inversion)"],
+      "application": "Time dilation near the black hole: slow-motion effects, time readouts changing speed, sound pitch-shifting. Interstellar's Gargantua is the most direct reference.",
+      "technique": "Cross-cutting between different time rates. Audio pitch-shifting. Clock-like sounds decelerating."
+    },
+    "wes_anderson_palette": {
+      "description": "Wes Anderson's precise, curated color palettes and centered framing",
+      "effect": "Whimsy, precision, artificiality, storybook quality",
+      "films": ["Grand Budapest Hotel", "Moonrise Kingdom", "The French Dispatch"],
+      "application": "NOT directly applicable to Event Horizon's dark aesthetic, but the PRINCIPLE of a precisely controlled, limited palette is essential. Every color must be intentional.",
+      "technique": "Limit palette to 4-6 colors. Every color justified. No accidental colors."
+    },
+    "ridley_scott_atmosphere": {
+      "description": "Ridley Scott's use of atmospheric perspective, smoke, and light shafts",
+      "effect": "Mood, mystery, environmental storytelling",
+      "films": ["Alien (claustrophobic corridors)", "Blade Runner (neon in rain)"],
+      "application": "Particle fog, volumetric light through the accretion disk, atmospheric haze around the black hole. Light passing through matter creates depth and mood.",
+      "technique": "Layered atmosphere — foreground haze, midground detail, background glow. Visible light beams."
+    }
+  },
+  "full_screen_webgl_composition": {
+    "description": "Specific rules for composing within a full-viewport WebGL canvas",
+    "principles": [
+      {
+        "name": "Respect the viewport aspect ratio",
+        "description": "Different screens have wildly different aspects (16:9, 16:10, 4:3, ultrawide 21:9, mobile 9:16). Composition must work across all.",
+        "solution": "Use viewport-relative positioning (percentages). Anchor key elements to viewport center or edges, not absolute positions."
+      },
+      {
+        "name": "The center is the anchor",
+        "description": "In full-screen immersive experiences, the center is the natural focus point. Everything is positioned relative to center.",
+        "solution": "Place the black hole at or near center. Text and HUD elements positioned relative to center (offset in viewport units)."
+      },
+      {
+        "name": "Edge awareness",
+        "description": "Content near viewport edges may be cut off on smaller screens or obscured by browser chrome.",
+        "solution": "Keep critical content within a 90% safe area (5% inset from each edge). Decorative elements can bleed beyond."
+      },
+      {
+        "name": "Scroll-driven composition changes",
+        "description": "As the user scrolls, the composition should evolve — zooming, panning, revealing new elements",
+        "solution": "Map scroll position to composition parameters. At scroll 0%: wide establishing shot. At scroll 50%: close-up. At scroll 100%: inside the void."
+      },
+      {
+        "name": "Layer text over predictable zones",
+        "description": "Text must always be readable. Position text over areas of the scene that remain consistently dark/uniform.",
+        "solution": "Define 'text-safe zones' in the WebGL scene where the shader guarantees low luminance and no bright particles."
+      }
+    ]
+  },
+  "composition_during_scroll": {
+    "description": "How visual composition should evolve as the user scrolls through the experience",
+    "phases": [
+      {
+        "scroll_range": "0-10%",
+        "composition": "Establishing shot — wide, minimal, atmospheric",
+        "elements": "Star field, subtle nebula, empty space",
+        "focal_point": "Distributed (no single focus yet)",
+        "emotional_target": "Curiosity, wonder, vastness"
+      },
+      {
+        "scroll_range": "10-30%",
+        "composition": "Introduction — first visual anchor appears",
+        "elements": "Black hole silhouette visible, first particles, first text",
+        "focal_point": "Off-center black hole (rule of thirds)",
+        "emotional_target": "Discovery, approach, anticipation"
+      },
+      {
+        "scroll_range": "30-60%",
+        "composition": "Development — increasing complexity and closeness",
+        "elements": "Full accretion disk, active particles, detailed data, narrative text",
+        "focal_point": "Black hole growing, moving toward center",
+        "emotional_target": "Engagement, education, growing tension"
+      },
+      {
+        "scroll_range": "60-80%",
+        "composition": "Climax — maximum visual intensity",
+        "elements": "Close-up black hole, intense accretion, gravitational distortion, time dilation effects",
+        "focal_point": "Black hole centered, dominating viewport",
+        "emotional_target": "Awe, fear, sublime, overwhelm"
+      },
+      {
+        "scroll_range": "80-95%",
+        "composition": "Crossing — dissolution and transformation",
+        "elements": "Spaghettification effects, reality distortion, color shifts, visual breakdown",
+        "focal_point": "Singularity point — everything converging",
+        "emotional_target": "Transcendence, dissolution, ego death"
+      },
+      {
+        "scroll_range": "95-100%",
+        "composition": "Resolution — emergence or void",
+        "elements": "New visual state — either void, rebirth, or static",
+        "focal_point": "Dispersed or new focal point",
+        "emotional_target": "Catharsis, reflection, completion"
+      }
+    ]
+  },
+  "radial_composition": {
+    "description": "Specific to the black hole — composition organized around a central void with orbital elements",
+    "principles": [
+      "The void IS the composition. Everything else orbits around absence.",
+      "Concentric rings create natural visual hierarchy (center = most important)",
+      "Radial symmetry is hypnotic — use intentional asymmetric breaks to maintain interest",
+      "Elements closer to center: smaller, faster, hotter (orange/white)",
+      "Elements farther from center: larger, slower, cooler (blue/purple)",
+      "The event horizon boundary is the strongest compositional line — the divide between visible and invisible"
+    ],
+    "ring_hierarchy": [
+      {"ring": "Photon sphere", "distance": "closest visible", "visual": "Brightest ring, thin, intense white/blue"},
+      {"ring": "Inner accretion", "distance": "near", "visual": "Hot white/gold, rapid rotation"},
+      {"ring": "Mid accretion", "distance": "mid", "visual": "Orange/gold, moderate rotation"},
+      {"ring": "Outer accretion", "distance": "far", "visual": "Deep orange/red, slow rotation, wider"},
+      {"ring": "Particle field", "distance": "farthest", "visual": "Scattered particles, slow orbit, dim"}
+    ]
+  },
+  "sources": [
+    {"title": "The Filmmaker's Eye", "author": "Gustavo Mercado", "type": "book"},
+    {"title": "Understanding Comics", "author": "Scott McCloud", "type": "book"},
+    {"title": "Grid Systems in Graphic Design", "author": "Josef Müller-Brockmann", "type": "book"},
+    {"title": "Geometry of Design", "author": "Kimberly Elam", "type": "book"},
+    {"title": "The Art of Looking Sideways", "author": "Alan Fletcher", "type": "book"},
+    {"title": "Kubrick: One-Point Perspective", "author": "kogonada (video essay)", "type": "video"},
+    {"title": "Every Frame a Painting", "author": "Tony Zhou", "type": "video_series"},
+    {"title": "Gestalt Principles of Perception", "author": "Max Wertheimer", "type": "research"},
+    {"title": "Universal Principles of Design", "author": "William Lidwell", "type": "book"},
+    {"title": "Layout Essentials: 100 Design Principles", "author": "Beth Tondreau", "type": "book"}
+  ]
+}

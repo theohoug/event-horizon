@@ -1,0 +1,632 @@
+{
+  "meta": {
+    "title": "Color Psychology Database for SOTY Event Horizon",
+    "version": "1.0.0",
+    "author": "Cleanlystudio",
+    "description": "Comprehensive color psychology data for auditing and upgrading the Event Horizon black hole WebGL experience"
+  },
+  "colors": {
+    "red": {
+      "hex_range": ["#FF0000", "#DC143C", "#B22222", "#8B0000"],
+      "emotional_associations": {
+        "positive": ["passion", "energy", "excitement", "power", "courage", "love", "desire", "confidence", "action"],
+        "negative": ["anger", "danger", "aggression", "violence", "pain", "warning", "debt", "emergency"]
+      },
+      "cultural_associations": {
+        "western": "Danger, love, passion, stop signals, Christmas, Valentine's Day",
+        "eastern": "Luck, prosperity, happiness, celebration, wedding color in China and India",
+        "universal": "Blood, fire, heat — universally recognized as high-arousal color"
+      },
+      "physiological_effects": {
+        "heart_rate": "Increases by 5-10 BPM in controlled studies",
+        "attention": "Highest attention-grabbing of all colors; detected fastest in peripheral vision",
+        "arousal": "Increases galvanic skin response by 15-20%",
+        "appetite": "Stimulates appetite (reason fast food brands use it)",
+        "time_perception": "Makes time feel like it passes slower"
+      },
+      "web_design_use_cases": [
+        "CTA buttons (increases click-through by 21% vs green in some A/B tests)",
+        "Error states and validation messages",
+        "Sale/discount badges",
+        "Notification indicators",
+        "Warning alerts"
+      ],
+      "famous_examples": [
+        {"brand": "YouTube", "usage": "Play button, brand identity — energy and action"},
+        {"brand": "Netflix", "usage": "Brand color — passion for entertainment"},
+        {"brand": "Coca-Cola", "usage": "Full brand identity — excitement and energy"},
+        {"brand": "Target", "usage": "Logo — bold, attention-grabbing"}
+      ]
+    },
+    "orange": {
+      "hex_range": ["#FF8C00", "#FF6B35", "#E65100", "#FF9800"],
+      "emotional_associations": {
+        "positive": ["warmth", "enthusiasm", "creativity", "adventure", "confidence", "friendliness", "energy", "vitality", "optimism"],
+        "negative": ["immaturity", "superficiality", "cheapness", "frustration", "sluggishness"]
+      },
+      "cultural_associations": {
+        "western": "Halloween, autumn, warmth, creativity, affordable brands",
+        "eastern": "Sacred color in Hinduism and Buddhism, courage in Japan",
+        "universal": "Sunset, fire, warmth — associated with transition and change"
+      },
+      "physiological_effects": {
+        "heart_rate": "Moderate increase, less than red",
+        "attention": "High visibility — used in safety vests and traffic cones",
+        "arousal": "Stimulating but less aggressive than red",
+        "appetite": "Stimulates appetite (second to red)",
+        "time_perception": "Slightly speeds perceived time passage"
+      },
+      "web_design_use_cases": [
+        "Secondary CTA buttons",
+        "Warning states (less severe than red)",
+        "Progress indicators",
+        "Energy/heat visualization",
+        "Accretion disk glow in space visualizations"
+      ],
+      "famous_examples": [
+        {"brand": "Soundcloud", "usage": "Brand identity — creative energy"},
+        {"brand": "Hermès", "usage": "Luxury packaging — warmth with exclusivity"},
+        {"brand": "Nickelodeon", "usage": "Brand identity — fun, youthful energy"}
+      ]
+    },
+    "yellow": {
+      "hex_range": ["#FFD700", "#FFC107", "#FFEB3B", "#F9A825"],
+      "emotional_associations": {
+        "positive": ["happiness", "optimism", "clarity", "warmth", "intellect", "honor", "loyalty", "joy", "cheerfulness"],
+        "negative": ["cowardice", "caution", "anxiety", "sickness", "deceit", "aging"]
+      },
+      "cultural_associations": {
+        "western": "Sunshine, happiness, caution signs, taxis",
+        "eastern": "Imperial color in China, sacred in Hinduism, courage in Japan",
+        "universal": "Sun, light, gold — associated with illumination and knowledge"
+      },
+      "physiological_effects": {
+        "heart_rate": "Slight increase",
+        "attention": "Highest visibility color at distance; first color the eye processes",
+        "arousal": "Stimulates mental activity and nervous system",
+        "appetite": "Moderate appetite stimulant",
+        "time_perception": "Neutral effect"
+      },
+      "web_design_use_cases": [
+        "Highlight/emphasis elements",
+        "Star ratings",
+        "Warning badges (softer than orange)",
+        "Premium/gold tier indicators",
+        "Solar/stellar representations"
+      ],
+      "famous_examples": [
+        {"brand": "Snapchat", "usage": "Brand identity — youthful optimism"},
+        {"brand": "IKEA", "usage": "Brand identity — warmth and accessibility"},
+        {"brand": "National Geographic", "usage": "Yellow border — discovery and exploration"}
+      ]
+    },
+    "green": {
+      "hex_range": ["#00C853", "#4CAF50", "#2E7D32", "#00E676"],
+      "emotional_associations": {
+        "positive": ["growth", "harmony", "nature", "balance", "renewal", "health", "prosperity", "safety", "permission"],
+        "negative": ["envy", "jealousy", "inexperience", "sickness", "greed"]
+      },
+      "cultural_associations": {
+        "western": "Nature, go signals, money, St. Patrick's Day, environmentalism",
+        "eastern": "Islam (sacred), fertility, new beginnings, eternity in Japan",
+        "universal": "Vegetation, life, growth — universally associated with nature"
+      },
+      "physiological_effects": {
+        "heart_rate": "Decreases slightly — calming effect",
+        "attention": "Moderate — less attention-grabbing than warm colors",
+        "arousal": "Reduces stress and anxiety",
+        "appetite": "Neutral to slight decrease",
+        "time_perception": "Neutral"
+      },
+      "web_design_use_cases": [
+        "Success states and confirmations",
+        "Progress bars",
+        "Eco/sustainability themes",
+        "Financial/growth dashboards",
+        "Health and wellness apps"
+      ],
+      "famous_examples": [
+        {"brand": "Spotify", "usage": "Brand identity — growth, energy, harmony"},
+        {"brand": "WhatsApp", "usage": "Brand identity — connection, communication"},
+        {"brand": "Starbucks", "usage": "Brand identity — nature, relaxation"}
+      ]
+    },
+    "blue": {
+      "hex_range": ["#2196F3", "#1565C0", "#0D47A1", "#42A5F5", "#00BCD4"],
+      "emotional_associations": {
+        "positive": ["trust", "stability", "calm", "depth", "wisdom", "confidence", "intelligence", "loyalty", "serenity", "professionalism"],
+        "negative": ["coldness", "sadness", "aloofness", "depression", "conservatism"]
+      },
+      "cultural_associations": {
+        "western": "Corporate trust, masculinity, sky and sea, police and authority",
+        "eastern": "Immortality in China, mourning in Iran, protection (evil eye) in Middle East",
+        "universal": "Sky, water, vastness — associated with depth and infinity"
+      },
+      "physiological_effects": {
+        "heart_rate": "Decreases by 3-7 BPM in studies",
+        "attention": "Lower immediate attention but higher sustained attention",
+        "arousal": "Reduces blood pressure and respiration rate",
+        "appetite": "Suppresses appetite (rare in natural foods)",
+        "time_perception": "Makes time feel like it passes faster"
+      },
+      "web_design_use_cases": [
+        "Primary UI elements (links, buttons)",
+        "Corporate and tech branding",
+        "Data visualization",
+        "HUD and interface overlays",
+        "Cool-temperature sci-fi aesthetics",
+        "Science and research contexts",
+        "Information architecture elements"
+      ],
+      "famous_examples": [
+        {"brand": "Facebook/Meta", "usage": "Brand identity — trust and connection"},
+        {"brand": "Twitter/X", "usage": "Former brand identity — open communication"},
+        {"brand": "IBM", "usage": "Brand identity — enterprise trust"},
+        {"brand": "Samsung", "usage": "Brand identity — technology and reliability"}
+      ]
+    },
+    "indigo": {
+      "hex_range": ["#3F51B5", "#283593", "#1A237E", "#5C6BC0"],
+      "emotional_associations": {
+        "positive": ["intuition", "perception", "mysticism", "deep thought", "meditation", "wisdom", "dignity", "devotion"],
+        "negative": ["moodiness", "self-indulgence", "fanaticism", "addiction"]
+      },
+      "cultural_associations": {
+        "western": "Spirituality, deep thought, luxury textiles (historically expensive dye)",
+        "eastern": "Third eye chakra, intuition, spiritual awareness",
+        "universal": "Night sky, deep space — associated with the infinite and unknown"
+      },
+      "physiological_effects": {
+        "heart_rate": "Slight decrease",
+        "attention": "Encourages deep focus and introspection",
+        "arousal": "Sedating effect — promotes contemplation",
+        "appetite": "Slight suppressant",
+        "time_perception": "Can distort time perception — promotes timelessness"
+      },
+      "web_design_use_cases": [
+        "Deep space backgrounds",
+        "Meditation and wellness apps",
+        "Premium tier indicators",
+        "Night mode accents",
+        "Spiritual/mystical experiences"
+      ],
+      "famous_examples": [
+        {"brand": "Cadbury", "usage": "Brand identity — indulgence and luxury"},
+        {"brand": "FedEx", "usage": "Partial brand — reliability with energy"}
+      ]
+    },
+    "violet": {
+      "hex_range": ["#9C27B0", "#7B1FA2", "#4A148C", "#CE93D8", "#E040FB", "#AA00FF"],
+      "emotional_associations": {
+        "positive": ["creativity", "luxury", "mystery", "spirituality", "royalty", "imagination", "wisdom", "magic", "transcendence", "cosmic"],
+        "negative": ["decadence", "arrogance", "mourning", "excess", "moodiness"]
+      },
+      "cultural_associations": {
+        "western": "Royalty (Tyrian purple cost more than gold), luxury, spirituality, LGBTQ+ pride",
+        "eastern": "Nobility in Japan, mourning in Thailand and Brazil, wealth",
+        "universal": "Rare in nature — signals something extraordinary or supernatural"
+      },
+      "physiological_effects": {
+        "heart_rate": "Slight decrease",
+        "attention": "Draws attention through rarity — unusual in natural environments",
+        "arousal": "Stimulates imagination and problem-solving",
+        "appetite": "Mild suppressant",
+        "time_perception": "Promotes sense of otherworldliness and timelessness"
+      },
+      "web_design_use_cases": [
+        "Premium/luxury brand elements",
+        "Creative tool interfaces",
+        "Gaming and entertainment",
+        "Cosmic and space themes",
+        "Accretion disk inner edge glow",
+        "Particle effects and energy trails",
+        "Black hole gravitational lensing effects"
+      ],
+      "famous_examples": [
+        {"brand": "Twitch", "usage": "Brand identity — creativity and entertainment"},
+        {"brand": "Cadbury", "usage": "Brand identity — luxury and indulgence"},
+        {"brand": "Roku", "usage": "Brand identity — entertainment and magic"}
+      ],
+      "event_horizon_specific": {
+        "role": "Primary accent color for cosmic and spiritual elements",
+        "usage": [
+          "Accretion disk inner glow",
+          "Gravitational lensing chromatic aberration",
+          "UI accent for chapter transitions",
+          "Particle trails near event horizon",
+          "Text glow effects"
+        ],
+        "recommended_values": {
+          "bright_accent": "#E040FB",
+          "medium": "#9C27B0",
+          "deep": "#4A148C",
+          "glow": "rgba(224, 64, 251, 0.4)"
+        }
+      }
+    },
+    "black": {
+      "hex_range": ["#000000", "#0A0A0A", "#121212", "#1A1A1A", "#212121"],
+      "emotional_associations": {
+        "positive": ["power", "elegance", "sophistication", "mystery", "authority", "formality", "depth", "the unknown", "infinity", "void"],
+        "negative": ["death", "evil", "mourning", "oppression", "fear", "emptiness", "the abyss"]
+      },
+      "cultural_associations": {
+        "western": "Death, mourning, elegance, formality, rebellion, luxury fashion",
+        "eastern": "Career and knowledge in feng shui, stability, power in Japan",
+        "universal": "Night, void, absence of light — primal association with the unknown"
+      },
+      "physiological_effects": {
+        "heart_rate": "Context-dependent — can increase (fear) or maintain (calm sophistication)",
+        "attention": "Creates focal points when used with contrasting elements",
+        "arousal": "Depends on context — can be both calming (night) and unsettling (void)",
+        "appetite": "Neutral — often used in premium dining",
+        "time_perception": "Can feel timeless or oppressive depending on context"
+      },
+      "web_design_use_cases": [
+        "Dark mode backgrounds",
+        "Luxury brand themes",
+        "Cinematic experiences",
+        "Space and cosmic visualizations",
+        "Black hole core visualization",
+        "High-contrast text on light backgrounds",
+        "Negative space in premium designs"
+      ],
+      "famous_examples": [
+        {"brand": "Apple", "usage": "Product and dark mode — premium sophistication"},
+        {"brand": "Chanel", "usage": "Brand identity — timeless luxury"},
+        {"brand": "Nike", "usage": "Dark themes — power and performance"},
+        {"brand": "SpaceX", "usage": "Dark UI — space, technology, frontier"}
+      ],
+      "event_horizon_specific": {
+        "role": "The dominant color — represents the void, the singularity, the unknown",
+        "usage": [
+          "Black hole core (absolute black #000000)",
+          "Deep space background (#050505 to #0A0A0A — never pure black for background)",
+          "Void between chapters",
+          "Shadow and depth",
+          "The absence that makes light meaningful"
+        ],
+        "design_rules": [
+          "Never use pure #000000 for backgrounds — use #050505 to #0A0A0A for subtle depth",
+          "Pure black (#000000) reserved ONLY for the singularity center",
+          "Layer multiple near-black values for depth perception",
+          "Use subtle noise texture (0.5-1% opacity) to prevent banding on dark gradients",
+          "OLED-safe: pure black areas will look 'dead' on OLED — intentional for singularity"
+        ]
+      }
+    },
+    "white": {
+      "hex_range": ["#FFFFFF", "#FAFAFA", "#F5F5F5", "#EEEEEE", "#E0E0E0"],
+      "emotional_associations": {
+        "positive": ["purity", "cleanliness", "simplicity", "peace", "innocence", "transcendence", "perfection", "light", "new beginnings"],
+        "negative": ["sterility", "emptiness", "isolation", "coldness", "blinding"]
+      },
+      "cultural_associations": {
+        "western": "Wedding, purity, peace, hospitals, minimalism",
+        "eastern": "Death and mourning in China and Japan, purity in India",
+        "universal": "Light, snow, clouds — associated with transcendence and the sacred"
+      },
+      "physiological_effects": {
+        "heart_rate": "Neutral — depends on brightness level",
+        "attention": "High contrast against dark — draws eye immediately",
+        "arousal": "Can be calming (soft white) or overwhelming (bright white flash)",
+        "appetite": "Neutral",
+        "time_perception": "Neutral in moderate amounts"
+      },
+      "web_design_use_cases": [
+        "Typography on dark backgrounds",
+        "Flash/impact moments in dark experiences",
+        "Singularity representation (blinding light)",
+        "Clean UI elements",
+        "Breathing room and negative space"
+      ],
+      "event_horizon_specific": {
+        "role": "Represents singularity, transcendence, the blinding moment of crossing",
+        "usage": [
+          "Final chapter — crossing the event horizon flash",
+          "Text color on dark backgrounds (but use #E0E0E0 to #F5F5F5, not pure white)",
+          "Star field pinpoints",
+          "Gravitational lensing bright spots",
+          "The 'other side' of the black hole"
+        ],
+        "design_rules": [
+          "Never use pure #FFFFFF for body text on dark backgrounds — too harsh, use #E0E0E0 or #F0F0F0",
+          "Pure white reserved for light sources, stars, and the singularity flash",
+          "Use warm whites (#FFF8F0) for organic/warm moments",
+          "Use cool whites (#F0F8FF) for scientific/data moments",
+          "White flash must be brief (200-400ms) to avoid eye strain"
+        ]
+      }
+    },
+    "gold": {
+      "hex_range": ["#FFD700", "#FFC107", "#FFB300", "#F9A825", "#C49B00"],
+      "emotional_associations": {
+        "positive": ["wealth", "prestige", "quality", "achievement", "warmth", "wisdom", "grandeur", "triumph", "divinity"],
+        "negative": ["greed", "kitsch", "gaudy", "ostentatious"]
+      },
+      "cultural_associations": {
+        "western": "Achievement, trophies, luxury, 50th anniversary, premium tier",
+        "eastern": "Divinity in Hinduism and Buddhism, imperial in China",
+        "universal": "The sun, precious metal — universally associated with value and importance"
+      },
+      "physiological_effects": {
+        "heart_rate": "Slight increase — associated with excitement and desire",
+        "attention": "High — metallic/warm tones are eye-catching",
+        "arousal": "Moderate stimulation — associated with reward",
+        "appetite": "Slight stimulant (warm tones)",
+        "time_perception": "Neutral"
+      },
+      "web_design_use_cases": [
+        "Premium/gold tier badges",
+        "Achievement indicators",
+        "Luxury brand accents",
+        "Accretion disk warm inner glow",
+        "Particle heat visualization",
+        "Star surface temperature representation"
+      ],
+      "event_horizon_specific": {
+        "role": "Accretion disk heat, energy, and warmth — the hot matter spiraling into oblivion",
+        "usage": [
+          "Accretion disk outer-to-mid glow",
+          "Hot particle trails",
+          "Energy emission visualization",
+          "Temperature gradient (gold → orange → white at hottest)",
+          "UI highlight for key data points"
+        ]
+      }
+    },
+    "silver": {
+      "hex_range": ["#C0C0C0", "#B0BEC5", "#90A4AE", "#78909C", "#607D8B"],
+      "emotional_associations": {
+        "positive": ["modernity", "sleekness", "precision", "technology", "sophistication", "futurism", "reflection", "clarity"],
+        "negative": ["coldness", "industrial", "impersonal", "aging", "second-best"]
+      },
+      "cultural_associations": {
+        "western": "Technology, futurism, second place, moonlight",
+        "eastern": "Associated with metal element in Chinese philosophy",
+        "universal": "Moonlight, metal, reflection — associated with precision and technology"
+      },
+      "physiological_effects": {
+        "heart_rate": "Neutral",
+        "attention": "Moderate — reflective quality draws eye",
+        "arousal": "Low — calming, professional",
+        "appetite": "Slight suppressant",
+        "time_perception": "Neutral"
+      },
+      "web_design_use_cases": [
+        "Secondary UI text",
+        "Borders and dividers",
+        "Metallic textures",
+        "Inactive/disabled states",
+        "Data visualization secondary elements"
+      ],
+      "event_horizon_specific": {
+        "role": "Cool metallic tones for UI chrome and secondary information",
+        "usage": [
+          "HUD interface elements",
+          "Secondary text and labels",
+          "Grid lines and measurement marks",
+          "Gravitational wave visualization (cool end)",
+          "Timeline/progress indicators"
+        ]
+      }
+    },
+    "cyan": {
+      "hex_range": ["#00BCD4", "#00ACC1", "#0097A7", "#00E5FF", "#18FFFF", "#84FFFF"],
+      "emotional_associations": {
+        "positive": ["clarity", "communication", "technology", "precision", "innovation", "digital", "science", "futurism", "cool intelligence"],
+        "negative": ["cold", "clinical", "sterile", "artificial"]
+      },
+      "cultural_associations": {
+        "western": "Technology, digital interfaces, sci-fi, medical",
+        "eastern": "Healing, protection, sky",
+        "universal": "Ice, water, technology — associated with digital precision"
+      },
+      "physiological_effects": {
+        "heart_rate": "Slight decrease — calming",
+        "attention": "High on dark backgrounds — excellent contrast",
+        "arousal": "Low to moderate — promotes focus",
+        "appetite": "Suppressant",
+        "time_perception": "Promotes analytical thinking"
+      },
+      "event_horizon_specific": {
+        "role": "Primary HUD and data visualization color — the scientific instrument aesthetic",
+        "usage": [
+          "HUD elements and readouts",
+          "Data labels and measurements",
+          "Gravitational field lines",
+          "Scientific overlay elements",
+          "Interactive highlight states",
+          "Terminal/console text"
+        ],
+        "recommended_values": {
+          "bright": "#00E5FF",
+          "medium": "#00BCD4",
+          "dim": "#006064",
+          "glow": "rgba(0, 229, 255, 0.3)"
+        }
+      }
+    }
+  },
+  "color_combinations": {
+    "complementary": {
+      "description": "Colors opposite on the color wheel — maximum contrast and visual tension",
+      "effect": "Creates vibrant, high-energy compositions. Use one as dominant, the other as accent.",
+      "web_usage": "CTA buttons against background, error vs success states",
+      "examples": [
+        {"pair": ["blue", "orange"], "effect": "Trust meets energy — corporate with warmth"},
+        {"pair": ["purple", "yellow"], "effect": "Luxury meets optimism — premium but approachable"},
+        {"pair": ["red", "green"], "effect": "Danger meets safety — strong contrast, avoid for colorblind users"}
+      ]
+    },
+    "analogous": {
+      "description": "Colors adjacent on the color wheel — harmonious and unified",
+      "effect": "Creates serene, comfortable compositions. Low contrast, cohesive feeling.",
+      "web_usage": "Gradients, background atmospheres, cohesive brand palettes",
+      "examples": [
+        {"group": ["blue", "cyan", "teal"], "effect": "Cool technology — data interfaces, sci-fi"},
+        {"group": ["violet", "indigo", "blue"], "effect": "Deep cosmic — space, mystery, depth"},
+        {"group": ["orange", "gold", "yellow"], "effect": "Warm energy — accretion disk, heat"}
+      ]
+    },
+    "triadic": {
+      "description": "Three colors equally spaced on the color wheel — balanced vibrancy",
+      "effect": "Vibrant even when desaturated. Use one dominant, two as accents.",
+      "web_usage": "Complex data visualization, multi-element interfaces",
+      "examples": [
+        {"group": ["red", "yellow", "blue"], "effect": "Primary triad — bold and balanced"},
+        {"group": ["orange", "green", "violet"], "effect": "Secondary triad — rich and creative"}
+      ]
+    },
+    "split_complementary": {
+      "description": "One color plus the two adjacent to its complement — contrast with less tension",
+      "effect": "Strong visual contrast but more nuanced than straight complementary.",
+      "web_usage": "Brand palettes, illustration, data visualization",
+      "examples": [
+        {"base": "blue", "accents": ["red-orange", "yellow-orange"], "effect": "Trust base with warm accents — tech with human warmth"},
+        {"base": "violet", "accents": ["yellow-green", "yellow-orange"], "effect": "Cosmic base with organic accents"}
+      ]
+    },
+    "dark_mode_specific": {
+      "description": "Color psychology shifts in dark mode contexts",
+      "rules": [
+        "Saturated colors appear more vibrant on dark backgrounds — desaturate by 10-20% to compensate",
+        "Blue light on dark backgrounds creates higher perceived contrast than on light",
+        "Warm accent colors (orange, gold) feel more inviting on dark backgrounds",
+        "Pure saturated colors (#FF0000) on dark backgrounds cause visual vibration — always desaturate",
+        "Text readability: minimum 4.5:1 contrast ratio (WCAG AA), target 7:1 (WCAG AAA)",
+        "Dark backgrounds reduce eye strain in low-light environments — ideal for immersive experiences",
+        "Use elevation (lighter surfaces = higher elevation) following Material Design dark theme principles",
+        "Emissive colors (colors that appear to glow) work much better on dark backgrounds"
+      ],
+      "surface_elevation_scale": [
+        {"level": 0, "overlay": "0%", "hex": "#121212", "usage": "Background"},
+        {"level": 1, "overlay": "5%", "hex": "#1E1E1E", "usage": "Card surface"},
+        {"level": 2, "overlay": "7%", "hex": "#222222", "usage": "Navigation"},
+        {"level": 3, "overlay": "8%", "hex": "#242424", "usage": "Modal surface"},
+        {"level": 4, "overlay": "9%", "hex": "#272727", "usage": "Dropdown"},
+        {"level": 6, "overlay": "11%", "hex": "#2C2C2C", "usage": "Tooltip"},
+        {"level": 8, "overlay": "12%", "hex": "#2E2E2E", "usage": "Highest elevation"},
+        {"level": 12, "overlay": "14%", "hex": "#333333", "usage": "Dialog overlay"},
+        {"level": 16, "overlay": "15%", "hex": "#363636", "usage": "Floating action"},
+        {"level": 24, "overlay": "16%", "hex": "#383838", "usage": "Maximum elevation"}
+      ]
+    },
+    "cosmic_palette": {
+      "description": "Space and cosmic color psychology — specific to Event Horizon",
+      "psychology": [
+        "Deep space blacks trigger awe through perceived vastness",
+        "Violet nebula tones activate imagination and spiritual contemplation",
+        "Cyan starlight creates sense of cold, vast, indifferent cosmos",
+        "Orange/gold accretion suggests heat, energy, transformation — matter becoming energy",
+        "The contrast of warm (accretion) against cool (space) creates visual and emotional tension",
+        "Darkness punctuated by light creates perceived depth far beyond the screen",
+        "Chromatic aberration at edges of bright objects suggests extreme gravity — visual cue for power"
+      ],
+      "event_horizon_palette": {
+        "void": {"hex": "#000000", "role": "Singularity center — absolute zero point"},
+        "deep_space": {"hex": "#050508", "role": "Primary background — near-black with blue-purple tint"},
+        "space_dust": {"hex": "#0D0D14", "role": "Secondary background — subtle atmosphere"},
+        "accretion_hot": {"hex": "#FFE0B2", "role": "Hottest accretion disk — near-white heat"},
+        "accretion_warm": {"hex": "#FF9800", "role": "Mid accretion disk — orange heat"},
+        "accretion_outer": {"hex": "#E65100", "role": "Outer accretion disk — deep orange"},
+        "lensing_violet": {"hex": "#CE93D8", "role": "Gravitational lensing — light bending"},
+        "lensing_blue": {"hex": "#42A5F5", "role": "Blueshifted light"},
+        "lensing_red": {"hex": "#EF5350", "role": "Redshifted light"},
+        "hud_cyan": {"hex": "#00E5FF", "role": "Primary HUD and data elements"},
+        "hud_dim": {"hex": "#006064", "role": "Secondary HUD — less important data"},
+        "text_primary": {"hex": "#E0E0E0", "role": "Primary text — soft white"},
+        "text_secondary": {"hex": "#9E9E9E", "role": "Secondary text — muted"},
+        "star_white": {"hex": "#FFFFFF", "role": "Star pinpoints and light sources"},
+        "singularity_flash": {"hex": "#FFFFFF", "role": "Transcendence moment — blinding white"}
+      }
+    }
+  },
+  "color_temperature": {
+    "warm_colors": {
+      "range": ["red", "orange", "yellow", "gold"],
+      "psychological_effect": "Advance toward viewer, feel closer and larger. Stimulating, energetic, attention-grabbing.",
+      "physiological_effect": "Increase heart rate, raise body temperature perception, stimulate appetite",
+      "web_usage": "CTAs, important elements, energy visualization, heat maps, accretion disks",
+      "best_on_dark": "Warm colors on dark backgrounds create focal points — the eye is drawn to warmth in darkness (like fire in night)"
+    },
+    "cool_colors": {
+      "range": ["blue", "cyan", "indigo", "violet"],
+      "psychological_effect": "Recede from viewer, feel farther and smaller. Calming, expansive, contemplative.",
+      "physiological_effect": "Decrease heart rate, promote relaxation, reduce perceived temperature",
+      "web_usage": "Backgrounds, receding elements, data visualization, space scenes, ambient effects",
+      "best_on_dark": "Cool colors on dark backgrounds create perceived depth — they push the background further away"
+    },
+    "temperature_contrast": {
+      "description": "Using warm and cool together creates depth and visual hierarchy",
+      "technique": "Warm foreground elements on cool backgrounds create strong depth separation",
+      "event_horizon_application": "Hot orange/gold accretion disk (warm foreground) against deep blue-black space (cool background) creates infinite depth perception"
+    }
+  },
+  "contrast_and_readability": {
+    "wcag_standards": {
+      "AA_normal_text": {"min_ratio": "4.5:1", "description": "Normal text (< 18px or < 14px bold)"},
+      "AA_large_text": {"min_ratio": "3:1", "description": "Large text (>= 18px or >= 14px bold)"},
+      "AAA_normal_text": {"min_ratio": "7:1", "description": "Enhanced contrast for normal text"},
+      "AAA_large_text": {"min_ratio": "4.5:1", "description": "Enhanced contrast for large text"},
+      "non_text": {"min_ratio": "3:1", "description": "UI components and graphical objects"}
+    },
+    "specific_ratios": {
+      "white_on_black": {"ratio": "21:1", "verdict": "Maximum possible contrast — too harsh for body text"},
+      "E0E0E0_on_121212": {"ratio": "13.3:1", "verdict": "Excellent for body text on dark backgrounds"},
+      "9E9E9E_on_121212": {"ratio": "5.8:1", "verdict": "Good for secondary text, passes AA"},
+      "757575_on_121212": {"ratio": "3.5:1", "verdict": "Borderline — only for large text or non-essential"},
+      "00E5FF_on_000000": {"ratio": "10.3:1", "verdict": "Excellent — cyan HUD on black"},
+      "FF9800_on_000000": {"ratio": "5.9:1", "verdict": "Good for large text and UI elements"},
+      "CE93D8_on_000000": {"ratio": "6.2:1", "verdict": "Good for accent text and highlights"},
+      "9C27B0_on_000000": {"ratio": "2.8:1", "verdict": "Fails AA — use only for decorative, not text"}
+    },
+    "dark_mode_text_rules": [
+      "Use font-weight 300-400 for body text on dark backgrounds (light text on dark appears thicker due to halation)",
+      "Increase letter-spacing slightly (+0.015em) for thin fonts on dark backgrounds",
+      "Use -webkit-font-smoothing: antialiased on macOS for dark backgrounds to reduce halation",
+      "Never use pure white (#FFF) text on pure black (#000) — the contrast is too harsh and causes eye strain",
+      "Recommended body text: #E0E0E0 on #121212 (13.3:1 ratio)",
+      "Recommended heading text: #F5F5F5 on #121212 (15.4:1 ratio)",
+      "Disabled/muted text: minimum #757575 on #121212 (3.5:1 ratio, large text only)"
+    ]
+  },
+  "dark_ui_design_rules": {
+    "foundations": [
+      "Dark UI is NOT just 'white UI with colors inverted' — it requires complete redesign of depth, hierarchy, and emphasis",
+      "Use elevation (surface lightness) instead of shadows for depth — shadows are invisible on dark surfaces",
+      "Reduce color saturation by 10-30% compared to light mode — saturated colors vibrate on dark backgrounds",
+      "Use semi-transparent white overlays for elevation rather than gray values — this adapts to any base color",
+      "Keep primary surface between #121212 and #1E1E1E — not pure black (feels like a void/hole in the screen)"
+    ],
+    "accent_colors_on_dark": [
+      "Desaturated accents (pastel-ish) are easier on the eyes than fully saturated",
+      "Neon/fully-saturated colors work ONLY for small, intentional highlights (think Tron lines)",
+      "Large areas of saturated color on dark backgrounds cause visual fatigue in < 2 minutes",
+      "Emissive glow effects (box-shadow with color, text-shadow) work beautifully on dark — they physically cannot work on light"
+    ],
+    "gradients_on_dark": [
+      "Dark gradients are prone to banding — use subtle noise texture overlay (1-2% opacity) to break banding",
+      "Gradient from #000000 to #1A1A1A is barely visible but creates perceived depth",
+      "Radial gradients from center create spotlight effect — great for directing focus",
+      "Multiple layered gradients create rich atmosphere without any single one being obvious"
+    ],
+    "borders_and_dividers": [
+      "Use 1px borders at rgba(255,255,255,0.08) to rgba(255,255,255,0.12) for subtle separation",
+      "Avoid hard white borders — they look like cracks",
+      "For glass morphism on dark: rgba(255,255,255,0.05) background, rgba(255,255,255,0.1) border, backdrop-blur",
+      "Divider lines: rgba(255,255,255,0.06) — barely there but structurally important"
+    ]
+  },
+  "sources": [
+    {"title": "Color Psychology: How Colors Influence the Mind", "author": "Andrew Elliot", "type": "research_paper"},
+    {"title": "Interaction of Color", "author": "Josef Albers", "type": "book"},
+    {"title": "A Theory of Color in Visual Design", "author": "Jan Tschichold", "type": "book"},
+    {"title": "Material Design Dark Theme Guidelines", "author": "Google", "url": "https://m3.material.io/styles/color/dark-theme"},
+    {"title": "WCAG 2.1 Contrast Requirements", "author": "W3C", "url": "https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum"},
+    {"title": "The Psychology of Color in Marketing and Branding", "author": "Gregory Ciotti", "type": "article"},
+    {"title": "Colour Affects", "author": "Angela Wright", "type": "book"},
+    {"title": "An Introduction to Color Theory for Web Designers", "author": "Cameron Chapman", "type": "article"},
+    {"title": "Dark Theme UI Design Guidelines", "author": "Material Design", "type": "documentation"}
+  ]
+}

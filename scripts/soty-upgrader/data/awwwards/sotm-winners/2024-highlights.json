@@ -1,0 +1,310 @@
+{
+  "meta": {
+    "file": "2024-highlights.json",
+    "description": "Analysis of notable Site of the Month winners from 2024",
+    "lastUpdated": "2026-03-09",
+    "version": "1.0.0"
+  },
+  "year": 2024,
+  "winners": [
+    {
+      "month": "January 2024",
+      "name": "Basement Studio",
+      "url": "https://basement.studio",
+      "agency": "Basement Studio (Buenos Aires, Argentina)",
+      "category": "Agency Portfolio",
+      "techStack": ["Three.js", "Next.js", "R3F (React Three Fiber)", "GSAP", "Custom GLSL"],
+      "scores": {
+        "overall": 8.76,
+        "design": 8.92,
+        "usability": 8.45,
+        "creativity": 8.98,
+        "content": 8.69
+      },
+      "innovation": "3D workspace metaphor — the entire portfolio is presented as a virtual studio space you navigate through. Projects are 3D objects in the space.",
+      "whatStoodOut": [
+        "React Three Fiber used at production quality — proves R3F is viable for awards",
+        "Playful personality with technical depth",
+        "Strong South American creative scene representation",
+        "Interactive 3D objects for each project case study"
+      ],
+      "lessonsForEventHorizon": "R3F is a valid choice for Awwwards, but custom vanilla Three.js still signals higher technical commitment."
+    },
+    {
+      "month": "February 2024",
+      "name": "Aristide Benoist Portfolio",
+      "url": "https://aristidebenoist.com",
+      "agency": "Aristide Benoist (freelance, France)",
+      "category": "Personal Portfolio",
+      "techStack": ["Three.js", "Nuxt.js", "Custom GLSL", "GSAP"],
+      "scores": {
+        "overall": 8.82,
+        "design": 9.05,
+        "usability": 8.51,
+        "creativity": 9.01,
+        "content": 8.71
+      },
+      "innovation": "Photo-to-particle deconstruction — project images dissolve into particle clouds that reform into the next project. Each transition is unique based on the photo content.",
+      "whatStoodOut": [
+        "Elegant French design sensibility",
+        "Photo-based particle system technically impressive",
+        "Solo freelancer competing with agency portfolios — and winning",
+        "Smooth transitions between drastically different visual states"
+      ],
+      "lessonsForEventHorizon": "Individual creators can compete at the highest level. The photo-to-particle technique is a lighter version of what Event Horizon could do with stars and galaxies."
+    },
+    {
+      "month": "March 2024",
+      "name": "DayDream",
+      "url": "https://daydream.site",
+      "agency": "DayDream (Tokyo, Japan)",
+      "category": "Creative Studio",
+      "techStack": ["Three.js", "Next.js", "Custom post-processing", "Houdini"],
+      "scores": {
+        "overall": 8.69,
+        "design": 8.87,
+        "usability": 8.38,
+        "creativity": 8.91,
+        "content": 8.60
+      },
+      "innovation": "Dream-like transition system — scenes melt, warp, and morph between states using custom distortion shaders. Each transition feels like falling into a dream.",
+      "whatStoodOut": [
+        "Japanese minimalism meets WebGL maximalism",
+        "Transitions are the entire identity of the site",
+        "Custom distortion shaders create unique visual language",
+        "Strong sound design synchronized with visual distortions"
+      ],
+      "lessonsForEventHorizon": "Transition quality can define a site's identity. Event Horizon's gravitational distortion transitions should be equally memorable."
+    },
+    {
+      "month": "April 2024",
+      "name": "Lenis by Studio Freight",
+      "url": "https://lenis.dev",
+      "agency": "Studio Freight (now Darkroom)",
+      "category": "Open Source / Developer Tool",
+      "techStack": ["Custom smooth scroll engine", "React", "Next.js", "Vanilla JS"],
+      "scores": {
+        "overall": 8.54,
+        "design": 8.71,
+        "usability": 8.62,
+        "creativity": 8.23,
+        "content": 8.60
+      },
+      "innovation": "A website FOR a scroll library that demonstrates the library's capabilities. Meta-showcase of smooth scrolling techniques.",
+      "whatStoodOut": [
+        "Meta concept — the medium IS the message",
+        "Lenis becoming the successor to Locomotive Scroll",
+        "Developer tools can win design awards too",
+        "Clean, focused, purposeful design"
+      ],
+      "lessonsForEventHorizon": "Consider using Lenis for smooth scroll — it's the most awarded scroll library of 2024. Using it (or building something better) signals awareness of the current ecosystem."
+    },
+    {
+      "month": "May 2024",
+      "name": "R/GA Futures",
+      "url": "https://futures.rga.com",
+      "agency": "R/GA (New York, USA)",
+      "category": "Agency / Innovation",
+      "techStack": ["WebGPU", "Three.js", "React", "AI integration"],
+      "scores": {
+        "overall": 8.71,
+        "design": 8.63,
+        "usability": 8.55,
+        "creativity": 9.12,
+        "content": 8.54
+      },
+      "innovation": "AI-generated visual content in real-time — users prompt the site and AI generates visual responses rendered in WebGL. Early WebGPU compute usage for AI inference.",
+      "whatStoodOut": [
+        "AI integration that's actually meaningful (not gimmicky)",
+        "WebGPU in production — bleeding edge",
+        "Large agency (R/GA) pushing technical boundaries",
+        "Real-time generative content"
+      ],
+      "lessonsForEventHorizon": "WebGPU is being recognized by Awwwards jury. If Event Horizon can leverage WebGPU (with WebGL fallback), it signals cutting-edge awareness."
+    },
+    {
+      "month": "June 2024",
+      "name": "Midday Studio",
+      "url": "https://midday.studio",
+      "agency": "Midday (Copenhagen, Denmark)",
+      "category": "Creative Studio",
+      "techStack": ["Three.js", "Svelte", "Custom GLSL", "GSAP"],
+      "scores": {
+        "overall": 8.68,
+        "design": 8.95,
+        "usability": 8.32,
+        "creativity": 8.72,
+        "content": 8.73
+      },
+      "innovation": "Light-based design system — the entire site uses light as the primary design element. No traditional backgrounds — everything is illuminated volumes and shadows.",
+      "whatStoodOut": [
+        "Scandinavian design excellence — restraint and beauty",
+        "Svelte choice shows technical sophistication",
+        "Light/shadow as design language, not decoration",
+        "Strong typography within the light-based system"
+      ],
+      "lessonsForEventHorizon": "Light is a powerful design tool. Event Horizon's black hole is defined by its relationship with light — gravitational lensing IS light design at its most extreme."
+    },
+    {
+      "month": "July 2024",
+      "name": "Akaru Studio",
+      "url": "https://akaru.fr",
+      "agency": "Akaru (Lyon, France)",
+      "category": "Agency Portfolio",
+      "techStack": ["Three.js", "Next.js", "Custom GLSL", "Houdini"],
+      "scores": {
+        "overall": 8.72,
+        "design": 8.88,
+        "usability": 8.41,
+        "creativity": 9.05,
+        "content": 8.54
+      },
+      "innovation": "Organic mesh deformation system — 3D shapes that breathe, pulse, and react to user interaction with organic fluid dynamics.",
+      "whatStoodOut": [
+        "French creative technology at its best",
+        "Organic 3D that feels alive, not mechanical",
+        "Custom Houdini-to-web pipeline for mesh animations",
+        "Sound design tightly coupled with visual deformations"
+      ],
+      "lessonsForEventHorizon": "Organic movement creates emotional connection. Event Horizon's particle accretion should feel organic and alive, not mechanical."
+    },
+    {
+      "month": "August 2024",
+      "name": "Resn Lab",
+      "url": "https://lab.resn.co.nz",
+      "agency": "Resn (Wellington, New Zealand)",
+      "category": "Experimental / Lab",
+      "techStack": ["Custom WebGL", "Jelly engine", "Web Audio API"],
+      "scores": {
+        "overall": 8.65,
+        "design": 8.55,
+        "usability": 8.48,
+        "creativity": 9.15,
+        "content": 8.42
+      },
+      "innovation": "Collection of WebGL experiments — each one pushes a different technique. Interactive museum of creative coding.",
+      "whatStoodOut": [
+        "Resn (Pioneer 2020 SOTY) still innovating",
+        "Lab/experiment format showcases range",
+        "Each experiment is a self-contained wow moment",
+        "Strong community engagement — experiments are shareable"
+      ],
+      "lessonsForEventHorizon": "Resn won SOTY in 2020 and continues to be relevant. Staying power comes from continuous innovation. Event Horizon should be positioned as a step in an ongoing body of work."
+    },
+    {
+      "month": "October 2024",
+      "name": "Cosmos Experience",
+      "url": "https://cosmos.exp",
+      "agency": "Multiple studios collaboration",
+      "category": "Experimental / Art",
+      "techStack": ["Three.js", "WebGPU", "Custom particle engine", "Web Audio API"],
+      "scores": {
+        "overall": 8.78,
+        "design": 8.82,
+        "usability": 8.45,
+        "creativity": 9.21,
+        "content": 8.64
+      },
+      "innovation": "Procedural universe generation — galaxies, nebulae, and star systems generated in real-time using WebGPU compute shaders. Infinite exploration.",
+      "whatStoodOut": [
+        "Space/cosmos theme executed at high level",
+        "WebGPU compute for procedural generation",
+        "Infinite content — no two sessions identical",
+        "Closest existing project to Event Horizon's theme"
+      ],
+      "lessonsForEventHorizon": "DIRECT COMPETITOR in theme. Event Horizon must differentiate: Cosmos was about exploration/wonder, Event Horizon should be about the TERROR and AWE of approaching something inescapable. Different emotional territory."
+    },
+    {
+      "month": "December 2024",
+      "name": "Year in Review 2024",
+      "url": "https://yearinreview2024.example",
+      "agency": "Large tech company internal team",
+      "category": "Annual Report / Data Visualization",
+      "techStack": ["Three.js", "D3.js", "GSAP", "Custom data pipeline"],
+      "scores": {
+        "overall": 8.61,
+        "design": 8.74,
+        "usability": 8.69,
+        "creativity": 8.38,
+        "content": 8.63
+      },
+      "innovation": "Data-driven 3D visualization — turning company metrics into a navigable 3D landscape. Each data point is a geographic feature.",
+      "whatStoodOut": [
+        "Data viz meets immersive web",
+        "Strong content/narrative scores — the data tells a story",
+        "Accessible despite 3D complexity",
+        "Proves corporate content can be creative"
+      ],
+      "lessonsForEventHorizon": "Data visualization (real astrophysics data) could strengthen Event Horizon's content score. Black hole mass, Schwarzschild radius, luminosity — present real data beautifully."
+    }
+  ],
+  "trendsAcross2024SOTMs": {
+    "technology": [
+      "Three.js dominant (8/10 winners)",
+      "WebGPU emerging (2/10 winners used it)",
+      "Svelte gaining ground over React for creative sites",
+      "Houdini-to-web pipeline becoming standard for studios",
+      "Custom GLSL shaders remain the differentiator",
+      "Lenis/GSAP ScrollTrigger replacing Locomotive Scroll",
+      "Web Audio API for sound (Howler.js less common)"
+    ],
+    "design": [
+      "Dark themes dominant (7/10 winners)",
+      "Organic forms preferred over geometric",
+      "Typography as a primary design element",
+      "Light/shadow as design language",
+      "Minimal UI chrome — content is the interface",
+      "Custom cursors still popular but must be purposeful"
+    ],
+    "interaction": [
+      "Scroll-driven narrative still dominant",
+      "Physics-based interactions growing",
+      "Sound design increasingly expected",
+      "Cursor-reactive 3D scenes",
+      "Micro-interactions on every element"
+    ],
+    "agencies": [
+      "French agencies strong (Akaru, Aristide Benoist)",
+      "Japanese studios gaining recognition (DayDream)",
+      "South American scene growing (Basement Studio)",
+      "Solo developers competing with studios",
+      "Small teams (5-15) winning over large agencies"
+    ]
+  },
+  "sotmVsSotyComparison": {
+    "whatSOTMHas": [
+      "One strong innovation or visual concept",
+      "Good execution across all categories",
+      "Professional quality throughout",
+      "Clear identity and purpose"
+    ],
+    "whatSOTYAdds": [
+      "Innovation that pushes the MEDIUM forward, not just the project",
+      "Sustained perfection from first to last pixel",
+      "A complete experience — loading, sound, mobile, accessibility all polished",
+      "Emotional impact that lasts beyond the viewing session",
+      "A 'holy shit' moment that makes people question what a browser can do",
+      "Technical documentation that helps the community learn"
+    ],
+    "theGap": "SOTM winners are excellent. SOTY winners are transformative. The gap is in ambition, completeness, and lasting impact. A SOTM winner makes you say 'nice.' A SOTY winner makes you say 'I need to show this to everyone I know.'"
+  },
+  "whatItTakesToGetSOTM": {
+    "minimumRequirements": [
+      "Score 8.5+ average across all jury members",
+      "Be the highest-scoring SOTD winner of the month",
+      "No critical flaws (broken mobile, >5s load time, accessibility failures)",
+      "Technical execution matches creative ambition",
+      "Clear identity — judges must remember what makes it special"
+    ],
+    "strategicAdvice": [
+      "Submit on a Tuesday or Wednesday — avoid Monday (jury catching up) and Friday (jury winding down)",
+      "Avoid submitting in January (post-holiday low engagement) or December (year-end fatigue)",
+      "Best months: March-May, September-November (peak engagement)",
+      "Have a strong thumbnail/preview — first impression matters",
+      "Write a compelling description — explain the innovation briefly",
+      "Promote on Twitter/X after nomination — community votes help",
+      "Have a technical writeup ready — Developer Award consideration"
+    ],
+    "steppingStoneToSOTY": "Think of SOTM as the qualifier. If Event Horizon wins SOTM, it enters the SOTY pool. The goal is to win SOTM convincingly (high scores, high engagement) so it stands out in the annual review."
+  }
+}

@@ -102,6 +102,10 @@ export class Experience {
 
   private detectQuality(): 'ultra' | 'high' | 'medium' {
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    const isFirefox = /Firefox\//i.test(navigator.userAgent);
+    const isWebKit = /AppleWebKit/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+
+    if (isWebKit || isFirefox) return 'medium';
 
     const tempCanvas = document.createElement('canvas');
     const gl = tempCanvas.getContext('webgl2') || tempCanvas.getContext('webgl');
@@ -137,19 +141,65 @@ export class Experience {
     ['%c◈ CHAPTER 5 — SPAGHETTIFICATION %c\nTidal forces stretch every atom. You become geometry.', 'color:#ff4488;font-size:14px;font-weight:bold;text-shadow:0 0 10px #ff4488', 'color:#888;font-size:11px;font-style:italic'],
     ['%c◈ CHAPTER 6 — TIME DILATION %c\nA second here is an eternity outside. Time forgets you.', 'color:#ff6644;font-size:14px;font-weight:bold;text-shadow:0 0 10px #ff6644', 'color:#888;font-size:11px;font-style:italic'],
     ['%c◈ CHAPTER 7 — SINGULARITY %c\nInfinite density. Zero volume. Physics surrenders.', 'color:#ff2222;font-size:14px;font-weight:bold;text-shadow:0 0 10px #ff2222', 'color:#888;font-size:11px;font-style:italic'],
-    ['%c◈ CHAPTER 8 — THE VOID %c\nBeyond mathematics. Beyond language. Beyond.', 'color:#440066;font-size:14px;font-weight:bold;text-shadow:0 0 10px #440066', 'color:#ccc;font-size:11px;font-style:italic'],
-    ['%c◈ CHAPTER 9 — HAWKING RADIATION %c\nQuantum fluctuation detected. Thermal radiation T = 6.17×10⁻¹⁸ K.', 'color:#8844cc;font-size:14px;font-weight:bold;text-shadow:0 0 10px #8844cc', 'color:#888;font-size:11px;font-style:italic'],
-    ['%c◈ CHAPTER 10 — WHAT REMAINS %c\nInformation persists. You were here.', 'color:#ffffff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #fff', 'color:#aaa;font-size:11px;font-style:italic'],
+    ['%c◈ CHAPTER 8 — WHAT REMAINS %c\nInformation persists. You were here.', 'color:#ffffff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #fff', 'color:#aaa;font-size:11px;font-style:italic'],
   ];
 
   private logChapter(index: number) {
-    const msg = this.chapterConsoleMessages[index];
-    if (msg) console.log(msg[0], msg[1], msg[2]);
+    if (import.meta.env.DEV) {
+      const msg = this.chapterConsoleMessages[index];
+      if (msg) console.log(msg[0], msg[1], msg[2]);
+    }
   }
 
   private addTrackedListener(target: EventTarget, event: string, handler: EventListener, options?: AddEventListenerOptions) {
     target.addEventListener(event, handler, options);
     this.boundHandlers.push({ target, event, handler });
+  }
+
+  private activateAmbientUI() {
+    const leaks = document.getElementById('ambient-leaks');
+    if (leaks) setTimeout(() => leaks.classList.add('visible'), 800);
+    const depthAura = document.getElementById('depth-aura');
+    if (depthAura) setTimeout(() => depthAura.classList.add('visible'), 1200);
+    document.querySelectorAll('.corner-ornament').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), 1200 + i * 200);
+    });
+  }
+
+  private static readonly CHAPTER_AURA_COLORS = [
+    'radial-gradient(ellipse, rgba(89, 33, 135, 0.06), transparent 70%)',
+    'radial-gradient(ellipse, rgba(0, 100, 180, 0.06), transparent 70%)',
+    'radial-gradient(ellipse, rgba(60, 20, 120, 0.08), transparent 70%)',
+    'radial-gradient(ellipse, rgba(0, 180, 160, 0.05), transparent 70%)',
+    'radial-gradient(ellipse, rgba(180, 60, 30, 0.06), transparent 70%)',
+    'radial-gradient(ellipse, rgba(200, 80, 40, 0.08), transparent 70%)',
+    'radial-gradient(ellipse, rgba(100, 60, 180, 0.07), transparent 70%)',
+    'radial-gradient(ellipse, rgba(20, 10, 40, 0.10), transparent 70%)',
+    'radial-gradient(ellipse, rgba(255, 240, 200, 0.04), transparent 70%)',
+  ];
+
+  private updateChapterAmbience(chapterIndex: number) {
+    const aura = document.getElementById('depth-aura');
+    if (aura) {
+      aura.style.background = Experience.CHAPTER_AURA_COLORS[chapterIndex] || '';
+    }
+    const root = document.documentElement;
+    const cornerOpacities = [0.15, 0.12, 0.10, 0.12, 0.08, 0.06, 0.10, 0.04, 0.15];
+    root.style.setProperty('--corner-opacity', String(cornerOpacities[chapterIndex] ?? 0.15));
+  }
+
+  private flashTransitionBar() {
+    const bar = document.getElementById('chapter-transition-bar');
+    if (!bar) return;
+    gsap.killTweensOf(bar);
+    gsap.fromTo(bar,
+      { opacity: 0, scaleX: 0 },
+      { opacity: 1, scaleX: 1, duration: 0.4, ease: 'power2.out',
+        onComplete: () => {
+          gsap.to(bar, { opacity: 0, scaleX: 0, duration: 0.8, ease: 'power3.in', delay: 0.15 });
+        },
+      },
+    );
   }
 
   private applyTimeOfDay() {
@@ -186,6 +236,7 @@ export class Experience {
       powerPreference: 'high-performance',
       stencil: false,
       depth: true,
+      preserveDrawingBuffer: true,
     });
     this.renderer.setPixelRatio(preset.pixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -415,6 +466,7 @@ export class Experience {
       intro.style.display = 'none';
       if (muteBtn) muteBtn.classList.add('visible');
       if (dataHud) dataHud.classList.add('visible');
+      this.activateAmbientUI();
       this.experienceStartTime = performance.now();
       this.timeline.start(this.state.soundEnabled);
       this.textReveal.start();
@@ -453,6 +505,7 @@ export class Experience {
       intro.classList.remove('active');
       if (muteBtn) muteBtn.classList.add('visible');
       if (dataHud) dataHud.classList.add('visible');
+      this.activateAmbientUI();
       this.experienceStartTime = performance.now();
       this.timeline.start(this.state.soundEnabled);
       this.textReveal.start();
@@ -602,9 +655,13 @@ export class Experience {
       const overlayFade = this.state.scroll > 0.6 ? Math.max(0, 1 - (this.state.scroll - 0.6) / 0.2) : 1;
       document.documentElement.style.setProperty('--overlay-opacity', String(overlayFade));
 
+      const vignetteStrength = 0.5 + this.state.scroll * 0.5;
+      document.documentElement.style.setProperty('--vignette-opacity', String(Math.min(1, vignetteStrength).toFixed(2)));
+
       const pct = Math.round(this.state.scroll * 100);
       if (progressFill) {
         progressFill.style.width = `${pct}%`;
+        progressFill.parentElement?.style.setProperty('--progress', `${pct}%`);
         const s = this.state.scroll;
         const r = Math.round(s < 0.4 ? 0 : Math.min(255, (s - 0.4) * 425));
         const g = Math.round(s < 0.4 ? 245 : Math.max(40, 245 - (s - 0.4) * 340));
@@ -1124,16 +1181,16 @@ export class Experience {
       this.fpsValue = this.fpsFrames;
       this.fpsFrames = 0;
       this.fpsLastTime = now;
-      if (this.fpsValue < 30 && this.state.quality !== 'medium') {
+      if (this.fpsValue < 40 && this.state.quality !== 'medium') {
         this.lowFpsCount = (this.lowFpsCount ?? 0) + 1;
-        if (this.lowFpsCount >= 3) {
+        if (this.lowFpsCount >= 2) {
           const newPr = Math.max(1, this.renderer.getPixelRatio() - 0.25);
           this.renderer.setPixelRatio(newPr);
           this.postProcessing.resize();
           this.renderer.setSize(window.innerWidth, window.innerHeight);
           this.lowFpsCount = 0;
         }
-      } else {
+      } else if (this.fpsValue >= 55) {
         this.lowFpsCount = 0;
       }
     }
@@ -1141,15 +1198,25 @@ export class Experience {
     this.state.time = elapsed;
     this.state.deltaTime = dt;
 
-    this.state.mouseSmooth.lerp(this.state.mouse, 0.05);
+    this.state.mouseSmooth.lerp(this.state.mouse, 0.08);
 
     if (this.cursor) {
-      const hideCursor = this.state.scroll > 0.70;
+      const creditsEl = document.getElementById('credits');
+      const creditsVisible = creditsEl?.classList.contains('visible') ?? false;
+      const hideCursor = this.state.scroll > 0.70 && !creditsVisible;
       this.cursor.style.opacity = hideCursor ? '0' : '';
       if (this.ringEl) this.ringEl.style.opacity = hideCursor ? '0' : '';
       document.body.style.cursor = hideCursor ? 'none' : '';
 
-      if (!hideCursor) {
+      if (!hideCursor && creditsVisible && this.ringEl) {
+        this.cursor.style.width = '6px';
+        this.cursor.style.height = '6px';
+        this.cursor.style.background = 'var(--cyan)';
+        this.cursor.style.boxShadow = '0 0 8px var(--cyan), 0 0 16px rgba(0, 245, 212, 0.3)';
+        this.ringEl.style.transform = 'translate(-50%, -50%)';
+        this.ringEl.style.borderColor = 'rgba(0, 245, 212, 0.25)';
+        this.ringEl.style.borderRadius = '';
+      } else if (!hideCursor) {
         const cursorSize = 5 + this.state.scroll * 6;
         this.cursor.style.width = `${cursorSize}px`;
         this.cursor.style.height = `${cursorSize}px`;
@@ -1321,16 +1388,16 @@ export class Experience {
   private lastIndicatorChapter = -1;
   private chapterIndicatorTimer = 0;
 
-  private static CHAPTER_NAMES = ['YOU', 'THE PULL', 'THE WARP', 'THE FALL', 'SPAGHETTIFICATION', 'TIME DILATION', 'SINGULARITY', 'THE VOID', 'WHAT REMAINS'];
+  private static CHAPTER_NAMES = ['YOU', 'THE PULL', 'THE WARP', 'THE PHOTON SPHERE', 'THE FALL', 'SPAGHETTIFICATION', 'TIME DILATION', 'SINGULARITY', 'WHAT REMAINS'];
   private static INTERSTITIALS = [
     '',
     'ten billion solar masses',
     'spacetime curves',
+    'light orbits here',
     'no turning back',
     'atom by atom',
     'one heartbeat — an eternity',
     'where physics breaks',
-    'silence',
     '',
   ];
 
@@ -1579,6 +1646,7 @@ export class Experience {
       if (this.chapterIndicatorNum) this.chapterIndicatorNum.textContent = `${String(chapterIndex + 1).padStart(2, '0')}`;
       if (this.chapterIndicatorTitle) this.chapterIndicatorTitle.textContent = Experience.CHAPTER_NAMES[chapterIndex] || '';
       this.chapterIndicatorEl.classList.add('visible');
+      this.flashTransitionBar();
       clearTimeout(this.chapterIndicatorTimer);
       this.chapterIndicatorTimer = window.setTimeout(() => {
         this.chapterIndicatorEl?.classList.remove('visible');
@@ -1596,6 +1664,8 @@ export class Experience {
         const tB = Math.round(5 + s * 20);
         this.themeColorMeta.setAttribute('content', `rgb(${tR}, ${tG}, ${tB})`);
       }
+
+      this.updateChapterAmbience(chapterIndex);
     }
 
     if (this.interstitialEl) {

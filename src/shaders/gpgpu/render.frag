@@ -22,9 +22,9 @@ void main() {
   float dist = length(center);
   if (dist > 0.5) discard;
 
-  float core = exp(-dist * dist * 55.0);
-  float glow = exp(-dist * dist * 12.0);
-  float outerGlow = exp(-dist * dist * 3.0);
+  float core = exp(-dist * dist * 100.0);
+  float glow = exp(-dist * dist * 22.0);
+  float outerGlow = exp(-dist * dist * 6.0);
 
   float alpha = (core * 0.6 + glow * 0.22 + outerGlow * 0.06) * vBrightness;
 
@@ -76,13 +76,15 @@ void main() {
   float deepDesaturate = smoothstep(0.82, 0.95, vScroll);
   if (deepDesaturate > 0.01) {
     float cLuma = dot(color, vec3(0.2126, 0.7152, 0.0722));
-    color = mix(color, vec3(cLuma * 0.8, cLuma * 0.82, cLuma * 1.1), deepDesaturate * 0.5);
+    color = mix(color, vec3(cLuma * 0.85, cLuma * 0.88, cLuma * 1.05), deepDesaturate * 0.45);
   }
 
   if (vDiskGlow > 0.05) {
-    float diskAlphaBoost = vDiskGlow * outerGlow * 0.3;
+    float diskAlphaBoost = vDiskGlow * outerGlow * 0.35;
     alpha += diskAlphaBoost;
-    color += vColor * vDiskGlow * 0.1;
+    color += vColor * vDiskGlow * 0.15;
+    vec3 diskHotCore = vec3(1.0, 0.88, 0.65) * core * vDiskGlow * 0.08;
+    color += diskHotCore;
   }
 
   float lifeFade = smoothstep(0.0, 0.1, vLife);

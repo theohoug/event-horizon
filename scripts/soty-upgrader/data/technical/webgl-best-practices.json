@@ -1,0 +1,378 @@
+{
+  "meta": {
+    "title": "WebGL 2.0 Best Practices for SOTY Event Horizon",
+    "version": "1.0.0",
+    "author": "Cleanlystudio",
+    "description": "Comprehensive WebGL optimization database for high-performance black hole visualization"
+  },
+  "render_pipeline_optimization": {
+    "minimize_draw_calls": {
+      "description": "Each draw call has CPU overhead for state setup and GPU command submission. Fewer calls = better performance.",
+      "target": "Under 100 draw calls per frame for 60fps on mid-range hardware. Under 50 for mobile.",
+      "techniques": [
+        {
+          "name": "Geometry batching",
+          "description": "Merge multiple geometries into a single buffer and draw with one call",
+          "implementation": "Combine all static meshes into one BufferGeometry. Use different vertex attributes to distinguish objects.",
+          "savings": "N objects → 1 draw call instead of N"
+        },
+        {
+          "name": "Instanced rendering",
+          "description": "Draw multiple copies of the same geometry with per-instance attributes (position, color, scale)",
+          "implementation": "gl.drawArraysInstanced() / gl.drawElementsInstanced() with instance attribute buffers",
+          "ideal_for": "Particle systems (10,000+ particles as one draw call), star fields, debris",
+          "savings": "10,000 particles = 1 draw call instead of 10,000"
+        },
+        {
+          "name": "Sort by material/shader",
+          "description": "Group objects by their shader program to minimize program switches",
+          "implementation": "Sort renderables by material ID before drawing. Front-to-back for opaque, back-to-front for transparent.",
+          "savings": "Reduces program switch overhead (each switch costs ~0.1-0.5ms)"
+        },
+        {
+          "name": "Indirect rendering",
+          "description": "WebGL 2.0 does not support gl.drawArraysIndirect directly, but you can emulate with GPGPU",
+          "note": "Store draw parameters in textures, read back to CPU, or use transform feedback"
+        }
+      ]
+    },
+    "vertex_array_objects": {
+      "description": "VAOs store vertex attribute state so you don't need to reconfigure attributes every frame",
+      "implementation": "gl.createVertexArray() → gl.bindVertexArray() → configure attributes → unbind. At draw time: just bind the VAO.",
+      "requirement": "WebGL 2.0 has native VAO support. In WebGL 1.0, use the OES_vertex_array_object extension.",
+      "savings": "Eliminates per-frame attribute setup calls — significant for complex vertex layouts"
+    },
+    "uniform_buffer_objects": {
+      "description": "Share uniform data across multiple shader programs without redundant uploads",
+      "implementation": "gl.createBuffer() with UNIFORM_BUFFER target. gl.uniformBlockBinding() to connect.",
+      "ideal_for": "Camera matrices (view, projection) shared across all shaders. Scene globals (time, resolution, scroll position).",
+      "savings": "Upload once, use in all programs — eliminates redundant gl.uniformMatrix4fv() calls",
+      "webgl2_only": true
+    },
+    "state_management": {
+      "description": "Minimize redundant WebGL state changes",
+      "rules": [
+        "Cache current GL state (bound program, textures, blend mode) and skip redundant calls",
+        "Sort rendering order to minimize state changes: same program → same textures → same blend mode",
+        "Batch blend state: render all opaque objects first (no blend), then all transparent (with blend)",
+        "Minimize enable/disable calls — group objects by required GL state"
+      ],
+      "costly_state_changes_ranked": [
+        {"change": "Framebuffer switch (render target)", "cost": "Very high — flushes GPU pipeline"},
+        {"change": "Shader program switch", "cost": "High — recompiles uniform locations"},
+        {"change": "Texture bind", "cost": "Medium — texture unit switching"},
+        {"change": "Blend mode change", "cost": "Medium — pipeline reconfiguration"},
+        {"change": "Uniform upload", "cost": "Low-medium — CPU to GPU transfer"},
+        {"change": "VAO bind", "cost": "Low — fast state lookup"},
+        {"change": "Viewport/scissor change", "cost": "Low"}
+      ]
+    }
+  },
+  "texture_optimization": {
+    "power_of_two": {
+      "description": "Textures with dimensions that are powers of 2 (256, 512, 1024, 2048) have optimal GPU memory layout",
+      "webgl2_note": "WebGL 2.0 supports NPOT textures with full mipmapping and wrapping, but POT is still faster on some hardware",
+      "recommendation": "Use POT dimensions when possible, especially for frequently sampled textures"
+    },
+    "mipmapping": {
+      "description": "Pre-computed lower-resolution versions of textures for distant/small rendering",
+      "when_to_use": "Any texture that will be viewed at varying distances (star textures, particle sprites, noise textures)",
+      "when_to_skip": "Textures always viewed at 1:1 (UI elements, GPGPU data textures)",
+      "implementation": "gl.generateMipmap(gl.TEXTURE_2D) after uploading texture data",
+      "memory_cost": "33% additional memory (1/4 + 1/16 + 1/64 + ... converges to 1/3)"
+    },
+    "compressed_textures": {
+      "formats": [
+        {"name": "S3TC/DXT (WEBGL_compressed_texture_s3tc)", "platforms": "Desktop (NVIDIA, AMD, Intel)", "compression": "4:1 to 8:1", "quality": "Good for most textures"},
+        {"name": "ETC2 (WEBGL_compressed_texture_etc)", "platforms": "Mobile (all WebGL 2.0 mobile GPUs)", "compression": "4:1 to 8:1", "quality": "Good, mandatory in OpenGL ES 3.0"},
+        {"name": "ASTC (WEBGL_compressed_texture_astc)", "platforms": "Modern mobile (Mali, Adreno, Apple)", "compression": "Variable 2:1 to 36:1", "quality": "Best quality-to-size ratio"},
+        {"name": "PVRTC (WEBGL_compressed_texture_pvrtc)", "platforms": "Apple (older iOS devices)", "compression": "8:1 to 16:1", "quality": "Adequate for mobile"}
+      ],
+      "recommendation": "Use basis_universal or KTX2 container format — transcodes to the best format available on the device at load time",
+      "savings": "4-8x reduction in GPU memory and texture upload time"
+    },
+    "texture_atlas": {
+      "description": "Combine multiple small textures into a single large texture, use UV coordinates to sample sub-regions",
+      "ideal_for": "Particle sprites (multiple particle types in one atlas), icon sets, HUD elements",
+      "implementation": "Pack textures into a 2048×2048 atlas. Pass UV offset/scale as attributes or uniforms.",
+      "savings": "Eliminates texture bind switching between particles of different types"
+    },
+    "float_textures": {
+      "rgba32f": {
+        "description": "32-bit floating point per channel. Full precision GPGPU computation.",
+        "usage": "Particle position/velocity storage, physics simulation, high-precision computation",
+        "extension": "EXT_color_buffer_float (for rendering to) — required for GPGPU",
+        "memory": "16 bytes per pixel (4x RGBA8)"
+      },
+      "rgba16f": {
+        "description": "16-bit half-float per channel. Good precision for most visual purposes.",
+        "usage": "Mobile GPGPU, HDR rendering, bloom/blur intermediate buffers",
+        "memory": "8 bytes per pixel (2x RGBA8)",
+        "precision": "~3 decimal digits of precision, range ±65504",
+        "recommendation": "Prefer RGBA16F over RGBA32F when possible — half the memory, adequate precision for most visual effects"
+      }
+    },
+    "texture_filtering": {
+      "nearest": {
+        "gl_constant": "gl.NEAREST",
+        "description": "No interpolation — pixel art look. Fastest.",
+        "use": "GPGPU data textures (must read exact values), pixel art"
+      },
+      "linear": {
+        "gl_constant": "gl.LINEAR",
+        "description": "Bilinear interpolation. Smooth but no mip transitions.",
+        "use": "UI textures, textures viewed at constant size"
+      },
+      "linear_mipmap_linear": {
+        "gl_constant": "gl.LINEAR_MIPMAP_LINEAR",
+        "description": "Trilinear — smoothest quality. Bilinear within mip + linear between mips.",
+        "use": "All textures viewed at varying distances — the default quality choice"
+      },
+      "anisotropic_filtering": {
+        "extension": "EXT_texture_filter_anisotropic",
+        "description": "Improves texture quality at oblique viewing angles",
+        "max_anisotropy": "Query with gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT) — typically 8 or 16",
+        "use": "Accretion disk texture viewed at steep angle, floor/ground planes (if any)",
+        "performance": "Minimal impact on modern GPUs — enable at max anisotropy for visual quality"
+      }
+    }
+  },
+  "framebuffer_optimization": {
+    "minimize_render_target_switches": {
+      "description": "Switching render targets (FBOs) is one of the most expensive GL operations",
+      "strategy": [
+        "Batch all renders to the same target together",
+        "Use MRT (Multiple Render Targets) to write multiple outputs in one pass",
+        "Plan your render pipeline to minimize target switches: Scene → Post-process chain → Screen"
+      ]
+    },
+    "multiple_render_targets": {
+      "description": "WebGL 2.0 supports writing to multiple color attachments in a single fragment shader pass",
+      "max_targets": "Minimum 4 (query gl.MAX_COLOR_ATTACHMENTS for actual device support, typically 4-8)",
+      "implementation": "gl.drawBuffers([gl.COLOR_ATTACHMENT0, gl.COLOR_ATTACHMENT1, ...]) on the framebuffer",
+      "ideal_for": "Deferred rendering — write position, normal, albedo, emission in one pass instead of four",
+      "event_horizon_use": "Write particle ID + depth in one pass for post-processing selection"
+    },
+    "resolution_management": {
+      "rules": [
+        "Main render: full resolution (renderer.setPixelRatio(Math.min(dpr, 2)))",
+        "Bloom/glow: half resolution is visually identical (blur hides resolution loss)",
+        "GPGPU simulation: resolution = particle count, NOT screen resolution",
+        "Shadow maps: typically 1024×1024 or 2048×2048 regardless of screen size",
+        "DOF/motion blur: can run at 3/4 resolution and upsample"
+      ],
+      "dynamic_resolution": {
+        "description": "Reduce render resolution when frame time exceeds budget, increase when headroom available",
+        "implementation": "Monitor frame time with performance.now(). If consistently > 14ms, reduce render scale by 10%. If < 10ms, increase.",
+        "min_scale": 0.5,
+        "max_scale": 1.0,
+        "step": 0.05,
+        "hysteresis": "Only change after 10+ frames at the same threshold to avoid flickering"
+      }
+    }
+  },
+  "memory_management": {
+    "resource_disposal": {
+      "description": "WebGL resources (textures, buffers, programs, framebuffers) are NOT garbage collected. You MUST manually delete them.",
+      "resources_to_track": [
+        {"type": "Texture", "delete": "gl.deleteTexture(texture)"},
+        {"type": "Buffer", "delete": "gl.deleteBuffer(buffer)"},
+        {"type": "Framebuffer", "delete": "gl.deleteFramebuffer(fbo)"},
+        {"type": "Renderbuffer", "delete": "gl.deleteRenderbuffer(rbo)"},
+        {"type": "Program", "delete": "gl.deleteProgram(program)"},
+        {"type": "Shader", "delete": "gl.deleteShader(shader)"},
+        {"type": "VAO", "delete": "gl.deleteVertexArray(vao)"}
+      ],
+      "three_js_disposal": {
+        "geometry": "geometry.dispose()",
+        "material": "material.dispose()",
+        "texture": "texture.dispose()",
+        "render_target": "renderTarget.dispose()",
+        "important": "Three.js dispose() calls the underlying GL delete. ALWAYS dispose when removing objects from scene."
+      }
+    },
+    "vram_budget": {
+      "desktop_budget": "512MB-2GB VRAM available (varies by GPU)",
+      "mobile_budget": "128-512MB VRAM shared with system (varies by device)",
+      "monitoring": "No direct WebGL API for VRAM usage. Use WEBGL_debug_renderer_info to identify GPU, then estimate.",
+      "estimation_formula": "Total VRAM ≈ sum of (texture_width × texture_height × bytes_per_pixel × (1 + 0.33 if mipmapped)) + buffer_sizes + framebuffer_sizes"
+    },
+    "typed_array_pooling": {
+      "description": "Reuse Float32Array and other typed arrays instead of creating new ones each frame",
+      "problem": "new Float32Array(n) allocates memory that must be GC'd. In hot loops, this causes GC pauses (stuttering).",
+      "solution": "Pre-allocate arrays at initialization and reuse them. Zero them if needed with array.fill(0).",
+      "example": "const tempVec3 = new Float32Array(3); // reuse this everywhere instead of creating new ones"
+    }
+  },
+  "webgl2_features": {
+    "transform_feedback": {
+      "description": "Capture vertex shader output into buffers without going through fragment shader",
+      "use_case": "GPGPU particle simulation alternative to FBO ping-pong",
+      "advantages": "Simpler setup than FBO-based GPGPU for position/velocity updates",
+      "disadvantages": "Limited to vertex shader (no fragment shader compute), sequential output",
+      "implementation": "gl.beginTransformFeedback(gl.POINTS) → draw → gl.endTransformFeedback()"
+    },
+    "integer_textures": {
+      "description": "Textures with integer formats (not normalized to 0-1)",
+      "formats": ["R8UI", "RG16I", "RGBA32UI", "RGBA32I"],
+      "use_case": "Object ID buffers, index textures, lookup tables with exact integer values",
+      "event_horizon_use": "Particle ID texture for per-particle selection and post-processing effects"
+    },
+    "3d_textures": {
+      "description": "Volumetric textures (width × height × depth)",
+      "implementation": "gl.texImage3D() with gl.TEXTURE_3D target",
+      "use_case": "3D noise functions (pre-computed Perlin/Simplex noise), volumetric effects, LUT color grading",
+      "event_horizon_use": "Pre-computed 3D noise texture for nebula/gas cloud rendering. Color grading LUT for cinematic post-processing."
+    },
+    "uniform_buffer_objects_detail": {
+      "description": "Shared blocks of uniform data accessible by multiple programs",
+      "layout_rules": [
+        "std140 layout guarantees cross-platform consistency",
+        "Vectors must be aligned to their size (vec4 → 16 byte alignment)",
+        "Matrices stored as arrays of column vectors",
+        "Padding may be inserted for alignment — be aware of memory layout"
+      ],
+      "example_block": {
+        "glsl": "layout(std140) uniform SceneData { mat4 viewMatrix; mat4 projMatrix; vec4 cameraPosition; float time; float scrollProgress; };",
+        "js": "gl.bindBufferBase(gl.UNIFORM_BUFFER, 0, uboBuffer); gl.uniformBlockBinding(program, blockIndex, 0);"
+      }
+    },
+    "non_power_of_two_textures": {
+      "description": "WebGL 2.0 fully supports NPOT textures with wrapping and mipmapping",
+      "note": "WebGL 1.0 limited NPOT textures to CLAMP_TO_EDGE wrapping and no mipmaps",
+      "recommendation": "Still prefer POT for performance-critical textures, but NPOT is fine for most use cases"
+    }
+  },
+  "device_capability_detection": {
+    "gpu_identification": {
+      "extension": "WEBGL_debug_renderer_info",
+      "usage": "gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) — returns GPU name string",
+      "note": "Some browsers block this for fingerprinting. Fallback to benchmarking.",
+      "known_gpu_tiers": {
+        "high": ["NVIDIA RTX 30xx/40xx", "AMD RX 6xxx/7xxx", "Apple M1/M2/M3 Pro/Max"],
+        "medium": ["NVIDIA GTX 10xx/16xx", "AMD RX 5xx", "Apple M1/M2 base", "Intel Iris Xe"],
+        "low": ["Intel HD/UHD 6xx", "Intel Iris Plus", "Integrated AMD Vega"],
+        "mobile_high": ["Apple A15/A16/A17", "Adreno 740/750", "Mali-G710/G720"],
+        "mobile_low": ["Adreno 610/620", "Mali-G57/G68", "Apple A12/A13"]
+      }
+    },
+    "capability_queries": [
+      {"query": "gl.getParameter(gl.MAX_TEXTURE_SIZE)", "typical": "4096-16384", "use": "Max texture dimension"},
+      {"query": "gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)", "typical": "4096-16384", "use": "Max FBO size"},
+      {"query": "gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS)", "typical": "8-32", "use": "Textures in vertex shader (GPGPU)"},
+      {"query": "gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS)", "typical": "256-4096", "use": "Uniform capacity"},
+      {"query": "gl.getParameter(gl.MAX_VARYING_VECTORS)", "typical": "16-32", "use": "Data passed VS→FS"},
+      {"query": "gl.getParameter(gl.MAX_COLOR_ATTACHMENTS)", "typical": "4-8", "use": "MRT capacity"},
+      {"query": "gl.getParameter(gl.MAX_DRAW_BUFFERS)", "typical": "4-8", "use": "MRT output count"},
+      {"query": "gl.getExtension('EXT_color_buffer_float')", "typical": "boolean", "use": "Float texture render targets (required for GPGPU)"}
+    ],
+    "runtime_benchmarking": {
+      "description": "If GPU identification is blocked, run a quick benchmark at startup",
+      "technique": "Render a known scene (e.g., 1000 particles) for 60 frames, measure average frame time",
+      "thresholds": {
+        "high": "< 4ms per frame → full quality",
+        "medium": "4-10ms per frame → reduced particles, half-res bloom",
+        "low": "> 10ms per frame → minimal particles, no post-processing, reduced resolution"
+      }
+    }
+  },
+  "fallback_strategies": {
+    "tiers": [
+      {
+        "tier": "A",
+        "requirement": "WebGL 2.0 + float textures + compute capability",
+        "features": "Full GPGPU particles, full post-processing, full resolution, all effects",
+        "target": "Desktop with dedicated GPU, high-end mobile"
+      },
+      {
+        "tier": "B",
+        "requirement": "WebGL 2.0 without float textures OR WebGL 1.0 with extensions",
+        "features": "Reduced particles (CPU-computed), simplified post-processing, reduced effects",
+        "target": "Mid-range laptops, mid-range mobile"
+      },
+      {
+        "tier": "C",
+        "requirement": "WebGL 1.0 basic",
+        "features": "Minimal particles, no GPGPU, basic shaders, no post-processing",
+        "target": "Low-end devices, older browsers"
+      },
+      {
+        "tier": "D",
+        "requirement": "No WebGL",
+        "features": "CSS 3D transforms for basic animation, pre-rendered video, static images with parallax",
+        "target": "Browsers with WebGL disabled, very old devices"
+      }
+    ],
+    "detection_code_pattern": "1. Try getContext('webgl2'). 2. If fail, try getContext('webgl'). 3. Check extensions. 4. Run benchmark. 5. Select tier."
+  },
+  "common_pitfalls": [
+    {
+      "pitfall": "Creating textures or buffers every frame",
+      "symptom": "Increasing memory usage, eventual crash or severe GC pauses",
+      "fix": "Pre-allocate all resources at init. Reuse with sub-data updates."
+    },
+    {
+      "pitfall": "Not disposing resources on scene change",
+      "symptom": "VRAM leak — performance degrades over time",
+      "fix": "Track all GL resources. Dispose on unmount/navigation."
+    },
+    {
+      "pitfall": "Overdraw — rendering transparent layers that overlap extensively",
+      "symptom": "Fragment shader executes multiple times per pixel, reducing performance",
+      "fix": "Sort transparent objects back-to-front. Reduce number of overlapping transparent layers. Use premultiplied alpha."
+    },
+    {
+      "pitfall": "Synchronous readback with gl.readPixels()",
+      "symptom": "GPU stall — CPU waits for GPU to finish before continuing",
+      "fix": "Use PIXEL_PACK_BUFFER with gl.fenceSync() for async readback in WebGL 2.0"
+    },
+    {
+      "pitfall": "High pixel ratio on high-DPI screens (4x pixels on Retina)",
+      "symptom": "4x more fragment shader work. Severe performance loss on mobile Retina.",
+      "fix": "Cap pixel ratio at 2.0: Math.min(window.devicePixelRatio, 2)"
+    },
+    {
+      "pitfall": "Fragment shader complexity on mobile",
+      "symptom": "30fps or lower on mobile despite working on desktop",
+      "fix": "Mobile GPUs have 4-10x less fragment throughput. Reduce shader complexity (fewer texture reads, simpler math, lower precision)."
+    }
+  ],
+  "profiling_tools": [
+    {
+      "tool": "Spector.js",
+      "type": "WebGL inspector",
+      "url": "https://spector.babylonjs.com/",
+      "features": "Capture and replay WebGL frames, inspect textures/buffers/state, identify redundant calls"
+    },
+    {
+      "tool": "Chrome DevTools Performance Panel",
+      "type": "Built-in browser profiler",
+      "features": "Frame time breakdown (JS, Rendering, Painting, GPU), identify long tasks, memory profiling"
+    },
+    {
+      "tool": "EXT_disjoint_timer_query_webgl2",
+      "type": "WebGL extension for GPU timing",
+      "features": "Measure actual GPU time per draw call or render pass",
+      "note": "May be disabled in some browsers for security/fingerprinting reasons"
+    },
+    {
+      "tool": "RenderDoc",
+      "type": "Frame debugger (requires running in debug context)",
+      "features": "Full frame capture, shader debugging, texture inspection, draw call breakdown"
+    },
+    {
+      "tool": "WebGL Inspector (Chrome extension)",
+      "type": "Browser extension",
+      "features": "Monitor GL calls in real-time, detect redundant state changes"
+    }
+  ],
+  "sources": [
+    {"title": "WebGL2 Fundamentals", "url": "https://webgl2fundamentals.org/"},
+    {"title": "WebGL Best Practices (Mozilla)", "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices"},
+    {"title": "WebGL2 Specification", "url": "https://registry.khronos.org/webgl/specs/latest/2.0/"},
+    {"title": "GPU Gems Series", "author": "NVIDIA", "type": "book_series"},
+    {"title": "Real-Time Rendering (4th Edition)", "author": "Tomas Akenine-Möller et al.", "type": "book"},
+    {"title": "The Book of Shaders", "author": "Patricio Gonzalez Vivo", "url": "https://thebookofshaders.com/"},
+    {"title": "Spector.js", "url": "https://spector.babylonjs.com/"}
+  ]
+}

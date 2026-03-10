@@ -1,0 +1,670 @@
+{
+  "metadata": {
+    "title": "Fundamental Physics Constants for Black Hole Physics",
+    "description": "Comprehensive database of physical constants, formulas, and derived values relevant to black hole astrophysics",
+    "version": "1.0.0",
+    "lastUpdated": "2026-03-09",
+    "unitSystem": "SI (primary) with natural units (G=c=1) provided where relevant"
+  },
+  "fundamentalConstants": {
+    "gravitationalConstant": {
+      "symbol": "G",
+      "value": 6.67430e-11,
+      "unit": "m³ kg⁻¹ s⁻²",
+      "uncertainty": 1.5e-15,
+      "source": "CODATA 2018",
+      "naturalUnits": 1
+    },
+    "speedOfLight": {
+      "symbol": "c",
+      "value": 299792458,
+      "unit": "m s⁻¹",
+      "exact": true,
+      "source": "SI definition 2019",
+      "naturalUnits": 1
+    },
+    "planckConstant": {
+      "symbol": "h",
+      "value": 6.62607015e-34,
+      "unit": "J s",
+      "exact": true,
+      "source": "SI definition 2019"
+    },
+    "reducedPlanckConstant": {
+      "symbol": "ℏ",
+      "value": 1.054571817e-34,
+      "unit": "J s",
+      "derivation": "h / (2π)",
+      "source": "CODATA 2018"
+    },
+    "boltzmannConstant": {
+      "symbol": "k_B",
+      "value": 1.380649e-23,
+      "unit": "J K⁻¹",
+      "exact": true,
+      "source": "SI definition 2019"
+    },
+    "stefanBoltzmannConstant": {
+      "symbol": "σ",
+      "value": 5.670374419e-8,
+      "unit": "W m⁻² K⁻⁴",
+      "derivation": "2π⁵k_B⁴ / (15h³c²)",
+      "source": "CODATA 2018"
+    },
+    "solarMass": {
+      "symbol": "M_☉",
+      "value": 1.98892e30,
+      "unit": "kg",
+      "source": "IAU 2015 nominal solar mass parameter"
+    },
+    "solarLuminosity": {
+      "symbol": "L_☉",
+      "value": 3.828e26,
+      "unit": "W",
+      "source": "IAU 2015"
+    },
+    "electronMass": {
+      "symbol": "m_e",
+      "value": 9.1093837015e-31,
+      "unit": "kg",
+      "source": "CODATA 2018"
+    },
+    "protonMass": {
+      "symbol": "m_p",
+      "value": 1.67262192369e-27,
+      "unit": "kg",
+      "source": "CODATA 2018"
+    },
+    "thomsonCrossSection": {
+      "symbol": "σ_T",
+      "value": 6.6524587321e-29,
+      "unit": "m²",
+      "source": "CODATA 2018"
+    },
+    "planckLength": {
+      "symbol": "ℓ_P",
+      "value": 1.616255e-35,
+      "unit": "m",
+      "derivation": "√(ℏG/c³)",
+      "source": "CODATA 2018"
+    },
+    "planckMass": {
+      "symbol": "m_P",
+      "value": 2.176434e-8,
+      "unit": "kg",
+      "derivation": "√(ℏc/G)",
+      "source": "CODATA 2018"
+    },
+    "planckTime": {
+      "symbol": "t_P",
+      "value": 5.391247e-44,
+      "unit": "s",
+      "derivation": "√(ℏG/c⁵)",
+      "source": "CODATA 2018"
+    },
+    "planckTemperature": {
+      "symbol": "T_P",
+      "value": 1.416784e32,
+      "unit": "K",
+      "derivation": "√(ℏc⁵/(Gk_B²))",
+      "source": "CODATA 2018"
+    },
+    "fineStructureConstant": {
+      "symbol": "α",
+      "value": 7.2973525693e-3,
+      "unit": "dimensionless",
+      "source": "CODATA 2018"
+    },
+    "vacuumPermeability": {
+      "symbol": "μ₀",
+      "value": 1.25663706212e-6,
+      "unit": "N A⁻²",
+      "source": "CODATA 2018"
+    },
+    "vacuumPermittivity": {
+      "symbol": "ε₀",
+      "value": 8.8541878128e-12,
+      "unit": "F m⁻¹",
+      "source": "CODATA 2018"
+    },
+    "parsec": {
+      "symbol": "pc",
+      "value": 3.0856775814913673e16,
+      "unit": "m",
+      "source": "IAU 2012"
+    },
+    "megaparsec": {
+      "symbol": "Mpc",
+      "value": 3.0856775814913673e22,
+      "unit": "m",
+      "source": "IAU 2012"
+    },
+    "astronomicalUnit": {
+      "symbol": "AU",
+      "value": 1.495978707e11,
+      "unit": "m",
+      "exact": true,
+      "source": "IAU 2012"
+    },
+    "lightYear": {
+      "symbol": "ly",
+      "value": 9.4607304725808e15,
+      "unit": "m",
+      "source": "IAU"
+    },
+    "electronVolt": {
+      "symbol": "eV",
+      "value": 1.602176634e-19,
+      "unit": "J",
+      "exact": true,
+      "source": "SI definition 2019"
+    },
+    "electronScatteringOpacity": {
+      "symbol": "κ_es",
+      "value": 0.2,
+      "unit": "cm² g⁻¹",
+      "description": "Electron scattering opacity for fully ionized hydrogen",
+      "siValue": 0.02,
+      "siUnit": "m² kg⁻¹"
+    }
+  },
+  "schwarzschildRadius": {
+    "formula": "R_s = 2GM/c²",
+    "formulaLatex": "R_s = \\frac{2GM}{c^2}",
+    "naturalUnitsFormula": "R_s = 2M",
+    "perSolarMass": {
+      "value": 2953.25,
+      "unit": "m",
+      "note": "Rs per solar mass"
+    },
+    "valuesForDifferentMasses": [
+      {
+        "massLabel": "1 M_☉",
+        "massSolarMasses": 1,
+        "massKg": 1.98892e30,
+        "schwarzschildRadius_m": 2953.25,
+        "schwarzschildRadius_km": 2.95325,
+        "eventHorizonDiameter_km": 5.9065,
+        "note": "Typical stellar remnant lower bound"
+      },
+      {
+        "massLabel": "3 M_☉",
+        "massSolarMasses": 3,
+        "massKg": 5.96676e30,
+        "schwarzschildRadius_m": 8859.75,
+        "schwarzschildRadius_km": 8.85975,
+        "eventHorizonDiameter_km": 17.7195,
+        "note": "Minimum mass for stellar black hole (Tolman–Oppenheimer–Volkoff limit)"
+      },
+      {
+        "massLabel": "5 M_☉",
+        "massSolarMasses": 5,
+        "massKg": 9.9446e30,
+        "schwarzschildRadius_m": 14766.25,
+        "schwarzschildRadius_km": 14.76625,
+        "eventHorizonDiameter_km": 29.5325
+      },
+      {
+        "massLabel": "10 M_☉",
+        "massSolarMasses": 10,
+        "massKg": 1.98892e31,
+        "schwarzschildRadius_m": 29532.5,
+        "schwarzschildRadius_km": 29.5325,
+        "eventHorizonDiameter_km": 59.065,
+        "note": "Typical stellar black hole"
+      },
+      {
+        "massLabel": "20 M_☉",
+        "massSolarMasses": 20,
+        "massKg": 3.97784e31,
+        "schwarzschildRadius_m": 59065,
+        "schwarzschildRadius_km": 59.065,
+        "eventHorizonDiameter_km": 118.13
+      },
+      {
+        "massLabel": "30 M_☉",
+        "massSolarMasses": 30,
+        "massKg": 5.96676e31,
+        "schwarzschildRadius_m": 88597.5,
+        "schwarzschildRadius_km": 88.5975,
+        "eventHorizonDiameter_km": 177.195,
+        "note": "Massive stellar BH (LIGO GW150914 range)"
+      },
+      {
+        "massLabel": "62 M_☉",
+        "massSolarMasses": 62,
+        "massKg": 1.23313e32,
+        "schwarzschildRadius_m": 183101.5,
+        "schwarzschildRadius_km": 183.1015,
+        "eventHorizonDiameter_km": 366.203,
+        "note": "GW150914 merger remnant"
+      },
+      {
+        "massLabel": "100 M_☉",
+        "massSolarMasses": 100,
+        "massKg": 1.98892e32,
+        "schwarzschildRadius_m": 295325,
+        "schwarzschildRadius_km": 295.325,
+        "eventHorizonDiameter_km": 590.65,
+        "note": "Intermediate mass lower range"
+      },
+      {
+        "massLabel": "1,000 M_☉",
+        "massSolarMasses": 1000,
+        "massKg": 1.98892e33,
+        "schwarzschildRadius_m": 2953250,
+        "schwarzschildRadius_km": 2953.25,
+        "eventHorizonDiameter_km": 5906.5,
+        "note": "Intermediate mass black hole"
+      },
+      {
+        "massLabel": "10,000 M_☉",
+        "massSolarMasses": 10000,
+        "massKg": 1.98892e34,
+        "schwarzschildRadius_m": 29532500,
+        "schwarzschildRadius_km": 29532.5,
+        "eventHorizonDiameter_km": 59065,
+        "note": "Upper intermediate mass"
+      },
+      {
+        "massLabel": "100,000 M_☉",
+        "massSolarMasses": 100000,
+        "massKg": 1.98892e35,
+        "schwarzschildRadius_m": 2.953250e8,
+        "schwarzschildRadius_km": 295325,
+        "eventHorizonDiameter_km": 590650,
+        "note": "Low-mass supermassive"
+      },
+      {
+        "massLabel": "1 million M_☉",
+        "massSolarMasses": 1e6,
+        "massKg": 1.98892e36,
+        "schwarzschildRadius_m": 2.95325e9,
+        "schwarzschildRadius_km": 2953250,
+        "schwarzschildRadius_AU": 0.01974,
+        "eventHorizonDiameter_km": 5906500,
+        "note": "Small SMBH"
+      },
+      {
+        "massLabel": "4 million M_☉ (Sgr A*)",
+        "massSolarMasses": 4e6,
+        "massKg": 7.95568e36,
+        "schwarzschildRadius_m": 1.18130e10,
+        "schwarzschildRadius_km": 11813000,
+        "schwarzschildRadius_AU": 0.07896,
+        "eventHorizonDiameter_km": 23626000,
+        "note": "Sagittarius A* approximate mass"
+      },
+      {
+        "massLabel": "10 million M_☉",
+        "massSolarMasses": 1e7,
+        "massKg": 1.98892e37,
+        "schwarzschildRadius_m": 2.95325e10,
+        "schwarzschildRadius_km": 29532500,
+        "schwarzschildRadius_AU": 0.1974,
+        "eventHorizonDiameter_km": 59065000
+      },
+      {
+        "massLabel": "100 million M_☉",
+        "massSolarMasses": 1e8,
+        "massKg": 1.98892e38,
+        "schwarzschildRadius_m": 2.95325e11,
+        "schwarzschildRadius_km": 2.95325e8,
+        "schwarzschildRadius_AU": 1.974,
+        "eventHorizonDiameter_km": 5.9065e8
+      },
+      {
+        "massLabel": "1 billion M_☉",
+        "massSolarMasses": 1e9,
+        "massKg": 1.98892e39,
+        "schwarzschildRadius_m": 2.95325e12,
+        "schwarzschildRadius_km": 2.95325e9,
+        "schwarzschildRadius_AU": 19.74,
+        "eventHorizonDiameter_km": 5.9065e9,
+        "note": "Typical large SMBH"
+      },
+      {
+        "massLabel": "6.5 billion M_☉ (M87*)",
+        "massSolarMasses": 6.5e9,
+        "massKg": 1.292798e40,
+        "schwarzschildRadius_m": 1.919613e13,
+        "schwarzschildRadius_km": 1.919613e10,
+        "schwarzschildRadius_AU": 128.3,
+        "eventHorizonDiameter_km": 3.839226e10,
+        "note": "M87* — first imaged black hole"
+      },
+      {
+        "massLabel": "10 billion M_☉",
+        "massSolarMasses": 1e10,
+        "massKg": 1.98892e40,
+        "schwarzschildRadius_m": 2.95325e13,
+        "schwarzschildRadius_km": 2.95325e10,
+        "schwarzschildRadius_AU": 197.4,
+        "eventHorizonDiameter_km": 5.9065e10
+      },
+      {
+        "massLabel": "40 billion M_☉ (TON 618)",
+        "massSolarMasses": 4e10,
+        "massKg": 7.95568e40,
+        "schwarzschildRadius_m": 1.18130e14,
+        "schwarzschildRadius_km": 1.18130e11,
+        "schwarzschildRadius_AU": 789.6,
+        "eventHorizonDiameter_km": 2.36260e11,
+        "note": "TON 618 — one of the most massive known black holes"
+      },
+      {
+        "massLabel": "66 billion M_☉ (Phoenix A)",
+        "massSolarMasses": 6.6e10,
+        "massKg": 1.312687e41,
+        "schwarzschildRadius_m": 1.949145e14,
+        "schwarzschildRadius_km": 1.949145e11,
+        "schwarzschildRadius_AU": 1302.8,
+        "eventHorizonDiameter_km": 3.898290e11,
+        "note": "Phoenix A — largest known black hole as of 2022"
+      }
+    ]
+  },
+  "photonSphere": {
+    "schwarzschild": {
+      "formula": "r_ph = (3/2) R_s = 3GM/c²",
+      "formulaLatex": "r_{ph} = \\frac{3GM}{c^2} = \\frac{3}{2}R_s",
+      "naturalUnitsFormula": "r_ph = 3M",
+      "ratioToRs": 1.5,
+      "description": "Unstable circular photon orbit. Any photon at this radius with tangential trajectory will orbit, but perturbations cause escape or capture."
+    },
+    "kerr": {
+      "progradeFormula": "r_ph+ = 2M(1 + cos(2/3 arccos(-a/M)))",
+      "retrogradeFormula": "r_ph- = 2M(1 + cos(2/3 arccos(a/M)))",
+      "valuesForDifferentSpins": [
+        { "spinParameter": 0.0, "progradeR_over_M": 3.0, "retrogradeR_over_M": 3.0 },
+        { "spinParameter": 0.1, "progradeR_over_M": 2.920, "retrogradeR_over_M": 3.079 },
+        { "spinParameter": 0.2, "progradeR_over_M": 2.838, "retrogradeR_over_M": 3.157 },
+        { "spinParameter": 0.3, "progradeR_over_M": 2.752, "retrogradeR_over_M": 3.233 },
+        { "spinParameter": 0.4, "progradeR_over_M": 2.663, "retrogradeR_over_M": 3.307 },
+        { "spinParameter": 0.5, "progradeR_over_M": 2.571, "retrogradeR_over_M": 3.380 },
+        { "spinParameter": 0.6, "progradeR_over_M": 2.474, "retrogradeR_over_M": 3.451 },
+        { "spinParameter": 0.7, "progradeR_over_M": 2.372, "retrogradeR_over_M": 3.520 },
+        { "spinParameter": 0.8, "progradeR_over_M": 2.263, "retrogradeR_over_M": 3.587 },
+        { "spinParameter": 0.9, "progradeR_over_M": 2.143, "retrogradeR_over_M": 3.652 },
+        { "spinParameter": 0.95, "progradeR_over_M": 2.073, "retrogradeR_over_M": 3.684 },
+        { "spinParameter": 0.99, "progradeR_over_M": 2.014, "retrogradeR_over_M": 3.709 },
+        { "spinParameter": 0.998, "progradeR_over_M": 2.003, "retrogradeR_over_M": 3.714 },
+        { "spinParameter": 1.0, "progradeR_over_M": 1.0, "retrogradeR_over_M": 4.0, "note": "Extremal Kerr limit" }
+      ]
+    }
+  },
+  "isco": {
+    "description": "Innermost Stable Circular Orbit — the smallest stable orbit for massive particles",
+    "schwarzschild": {
+      "formula": "r_ISCO = 3 R_s = 6GM/c²",
+      "formulaLatex": "r_{ISCO} = 6M = 3R_s",
+      "naturalUnitsFormula": "r_ISCO = 6M",
+      "ratioToRs": 3.0,
+      "specificEnergy": 0.9428,
+      "specificAngularMomentum_over_M": 3.4641,
+      "orbitalFrequency_formula": "f = c³/(6√6 × 2πGM)",
+      "bindingEnergy_percent": 5.719,
+      "note": "The binding energy at ISCO determines the maximum radiative efficiency of a non-spinning black hole"
+    },
+    "kerr": {
+      "progradeFormula": "r_ISCO = M(3 + Z2 - √((3-Z1)(3+Z1+2Z2))) where Z1 = 1+(1-a²)^(1/3)[(1+a)^(1/3)+(1-a)^(1/3)], Z2 = √(3a²+Z1²)",
+      "retrogradeFormula": "r_ISCO = M(3 + Z2 + √((3-Z1)(3+Z1+2Z2)))",
+      "valuesForDifferentSpins": [
+        { "spinParameter": 0.0, "progradeR_over_M": 6.000, "retrogradeR_over_M": 6.000, "progradeEfficiency_percent": 5.719, "retrogradeEfficiency_percent": 5.719 },
+        { "spinParameter": 0.1, "progradeR_over_M": 5.669, "retrogradeR_over_M": 6.314, "progradeEfficiency_percent": 6.08, "retrogradeEfficiency_percent": 5.38 },
+        { "spinParameter": 0.2, "progradeR_over_M": 5.329, "retrogradeR_over_M": 6.619, "progradeEfficiency_percent": 6.50, "retrogradeEfficiency_percent": 5.09 },
+        { "spinParameter": 0.3, "progradeR_over_M": 4.979, "retrogradeR_over_M": 6.917, "progradeEfficiency_percent": 6.98, "retrogradeEfficiency_percent": 4.83 },
+        { "spinParameter": 0.4, "progradeR_over_M": 4.614, "retrogradeR_over_M": 7.209, "progradeEfficiency_percent": 7.56, "retrogradeEfficiency_percent": 4.59 },
+        { "spinParameter": 0.5, "progradeR_over_M": 4.233, "retrogradeR_over_M": 7.494, "progradeEfficiency_percent": 8.28, "retrogradeEfficiency_percent": 4.38 },
+        { "spinParameter": 0.6, "progradeR_over_M": 3.829, "retrogradeR_over_M": 7.775, "progradeEfficiency_percent": 9.16, "retrogradeEfficiency_percent": 4.18 },
+        { "spinParameter": 0.7, "progradeR_over_M": 3.393, "retrogradeR_over_M": 8.050, "progradeEfficiency_percent": 10.31, "retrogradeEfficiency_percent": 4.00 },
+        { "spinParameter": 0.8, "progradeR_over_M": 2.907, "retrogradeR_over_M": 8.321, "progradeEfficiency_percent": 11.90, "retrogradeEfficiency_percent": 3.83 },
+        { "spinParameter": 0.9, "progradeR_over_M": 2.321, "retrogradeR_over_M": 8.587, "progradeEfficiency_percent": 15.58, "retrogradeEfficiency_percent": 3.68 },
+        { "spinParameter": 0.95, "progradeR_over_M": 1.937, "retrogradeR_over_M": 8.718, "progradeEfficiency_percent": 19.20, "retrogradeEfficiency_percent": 3.61 },
+        { "spinParameter": 0.98, "progradeR_over_M": 1.612, "retrogradeR_over_M": 8.802, "progradeEfficiency_percent": 23.72, "retrogradeEfficiency_percent": 3.57 },
+        { "spinParameter": 0.99, "progradeR_over_M": 1.455, "retrogradeR_over_M": 8.838, "progradeEfficiency_percent": 26.38, "retrogradeEfficiency_percent": 3.55 },
+        { "spinParameter": 0.998, "progradeR_over_M": 1.237, "retrogradeR_over_M": 8.867, "progradeEfficiency_percent": 32.05, "retrogradeEfficiency_percent": 3.53 },
+        { "spinParameter": 0.9999, "progradeR_over_M": 1.064, "retrogradeR_over_M": 8.882, "progradeEfficiency_percent": 39.41, "retrogradeEfficiency_percent": 3.52 },
+        { "spinParameter": 1.0, "progradeR_over_M": 1.000, "retrogradeR_over_M": 9.000, "progradeEfficiency_percent": 42.26, "retrogradeEfficiency_percent": 3.44, "note": "Extremal Kerr limit (theoretical)" }
+      ]
+    }
+  },
+  "ergosphere": {
+    "description": "Region between the outer ergosurface and the event horizon in a Kerr black hole where frame-dragging forces all objects to co-rotate",
+    "outerBoundaryFormula": "r_ergo = M + √(M² - a²cos²θ)",
+    "outerBoundaryLatex": "r_{ergo} = M + \\sqrt{M^2 - a^2\\cos^2\\theta}",
+    "innerBoundaryFormula": "r_+ = M + √(M² - a²)",
+    "innerBoundaryLatex": "r_+ = M + \\sqrt{M^2 - a^2}",
+    "equatorialExtent": {
+      "description": "At the equator (θ=π/2), the ergosphere extends from r_+ to r=2M regardless of spin",
+      "outerRadius_over_M": 2.0,
+      "note": "At the equator, r_ergo = 2M always"
+    },
+    "polarExtent": {
+      "description": "At the poles (θ=0), the ergosphere touches the event horizon",
+      "note": "r_ergo = r_+ at the poles, so ergosphere has zero thickness"
+    },
+    "shapesForDifferentSpins": [
+      { "spinParameter": 0.0, "eventHorizon_over_M": 2.0, "ergoEquator_over_M": 2.0, "ergosphereThicknessEquator_over_M": 0.0, "note": "No ergosphere for Schwarzschild" },
+      { "spinParameter": 0.3, "eventHorizon_over_M": 1.9539, "ergoEquator_over_M": 2.0, "ergosphereThicknessEquator_over_M": 0.0461 },
+      { "spinParameter": 0.5, "eventHorizon_over_M": 1.8660, "ergoEquator_over_M": 2.0, "ergosphereThicknessEquator_over_M": 0.1340 },
+      { "spinParameter": 0.7, "eventHorizon_over_M": 1.7141, "ergoEquator_over_M": 2.0, "ergosphereThicknessEquator_over_M": 0.2859 },
+      { "spinParameter": 0.9, "eventHorizon_over_M": 1.4359, "ergoEquator_over_M": 2.0, "ergosphereThicknessEquator_over_M": 0.5641 },
+      { "spinParameter": 0.95, "eventHorizon_over_M": 1.3122, "ergoEquator_over_M": 2.0, "ergosphereThicknessEquator_over_M": 0.6878 },
+      { "spinParameter": 0.99, "eventHorizon_over_M": 1.1411, "ergoEquator_over_M": 2.0, "ergosphereThicknessEquator_over_M": 0.8589 },
+      { "spinParameter": 0.998, "eventHorizon_over_M": 1.0632, "ergoEquator_over_M": 2.0, "ergosphereThicknessEquator_over_M": 0.9368 },
+      { "spinParameter": 1.0, "eventHorizon_over_M": 1.0, "ergoEquator_over_M": 2.0, "ergosphereThicknessEquator_over_M": 1.0, "note": "Extremal Kerr" }
+    ]
+  },
+  "gravitationalRedshift": {
+    "formula": "z = 1/√(1 - R_s/r) - 1",
+    "formulaLatex": "z = \\frac{1}{\\sqrt{1 - R_s/r}} - 1",
+    "alternateFormula": "λ_observed/λ_emitted = 1/√(1 - R_s/r)",
+    "values": [
+      { "r_over_Rs": 1.001, "z": 30.62, "wavelengthRatio": 31.62 },
+      { "r_over_Rs": 1.01, "z": 9.0, "wavelengthRatio": 10.0 },
+      { "r_over_Rs": 1.05, "z": 3.472, "wavelengthRatio": 4.472 },
+      { "r_over_Rs": 1.1, "z": 2.162, "wavelengthRatio": 3.162 },
+      { "r_over_Rs": 1.2, "z": 1.236, "wavelengthRatio": 2.236 },
+      { "r_over_Rs": 1.5, "z": 0.732, "wavelengthRatio": 1.732 },
+      { "r_over_Rs": 2.0, "z": 0.414, "wavelengthRatio": 1.414 },
+      { "r_over_Rs": 3.0, "z": 0.225, "wavelengthRatio": 1.225 },
+      { "r_over_Rs": 5.0, "z": 0.118, "wavelengthRatio": 1.118 },
+      { "r_over_Rs": 10.0, "z": 0.054, "wavelengthRatio": 1.054 },
+      { "r_over_Rs": 20.0, "z": 0.026, "wavelengthRatio": 1.026 },
+      { "r_over_Rs": 50.0, "z": 0.010, "wavelengthRatio": 1.010 },
+      { "r_over_Rs": 100.0, "z": 0.005, "wavelengthRatio": 1.005 },
+      { "r_over_Rs": 1000.0, "z": 0.0005, "wavelengthRatio": 1.0005 }
+    ],
+    "notableValues": {
+      "atPhotonSphere": { "r_over_Rs": 1.5, "z": 0.732 },
+      "atISCO_Schwarzschild": { "r_over_Rs": 3.0, "z": 0.225 },
+      "atEventHorizon": { "r_over_Rs": 1.0, "z": "infinity", "note": "Infinite redshift surface" }
+    }
+  },
+  "timeDilation": {
+    "formula": "dt_far / dt_local = 1/√(1 - R_s/r)",
+    "formulaLatex": "\\frac{dt_{\\infty}}{dt_{local}} = \\frac{1}{\\sqrt{1 - R_s/r}}",
+    "description": "A clock at radius r runs slower by this factor compared to a distant observer's clock",
+    "values": [
+      { "r_over_Rs": 1.001, "dilationFactor": 31.62, "note": "1 second local ≈ 31.6 seconds far away" },
+      { "r_over_Rs": 1.01, "dilationFactor": 10.0 },
+      { "r_over_Rs": 1.1, "dilationFactor": 3.162 },
+      { "r_over_Rs": 1.5, "dilationFactor": 1.732, "note": "At photon sphere" },
+      { "r_over_Rs": 2.0, "dilationFactor": 1.414 },
+      { "r_over_Rs": 3.0, "dilationFactor": 1.225, "note": "At ISCO (Schwarzschild)" },
+      { "r_over_Rs": 5.0, "dilationFactor": 1.118 },
+      { "r_over_Rs": 10.0, "dilationFactor": 1.054 },
+      { "r_over_Rs": 100.0, "dilationFactor": 1.005 },
+      { "r_over_Rs": 1000.0, "dilationFactor": 1.0005 }
+    ],
+    "extremeExample": {
+      "description": "Interstellar Miller's planet scenario",
+      "r_over_Rs": 1.00034,
+      "dilationFactor": 54.2,
+      "result": "1 hour on surface ≈ 54.2 hours (about 2.3 days) far away. For 1 hour = 7 years, need r/Rs ≈ 1 + 1.63×10⁻⁹, requiring spin a/M ≈ 0.99999999785"
+    }
+  },
+  "tidalForce": {
+    "formula": "ΔF = 2GMd/r³",
+    "formulaLatex": "\\Delta F = \\frac{2GMd}{r^3}",
+    "description": "Differential gravitational force across an object of length d at distance r from mass M",
+    "spaghettificationThresholds": {
+      "humanBody": {
+        "length_m": 1.8,
+        "comfortLimit_g": 1,
+        "painLimit_g": 5,
+        "lethalLimit_g": 10,
+        "structuralFailure_g": 100,
+        "radiusForLethalTides": {
+          "10_Msun": { "radius_km": 396, "radius_over_Rs": 13.4 },
+          "100_Msun": { "radius_km": 854, "radius_over_Rs": 2.89 },
+          "1000_Msun": { "radius_km": 1841, "radius_over_Rs": 0.623, "note": "Inside event horizon" },
+          "1e6_Msun": { "radius_km": 85400, "radius_over_Rs": 0.0289, "note": "Deep inside event horizon" },
+          "1e9_Msun": { "radius_km": 8540000, "radius_over_Rs": 0.00289, "note": "Tides not lethal at horizon" }
+        }
+      },
+      "note": "For supermassive black holes (>10^8 M_sun), a human could cross the event horizon without feeling significant tidal forces"
+    },
+    "tidalForceAtHorizon": {
+      "formula": "ΔF_horizon = c⁶d/(4G²M²) (per unit mass)",
+      "description": "Tidal acceleration at the Schwarzschild radius",
+      "values": [
+        { "massSolarMasses": 1, "tidalAcceleration_m_s2": 4.89e10, "note": "Extreme — instant spaghettification" },
+        { "massSolarMasses": 10, "tidalAcceleration_m_s2": 4.89e8 },
+        { "massSolarMasses": 100, "tidalAcceleration_m_s2": 4.89e6 },
+        { "massSolarMasses": 1000, "tidalAcceleration_m_s2": 4.89e4 },
+        { "massSolarMasses": 1e6, "tidalAcceleration_m_s2": 0.0489, "note": "Barely perceptible" },
+        { "massSolarMasses": 1e9, "tidalAcceleration_m_s2": 4.89e-8, "note": "Completely negligible at horizon" },
+        { "massSolarMasses": 6.5e9, "tidalAcceleration_m_s2": 1.16e-9, "note": "M87* — undetectable at horizon" }
+      ]
+    }
+  },
+  "orbitalMechanics": {
+    "circularOrbitalVelocity": {
+      "newtonianFormula": "v = √(GM/r)",
+      "relativisticFormula": "v = √(M/(r-Rs)) for Schwarzschild in Schwarzschild coordinates",
+      "values": [
+        { "r_over_Rs": 1.5, "v_over_c": 0.577, "note": "Photon sphere — only photons orbit here" },
+        { "r_over_Rs": 2.0, "v_over_c": 0.500 },
+        { "r_over_Rs": 3.0, "v_over_c": 0.408, "note": "ISCO for Schwarzschild" },
+        { "r_over_Rs": 5.0, "v_over_c": 0.333 },
+        { "r_over_Rs": 10.0, "v_over_c": 0.236 },
+        { "r_over_Rs": 20.0, "v_over_c": 0.162 },
+        { "r_over_Rs": 50.0, "v_over_c": 0.100 },
+        { "r_over_Rs": 100.0, "v_over_c": 0.071 },
+        { "r_over_Rs": 1000.0, "v_over_c": 0.022 }
+      ]
+    },
+    "specificAngularMomentum": {
+      "formula": "L/m = r²(dφ/dt)",
+      "formulaLatex": "\\frac{L}{m} = \\frac{r\\sqrt{M}}{\\sqrt{r - 3M/2}}",
+      "atISCO_Schwarzschild": "L/(mM) = 2√3 ≈ 3.4641"
+    },
+    "orbitalPeriod": {
+      "formula": "T = 2π√(r³/(GM))",
+      "atISCO_Schwarzschild": "T = 2π × 6√6 × GM/c³",
+      "examples": [
+        { "massSolarMasses": 10, "r_over_Rs": 3, "period_ms": 2.72, "note": "ISCO period for 10 M_sun" },
+        { "massSolarMasses": 4e6, "r_over_Rs": 3, "period_minutes": 18.1, "note": "ISCO period for Sgr A*" },
+        { "massSolarMasses": 6.5e9, "r_over_Rs": 3, "period_days": 20.3, "note": "ISCO period for M87*" }
+      ]
+    }
+  },
+  "bindingEnergy": {
+    "atISCO": {
+      "schwarzschild": {
+        "efficiency": 0.05719,
+        "percentRestMass": 5.719,
+        "specificEnergy": 0.9428,
+        "note": "1 - 1/√(8/9) = 1 - √(8)/3"
+      },
+      "kerrMaximalPrograde": {
+        "efficiency": 0.4226,
+        "percentRestMass": 42.26,
+        "specificEnergy": 0.5774,
+        "note": "1 - 1/√3 for extremal Kerr"
+      },
+      "kerrMaximalRetrograde": {
+        "efficiency": 0.0344,
+        "percentRestMass": 3.44,
+        "specificEnergy": 0.9656
+      }
+    },
+    "comparison": {
+      "nuclearFusion_hydrogen": {
+        "efficiency": 0.007,
+        "percentRestMass": 0.7,
+        "note": "Hydrogen to Helium"
+      },
+      "nuclearFission_uranium": {
+        "efficiency": 0.001,
+        "percentRestMass": 0.1,
+        "note": "Uranium-235"
+      },
+      "matterAntimatterAnnihilation": {
+        "efficiency": 1.0,
+        "percentRestMass": 100.0
+      }
+    }
+  },
+  "eddingtonLuminosity": {
+    "formula": "L_Edd = 4πGMm_p c / σ_T",
+    "formulaLatex": "L_{Edd} = \\frac{4\\pi G M m_p c}{\\sigma_T}",
+    "perSolarMass": {
+      "value": 1.26e31,
+      "unit": "W",
+      "valueErgPerS": 1.26e38,
+      "note": "L_Edd per solar mass of the accreting object"
+    },
+    "values": [
+      { "massSolarMasses": 1, "eddingtonLuminosity_W": 1.26e31, "eddingtonLuminosity_Lsun": 32900 },
+      { "massSolarMasses": 10, "eddingtonLuminosity_W": 1.26e32, "eddingtonLuminosity_Lsun": 329000 },
+      { "massSolarMasses": 1e6, "eddingtonLuminosity_W": 1.26e37, "eddingtonLuminosity_Lsun": 3.29e10 },
+      { "massSolarMasses": 4e6, "eddingtonLuminosity_W": 5.04e37, "eddingtonLuminosity_Lsun": 1.316e11, "note": "Sgr A*" },
+      { "massSolarMasses": 1e8, "eddingtonLuminosity_W": 1.26e39, "eddingtonLuminosity_Lsun": 3.29e12 },
+      { "massSolarMasses": 1e9, "eddingtonLuminosity_W": 1.26e40, "eddingtonLuminosity_Lsun": 3.29e13 },
+      { "massSolarMasses": 6.5e9, "eddingtonLuminosity_W": 8.19e40, "eddingtonLuminosity_Lsun": 2.14e14, "note": "M87*" },
+      { "massSolarMasses": 4e10, "eddingtonLuminosity_W": 5.04e41, "eddingtonLuminosity_Lsun": 1.316e15, "note": "TON 618" }
+    ],
+    "eddingtonAccretionRate": {
+      "formula": "Ṁ_Edd = L_Edd / (η c²)",
+      "forEta_0_1": {
+        "perSolarMass": {
+          "value": 1.4e-9,
+          "unit": "M_sun yr⁻¹",
+          "note": "Per solar mass of BH, assuming 10% radiative efficiency"
+        }
+      }
+    }
+  },
+  "naturalUnitsConversion": {
+    "description": "In natural units where G = c = 1, mass has dimensions of length and time",
+    "massToLength": {
+      "formula": "L = GM/c²",
+      "value_m_per_kg": 7.426e-28,
+      "solarMass_to_m": 1476.625,
+      "note": "1 M_sun = 1476.625 m in geometric units"
+    },
+    "massToTime": {
+      "formula": "T = GM/c³",
+      "value_s_per_kg": 2.477e-36,
+      "solarMass_to_s": 4.926e-6,
+      "note": "1 M_sun = 4.926 μs in geometric units"
+    },
+    "schwarzschildRadius_naturalUnits": "R_s = 2M",
+    "photonSphere_naturalUnits": "r_ph = 3M",
+    "ISCO_naturalUnits": "r_ISCO = 6M"
+  },
+  "sources": [
+    "CODATA 2018 Recommended Values of the Fundamental Physical Constants",
+    "IAU 2015 Resolution B3: Recommended Nominal Conversion Constants",
+    "Misner, Thorne & Wheeler, 'Gravitation' (1973)",
+    "Chandrasekhar, 'The Mathematical Theory of Black Holes' (1983)",
+    "Bardeen, Press & Teukolsky, ApJ 178, 347 (1972)",
+    "Shapiro & Teukolsky, 'Black Holes, White Dwarfs, and Neutron Stars' (1983)",
+    "Wald, 'General Relativity' (1984)",
+    "Carroll, 'Spacetime and Geometry' (2004)",
+    "Hartle, 'Gravity: An Introduction to Einstein's General Relativity' (2003)"
+  ]
+}

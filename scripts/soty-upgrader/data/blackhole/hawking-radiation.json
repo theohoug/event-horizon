@@ -1,0 +1,399 @@
+{
+  "metadata": {
+    "title": "Hawking Radiation and Black Hole Thermodynamics",
+    "description": "Comprehensive database of Hawking radiation physics, black hole thermodynamics, entropy, evaporation, and the information paradox",
+    "version": "1.0.0",
+    "lastUpdated": "2026-03-09"
+  },
+  "hawkingTemperature": {
+    "formula": "T_H = ℏc³ / (8πGMk_B)",
+    "formulaLatex": "T_H = \\frac{\\hbar c^3}{8\\pi G M k_B}",
+    "naturalUnitsFormula": "T_H = 1/(8πM)",
+    "scalingPerSolarMass": {
+      "value_K": 6.169e-8,
+      "note": "T_H = 6.169 × 10⁻⁸ / (M/M_sun) Kelvin"
+    },
+    "inverseMassRelation": "T_H ∝ 1/M — smaller black holes are hotter",
+    "valuesForDifferentMasses": [
+      { "massLabel": "Planck mass (2.18×10⁻⁸ kg)", "mass_kg": 2.176e-8, "T_H_K": 1.417e32, "note": "Planck temperature — quantum gravity regime" },
+      { "massLabel": "10⁹ kg (mountain)", "mass_kg": 1e9, "T_H_K": 1.227e14, "note": "Hawking temp comparable to LHC energy scales" },
+      { "massLabel": "10¹² kg (asteroid)", "mass_kg": 1e12, "T_H_K": 1.227e11, "peakWavelength": "Gamma ray" },
+      { "massLabel": "10¹⁵ kg (small asteroid)", "mass_kg": 1e15, "T_H_K": 1.227e8, "peakWavelength": "Hard X-ray", "note": "Evaporating now if formed in Big Bang (lifetime ~ age of universe)" },
+      { "massLabel": "10¹⁸ kg", "mass_kg": 1e18, "T_H_K": 1.227e5, "peakWavelength": "UV" },
+      { "massLabel": "10²⁰ kg", "mass_kg": 1e20, "T_H_K": 1227, "peakWavelength": "Infrared" },
+      { "massLabel": "10²² kg (Moon mass)", "mass_kg": 7.342e22, "T_H_K": 1.672, "peakWavelength": "Microwave" },
+      { "massLabel": "10²⁵ kg", "mass_kg": 1e25, "T_H_K": 0.01227, "peakWavelength": "Radio" },
+      { "massLabel": "Earth mass (5.97×10²⁴ kg)", "mass_kg": 5.972e24, "T_H_K": 0.02055 },
+      { "massLabel": "Jupiter mass (1.9×10²⁷ kg)", "mass_kg": 1.898e27, "T_H_K": 6.464e-5 },
+      { "massLabel": "1 M_sun", "mass_kg": 1.989e30, "T_H_K": 6.169e-8, "note": "60 nanokelvin — far below CMB temperature of 2.725K" },
+      { "massLabel": "10 M_sun", "mass_kg": 1.989e31, "T_H_K": 6.169e-9, "note": "Typical stellar BH" },
+      { "massLabel": "4×10⁶ M_sun (Sgr A*)", "mass_kg": 7.956e36, "T_H_K": 1.542e-14 },
+      { "massLabel": "6.5×10⁹ M_sun (M87*)", "mass_kg": 1.293e40, "T_H_K": 9.491e-18 },
+      { "massLabel": "4×10¹⁰ M_sun (TON 618)", "mass_kg": 7.956e40, "T_H_K": 1.542e-18 }
+    ],
+    "comparisonWithCMB": {
+      "CMBtemperature_K": 2.725,
+      "minMassToBeHotterThanCMB_kg": 4.503e22,
+      "minMassToBeHotterThanCMB_Msun": 2.264e-8,
+      "note": "Only BHs lighter than ~0.02 lunar masses are hotter than the CMB. All astrophysical BHs are colder than the CMB and actually ABSORB more radiation than they emit."
+    }
+  },
+  "hawkingLuminosity": {
+    "formula": "L_H = ℏc⁶ / (15360π G²M²)",
+    "formulaLatex": "L_H = \\frac{\\hbar c^6}{15360\\pi G^2 M^2}",
+    "scalingPerSolarMass": {
+      "value_W": 9.006e-29,
+      "note": "L_H = 9.006 × 10⁻²⁹ / (M/M_sun)² Watts"
+    },
+    "inverseMassSquaredRelation": "L_H ∝ 1/M² — smaller BHs radiate enormously faster",
+    "valuesForDifferentMasses": [
+      { "mass_kg": 1e9, "luminosity_W": 3.563e28, "note": "Enormous — final explosion energy scale" },
+      { "mass_kg": 1e12, "luminosity_W": 3.563e22 },
+      { "mass_kg": 1e15, "luminosity_W": 3.563e16, "note": "~400 GW — comparable to world power consumption" },
+      { "mass_kg": 1e18, "luminosity_W": 3.563e10 },
+      { "mass_kg": 1e20, "luminosity_W": 3.563e6 },
+      { "mass_kg": 1e22, "luminosity_W": 35.63 },
+      { "mass_kg": 1e25, "luminosity_W": 3.563e-5 },
+      { "massSolarMasses": 1, "luminosity_W": 9.006e-29, "note": "Completely negligible" },
+      { "massSolarMasses": 10, "luminosity_W": 9.006e-31 },
+      { "massSolarMasses": 4e6, "luminosity_W": 5.629e-41, "note": "Sgr A*" },
+      { "massSolarMasses": 6.5e9, "luminosity_W": 2.131e-47, "note": "M87*" }
+    ]
+  },
+  "evaporationTime": {
+    "formula": "t_evap = 5120π G²M³ / (ℏc⁴)",
+    "formulaLatex": "t_{evap} = \\frac{5120\\pi G^2 M^3}{\\hbar c^4}",
+    "scalingPerSolarMass": {
+      "value_years": 2.098e67,
+      "note": "t_evap = 2.098 × 10⁶⁷ × (M/M_sun)³ years"
+    },
+    "cubicMassRelation": "t_evap ∝ M³ — massive BHs last enormously longer",
+    "valuesForDifferentMasses": [
+      { "mass_kg": 1e9, "evapTime_s": 2.667e-18, "evapTime_note": "~3 attoseconds" },
+      { "mass_kg": 1e10, "evapTime_s": 2.667e-15, "evapTime_note": "~3 femtoseconds" },
+      { "mass_kg": 1e11, "evapTime_s": 2.667e-12, "evapTime_note": "~3 picoseconds" },
+      { "mass_kg": 1e12, "evapTime_s": 2.667e-9, "evapTime_note": "~3 nanoseconds" },
+      { "mass_kg": 1e15, "evapTime_s": 2.667, "evapTime_note": "~3 seconds" },
+      { "massLabel": "Primordial BH evaporating now", "mass_kg": 5.0e11, "evapTime_years": 1.38e10, "note": "BHs with initial mass ~5×10¹¹ kg would be evaporating RIGHT NOW" },
+      { "mass_kg": 1e18, "evapTime_years": 8.41e4 },
+      { "mass_kg": 1e20, "evapTime_years": 8.41e10 },
+      { "mass_kg": 1e22, "evapTime_years": 8.41e16 },
+      { "mass_kg": 1e25, "evapTime_years": 8.41e25 },
+      { "massSolarMasses": 1, "evapTime_years": 2.098e67, "note": "10⁵⁷ times the age of the universe" },
+      { "massSolarMasses": 10, "evapTime_years": 2.098e70 },
+      { "massSolarMasses": 4e6, "evapTime_years": 3.71e87, "note": "Sgr A*" },
+      { "massSolarMasses": 6.5e9, "evapTime_years": 5.76e96, "note": "M87*" },
+      { "massSolarMasses": 4e10, "evapTime_years": 1.34e99, "note": "TON 618" }
+    ],
+    "ageOfUniverse_years": 1.38e10,
+    "primordialBHs": {
+      "description": "Black holes formed in the early universe could have masses where they are evaporating today",
+      "criticalMass_kg": 5e11,
+      "criticalMass_note": "A primordial BH with initial mass ~5×10¹¹ kg would evaporate now, potentially observable as gamma ray bursts",
+      "observationalSearches": "Fermi-LAT and other gamma-ray telescopes have searched for Hawking radiation from primordial BH evaporation — no confirmed detection"
+    }
+  },
+  "blackbodySpectrum": {
+    "description": "Hawking radiation has a blackbody spectrum modified by greybody factors",
+    "idealBlackbody": {
+      "particleEmissionRate": "dN/dωdt = Γ(ω) / [exp(ℏω/kT_H) ± 1]",
+      "where": {
+        "plus": "Fermions (Fermi-Dirac statistics)",
+        "minus": "Bosons (Bose-Einstein statistics)",
+        "Gamma_omega": "Greybody factor (transmission probability through the gravitational potential barrier)"
+      }
+    },
+    "emittedSpecies": {
+      "description": "A black hole emits all species of particles with mass m < kT_H/c²",
+      "forStellarBH_60nK": ["photons only (all other particles too massive)"],
+      "forPrimordialBH_1e8K": ["photons", "neutrinos", "gravitons"],
+      "forPrimordialBH_1e10K": ["photons", "neutrinos", "gravitons", "electrons", "positrons"],
+      "forPrimordialBH_1e12K": ["photons", "neutrinos", "gravitons", "e±", "μ±", "pions", "protons/neutrons"],
+      "forPrimordialBH_1e14K": ["All Standard Model particles"],
+      "note": "At the very end of evaporation, the BH becomes hot enough to emit all known particles"
+    },
+    "greybodyFactors": {
+      "description": "The gravitational potential barrier around the BH partially reflects outgoing Hawking quanta, reducing the emission rate",
+      "lowFrequency_s0": "Γ ∝ (ωRs)^(2l+2) for angular momentum mode l (geometric optics: only high-energy quanta escape efficiently)",
+      "highFrequency": "Γ → 1 (geometric optics limit — all high-energy quanta escape)",
+      "crossoverFrequency": "ω ~ c/Rs",
+      "effectOnSpectrum": "Greybody factors suppress low-energy emission, making the actual spectrum slightly harder than a pure blackbody",
+      "spin_s_dependence": [
+        { "particleSpin": 0, "name": "Scalar", "greybodyFactor_low_ell0": "Γ ∝ (ωRs)²" },
+        { "particleSpin": 0.5, "name": "Fermion", "greybodyFactor_low": "Γ ∝ (ωRs)²" },
+        { "particleSpin": 1, "name": "Photon/Vector", "greybodyFactor_low_ell1": "Γ ∝ (ωRs)⁴" },
+        { "particleSpin": 2, "name": "Graviton", "greybodyFactor_low_ell2": "Γ ∝ (ωRs)⁶" }
+      ]
+    }
+  },
+  "unruhEffect": {
+    "formula": "T_U = ℏa / (2πck_B)",
+    "formulaLatex": "T_U = \\frac{\\hbar a}{2\\pi c k_B}",
+    "description": "An observer uniformly accelerating through vacuum perceives thermal radiation at temperature T_U",
+    "connectionToHawking": "A static observer hovering at the horizon requires acceleration a = c⁴/(4GM) = surface gravity κ, and the Unruh temperature at this acceleration equals the Hawking temperature",
+    "surfaceGravity": {
+      "schwarzschild": "κ = c⁴/(4GM) = c²/(2Rs)",
+      "kerr": "κ = (r_+ - r_-)c² / (2(r_+² + a²)) where r_± = M ± √(M² - a²)"
+    },
+    "accelerationForKelvin": {
+      "value": 2.467e20,
+      "unit": "m/s²",
+      "note": "T_U = 1K requires acceleration of ~2.5 × 10²⁰ m/s² — extremely difficult to observe in the lab"
+    },
+    "experimentalSearches": {
+      "status": "Not yet directly observed",
+      "proposals": ["Circular motion in storage rings", "Ultra-intense laser experiments", "Analog models in Bose-Einstein condensates"]
+    }
+  },
+  "virtualParticlePicture": {
+    "description": "Heuristic picture of Hawking radiation as virtual particle pair creation near the horizon",
+    "mechanism": [
+      "Vacuum fluctuations constantly create virtual particle-antiparticle pairs everywhere",
+      "Near the horizon, the tidal gravitational field can separate the pair before they annihilate",
+      "One particle falls into the BH (with effectively negative energy as measured from outside)",
+      "The other escapes as real Hawking radiation",
+      "The BH mass decreases by the energy of the escaped particle"
+    ],
+    "caveats": [
+      "This picture is heuristic — the actual quantum field theory calculation does not require 'virtual particles'",
+      "The real calculation uses Bogoliubov transformations between in and out vacuum states",
+      "The emitted particles are NOT pair-produced — they emerge with a thermal spectrum",
+      "The 'negative energy partner' is not a real particle — it's a mathematical description of the BH losing mass"
+    ]
+  },
+  "blackHoleThermodynamics": {
+    "description": "The four laws of black hole thermodynamics, paralleling the laws of ordinary thermodynamics",
+    "zerothLaw": {
+      "statement": "The surface gravity κ is constant over the event horizon of a stationary black hole",
+      "thermodynamicAnalog": "Temperature is constant throughout a body in thermal equilibrium",
+      "formula_schwarzschild": "κ = c⁴/(4GM)",
+      "formula_kerr": "κ = √(M² - a²) c⁴ / (2GM(M + √(M² - a²)))"
+    },
+    "firstLaw": {
+      "statement": "dM = (κ/(8πG)) dA + Ω_H dJ + Φ_H dQ",
+      "statementLatex": "dM = \\frac{\\kappa}{8\\pi G} dA + \\Omega_H dJ + \\Phi_H dQ",
+      "thermodynamicAnalog": "dE = T dS + work terms",
+      "where": {
+        "M": "BH mass (energy)",
+        "A": "Event horizon area",
+        "J": "Angular momentum",
+        "Q": "Electric charge",
+        "Omega_H": "Horizon angular velocity",
+        "Phi_H": "Horizon electric potential"
+      }
+    },
+    "secondLaw": {
+      "classicalStatement": "The area of the event horizon never decreases: dA ≥ 0 (Hawking area theorem, 1971)",
+      "generalizedSecondLaw": "The generalized entropy S_gen = S_BH + S_outside never decreases",
+      "thermodynamicAnalog": "Total entropy never decreases",
+      "hawkingRadationException": "Hawking radiation allows the area to decrease, but the entropy of the radiation more than compensates, so the generalized second law holds"
+    },
+    "thirdLaw": {
+      "statement": "It is impossible to reduce the surface gravity κ to zero by any finite sequence of operations",
+      "thermodynamicAnalog": "It is impossible to reach absolute zero temperature",
+      "implication": "An extremal Kerr BH (κ=0) cannot be achieved in practice",
+      "note": "The third law is weaker than in ordinary thermodynamics — there are gedanken experiments that approach κ=0 arbitrarily closely"
+    },
+    "fourthLaw": {
+      "statement": "The area of the event horizon can decrease via quantum effects (Hawking radiation), but the generalized entropy increases",
+      "note": "Sometimes not listed as a separate law, but it extends the framework to include quantum effects"
+    }
+  },
+  "bekensteinHawkingEntropy": {
+    "formula": "S_BH = k_B A / (4 ℓ_P²)",
+    "formulaLatex": "S_{BH} = \\frac{k_B A}{4 \\ell_P^2} = \\frac{k_B c^3 A}{4 G \\hbar}",
+    "alternateFormula": "S_BH = k_B × 4π G M² / (ℏc)",
+    "eventHorizonArea_schwarzschild": "A = 4π Rs² = 16π G²M²/c⁴",
+    "entropyPerSolarMass": {
+      "value_JperK": 1.465e54,
+      "value_kB": 1.061e77,
+      "value_bits": 1.531e77,
+      "note": "S_BH ∝ M² — entropy scales as mass squared"
+    },
+    "valuesForDifferentMasses": [
+      { "massSolarMasses": 1, "entropy_kB": 1.06e77, "entropy_bits": 1.53e77 },
+      { "massSolarMasses": 10, "entropy_kB": 1.06e79 },
+      { "massSolarMasses": 4e6, "entropy_kB": 1.7e90, "note": "Sgr A*" },
+      { "massSolarMasses": 6.5e9, "entropy_kB": 4.5e96, "note": "M87*" },
+      { "massSolarMasses": 4e10, "entropy_kB": 1.7e98, "note": "TON 618" }
+    ],
+    "holographicPrinciple": {
+      "description": "The BH entropy is proportional to the AREA (not volume) of the event horizon",
+      "entropyDensity": "S/A = k_B/(4ℓ_P²) ≈ 1.2 × 10⁶⁹ k_B/m²",
+      "bitsPerPlanckArea": "1 bit per 4 Planck areas",
+      "implication": "This suggests that the information content of any region is bounded by its surface area, not its volume — a key insight for quantum gravity"
+    },
+    "comparison": {
+      "description": "BH entropy is enormously larger than ordinary matter entropy",
+      "sun_entropy_kB": 1e58,
+      "observableUniverse_matter_entropy_kB": 1e88,
+      "observableUniverse_totalBH_entropy_kB": 1e104,
+      "note": "The entropy of supermassive black holes dominates the entropy budget of the observable universe"
+    }
+  },
+  "informationParadox": {
+    "description": "Hawking's original calculation implies that information falling into a black hole is destroyed when the BH evaporates, violating quantum mechanics (unitarity)",
+    "hawkingOriginal1976": {
+      "claim": "Black hole evaporation is not unitary — pure states evolve to mixed states",
+      "implication": "Information is permanently destroyed, violating a fundamental principle of quantum mechanics",
+      "source": "Hawking, Physical Review D 14, 2460 (1976)"
+    },
+    "pageTime": {
+      "description": "The Page time is when the BH has emitted half its entropy in Hawking radiation",
+      "formula": "t_Page ≈ t_evap / (ln 2)² ≈ 2.08 × t_evap",
+      "significance": "If information is preserved, the entanglement entropy of the radiation should start decreasing after the Page time (Page curve)",
+      "source": "Page, PRL 71, 3743 (1993)"
+    },
+    "pageCurve": {
+      "description": "The entanglement entropy of the Hawking radiation as a function of time",
+      "earlyTime": "Entropy increases linearly (radiation is thermal, increasingly entangled with BH interior)",
+      "pageTime": "Entropy reaches maximum (~half the BH entropy)",
+      "lateTime": "Entropy decreases back to zero (information comes out — radiation becomes pure state)",
+      "shape": "Inverted V — rises linearly, peaks at Page time, decreases to zero"
+    },
+    "proposedResolutions": [
+      {
+        "name": "Information comes out in radiation (Page)",
+        "description": "Subtle correlations in the Hawking radiation encode the infalling information",
+        "status": "Currently the mainstream view, supported by recent calculations"
+      },
+      {
+        "name": "Black hole remnants",
+        "description": "Evaporation stops at the Planck scale, leaving a remnant containing all the information",
+        "problems": ["Infinite number of remnant species", "Pair production problems"]
+      },
+      {
+        "name": "Baby universe",
+        "description": "Information goes into a baby universe connected to ours only through the BH interior",
+        "status": "Speculative"
+      },
+      {
+        "name": "Complementarity (Susskind, 1993)",
+        "description": "Information is both inside and outside the BH, but no single observer can see both copies",
+        "source": "Susskind, Thorlacius & Uglum, PRD 48, 3743 (1993)"
+      },
+      {
+        "name": "Firewall (AMPS, 2012)",
+        "description": "A firewall (high-energy curtain) at the horizon destroys infalling matter, resolving the paradox but violating the equivalence principle",
+        "source": "Almheiri, Marolf, Polchinski & Sully, JHEP 2013, 62"
+      },
+      {
+        "name": "ER = EPR (Maldacena & Susskind, 2013)",
+        "description": "Einstein-Rosen bridges (wormholes) and Einstein-Podolsky-Rosen entanglement are the same phenomenon",
+        "source": "Maldacena & Susskind, Fortschritte der Physik 61, 781 (2013)"
+      },
+      {
+        "name": "Island rule (2019-2020)",
+        "description": "Quantum extremal surface calculations in gravity show that 'islands' inside the BH contribute to the radiation entropy, reproducing the Page curve",
+        "status": "Major breakthrough — widely considered the leading resolution",
+        "source": "Penington, JHEP 2020, 2; Almheiri et al., JHEP 2020, 13"
+      }
+    ],
+    "hawkingConcession": {
+      "year": 2004,
+      "description": "Hawking conceded that information IS preserved and the radiation IS unitary",
+      "source": "Hawking, Physical Review D 72, 084013 (2005)"
+    }
+  },
+  "evaporationProcess": {
+    "phases": [
+      {
+        "phase": "Quasi-static evaporation",
+        "description": "BH slowly evaporates, emitting low-energy quanta",
+        "duration_fraction": 0.999,
+        "note": "Most of the lifetime is in this phase"
+      },
+      {
+        "phase": "Accelerating evaporation",
+        "description": "As the BH shrinks, it gets hotter and evaporates faster (runaway process)",
+        "note": "T ∝ 1/M and L ∝ 1/M² and dM/dt ∝ -1/M², so M³ decreases linearly in time"
+      },
+      {
+        "phase": "Final explosion",
+        "description": "In the last fraction of a second, the BH releases its remaining mass-energy in a burst",
+        "energyReleased": {
+          "lastSecond_mass_kg": 2.28e5,
+          "lastSecond_energy_J": 2.05e22,
+          "lastSecond_energy_TNT_megatons": 4900,
+          "note": "Energy of about 5,000 one-megaton nuclear weapons released in 1 second"
+        }
+      },
+      {
+        "phase": "Unknown (Planck regime)",
+        "description": "When the BH reaches the Planck mass (~2.2×10⁻⁸ kg), quantum gravity effects become important and our current theories break down",
+        "possibilities": ["Complete evaporation to radiation", "Planck-mass remnant", "Unknown quantum gravity effects"]
+      }
+    ],
+    "massLossRate": {
+      "formula": "dM/dt = -ℏc⁴ / (15360π G²M²)",
+      "equivalently": "dM/dt = -L_H / c²"
+    }
+  },
+  "kerrBlackHoleHawking": {
+    "temperature": {
+      "formula": "T_H = ℏ κ / (2π k_B c)",
+      "surfaceGravity_kerr": "κ = √(M² - a²) × c⁴ / (2GM(r_+ + √(M² - a²)))",
+      "valuesForDifferentSpins": [
+        { "spin_a_over_M": 0.0, "T_over_T_schwarzschild": 1.0 },
+        { "spin_a_over_M": 0.3, "T_over_T_schwarzschild": 0.976 },
+        { "spin_a_over_M": 0.5, "T_over_T_schwarzschild": 0.931 },
+        { "spin_a_over_M": 0.7, "T_over_T_schwarzschild": 0.855 },
+        { "spin_a_over_M": 0.9, "T_over_T_schwarzschild": 0.678 },
+        { "spin_a_over_M": 0.95, "T_over_T_schwarzschild": 0.563 },
+        { "spin_a_over_M": 0.99, "T_over_T_schwarzschild": 0.354 },
+        { "spin_a_over_M": 0.998, "T_over_T_schwarzschild": 0.211 },
+        { "spin_a_over_M": 1.0, "T_over_T_schwarzschild": 0.0, "note": "Extremal Kerr has zero Hawking temperature" }
+      ]
+    },
+    "superradiantEmission": {
+      "description": "A Kerr BH preferentially emits particles co-rotating with the BH (superradiant modes)",
+      "spinDown": "Hawking radiation carries away angular momentum, causing the BH to spin down",
+      "finalState": "A Kerr BH evaporates to Schwarzschild (a→0) before its final explosion"
+    }
+  },
+  "analogGravityExperiments": {
+    "description": "Laboratory analogs of Hawking radiation using other physical systems",
+    "experiments": [
+      {
+        "system": "Sonic black holes (dumb holes)",
+        "medium": "Bose-Einstein condensate",
+        "analogHorizon": "Point where flow velocity exceeds speed of sound",
+        "detected": true,
+        "year": 2019,
+        "result": "Thermal spectrum consistent with Hawking prediction",
+        "source": "Muñoz de Nova et al., Nature 569, 688 (2019)"
+      },
+      {
+        "system": "Water wave analog",
+        "medium": "Shallow water channel",
+        "analogHorizon": "Hydraulic jump (where water flow exceeds wave speed)",
+        "detected": "Partial",
+        "source": "Weinfurtner et al., PRL 106, 021302 (2011)"
+      },
+      {
+        "system": "Optical analog",
+        "medium": "Optical fiber with intensity-dependent refractive index",
+        "analogHorizon": "Moving refractive index boundary",
+        "detected": "Claimed but debated",
+        "source": "Belgiorno et al., PRL 105, 203901 (2010)"
+      }
+    ]
+  },
+  "sources": [
+    "Hawking, Nature 248, 30-31 (1974) — Original brief report",
+    "Hawking, Communications in Mathematical Physics 43, 199-220 (1975) — Full derivation",
+    "Bekenstein, Physical Review D 7, 2333 (1973) — BH entropy",
+    "Bardeen, Carter & Hawking, Communications in Mathematical Physics 31, 161 (1973) — Laws of BH mechanics",
+    "Page, Physical Review D 13, 198 (1976) — Particle emission rates",
+    "Page, PRL 71, 3743 (1993) — Page curve and information",
+    "Unruh, Physical Review D 14, 870 (1976) — Unruh effect",
+    "Susskind, Thorlacius & Uglum, PRD 48, 3743 (1993) — Complementarity",
+    "Almheiri, Marolf, Polchinski & Sully, JHEP 2013, 62 — Firewall",
+    "Maldacena & Susskind, Fortschritte der Physik 61, 781 (2013) — ER=EPR",
+    "Penington, JHEP 2020, 2 — Island formula",
+    "Almheiri et al., JHEP 2020, 13 — Entropy of Hawking radiation",
+    "Muñoz de Nova et al., Nature 569, 688 (2019) — Analog Hawking radiation",
+    "Hawking, PRD 72, 084013 (2005) — Information preservation",
+    "Wald, 'Quantum Field Theory in Curved Spacetime and Black Hole Thermodynamics' (1994)"
+  ]
+}

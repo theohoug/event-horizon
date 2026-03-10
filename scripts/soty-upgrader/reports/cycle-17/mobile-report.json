@@ -1,0 +1,674 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "cpuThrottle": 4,
+  "networkCondition": "none",
+  "captures": [
+    {
+      "position": {
+        "percent": 0,
+        "pixelOffset": 0,
+        "chapter": 0,
+        "chapterName": "YOU",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-000.png",
+      "timestamp": 1773156170304,
+      "performance": {
+        "fps": 59,
+        "frameTime": 16.94,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 6.78,
+        "scrollVelocity": 0,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.05,
+        "pixelOffset": 0,
+        "chapter": 0,
+        "chapterName": "YOU",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-005.png",
+      "timestamp": 1773156172678,
+      "performance": {
+        "fps": 55,
+        "frameTime": 18.05,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 7.22,
+        "scrollVelocity": 0,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.1,
+        "pixelOffset": 0,
+        "chapter": 1,
+        "chapterName": "THE PULL",
+        "isTransition": true
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-010.png",
+      "timestamp": 1773156174961,
+      "performance": {
+        "fps": 57,
+        "frameTime": 17.5,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 7,
+        "scrollVelocity": 0,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.15000000000000002,
+        "pixelOffset": 0,
+        "chapter": 1,
+        "chapterName": "THE PULL",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-015.png",
+      "timestamp": 1773156177262,
+      "performance": {
+        "fps": 57,
+        "frameTime": 17.5,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 7,
+        "scrollVelocity": 0,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.2,
+        "pixelOffset": 0,
+        "chapter": 2,
+        "chapterName": "THE WARP",
+        "isTransition": true
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-020.png",
+      "timestamp": 1773156179595,
+      "performance": {
+        "fps": 56,
+        "frameTime": 17.78,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 7.11,
+        "scrollVelocity": 0,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.25,
+        "pixelOffset": 0,
+        "chapter": 2,
+        "chapterName": "THE WARP",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-025.png",
+      "timestamp": 1773156181964,
+      "performance": {
+        "fps": 49,
+        "frameTime": 20.28,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 8.11,
+        "scrollVelocity": 1,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.30000000000000004,
+        "pixelOffset": 0,
+        "chapter": 3,
+        "chapterName": "THE PHOTON SPHERE",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-030.png",
+      "timestamp": 1773156184387,
+      "performance": {
+        "fps": 47,
+        "frameTime": 21.11,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 8.44,
+        "scrollVelocity": 2,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.35000000000000003,
+        "pixelOffset": 0,
+        "chapter": 3,
+        "chapterName": "THE PHOTON SPHERE",
+        "isTransition": true
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-035.png",
+      "timestamp": 1773156186763,
+      "performance": {
+        "fps": 50,
+        "frameTime": 20,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 8,
+        "scrollVelocity": 3,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.4,
+        "pixelOffset": 0,
+        "chapter": 4,
+        "chapterName": "THE FALL",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-040.png",
+      "timestamp": 1773156189139,
+      "performance": {
+        "fps": 49,
+        "frameTime": 20.56,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 8.22,
+        "scrollVelocity": 5,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.45,
+        "pixelOffset": 0,
+        "chapter": 4,
+        "chapterName": "THE FALL",
+        "isTransition": true
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-045.png",
+      "timestamp": 1773156191622,
+      "performance": {
+        "fps": 46,
+        "frameTime": 21.67,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 8.67,
+        "scrollVelocity": 10,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.5,
+        "pixelOffset": 0,
+        "chapter": 5,
+        "chapterName": "SPAGHETTIFICATION",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-050.png",
+      "timestamp": 1773156194112,
+      "performance": {
+        "fps": 43,
+        "frameTime": 23.33,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 9.33,
+        "scrollVelocity": 16,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.55,
+        "pixelOffset": 0,
+        "chapter": 6,
+        "chapterName": "TIME DILATION",
+        "isTransition": true
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-055.png",
+      "timestamp": 1773156196576,
+      "performance": {
+        "fps": 28,
+        "frameTime": 35.28,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 14.11,
+        "scrollVelocity": 17,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.6000000000000001,
+        "pixelOffset": 0,
+        "chapter": 6,
+        "chapterName": "TIME DILATION",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-060.png",
+      "timestamp": 1773156199264,
+      "performance": {
+        "fps": 17,
+        "frameTime": 59.17,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 202,
+        "gpuEstimatedMs": 23.67,
+        "scrollVelocity": 17,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.65,
+        "pixelOffset": 0,
+        "chapter": 7,
+        "chapterName": "SINGULARITY",
+        "isTransition": true
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-065.png",
+      "timestamp": 1773156202093,
+      "performance": {
+        "fps": 15,
+        "frameTime": 67.78,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 202,
+        "gpuEstimatedMs": 27.11,
+        "scrollVelocity": 18,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.7000000000000001,
+        "pixelOffset": 0,
+        "chapter": 7,
+        "chapterName": "SINGULARITY",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-070.png",
+      "timestamp": 1773156204764,
+      "performance": {
+        "fps": 14,
+        "frameTime": 70,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 28,
+        "scrollVelocity": 19,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.75,
+        "pixelOffset": 0,
+        "chapter": 8,
+        "chapterName": "THE VOID",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-075.png",
+      "timestamp": 1773156207596,
+      "performance": {
+        "fps": 14,
+        "frameTime": 72.77,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 29.11,
+        "scrollVelocity": 20,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.8,
+        "pixelOffset": 0,
+        "chapter": 8,
+        "chapterName": "THE VOID",
+        "isTransition": true
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-080.png",
+      "timestamp": 1773156210138,
+      "performance": {
+        "fps": 19,
+        "frameTime": 52.5,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 21,
+        "scrollVelocity": 21,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.8500000000000001,
+        "pixelOffset": 0,
+        "chapter": 9,
+        "chapterName": "HAWKING RADIATION",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-085.png",
+      "timestamp": 1773156212770,
+      "performance": {
+        "fps": 22,
+        "frameTime": 46.39,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 18.55,
+        "scrollVelocity": 22,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.9,
+        "pixelOffset": 0,
+        "chapter": 9,
+        "chapterName": "HAWKING RADIATION",
+        "isTransition": true
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-090.png",
+      "timestamp": 1773156215327,
+      "performance": {
+        "fps": 22,
+        "frameTime": 45.28,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 18.11,
+        "scrollVelocity": 0,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 0.9500000000000001,
+        "pixelOffset": 0,
+        "chapter": 10,
+        "chapterName": "WHAT REMAINS",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-095.png",
+      "timestamp": 1773156217748,
+      "performance": {
+        "fps": 37,
+        "frameTime": 27.22,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 10.89,
+        "scrollVelocity": 0,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    },
+    {
+      "position": {
+        "percent": 1,
+        "pixelOffset": 0,
+        "chapter": 10,
+        "chapterName": "WHAT REMAINS",
+        "isTransition": false
+      },
+      "screenshotPath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-17\\mobile\\mobile-100.png",
+      "timestamp": 1773156220119,
+      "performance": {
+        "fps": 41,
+        "frameTime": 24.17,
+        "jsHeapUsed": 10000000,
+        "jsHeapTotal": 11200000,
+        "domNodes": 201,
+        "gpuEstimatedMs": 9.67,
+        "scrollVelocity": 0,
+        "canvasWidth": 585,
+        "canvasHeight": 1266,
+        "pixelRatio": 3,
+        "drawCalls": 0,
+        "triangles": 0,
+        "textures": 0,
+        "programs": 0
+      },
+      "audio": null,
+      "hudValues": null
+    }
+  ],
+  "touchResponsive": true,
+  "orientationHandled": false,
+  "qualityDetected": "unknown",
+  "hapticsWorking": false,
+  "performanceReport": {
+    "fpsAverage": 38,
+    "fpsMin": 14,
+    "fpsP5": 14,
+    "fpsDrops": [
+      {
+        "scrollPercent": 0,
+        "fps": 28
+      },
+      {
+        "scrollPercent": 0.05,
+        "fps": 17
+      },
+      {
+        "scrollPercent": 0.1,
+        "fps": 15
+      },
+      {
+        "scrollPercent": 0.15000000000000002,
+        "fps": 14
+      },
+      {
+        "scrollPercent": 0.2,
+        "fps": 14
+      },
+      {
+        "scrollPercent": 0.25,
+        "fps": 19
+      },
+      {
+        "scrollPercent": 0.30000000000000004,
+        "fps": 22
+      },
+      {
+        "scrollPercent": 0.35000000000000003,
+        "fps": 22
+      }
+    ],
+    "memoryPeak": 10000000,
+    "memoryLeakDetected": false,
+    "memoryGrowthRate": 0,
+    "lighthousePerformance": 0,
+    "lighthouseAccessibility": 0,
+    "lighthouseBestPractices": 0,
+    "lighthouseSEO": 0,
+    "fcp": 0,
+    "lcp": 0,
+    "cls": 0,
+    "tti": 0,
+    "tbt": 0
+  }
+}

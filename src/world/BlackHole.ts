@@ -22,6 +22,9 @@ export class BlackHole {
 
     const defines: Record<string, string> = {};
     if (quality === 'medium') {
+      defines['MAX_STEPS'] = '64';
+      defines['QUALITY_MEDIUM'] = '1';
+    } else if (quality === 'high') {
       defines['MAX_STEPS'] = '96';
     }
 

@@ -1,0 +1,335 @@
+{
+  "metadata": {
+    "title": "Penrose (Conformal) Diagrams and Causal Structure of Black Hole Spacetimes",
+    "description": "Comprehensive database of Penrose diagram structures, causal boundaries, and conformal transformations for various black hole spacetimes",
+    "version": "1.0.0",
+    "lastUpdated": "2026-03-09"
+  },
+  "introduction": {
+    "whatIsPenroseDiagram": "A Penrose diagram (Carter-Penrose diagram or conformal diagram) is a 2D representation of a spacetime where: (1) the entire infinite spacetime is mapped to a finite region, (2) light rays always travel at 45° angles, and (3) the causal structure is preserved.",
+    "conformalTransformation": "The metric is multiplied by a conformal factor Ω² that maps infinity to finite boundaries while preserving the light cone structure: ds²_physical = Ω² × ds²_diagram",
+    "conventions": {
+      "lightRays": "Always at ±45° from vertical",
+      "timeDirection": "Vertical (upward = future)",
+      "spaceDirection": "Horizontal",
+      "causalFuture": "Region accessible by a future-directed causal (timelike or null) curve from a point"
+    }
+  },
+  "minkowskiSpacetime": {
+    "description": "Flat spacetime — the reference case",
+    "diagramShape": "Triangle (or diamond, showing both left and right halves)",
+    "boundaries": [
+      {
+        "name": "i⁺ (future timelike infinity)",
+        "symbol": "i⁺",
+        "location": "Top vertex",
+        "description": "Where all timelike geodesics end (infinite future of all massive particles)",
+        "type": "point"
+      },
+      {
+        "name": "i⁻ (past timelike infinity)",
+        "symbol": "i⁻",
+        "location": "Bottom vertex",
+        "description": "Where all timelike geodesics begin (infinite past)",
+        "type": "point"
+      },
+      {
+        "name": "i⁰ (spacelike infinity)",
+        "symbol": "i⁰",
+        "location": "Right vertex (or left, depending on convention)",
+        "description": "Spatial infinity — where all spacelike surfaces end",
+        "type": "point"
+      },
+      {
+        "name": "ℐ⁺ (future null infinity, 'Scri plus')",
+        "symbol": "ℐ⁺",
+        "location": "Upper-right diagonal boundary",
+        "description": "Where outgoing light rays end — the future endpoint of all null geodesics directed outward",
+        "type": "null surface (45° line)"
+      },
+      {
+        "name": "ℐ⁻ (past null infinity, 'Scri minus')",
+        "symbol": "ℐ⁻",
+        "location": "Lower-right diagonal boundary",
+        "description": "Where incoming light rays originate — the past endpoint of all null geodesics from infinity",
+        "type": "null surface (45° line)"
+      }
+    ],
+    "conformalTransformation": {
+      "tortoise_coordinate": "r* = r + 2M ln|r/2M - 1| (for Schwarzschild; for Minkowski, r* = r)",
+      "null_coordinates": "u = t - r* (retarded), v = t + r* (advanced)",
+      "compactified": "U = arctan(u), V = arctan(v) — maps (-∞,∞) to (-π/2, π/2)"
+    }
+  },
+  "schwarzschildBlackHole": {
+    "description": "Non-rotating, uncharged black hole — the simplest case",
+    "maximalkruskalExtension": {
+      "description": "The maximally extended Schwarzschild solution contains four regions connected at the 'Einstein-Rosen bridge'",
+      "regions": [
+        {
+          "label": "Region I",
+          "name": "Exterior (our universe)",
+          "description": "The region outside the event horizon accessible to distant observers",
+          "rRange": "r > 2M (r > Rs)",
+          "accessible": true,
+          "boundaries": ["Event horizon (future)", "ℐ⁺", "ℐ⁻", "i⁰", "i⁺", "i⁻"]
+        },
+        {
+          "label": "Region II",
+          "name": "Black hole interior (future)",
+          "description": "The interior of the black hole — the future of anything crossing the horizon. Contains the spacelike singularity.",
+          "rRange": "0 < r < 2M",
+          "accessible": "Only by falling in from Region I or III",
+          "containsSingularity": true,
+          "singularityNature": "Spacelike — it lies in the future of every point inside the horizon"
+        },
+        {
+          "label": "Region III",
+          "name": "Parallel exterior universe",
+          "description": "A second asymptotically flat region — a 'parallel universe' connected to ours via the Einstein-Rosen bridge",
+          "rRange": "r > 2M",
+          "accessible": "NOT reachable from Region I — no causal path connects them",
+          "note": "This region is mathematically valid but likely unphysical (it disappears in realistic gravitational collapse)"
+        },
+        {
+          "label": "Region IV",
+          "name": "White hole (past)",
+          "description": "The time-reverse of the black hole — a singularity that emits matter but cannot absorb it",
+          "rRange": "0 < r < 2M",
+          "containsSingularity": true,
+          "singularityNature": "Spacelike — it lies in the past of every point in this region",
+          "note": "Time-reverse of Region II. Likely unphysical."
+        }
+      ]
+    },
+    "keyFeatures": [
+      {
+        "feature": "Event horizon",
+        "location": "r = 2M (Rs)",
+        "nature": "Null surface at 45° angle in the diagram",
+        "description": "The boundary of no return — once crossed, all future-directed paths lead to the singularity",
+        "properties": [
+          "Future event horizon: boundary of Region I/III into Region II",
+          "Past event horizon: boundary of Region I/III from Region IV"
+        ]
+      },
+      {
+        "feature": "Singularity (future)",
+        "location": "r = 0 (top of diagram)",
+        "nature": "Spacelike — horizontal wavy line at the top of Region II",
+        "description": "All timelike curves inside the BH end at this singularity",
+        "note": "It is NOT a point in space — it is a moment in time (the future) that is unavoidable inside the horizon"
+      },
+      {
+        "feature": "Singularity (past, white hole)",
+        "location": "r = 0 (bottom of Region IV)",
+        "nature": "Spacelike — horizontal wavy line at the bottom",
+        "description": "The white hole singularity — time-reverse of the future singularity"
+      },
+      {
+        "feature": "Einstein-Rosen bridge",
+        "location": "Center of the diagram (r = 2M, t = 0 surface)",
+        "description": "The spatial 'throat' connecting Region I and Region III — a wormhole that is NOT traversable",
+        "note": "It pinches off too quickly for any signal to cross"
+      }
+    ],
+    "lightCones": {
+      "description": "How light cones tilt in the Penrose diagram",
+      "farFromBH": "Standard ±45° cones, symmetric about the vertical (time) direction",
+      "nearHorizon": "Light cones tilt toward the singularity — the 'outgoing' direction becomes less outgoing",
+      "atHorizon": "The outgoing edge of the light cone is exactly radial (along the horizon) — you can orbit but not escape",
+      "insideHorizon": "Both edges of the light cone point toward the singularity — there is no direction that avoids it"
+    },
+    "realisticCollapse": {
+      "description": "In a realistic gravitational collapse (Oppenheimer-Snyder), Regions III and IV do not exist",
+      "diagramDescription": "Only the exterior (Region I) and the black hole interior (Region II) appear. The stellar matter collapses along a timelike worldline that replaces the white hole and parallel universe regions.",
+      "stellarSurface": "The collapsing star's surface starts in the past, crosses the horizon, and hits the singularity",
+      "interiorIsFilled": "Inside the collapsing matter, the metric is NOT Schwarzschild but Friedmann-like (homogeneous collapse)"
+    }
+  },
+  "kerrBlackHole": {
+    "description": "Rotating black hole — much richer causal structure than Schwarzschild",
+    "maximalkruskalExtension": {
+      "description": "The maximal extension of the Kerr solution contains an INFINITE chain of asymptotic regions connected through the ring singularity",
+      "regionsPerBlock": [
+        {
+          "label": "I",
+          "name": "Exterior",
+          "rRange": "r > r_+",
+          "description": "Outside both horizons — an asymptotically flat region"
+        },
+        {
+          "label": "II",
+          "name": "Between horizons",
+          "rRange": "r_- < r < r_+",
+          "description": "Between the outer (event) horizon and inner (Cauchy) horizon. Timelike singularity is NOT in the future here."
+        },
+        {
+          "label": "III",
+          "name": "Inside Cauchy horizon",
+          "rRange": "r < r_-",
+          "description": "Inside the inner horizon, containing the ring singularity and allowing passage to a new asymptotic region"
+        }
+      ],
+      "infiniteChain": "The diagram extends infinitely in the vertical (time) direction, with alternating blocks of exterior and interior regions"
+    },
+    "horizons": {
+      "outerHorizon": {
+        "name": "Event horizon (outer horizon)",
+        "radius": "r_+ = M + √(M² - a²)",
+        "nature": "Null surface",
+        "description": "The point of no return for outside observers"
+      },
+      "innerHorizon": {
+        "name": "Cauchy horizon (inner horizon)",
+        "radius": "r_- = M - √(M² - a²)",
+        "nature": "Null surface",
+        "description": "The inner horizon beyond which predictability breaks down",
+        "instability": {
+          "description": "The Cauchy horizon is UNSTABLE: infalling radiation is infinitely blueshifted, creating a 'mass inflation' singularity",
+          "massInflation": "First demonstrated by Poisson & Israel (1990)",
+          "implication": "The interior of a realistic Kerr BH likely does NOT have the full maximal extension. The Cauchy horizon is replaced by a null (or weak) singularity.",
+          "source": "Poisson & Israel, PRL 63, 1663 (1990)"
+        }
+      }
+    },
+    "ringSingularity": {
+      "description": "The singularity of a Kerr BH is NOT a point but a ring of radius a (in Boyer-Lindquist coordinates)",
+      "nature": "Timelike (not spacelike like Schwarzschild)",
+      "avoidable": true,
+      "note": "In the maximal extension, one can pass through the ring to reach a new asymptotic region with 'negative r'. However, this region contains closed timelike curves (time travel!) and is likely unphysical.",
+      "closedTimelikeCurves": {
+        "exist": true,
+        "where": "In the Region III (r < r_-) where gφφ < 0 for small enough r",
+        "implication": "Violation of causality — time travel possible in this region",
+        "note": "This is considered unphysical — quantum gravity effects likely prevent it"
+      }
+    },
+    "ergosphere": {
+      "location": "Between r_+ and r_ergo = M + √(M² - a²cos²θ)",
+      "onDiagram": "Lies within Region I, outside the event horizon",
+      "description": "In the ergosphere, all observers are forced to co-rotate. The Penrose process can extract energy here.",
+      "stationaryLimit": "The outer boundary of the ergosphere is called the stationary limit surface — no observer can remain stationary inside it"
+    },
+    "keyDifferencesFromSchwarzschild": [
+      "Two horizons instead of one (event + Cauchy)",
+      "Ring singularity instead of point singularity",
+      "Singularity is timelike and avoidable, not spacelike and unavoidable",
+      "Infinite chain of universes in the maximal extension",
+      "Ergosphere region allows energy extraction",
+      "Closed timelike curves exist in the inner region"
+    ]
+  },
+  "reissnerNordstromBlackHole": {
+    "description": "Charged, non-rotating black hole — similar causal structure to Kerr but spherically symmetric",
+    "horizons": {
+      "outer": "r_+ = M + √(M² - Q²)",
+      "inner": "r_- = M - √(M² - Q²)"
+    },
+    "diagramStructure": "Similar to Kerr: infinite chain of asymptotic regions connected through a timelike singularity",
+    "cauchyHorizonInstability": "Same mass inflation instability as Kerr",
+    "extremalCase": {
+      "condition": "Q = M (or Q² = M² in geometric units)",
+      "horizons": "r_+ = r_- = M (single degenerate horizon)",
+      "temperature": "T_H = 0 (zero Hawking temperature)",
+      "note": "Extremal RN has a Penrose diagram similar to Kerr but without the Cauchy horizon instability issues (debated)"
+    }
+  },
+  "kerr_Newman": {
+    "description": "Rotating AND charged black hole — the most general stationary BH solution (with mass, spin, charge)",
+    "horizons": "r_± = M ± √(M² - a² - Q²)",
+    "existenceCondition": "M² ≥ a² + Q² (otherwise naked singularity)",
+    "diagramStructure": "Same topology as Kerr: infinite chain of blocks with two horizons, ring singularity, and CTC region",
+    "note": "Astrophysical BHs are expected to be effectively uncharged (charge is quickly neutralized by accretion), so Kerr is the relevant solution"
+  },
+  "conformalTransformations": {
+    "schwarzschildCoordinates": {
+      "metric": "ds² = -(1-2M/r)dt² + (1-2M/r)⁻¹dr² + r²dΩ²",
+      "coordinateSingularity_at_r2M": true,
+      "note": "The apparent singularity at r=2M is a coordinate artifact"
+    },
+    "tortoiseCoordinate": {
+      "definition": "r* = r + 2M ln|r/(2M) - 1|",
+      "range": "r* ∈ (-∞, +∞) as r ∈ (2M, ∞)",
+      "property": "Radial null geodesics satisfy dt = ±dr* (light cones are at 45°)"
+    },
+    "eddingtonFinkelstein": {
+      "ingoing": {
+        "v": "v = t + r* (advanced null coordinate)",
+        "metric": "ds² = -(1-2M/r)dv² + 2dvdr + r²dΩ²",
+        "description": "Regular at the future event horizon — describes infall"
+      },
+      "outgoing": {
+        "u": "u = t - r* (retarded null coordinate)",
+        "metric": "ds² = -(1-2M/r)du² - 2dudr + r²dΩ²",
+        "description": "Regular at the past event horizon"
+      }
+    },
+    "kruskalSzekeres": {
+      "definition_regionI": {
+        "T": "T = (r/(2M) - 1)^(1/2) exp(r/(4M)) sinh(t/(4M))",
+        "X": "X = (r/(2M) - 1)^(1/2) exp(r/(4M)) cosh(t/(4M))"
+      },
+      "definition_regionII": {
+        "T": "T = (1 - r/(2M))^(1/2) exp(r/(4M)) cosh(t/(4M))",
+        "X": "X = (1 - r/(2M))^(1/2) exp(r/(4M)) sinh(t/(4M))"
+      },
+      "metric": "ds² = (32M³/r) exp(-r/(2M)) (-dT² + dX²) + r²dΩ²",
+      "horizon": "T = ±X (future and past horizons at 45°)",
+      "singularity": "T² - X² = 1 (hyperbola at top and bottom)",
+      "properties": [
+        "Regular everywhere except the physical singularity at r = 0",
+        "Covers the entire maximally extended Schwarzschild spacetime",
+        "Null geodesics are at 45° everywhere"
+      ]
+    },
+    "penroseCompactification": {
+      "description": "Further compactify Kruskal coordinates to fit the infinite spacetime into a finite diagram",
+      "transformation": "p = arctan(T + X), q = arctan(T - X)",
+      "range": "p, q ∈ (-π/2, π/2)",
+      "result": "The entire spacetime fits in a diamond-shaped region with boundaries at p, q = ±π/2"
+    }
+  },
+  "evaporatingBlackHole": {
+    "description": "Penrose diagram for a BH that forms from collapse and then evaporates via Hawking radiation",
+    "structure": [
+      "Flat spacetime (past) — before the collapsing matter",
+      "Collapsing matter creates the event horizon",
+      "BH interior with (truncated) singularity",
+      "Hawking radiation escaping to ℐ⁺",
+      "The event horizon shrinks as the BH evaporates",
+      "At the endpoint of evaporation, the singularity meets the event horizon",
+      "After evaporation: flat spacetime (future) with the information paradox"
+    ],
+    "keyQuestion": "Does the Penrose diagram have a 'thunderbolt' singularity at the evaporation endpoint, or does the singularity remain hidden?",
+    "informationParadoxOnDiagram": "The Hawking radiation at ℐ⁺ and the infalling matter at the singularity are in two causally disconnected regions — how can information come out?"
+  },
+  "nakedSingularity": {
+    "description": "A singularity not hidden behind an event horizon — violates cosmic censorship",
+    "penroseDiagram": "Similar to Minkowski but with a timelike singularity at r = 0 visible to all observers",
+    "cosmicCensorship": {
+      "weakForm": "Singularities formed from generic initial data are always hidden behind event horizons (Penrose, 1969)",
+      "strongForm": "Singularities formed from generic initial data are always spacelike (no Cauchy horizon problems)",
+      "status": "Not proven; counterexamples exist in fine-tuned situations",
+      "source": "Penrose, Rivista del Nuovo Cimento 1, 252 (1969)"
+    },
+    "superextremalKerr": {
+      "condition": "a > M (spin exceeds mass)",
+      "result": "No horizon — naked ring singularity",
+      "note": "Thought to be unphysical — spinning up a BH past extremal requires more and more energy and is prevented by the third law of BH mechanics"
+    }
+  },
+  "sources": [
+    "Penrose, PRL 14, 57 (1965) — Singularity theorems",
+    "Carter, Physical Review 174, 1559 (1968) — Kerr spacetime global structure",
+    "Hawking & Ellis, 'The Large Scale Structure of Space-Time' (1973)",
+    "Misner, Thorne & Wheeler, 'Gravitation' (1973)",
+    "Wald, 'General Relativity' (1984), Ch. 12",
+    "Carroll, 'Spacetime and Geometry' (2004), Ch. 5-6",
+    "Kruskal, Physical Review 119, 1743 (1960)",
+    "Szekeres, Publicationes Mathematicae Debrecen 7, 285 (1960)",
+    "Poisson & Israel, PRL 63, 1663 (1990) — Cauchy horizon instability",
+    "Penrose, Rivista del Nuovo Cimento 1, 252 (1969) — Cosmic censorship",
+    "Dafermos, Communications in Pure and Applied Mathematics 58, 445 (2005) — Cauchy horizon"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "cpuThrottle": 4,
+  "networkCondition": "none",
+  "captures": [],
+  "touchResponsive": false,
+  "orientationHandled": false,
+  "qualityDetected": "unknown",
+  "hapticsWorking": false,
+  "performanceReport": {
+    "fpsAverage": 0,
+    "fpsMin": 0,
+    "fpsP5": 0,
+    "fpsDrops": [],
+    "memoryPeak": 0,
+    "memoryLeakDetected": false,
+    "memoryGrowthRate": 0,
+    "lighthousePerformance": 0,
+    "lighthouseAccessibility": 0,
+    "lighthouseBestPractices": 0,
+    "lighthouseSEO": 0,
+    "fcp": 0,
+    "lcp": 0,
+    "cls": 0,
+    "tti": 0,
+    "tbt": 0
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "cycleNumber": 10,
+  "timestamp": "2026-03-09T21:36:01.897Z",
+  "duration": 802543,
+  "captureCount": 101,
+  "scienceChecks": [],
+  "designScores": [],
+  "performanceReport": {
+    "fpsAverage": 45,
+    "fpsMin": 27,
+    "fpsP5": 31,
+    "fpsDrops": [
+      {
+        "scrollPercent": 0.02,
+        "fps": 28
+      },
+      {
+        "scrollPercent": 0.03,
+        "fps": 27
+      },
+      {
+        "scrollPercent": 0.04,
+        "fps": 29
+      },
+      {
+        "scrollPercent": 0.05,
+        "fps": 28
+      },
+      {
+        "scrollPercent": 0.06,
+        "fps": 29
+      }
+    ],
+    "memoryPeak": 13046239,
+    "memoryLeakDetected": false,
+    "memoryGrowthRate": 126366,
+    "lighthousePerformance": 0,
+    "lighthouseAccessibility": 0,
+    "lighthouseBestPractices": 0,
+    "lighthouseSEO": 0,
+    "fcp": 0,
+    "lcp": 0,
+    "cls": 0,
+    "tti": 0,
+    "tbt": 0
+  },
+  "fixesApplied": [],
+  "overallScore": 90,
+  "improvementFromPrevious": 34,
+  "belowThresholdCount": 0,
+  "audioReport": {
+    "silentZones": [],
+    "layerActivation": [],
+    "emotionalArcMatch": 0,
+    "bassPresence": 0,
+    "dynamicRange": 0
+  },
+  "accessibilityReport": {
+    "contrastIssues": [],
+    "keyboardNavigable": true,
+    "ariaLabelsPresent": true,
+    "reducedMotionRespected": true,
+    "focusIndicatorsVisible": true,
+    "screenReaderFriendly": false,
+    "score": 90
+  }
+}

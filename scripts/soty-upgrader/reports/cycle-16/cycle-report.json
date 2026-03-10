@@ -1,0 +1,46 @@
+{
+  "cycleNumber": 16,
+  "timestamp": "2026-03-10T10:19:57.386Z",
+  "duration": 452145,
+  "captureCount": 101,
+  "scienceChecks": [],
+  "designScores": [],
+  "performanceReport": {
+    "fpsAverage": 35,
+    "fpsMin": 30,
+    "fpsP5": 31,
+    "fpsDrops": [],
+    "memoryPeak": 12495688,
+    "memoryLeakDetected": false,
+    "memoryGrowthRate": -336972,
+    "lighthousePerformance": 0,
+    "lighthouseAccessibility": 0,
+    "lighthouseBestPractices": 0,
+    "lighthouseSEO": 0,
+    "fcp": 0,
+    "lcp": 0,
+    "cls": 0,
+    "tti": 0,
+    "tbt": 0
+  },
+  "fixesApplied": [],
+  "overallScore": 95,
+  "improvementFromPrevious": -15,
+  "belowThresholdCount": 0,
+  "audioReport": {
+    "silentZones": [],
+    "layerActivation": [],
+    "emotionalArcMatch": 0,
+    "bassPresence": 0,
+    "dynamicRange": 0
+  },
+  "accessibilityReport": {
+    "contrastIssues": [],
+    "keyboardNavigable": true,
+    "ariaLabelsPresent": true,
+    "reducedMotionRespected": true,
+    "focusIndicatorsVisible": true,
+    "screenReaderFriendly": true,
+    "score": 95
+  }
+}

@@ -1,0 +1,590 @@
+{
+  "meta": {
+    "title": "Animation & Motion Design Principles for SOTY Event Horizon",
+    "version": "1.0.0",
+    "author": "Cleanlystudio",
+    "description": "Comprehensive animation database covering Disney principles, easing functions, web timing, and award-winning patterns"
+  },
+  "disney_12_principles": {
+    "description": "Walt Disney's 12 principles of animation, adapted for web and interactive design by Frank Thomas and Ollie Johnston (1981)",
+    "principles": {
+      "squash_and_stretch": {
+        "number": 1,
+        "original": "Objects deform to show mass, weight, and flexibility during motion",
+        "web_adaptation": "Elastic interactions — buttons that squish on press, elements that stretch during drag, rubber-band scroll overscroll effects",
+        "implementation": {
+          "css": "transform: scaleX(1.1) scaleY(0.9) on mousedown, return to 1,1 with spring easing",
+          "gsap": "gsap.to(el, { scaleX: 1.1, scaleY: 0.9, duration: 0.15, ease: 'power2.in', yoyo: true, repeat: 1 })",
+          "principle": "Volume preservation — if it squashes wider, it must get shorter (and vice versa)"
+        },
+        "event_horizon_use": [
+          "Particles deforming as they approach the event horizon (spaghettification)",
+          "UI elements stretching toward the black hole in crossing chapters",
+          "Subtle elastic response on click/tap interactions"
+        ]
+      },
+      "anticipation": {
+        "number": 2,
+        "original": "A preparatory movement before the main action (wind-up before pitch)",
+        "web_adaptation": "Hover states that subtly shift before click action. Elements that pull back before animating forward. Loading indicators that compress before expanding.",
+        "implementation": {
+          "css": "On hover: slight scale-down (0.98) before click triggers scale-up (1.05)",
+          "gsap": "Timeline: slight pullback (0.1s) → pause (0.05s) → main action",
+          "principle": "The anticipation should be 1/4 to 1/3 the duration of the main action"
+        },
+        "event_horizon_use": [
+          "Text elements pulling slightly toward the black hole before their reveal animation",
+          "Sound dipping before crescendo at chapter transitions",
+          "Brief darkness (anticipation) before a bright visual reveal"
+        ]
+      },
+      "staging": {
+        "number": 3,
+        "original": "Present an idea so that it is unmistakably clear — direct the audience's attention",
+        "web_adaptation": "Only one important action should happen at a time. Dim non-essential elements during key moments. Use motion to direct focus.",
+        "implementation": {
+          "technique": "Reduce opacity/blur of background elements when presenting new content",
+          "gsap": "Use timeline sequencing — don't overlap competing animations",
+          "principle": "If two things animate simultaneously, neither gets attention"
+        },
+        "event_horizon_use": [
+          "When narrative text appears, reduce particle intensity to stage the text",
+          "During chapter transitions, clear the visual field before new chapter staging",
+          "One reveal at a time — black hole, then title, then description (not all at once)"
+        ]
+      },
+      "straight_ahead_vs_pose_to_pose": {
+        "number": 4,
+        "original": "Straight ahead: draw frame by frame from start. Pose to pose: draw key poses, then fill in between.",
+        "web_adaptation": "Procedural animations (physics, particles) are 'straight ahead'. Keyframed/tweened animations are 'pose to pose'. Best results combine both.",
+        "implementation": {
+          "straight_ahead": "Particle systems, physics simulations, noise-based motion, procedural shader animations",
+          "pose_to_pose": "GSAP timelines, CSS keyframes, scroll-driven interpolation",
+          "hybrid": "Use keyframed timelines for high-level structure; procedural noise for organic detail within"
+        },
+        "event_horizon_use": [
+          "Black hole particles: straight ahead (GPGPU physics simulation)",
+          "Text reveals: pose to pose (GSAP timeline)",
+          "Accretion disk: hybrid (orbital physics + keyframed color/intensity changes)"
+        ]
+      },
+      "follow_through_and_overlapping": {
+        "number": 5,
+        "original": "Not everything stops at the same time. Parts with different mass continue moving after the main body stops.",
+        "web_adaptation": "After main element settles, secondary elements catch up with slight delay. Stagger endings. Elements with different visual weights have different deceleration rates.",
+        "implementation": {
+          "gsap": "Use stagger with a slight overshoot: gsap.to('.items', { y: 0, stagger: 0.05, ease: 'back.out(1.4)' })",
+          "principle": "Light elements continue longer than heavy elements (inertia)",
+          "timing": "Main action: 300ms. Follow-through: +100-200ms with lighter easing"
+        },
+        "event_horizon_use": [
+          "When scrolling stops, particles continue drifting slightly before settling",
+          "Text that slides in: title arrives first, then subtitle follows through",
+          "Camera movement stops but lens flare/glow continues for a beat"
+        ]
+      },
+      "slow_in_slow_out": {
+        "number": 6,
+        "original": "Objects accelerate from rest and decelerate to rest — more frames at start and end, fewer in middle",
+        "web_adaptation": "Easing functions. Nothing in the real world moves at constant speed. Every animation needs appropriate easing.",
+        "implementation": {
+          "css": "transition-timing-function: cubic-bezier(...)",
+          "gsap": "ease: 'power2.inOut'",
+          "principle": "ease-out for entering elements (arrive and settle). ease-in for exiting (accelerate away). ease-in-out for transitions between states.",
+          "never": "NEVER use linear easing for UI animations (exception: continuous rotation, progress bars)"
+        },
+        "event_horizon_use": [
+          "Every scroll-driven animation should have easing (scrub with smoothing)",
+          "Particle orbits: ease at aphelion (slow), speed at perihelion (fast) — Kepler's second law",
+          "Text opacity fades: ease-out in, ease-in out"
+        ]
+      },
+      "arcs": {
+        "number": 7,
+        "original": "Natural motion follows curved paths, not straight lines",
+        "web_adaptation": "Animate along curves, not just X/Y axes. Circular and elliptical paths for orbiting elements. Even 'drop-in' animations benefit from a slight arc.",
+        "implementation": {
+          "gsap_motion_path": "gsap.to(el, { motionPath: { path: [{x:100, y:-50}, {x:200, y:0}], curviness: 1.5 } })",
+          "css": "Combine translateX and translateY with different timing functions to create arc",
+          "principle": "Straight-line motion feels robotic. Even a 5-10px vertical deviation creates organic feel."
+        },
+        "event_horizon_use": [
+          "All orbital particle paths are arcs (elliptical orbits)",
+          "Gravitationally lensed light follows geodesic curves around the black hole",
+          "Text reveal animation: characters arc in from below-and-left, not straight up"
+        ]
+      },
+      "secondary_action": {
+        "number": 8,
+        "original": "Additional animations that support the primary action without distracting from it",
+        "web_adaptation": "Subtle background animation while primary animation plays. Particle effects accompanying a state change. Glow/shadow changes accompanying motion.",
+        "implementation": {
+          "principle": "Secondary actions must be subordinate — if you notice them more than the primary, they're too strong",
+          "timing": "Start secondary slightly after primary (50-100ms delay) so primary registers first",
+          "examples": "Button click (primary) + ripple effect (secondary). Text appear (primary) + background brightens (secondary)."
+        },
+        "event_horizon_use": [
+          "Chapter title appears (primary) while accretion disk pulses (secondary)",
+          "Scroll progresses (primary) while ambient particles shift density (secondary)",
+          "Black hole rotates (primary) while lens flare subtly breathes (secondary)"
+        ]
+      },
+      "timing": {
+        "number": 9,
+        "original": "The speed of action gives meaning — fast = urgent/light, slow = heavy/important",
+        "web_adaptation": "Animation duration communicates the weight and importance of the change. Small changes = fast. Large changes = slower. Emotional moments = slowest.",
+        "implementation": {
+          "micro_interactions": "100-200ms — hover states, toggles, small feedback",
+          "standard_transitions": "200-400ms — panel open/close, tab switch, content change",
+          "major_transitions": "400-800ms — page transitions, modals, full-state changes",
+          "dramatic_reveals": "800-2000ms — hero animations, chapter titles, emotional moments",
+          "ambient_loops": "2000-10000ms — breathing effects, orbital periods, atmospheric cycles"
+        },
+        "event_horizon_use": [
+          "Fast: HUD data updates (100ms), particle spawns (instant)",
+          "Medium: Text reveals (600-1000ms), scroll-driven transitions (continuous)",
+          "Slow: Chapter transitions (1500-3000ms), emotional crescendos (2000-5000ms)",
+          "Very slow: Background star drift (continuous), accretion disk rotation (8-20s period)"
+        ]
+      },
+      "exaggeration": {
+        "number": 10,
+        "original": "Push animation beyond realistic to emphasize the essence of the action",
+        "web_adaptation": "Slightly overshoot target values. Exaggerate scale changes. Push color transitions beyond subtle. Make important changes obvious.",
+        "implementation": {
+          "scale": "Instead of 1.0 → 1.0, go 1.0 → 1.05 → 1.0 (overshoot)",
+          "position": "Instead of stopping exactly at target, overshoot by 5-10px then settle",
+          "opacity": "Instead of 0 → 1, go 0 → 1.1 (slight overexposure) → 1",
+          "timing": "Make fast things faster and slow things slower than realistic"
+        },
+        "event_horizon_use": [
+          "Gravitational lensing effect stronger than physically accurate (more dramatic)",
+          "Time dilation effect exaggerated (clocks visually melting, not just slowing)",
+          "Spaghettification shown at a scale the eye can appreciate",
+          "Sound design: bass drops deeper than realistic, silence more absolute"
+        ]
+      },
+      "solid_drawing": {
+        "number": 11,
+        "original": "Maintain consistent three-dimensional form and volume through motion",
+        "web_adaptation": "3D transforms should maintain consistent perspective. Objects rotating in 3D should feel solid, not flat. Lighting should be consistent across the scene.",
+        "implementation": {
+          "css": "transform-style: preserve-3d; perspective: 1000px",
+          "three_js": "Consistent camera FOV and projection. Proper depth sorting.",
+          "principle": "If an element has a 3D transform, it should behave consistently in 3D space — not sometimes flat, sometimes dimensional."
+        },
+        "event_horizon_use": [
+          "The black hole and accretion disk must maintain consistent 3D geometry through all scroll positions",
+          "Particle sizes must be consistent with their 3D position (no size popping)",
+          "Gravitational lensing must be geometrically consistent (real ray-tracing, not faked)"
+        ]
+      },
+      "appeal": {
+        "number": 12,
+        "original": "Characters and scenes should have a pleasing design that engages the audience",
+        "web_adaptation": "The overall aesthetic should be captivating from the first frame. Clean, intentional design. No accidental visual elements. Every pixel contributes to the whole.",
+        "implementation": {
+          "principle": "Appeal ≠ beauty. Appeal = engaging + clear + intentional. A terrifying black hole can be appealing if it's well-designed.",
+          "checklist": [
+            "Is every element intentional?",
+            "Does the composition feel balanced?",
+            "Are the colors harmonious?",
+            "Is the animation smooth and polished?",
+            "Does it feel like someone CARED about every detail?"
+          ]
+        },
+        "event_horizon_use": [
+          "The black hole itself must be mesmerizing — the kind of thing you stare at",
+          "Color palette must be cohesive and intentional",
+          "Smooth 60fps performance is a prerequisite for appeal — jank destroys it",
+          "Audio and visual must harmonize — mismatched audio kills appeal instantly"
+        ]
+      }
+    }
+  },
+  "easing_functions": {
+    "description": "Mathematical functions that control the rate of change in animations",
+    "standard_css_easings": {
+      "linear": {
+        "cubic_bezier": "cubic-bezier(0, 0, 1, 1)",
+        "character": "Constant speed. Robotic. No acceleration.",
+        "use_cases": ["Progress bars", "Continuous rotation", "Color cycling"],
+        "never_for": "UI transitions, element movement, opacity changes"
+      },
+      "ease": {
+        "cubic_bezier": "cubic-bezier(0.25, 0.1, 0.25, 1)",
+        "character": "CSS default. Quick start, gentle end. Acceptable but generic.",
+        "use_cases": ["Default fallback", "Non-critical transitions"],
+        "note": "Better than linear but not as polished as custom easings"
+      },
+      "ease_in": {
+        "cubic_bezier": "cubic-bezier(0.42, 0, 1, 1)",
+        "character": "Slow start, fast end. Accelerating out of view.",
+        "use_cases": ["Elements leaving the viewport", "Fade-outs", "Objects falling"],
+        "feel": "Being pulled away, gravity, departure"
+      },
+      "ease_out": {
+        "cubic_bezier": "cubic-bezier(0, 0, 0.58, 1)",
+        "character": "Fast start, slow end. Decelerating into position.",
+        "use_cases": ["Elements entering the viewport", "Fade-ins", "Drop-ins"],
+        "feel": "Arriving, landing, settling into place"
+      },
+      "ease_in_out": {
+        "cubic_bezier": "cubic-bezier(0.42, 0, 0.58, 1)",
+        "character": "Slow start, fast middle, slow end. Symmetric.",
+        "use_cases": ["State transitions", "Carousel slides", "Modal open/close"],
+        "feel": "Smooth, natural, balanced"
+      }
+    },
+    "custom_cubic_bezier_presets": {
+      "snappy": {
+        "cubic_bezier": "cubic-bezier(0.2, 0, 0, 1)",
+        "character": "Fast departure, smooth arrival. Feels responsive and modern.",
+        "use_cases": ["Tab switches", "Toggle states", "Navigation transitions"],
+        "duration_range": "150-300ms"
+      },
+      "gentle": {
+        "cubic_bezier": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "character": "Smooth throughout. Material Design standard easing.",
+        "use_cases": ["Content changes", "Panel slides", "Accordions"],
+        "duration_range": "200-400ms"
+      },
+      "bouncy": {
+        "cubic_bezier": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "character": "Overshoots target then settles. Playful energy.",
+        "use_cases": ["Notification badges", "Button clicks", "Attention-grabbing reveals"],
+        "duration_range": "300-600ms"
+      },
+      "heavy": {
+        "cubic_bezier": "cubic-bezier(0.7, 0, 0.3, 1)",
+        "character": "Slow acceleration and deceleration. Feels weighty.",
+        "use_cases": ["Large modal transitions", "Full-page changes", "Loading sequences"],
+        "duration_range": "400-800ms"
+      },
+      "dramatic_enter": {
+        "cubic_bezier": "cubic-bezier(0, 0.7, 0.3, 1)",
+        "character": "Explosive start, graceful landing. High-impact entrance.",
+        "use_cases": ["Hero reveals", "Chapter titles", "Splash screens"],
+        "duration_range": "500-1000ms"
+      },
+      "gravitational": {
+        "cubic_bezier": "cubic-bezier(0.55, 0, 1, 0.45)",
+        "character": "Accelerating — like falling into gravity. Does not decelerate.",
+        "use_cases": ["Elements being pulled toward the black hole", "Spaghettification", "Consumption effects"],
+        "duration_range": "300-1000ms",
+        "event_horizon_specific": true
+      }
+    },
+    "gsap_easing": {
+      "power_easings": [
+        {"name": "power0 (linear)", "description": "No easing. Use: progress bars, continuous rotation.", "curve_strength": 0},
+        {"name": "power1 (quad)", "description": "Gentle easing. Subtle, professional.", "curve_strength": 1},
+        {"name": "power2 (cubic)", "description": "Standard easing. Good default for most animations.", "curve_strength": 2},
+        {"name": "power3 (quart)", "description": "Strong easing. Dramatic but controlled.", "curve_strength": 3},
+        {"name": "power4 (quint)", "description": "Very strong easing. Cinematic feel.", "curve_strength": 4}
+      ],
+      "special_easings": {
+        "back": {
+          "description": "Overshoots the target then returns. The strength parameter controls overshoot amount.",
+          "variants": {
+            "back.out(1.7)": "Standard overshoot on arrival — playful entrance",
+            "back.out(3)": "Extreme overshoot — very bouncy",
+            "back.in(1.7)": "Wind-up before departure",
+            "back.inOut(1.7)": "Wind-up and overshoot"
+          }
+        },
+        "elastic": {
+          "description": "Spring-like oscillation that settles. Parameters: amplitude, period.",
+          "variants": {
+            "elastic.out(1, 0.3)": "Standard elastic — multiple bounces settling",
+            "elastic.out(1, 0.5)": "Looser spring — fewer, wider bounces",
+            "elastic.out(2, 0.3)": "Higher amplitude — more dramatic",
+            "elastic.in(1, 0.3)": "Elastic wind-up (rare but useful)"
+          },
+          "use_cases": "Attention-grabbing reveals, playful interactions, notification pop-ins"
+        },
+        "bounce": {
+          "description": "Simulates a ball bouncing and settling",
+          "variants": {
+            "bounce.out": "Bouncing arrival — fun, playful",
+            "bounce.in": "Bouncing departure (unusual)",
+            "bounce.inOut": "Bounce at both ends"
+          },
+          "use_cases": "Rarely used in premium design — can feel cheap. Use elastic instead for sophistication."
+        },
+        "expo": {
+          "description": "Exponential easing — extremely dramatic acceleration/deceleration",
+          "variants": {
+            "expo.out": "Near-instant start, very slow end — feels like slamming into place",
+            "expo.in": "Very slow start, explosive end — like a spring release",
+            "expo.inOut": "Dramatic at both ends"
+          },
+          "use_cases": "Full-page transitions, dramatic camera movements, black hole approach acceleration"
+        },
+        "circ": {
+          "description": "Circular easing — based on quarter-circle curve. Sharp but smooth.",
+          "use_cases": "Circular/radial animations, orbital paths that need easing"
+        },
+        "sine": {
+          "description": "Sinusoidal easing — the gentlest of all. Very subtle.",
+          "use_cases": "Ambient breathing effects, gentle floating, atmospheric oscillation",
+          "event_horizon_use": "Particle field breathing, star twinkle, ambient glow pulsing"
+        }
+      },
+      "custom_ease": {
+        "description": "GSAP CustomEase plugin allows SVG path-based easing curves",
+        "example": "CustomEase.create('myEase', 'M0,0 C0.126,0.382 0.282,0.674 0.44,0.822 0.632,1.002 0.818,1.001 1,1')",
+        "use_cases": "When none of the built-in easings match the desired feel"
+      }
+    },
+    "spring_physics": {
+      "description": "Physics-based spring animation — more natural than cubic-bezier because it models real physical behavior",
+      "parameters": {
+        "stiffness": {
+          "description": "How tight the spring is. Higher = faster, more snappy.",
+          "range": "50-1000",
+          "presets": {"gentle": 100, "default": 200, "snappy": 400, "tight": 700}
+        },
+        "damping": {
+          "description": "How quickly oscillation decays. Higher = less bounce.",
+          "range": "5-100",
+          "presets": {"bouncy": 10, "default": 20, "smooth": 30, "no_bounce": 50}
+        },
+        "mass": {
+          "description": "Weight of the animated element. Higher = slower, more momentum.",
+          "range": "0.1-10",
+          "presets": {"light": 0.5, "default": 1, "heavy": 3, "very_heavy": 5}
+        },
+        "velocity": {
+          "description": "Initial velocity. Can carry momentum from previous animation.",
+          "range": "-1000 to 1000",
+          "default": 0
+        }
+      },
+      "preset_combinations": {
+        "responsive_button": {"stiffness": 400, "damping": 25, "mass": 0.8, "feel": "Quick, minimal bounce"},
+        "modal_appear": {"stiffness": 200, "damping": 20, "mass": 1, "feel": "Smooth entrance with slight settle"},
+        "notification_pop": {"stiffness": 300, "damping": 15, "mass": 0.5, "feel": "Bouncy, attention-grabbing"},
+        "page_transition": {"stiffness": 100, "damping": 20, "mass": 1.5, "feel": "Weighty, cinematic"},
+        "gravitational_pull": {"stiffness": 50, "damping": 5, "mass": 3, "feel": "Slow, inevitable, heavy — like gravity"},
+        "particle_settle": {"stiffness": 150, "damping": 12, "mass": 0.3, "feel": "Light, airy, multiple bounces"}
+      },
+      "frameworks": {
+        "framer_motion": "useSpring({ stiffness: 200, damping: 20 })",
+        "react_spring": "useSpring({ config: { tension: 200, friction: 20, mass: 1 } })",
+        "gsap": "Does not have native spring physics — use CustomEase or inertia plugin",
+        "css": "Not supported natively — use JavaScript spring libraries"
+      }
+    }
+  },
+  "web_animation_timing": {
+    "micro_interactions": {
+      "duration": "100-300ms",
+      "examples": [
+        {"action": "Button hover color change", "duration": "150ms", "easing": "ease-out"},
+        {"action": "Toggle switch", "duration": "200ms", "easing": "ease-in-out"},
+        {"action": "Checkbox check", "duration": "150ms", "easing": "ease-out"},
+        {"action": "Ripple effect", "duration": "300ms", "easing": "ease-out"},
+        {"action": "Tooltip appear", "duration": "200ms", "easing": "ease-out", "delay": "300ms"},
+        {"action": "Focus ring", "duration": "100ms", "easing": "ease-out"},
+        {"action": "Input validation icon", "duration": "200ms", "easing": "back.out(2)"}
+      ],
+      "rule": "Micro-interactions should be felt, not watched. Under 200ms, the brain perceives them as 'instant response'."
+    },
+    "page_transitions": {
+      "duration": "300-500ms",
+      "examples": [
+        {"action": "Tab content switch", "duration": "300ms", "easing": "ease-in-out"},
+        {"action": "Modal open", "duration": "350ms", "easing": "ease-out"},
+        {"action": "Modal close", "duration": "250ms", "easing": "ease-in"},
+        {"action": "Sidebar open", "duration": "400ms", "easing": "ease-out"},
+        {"action": "Page route change", "duration": "500ms", "easing": "power2.inOut"},
+        {"action": "Dropdown menu", "duration": "250ms", "easing": "ease-out"}
+      ],
+      "rule": "Exit animations should be 20-30% faster than enter animations. Users care about where they're going, not where they came from."
+    },
+    "scroll_animations": {
+      "duration": "Continuous (scroll-driven)",
+      "examples": [
+        {"action": "Parallax layer offset", "implementation": "Direct scroll mapping with lerp factor 0.1-0.3"},
+        {"action": "Element fade-in on scroll", "trigger_offset": "20% from bottom of viewport", "duration": "400ms"},
+        {"action": "Sticky element pin", "implementation": "GSAP ScrollTrigger pin: true"},
+        {"action": "Progress-based transform", "implementation": "Map scroll 0-1 to animation progress with scrub: true"}
+      ],
+      "rule": "Scroll animations must respond within 1 frame (16.67ms). Any lag between scroll and visual response breaks immersion."
+    },
+    "loading_animations": {
+      "duration": "1000-3000ms per cycle",
+      "examples": [
+        {"action": "Spinner rotation", "duration": "1000ms", "easing": "linear", "repeat": "infinite"},
+        {"action": "Skeleton pulse", "duration": "1500ms", "easing": "ease-in-out", "repeat": "infinite"},
+        {"action": "Progress bar fill", "duration": "variable", "easing": "ease-out"},
+        {"action": "Dot bounce loader", "duration": "1200ms", "stagger": "200ms", "easing": "ease-in-out"}
+      ],
+      "rule": "Loading animations should be calming, not anxiety-inducing. Smooth, predictable cycles. Show meaningful progress when possible."
+    },
+    "text_reveal_timing": {
+      "character_stagger": "20-50ms per character",
+      "word_stagger": "50-100ms per word",
+      "line_stagger": "100-200ms per line",
+      "individual_char_duration": "300-600ms",
+      "individual_word_duration": "400-600ms",
+      "individual_line_duration": "500-800ms",
+      "total_text_block_budget": "Entire text block should reveal within 1500-3000ms maximum",
+      "rule": "Reading speed is ~250 words/minute = ~240ms per word. Reveal should be faster than reading speed."
+    }
+  },
+  "gsap_best_practices": {
+    "timeline_structure": {
+      "description": "GSAP timelines are the backbone of complex animation sequences",
+      "rules": [
+        "Use named timelines for major sequences (chapterTimeline, hudTimeline, etc.)",
+        "Nest timelines for modularity — a chapter timeline contains text, visual, and audio sub-timelines",
+        "Use labels for seek points: tl.addLabel('chapter2', '+=1')",
+        "Use relative positioning: '<' (same start), '<0.5' (0.5s after previous start), '+=0.5' (0.5s after previous end)",
+        "Always set defaults on the timeline: gsap.timeline({ defaults: { duration: 0.5, ease: 'power2.out' } })"
+      ],
+      "example_structure": "const masterTl = gsap.timeline(); masterTl.add(chapterOneTl, 0).add(chapterTwoTl, '+=0.5').add(chapterThreeTl, '+=0.5')"
+    },
+    "scroll_trigger_patterns": {
+      "basic_reveal": {
+        "pattern": "gsap.from(el, { y: 50, opacity: 0, scrollTrigger: { trigger: el, start: 'top 80%', end: 'top 20%', scrub: false } })",
+        "description": "Element animates once when scrolled into view"
+      },
+      "scrub_animation": {
+        "pattern": "gsap.to(el, { x: 500, scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: 1 } })",
+        "description": "Animation progress directly tied to scroll position. scrub: 1 adds 1 second of smooth catching up."
+      },
+      "pin_and_animate": {
+        "pattern": "ScrollTrigger.create({ trigger: section, start: 'top top', end: '+=3000', pin: true, scrub: true, animation: tl })",
+        "description": "Section sticks in viewport while scroll drives animation through it. end: '+=3000' means 3000px of scroll to complete."
+      },
+      "snap_points": {
+        "pattern": "ScrollTrigger.create({ snap: { snapTo: 1/5, duration: 0.5, ease: 'power2.inOut' } })",
+        "description": "Scroll snaps to defined positions (chapters). Duration is the snap animation time."
+      }
+    },
+    "performance_rules": [
+      "Animate ONLY transform and opacity — these are GPU-composited and don't trigger layout/paint",
+      "Avoid animating: width, height, top, left, padding, margin, border, font-size — all trigger layout",
+      "Use will-change: transform on elements that will be animated (but remove after animation if static)",
+      "Batch animations in the same GSAP timeline — GSAP optimizes rendering for batched tweens",
+      "Use gsap.set() for initial states instead of CSS — ensures GSAP manages the values",
+      "Kill animations when elements leave viewport: ScrollTrigger handles this automatically with toggleActions",
+      "Use gsap.ticker for synchronizing with requestAnimationFrame instead of setInterval"
+    ]
+  },
+  "scroll_driven_animation_patterns": {
+    "scrollytelling": {
+      "description": "Long-form narrative driven by scroll, with visualizations changing at defined scroll points",
+      "implementation": "GSAP ScrollTrigger with pinned sections and scrub-driven animations",
+      "best_practices": [
+        "Each chapter should have enough scroll distance for comfortable reading (~150-200vh per chapter)",
+        "Transition zones between chapters: 50-100vh of scroll",
+        "Never surprise the user — foreshadow visual changes with subtle cues",
+        "Allow the user to scroll backward and see everything in reverse (no one-way animations)"
+      ]
+    },
+    "parallax": {
+      "description": "Layers move at different speeds based on scroll to create depth illusion",
+      "layers": [
+        {"name": "Background", "speed_multiplier": 0.1, "depth": "Farthest"},
+        {"name": "Mid-background", "speed_multiplier": 0.3, "depth": "Far"},
+        {"name": "Midground", "speed_multiplier": 0.5, "depth": "Middle"},
+        {"name": "Foreground content", "speed_multiplier": 1.0, "depth": "Normal (scroll speed)"},
+        {"name": "Close foreground", "speed_multiplier": 1.5, "depth": "Nearest"}
+      ],
+      "performance": "Use transform: translateY() only. Never translate DOM layout properties."
+    },
+    "progress_mapping": {
+      "description": "Map scroll position (0-1) to any visual property",
+      "formula": "progress = (scrollY - triggerStart) / (triggerEnd - triggerStart)",
+      "applications": [
+        "Black hole size: progress 0→1 maps to scale 0.1→5.0",
+        "Accretion disk color: progress 0→1 maps to hue shift",
+        "Camera zoom: progress 0→1 maps to FOV change",
+        "Audio volume: progress 0→1 maps to gain value"
+      ]
+    }
+  },
+  "performance_optimization": {
+    "gpu_composited_properties": {
+      "safe_to_animate": ["transform (translate, scale, rotate)", "opacity", "filter (with will-change)", "clip-path"],
+      "triggers_layout": ["width", "height", "top", "left", "right", "bottom", "margin", "padding", "border"],
+      "triggers_paint": ["color", "background-color", "box-shadow", "text-shadow", "border-radius"],
+      "note": "Layout > Paint > Composite in cost. Always prefer composite-only animations."
+    },
+    "will_change": {
+      "description": "Hints to the browser to promote element to its own compositing layer",
+      "usage": "will-change: transform, opacity — apply before animation starts",
+      "warning": "Don't apply to too many elements (each gets its own GPU layer = VRAM usage). Remove after animation if element becomes static.",
+      "max_elements": "Limit to ~20 will-change elements simultaneously"
+    },
+    "requestAnimationFrame": {
+      "description": "Browser API for 60fps animation loops",
+      "usage": "All continuous animations (particle systems, camera updates) should run in rAF",
+      "pattern": "function animate() { update(); render(); requestAnimationFrame(animate); }",
+      "gsap_integration": "GSAP uses rAF internally via gsap.ticker — no need to manage separately"
+    },
+    "frame_budget": {
+      "target_fps": 60,
+      "frame_time": "16.67ms per frame",
+      "budget_breakdown": {
+        "javascript": "< 8ms — animation calculations, state updates",
+        "style_layout_paint": "< 4ms — CSS recalculations",
+        "compositing": "< 2ms — GPU compositing",
+        "idle": "~2-3ms buffer — prevents frame drops during GC or other interrupts"
+      },
+      "monitoring": "Use Chrome DevTools Performance panel. Look for frames exceeding 16.67ms. Use the 'Frames' section to identify dropped frames."
+    }
+  },
+  "award_winning_animation_examples": [
+    {
+      "site": "Immersive Garden",
+      "url": "https://immersive-g.com",
+      "technique": "Scroll-driven 3D scene with physics and particle effects",
+      "what_makes_it_great": "Perfect synchronization between scroll and visual response. Zero lag. Every scroll pixel matters."
+    },
+    {
+      "site": "Active Theory — A Journey Through Middle-earth",
+      "technique": "WebGL scrollytelling with cinematic transitions",
+      "what_makes_it_great": "Chapter-based narrative with seamless transitions. Sound design synchronized with scroll position."
+    },
+    {
+      "site": "Apple AirPods Pro",
+      "url": "https://apple.com/airpods-pro",
+      "technique": "Scroll-scrubbed product animation (pre-rendered frames or 3D)",
+      "what_makes_it_great": "Products feel physical. Scroll = rotate/explode the product. Perfect performance."
+    },
+    {
+      "site": "Linear",
+      "url": "https://linear.app",
+      "technique": "Subtle GSAP scroll reveals with consistent easing",
+      "what_makes_it_great": "Restraint. Not every element animates. When something moves, it's meaningful."
+    },
+    {
+      "site": "Lusion — Interland",
+      "url": "https://beinternetawesome.withgoogle.com/en_us/interland",
+      "technique": "Full WebGL game experience with scroll and interaction",
+      "what_makes_it_great": "Seamless blend of 2D UI and 3D world. Performance optimization allows complex scenes at 60fps."
+    },
+    {
+      "site": "14islands",
+      "url": "https://14islands.com",
+      "technique": "Custom scroll-linked physics animations",
+      "what_makes_it_great": "Physics-based spring animations feel alive and responsive. Scroll velocity affects animation intensity."
+    }
+  ],
+  "sources": [
+    {"title": "The Illusion of Life: Disney Animation", "author": "Frank Thomas & Ollie Johnston", "type": "book", "year": 1981},
+    {"title": "Animation at Work", "author": "Rachel Nabors", "type": "book"},
+    {"title": "Designing Interface Animation", "author": "Val Head", "type": "book"},
+    {"title": "Material Design Motion", "author": "Google", "url": "https://m3.material.io/styles/motion"},
+    {"title": "GSAP Documentation", "author": "GreenSock", "url": "https://gsap.com/docs/v3/"},
+    {"title": "Cubic-bezier.com", "author": "Lea Verou", "url": "https://cubic-bezier.com"},
+    {"title": "Easings.net", "url": "https://easings.net/"},
+    {"title": "Web Animation Performance", "author": "Paul Lewis", "url": "https://web.dev/animations-guide/"},
+    {"title": "FLIP Animation Technique", "author": "Paul Lewis", "type": "article"},
+    {"title": "High Performance Animations", "author": "Chrome DevRel", "url": "https://web.dev/animations-overview/"}
+  ]
+}

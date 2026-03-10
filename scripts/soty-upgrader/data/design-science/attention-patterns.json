@@ -1,0 +1,439 @@
+{
+  "meta": {
+    "title": "Attention & Perception Science for SOTY Event Horizon",
+    "version": "1.0.0",
+    "author": "Cleanlystudio",
+    "description": "Comprehensive attention science database covering eye-tracking, perception, cognitive laws, and scroll behavior"
+  },
+  "eye_tracking_patterns": {
+    "f_pattern": {
+      "description": "Users scan the top of the page horizontally, move down, scan a shorter horizontal line, then scan the left side vertically",
+      "discovered_by": "Jakob Nielsen, Nielsen Norman Group, 2006",
+      "shape": "Two horizontal stripes and a vertical stripe forming an F",
+      "applies_to": "Text-heavy pages, search results, news articles, documentation",
+      "relevance_to_event_horizon": "LOW — F-pattern assumes text-dominant layouts. Event Horizon is visual-first.",
+      "key_insight": "Users rarely read word-by-word on the web. They scan. Even narrative text gets scanned first."
+    },
+    "z_pattern": {
+      "description": "Eye moves from top-left → top-right → diagonal to bottom-left → bottom-right",
+      "applies_to": "Simple layouts with minimal text, landing pages, advertisements",
+      "relevance_to_event_horizon": "MEDIUM — useful for individual chapter screens where title (top) leads to CTA/next section (bottom-right)",
+      "key_insight": "The diagonal sweep is where the eye is least focused — place less critical elements here."
+    },
+    "gutenberg_diagram": {
+      "description": "Page divided into four quadrants based on natural reading gravity",
+      "quadrants": {
+        "primary_optical_area": {"position": "top-left", "attention": "Highest — first place the eye goes"},
+        "strong_fallow_area": {"position": "top-right", "attention": "High — secondary scanning target"},
+        "weak_fallow_area": {"position": "bottom-left", "attention": "Low — often skipped entirely"},
+        "terminal_area": {"position": "bottom-right", "attention": "Medium — natural resting point after scanning"}
+      },
+      "relevance_to_event_horizon": "LOW-MEDIUM — most relevant for HUD layout. Place critical data in primary optical area, navigation in terminal area."
+    },
+    "center_bias": {
+      "description": "In full-screen visual experiences, viewers fixate on the center first and most frequently",
+      "research": "Tatler (2007) — 'The central fixation bias in scene viewing: Selecting an optimal viewing position independently of motor biases and image feature distributions'",
+      "relevance_to_event_horizon": "HIGHEST — the black hole at center leverages the strongest natural fixation tendency. The most important element is where people already look.",
+      "key_insight": "Don't fight the center bias — use it. Place the black hole center or near-center. Everything else orbits this natural fixation point."
+    }
+  },
+  "saccade_behavior": {
+    "description": "Saccades are rapid eye movements between fixation points. The eye does NOT move smoothly — it jumps from point to point.",
+    "characteristics": {
+      "speed": "Up to 900°/second — one of the fastest movements the human body makes",
+      "duration": "20-200ms per saccade",
+      "frequency": "3-5 saccades per second during active viewing",
+      "suppression": "Vision is suppressed during saccades — you are effectively blind during the jump (saccadic suppression)",
+      "amplitude": "Average saccade covers 2-5° of visual angle (about 2-5cm at screen distance)"
+    },
+    "implications_for_design": [
+      "Elements need to be different enough from their neighbors to attract saccadic targeting (visual saliency)",
+      "Animation that only lasts during a saccade (< 50ms) will literally be invisible to the viewer",
+      "Smooth pursuit eye movement (following a moving object) only works if the object moves at < 30°/second",
+      "Very fast animations may be missed if they occur during a saccade — keep important animations > 200ms"
+    ]
+  },
+  "fixation_points": {
+    "description": "Fixations are the pauses between saccades where the eye actually processes visual information",
+    "characteristics": {
+      "average_duration": "200-300ms per fixation",
+      "range": "100-600ms depending on cognitive load",
+      "visual_acuity": "Sharp vision only within the fovea — central 2° of visual field (about 2cm at arm's length)",
+      "processing": "Most visual processing happens during fixations, not saccades"
+    },
+    "what_attracts_fixations": {
+      "high_contrast_edges": {"priority": "Very high", "explanation": "Edges where light meets dark are the primary target for fixations"},
+      "faces_and_eyes": {"priority": "Highest in images with people", "explanation": "Even abstract face-like patterns attract fixation (pareidolia)"},
+      "text": {"priority": "High", "explanation": "Literate viewers automatically fixate on readable text"},
+      "motion": {"priority": "Very high", "explanation": "Motion in peripheral vision triggers reflexive saccade to the movement source"},
+      "color_singularities": {"priority": "High", "explanation": "A single colored element among neutral ones attracts fixation (pop-out effect)"},
+      "semantic_relevance": {"priority": "High", "explanation": "Elements related to the viewer's current goal/task attract fixation"}
+    },
+    "event_horizon_implications": [
+      "The boundary of the black hole (edge between void and accretion disk) will be a natural fixation magnet — HIGH contrast edge",
+      "Text elements will automatically attract fixation — position them deliberately so they don't compete with the visual",
+      "Moving particles attract peripheral fixation — use this to guide the eye toward specific areas",
+      "A single bright star or HUD element can redirect attention — use sparingly"
+    ]
+  },
+  "peripheral_vision": {
+    "description": "Vision outside the fovea (central 2°). Low resolution but highly sensitive to motion and contrast.",
+    "resolution_drop": {
+      "center_0_degrees": "Maximum acuity (20/20 vision)",
+      "2_degrees": "50% of central acuity",
+      "5_degrees": "25% of central acuity",
+      "10_degrees": "10% of central acuity",
+      "20_degrees": "4% of central acuity (can barely read large text)",
+      "30_plus_degrees": "Motion and luminance detection only"
+    },
+    "what_peripheral_vision_detects": [
+      "Motion (VERY sensitive — primary function is detecting approaching threats)",
+      "Luminance changes (bright flashes, dimming)",
+      "Large shapes and silhouettes",
+      "Color (reduced but present — warm colors detected better peripherally)"
+    ],
+    "what_peripheral_vision_cannot_detect": [
+      "Fine text (below ~24px at normal viewing distance at > 10°)",
+      "Small UI elements",
+      "Subtle color differences",
+      "Detail within textures"
+    ],
+    "design_implications": [
+      "Particles in the periphery don't need high detail — just motion and color blobs",
+      "Text must be positioned where the eye will foveate (center or natural fixation zones)",
+      "Use peripheral motion to guide attention — a subtle flash in the corner draws the eye without being conscious",
+      "The 'glow' around the accretion disk leverages peripheral color detection — creates atmosphere even when not directly looked at"
+    ]
+  },
+  "change_blindness": {
+    "description": "People fail to detect large changes in visual scenes when the change coincides with a brief disruption (blink, saccade, cut, or occlusion)",
+    "classic_experiment": "Simons & Levin (1997) — person asking for directions is replaced by different person during brief obstruction. 50% of participants didn't notice.",
+    "implications": [
+      "You can change significant visual elements during scroll transitions without the viewer noticing — they won't see changes that happen during their blink/saccade",
+      "Scene composition can shift dramatically between chapters if the transition includes a visual disruption (fade to black, flash)",
+      "Use this to your advantage: swap particle systems, change post-processing, modify the black hole during moment of darkness",
+      "BUT: if you WANT the viewer to notice a change, make it happen while they're looking — no disruption, smooth transition"
+    ]
+  },
+  "inattentional_blindness": {
+    "description": "People fail to perceive fully visible objects when their attention is focused elsewhere",
+    "classic_experiment": "Simons & Chabris (1999) — 'The Invisible Gorilla'. 50% of viewers focused on counting basketball passes failed to see a gorilla walk through the scene.",
+    "implications": [
+      "When the viewer is focused on reading text, they may completely miss visual changes in the 3D scene",
+      "Don't rely on background visual cues to communicate important information — the viewer might not see them",
+      "Important state changes need to be in the viewer's focus area or preceded by attention-directing cues",
+      "For Event Horizon: when narrative text is active, don't assume the viewer is watching the black hole. Stage visual reveals for AFTER text reading."
+    ]
+  },
+  "banner_blindness": {
+    "description": "Users have learned to ignore areas of the page that typically contain ads or non-content (headers, sidebars, cookie banners)",
+    "research": "Benway & Lane (1998) — coined the term. Users ignored the most prominent elements on the page because they looked like banners.",
+    "relevance": [
+      "HUD elements positioned in typical 'header' or 'sidebar' zones may be ignored",
+      "Navigation elements need to feel integrated into the experience, not like standard web chrome",
+      "Chapter indicators should NOT look like a generic website progress bar — they'll be mentally filtered out",
+      "Cookie/consent banners should be handled BEFORE the experience starts, not overlaid on top of the immersive content"
+    ]
+  },
+  "visual_saliency": {
+    "description": "The quality that makes an element stand out from its surroundings and attract bottom-up (involuntary) attention",
+    "saliency_factors": {
+      "contrast": {
+        "rank": 1,
+        "description": "The difference in luminance between an element and its surround. Higher contrast = higher saliency.",
+        "measurement": "Weber contrast = (L_target - L_background) / L_background",
+        "event_horizon": "On a near-black background, even a dim element has extremely high Weber contrast. This means every light pixel matters — be intentional."
+      },
+      "color": {
+        "rank": 2,
+        "description": "Chromatic uniqueness. A single colored element among achromatic ones is maximally salient.",
+        "measurement": "Color distance in CIE-Lab color space between element and surround",
+        "event_horizon": "The cyan HUD on black background has extreme color saliency. Use this power wisely — don't put cyan on everything or nothing will stand out."
+      },
+      "motion": {
+        "rank": 3,
+        "description": "Movement against a static background. Detected by specialized motion-sensitive neurons (V5/MT area).",
+        "characteristics": "Motion onset is most salient (the moment something STARTS moving). Continuous motion habituates (becomes less salient over time).",
+        "event_horizon": "Particle motion is constantly present → habituates. A NEW motion (text reveal, camera movement, flash) is highly salient because it breaks the pattern."
+      },
+      "orientation": {
+        "rank": 4,
+        "description": "Elements tilted differently from their surroundings. A diagonal line among horizontals pops out.",
+        "event_horizon": "Most elements orbit horizontally. A vertical or diagonal element (like text or a data line) stands out."
+      },
+      "size": {
+        "rank": 5,
+        "description": "Larger elements are more salient but diminishing returns above a certain size.",
+        "event_horizon": "The black hole is the largest element → highest size saliency. Text must be large enough to compete with the visual backdrop."
+      },
+      "faces": {
+        "rank": "Highest (special case)",
+        "description": "Human brains have specialized face-detection circuitry (fusiform face area). Faces ALWAYS attract attention.",
+        "event_horizon": "No faces in Event Horizon — but this means nothing will compete with faces for attention. Good: the experience won't be fighting biology."
+      }
+    },
+    "saliency_hierarchy_for_event_horizon": [
+      "1. The black hole boundary (extreme luminance contrast edge)",
+      "2. Text (learned saliency — literate brains automatically fixate on text)",
+      "3. HUD elements (color saliency — cyan on black)",
+      "4. Accretion disk brightest point (luminance peak)",
+      "5. New motion events (motion onset saliency)",
+      "6. Background particles (continuous motion — habituated, low saliency)"
+    ]
+  },
+  "attention_span": {
+    "common_claim": {
+      "claim": "Human attention span is 8 seconds, shorter than a goldfish",
+      "source": "Microsoft Consumer Insights report (2015)",
+      "reality": "MISLEADING. This measures selective attention switching, not sustained engagement. It does NOT mean people can't focus for more than 8 seconds."
+    },
+    "actual_attention_data": {
+      "selective_attention": {
+        "description": "Ability to focus on one stimulus while ignoring others",
+        "duration": "Variable — can switch in < 1 second if more salient stimulus appears",
+        "relevance": "Users will switch from your content to a notification instantly. You must be more interesting than their phone."
+      },
+      "sustained_attention": {
+        "description": "Ability to maintain focus on a single task over time",
+        "duration": "10-20 minutes for compelling content before needing variety or a break",
+        "relevance": "Event Horizon should target 5-10 minutes maximum. Include pacing variety to refresh sustained attention.",
+        "factors_that_extend": [
+          "Novelty (new visual elements keep appearing)",
+          "Narrative momentum (wanting to know what happens next)",
+          "Interaction (scroll-driven = user has agency)",
+          "Emotional engagement (awe, tension, curiosity)",
+          "Audio-visual synchronization (multi-sensory = more engaging)"
+        ]
+      },
+      "executive_attention": {
+        "description": "Ability to regulate attention, resolve conflict, and maintain goals",
+        "duration": "Decreases over time — 'decision fatigue'",
+        "relevance": "Don't require the user to make decisions. Scrolling should be the only action required."
+      }
+    },
+    "web_specific_attention_data": {
+      "average_page_visit": "52 seconds (Hubspot, 2023) — but this includes all page types",
+      "bounce_rate_threshold": "If no engagement signal in 3 seconds, 53% of mobile users leave (Google)",
+      "above_fold_time": "57% of viewing time is above the fold (Nielsen, 2018)",
+      "scroll_depth_average": "Only 50% of users reach 60% of a standard article",
+      "immersive_experience_exception": "SOTY-level immersive sites see 3-5 minute average sessions with 70-90% scroll completion"
+    }
+  },
+  "scroll_depth_behavior": {
+    "standard_content_sites": {
+      "25_percent": "90% of visitors reach this point",
+      "50_percent": "75% of visitors reach this point",
+      "75_percent": "50% of visitors reach this point",
+      "100_percent": "25-30% of visitors reach this point"
+    },
+    "immersive_experience_sites": {
+      "25_percent": "95% of visitors reach this point",
+      "50_percent": "85% of visitors reach this point",
+      "75_percent": "70% of visitors reach this point",
+      "100_percent": "50-60% of visitors reach this point",
+      "note": "Significantly higher completion rates due to engagement and novelty"
+    },
+    "factors_that_increase_scroll_completion": [
+      "Visual change on every scroll interaction (no 'dead zones')",
+      "Narrative momentum (curiosity about what's next)",
+      "Progress indication (how much is left)",
+      "Chapter/snap points (sense of achievement at each chapter)",
+      "Audio that evolves with scroll (creates continuity)",
+      "Fast initial load (under 3 seconds to interactive)"
+    ],
+    "factors_that_cause_scroll_abandonment": [
+      "Performance issues (jank, lag, frame drops)",
+      "Long sections without visual change ('scroll desert')",
+      "Confusing navigation (am I scrolling the right way?)",
+      "Audio issues (autoplay annoyance, volume too loud)",
+      "Content that doesn't deliver on the initial visual promise",
+      "Mobile usability problems (too small text, hard to scroll)"
+    ],
+    "event_horizon_scroll_targets": {
+      "target_completion_rate": "70%+",
+      "minimum_acceptable": "55%",
+      "strategies": [
+        "Every 5% of scroll should produce a noticeable visual change",
+        "Chapter transitions act as micro-rewards that encourage continued scrolling",
+        "The 'what's beyond the event horizon?' question creates powerful curiosity-driven scroll motivation",
+        "Progress indicators show the viewer they're on a journey with a destination"
+      ]
+    }
+  },
+  "fitts_law": {
+    "formula": "T = a + b × log₂(D/W + 1)",
+    "variables": {
+      "T": "Time to acquire target (move pointer to it)",
+      "a": "Intercept — minimum movement time (~50ms)",
+      "b": "Slope — depends on device (mouse ~100ms, touch ~150ms)",
+      "D": "Distance from current pointer position to target center",
+      "W": "Width of target along the axis of movement"
+    },
+    "simplified_rule": "Make clickable targets LARGE and CLOSE to likely cursor positions",
+    "specific_values": {
+      "minimum_touch_target": "44×44px (Apple HIG), 48×48dp (Material Design)",
+      "minimum_mouse_target": "24×24px",
+      "optimal_button_height": "40-48px for desktop, 44-56px for mobile",
+      "edge_advantage": "Elements at screen edges have 'infinite width' in one direction — effectively easier to hit"
+    },
+    "event_horizon_application": [
+      "Interactive HUD elements: minimum 44×44px touch target (even if visual is smaller, the hit area should be larger)",
+      "Chapter navigation dots: at least 24×24px visual, 44×44px hit area",
+      "Any clickable link or button overlaying the WebGL canvas: high contrast + sufficient size",
+      "Screen-edge navigation (arrows, progress bar) benefits from edge advantage"
+    ]
+  },
+  "hicks_law": {
+    "formula": "T = a + b × log₂(n + 1)",
+    "variables": {
+      "T": "Decision time",
+      "a": "Minimum decision time",
+      "b": "Cognitive processing rate per option",
+      "n": "Number of choices"
+    },
+    "simplified_rule": "More choices = slower decisions = more cognitive load = more abandonment",
+    "specific_values": {
+      "1_choice": "~300ms decision time (just go/no-go)",
+      "2_choices": "~450ms",
+      "4_choices": "~600ms",
+      "8_choices": "~750ms",
+      "16_choices": "~900ms"
+    },
+    "event_horizon_application": [
+      "Don't present the user with choices during the experience. Scrolling should be the ONLY action.",
+      "Navigation should be simple: chapters listed linearly, not in a complex menu",
+      "If any interactive moment exists, limit to 1-2 options maximum",
+      "The 'start experience' moment should be a single, obvious action (scroll or click ONE button)",
+      "Audio toggle: single mute/unmute button — not a volume slider with multiple options"
+    ]
+  },
+  "millers_law": {
+    "rule": "The average person can hold 7 ± 2 chunks of information in working memory",
+    "modern_revision": "Cowan (2001) revised this to 4 ± 1 chunks for focused attention",
+    "chunking": "Information grouped into meaningful clusters reduces cognitive load. 1-800-555-1234 is easier than 18005551234.",
+    "event_horizon_application": [
+      "Each chapter should present 3-5 key concepts maximum — not 10-15 facts dumped at once",
+      "HUD data displays: limit to 4-5 visible data points at a time. Rotate or reveal more progressively.",
+      "Scientific data should be chunked: 'Mass: 6.5 billion suns' is one chunk. Don't present mass, radius, temperature, spin, age, luminosity simultaneously.",
+      "Navigation: maximum 5-7 chapter labels visible. If more chapters, use progressive disclosure."
+    ]
+  },
+  "weber_fechner_law": {
+    "description": "The just-noticeable difference (JND) in a stimulus is proportional to the magnitude of the stimulus",
+    "formula": "ΔS/S = k (where ΔS is the change, S is the original stimulus, k is a constant)",
+    "implication": "The stronger the stimulus, the larger the change needed to be noticed",
+    "practical_values": {
+      "brightness": "JND ≈ 1-2% change in luminance for focused viewing, 5-10% for peripheral",
+      "size": "JND ≈ 3-5% change in object size to be noticeable",
+      "speed": "JND ≈ 8-10% change in animation speed to be perceived",
+      "color": "JND varies by hue — blue is least sensitive (~15° hue shift), red-green most sensitive (~2-3° hue shift)"
+    },
+    "event_horizon_application": [
+      "Scroll-driven size changes must exceed 3-5% per noticeable step to register",
+      "Gradual color transitions need to be spread over enough scroll distance for the total change to be above JND at each step",
+      "Audio volume changes must exceed 1-2 dB to be perceptible — gradual 0.5dB changes will be imperceptible",
+      "Ambient 'breathing' effects (pulsing glow, particle density) should vary by at least 5-10% to be subconsciously felt"
+    ]
+  },
+  "von_restorff_effect": {
+    "description": "The isolation effect — an item that is distinctly different from its surroundings is more likely to be remembered",
+    "discovered_by": "Hedwig von Restorff, 1933",
+    "mechanism": "Distinctive items receive more attention encoding and are stored more vividly in memory",
+    "event_horizon_application": [
+      "The moment of crossing the event horizon should be VISUALLY DISTINCT from everything else — a moment that stands out in memory",
+      "Key facts should be presented differently from surrounding text (different size, color, or animation)",
+      "One visually unique element per chapter anchors the memory of that chapter",
+      "The silence moment (after the crossing) is a von Restorff isolate — it's the ONLY silence in the experience"
+    ]
+  },
+  "peak_end_rule": {
+    "description": "People judge an experience based on how they felt at its most intense point (peak) and at its end, rather than the average of every moment",
+    "discovered_by": "Daniel Kahneman",
+    "classic_experiment": "Cold water experiment — longer painful experience judged better if it ended with slightly less pain",
+    "implications": [
+      "The PEAK moment (crossing the event horizon) must be the most emotionally intense moment — this defines the memory of the whole experience",
+      "The ENDING must be satisfying — a weak ending poisons the memory of even an amazing experience",
+      "A mediocre middle section is forgiven if the peak and end are exceptional",
+      "The last 30 seconds of the experience are disproportionately important to the overall impression"
+    ],
+    "event_horizon_application": {
+      "peak": "The crossing moment — maximum audio/visual intensity followed by total void. This is the moment people will remember and describe to others.",
+      "end": "The epilogue must resolve emotionally. Return to stars, contemplative tone, sense of completion. End with beauty, not with a whimper.",
+      "design_priority": "If time/budget is limited, invest disproportionately in the peak and ending moments."
+    }
+  },
+  "zeigarnik_effect": {
+    "description": "People remember uncompleted or interrupted tasks better than completed ones. Incompleteness creates cognitive tension.",
+    "discovered_by": "Bluma Zeigarnik, 1927",
+    "event_horizon_application": [
+      "The experience should always hint at what's coming next — creating a sense of incompleteness that drives scrolling",
+      "Chapter endings should tease the next chapter: 'But what happens at the event horizon?' creates Zeigarnik tension",
+      "The final chapter should provide closure to resolve the accumulated Zeigarnik tension",
+      "Loading screen: show partial elements of the experience to create tension and anticipation"
+    ]
+  },
+  "dwell_time_and_engagement": {
+    "description": "How long users spend looking at and interacting with specific elements",
+    "metrics": {
+      "bounce_rate": {
+        "definition": "Percentage of visitors who leave without interacting",
+        "target_for_soty": "< 20% (standard websites average 40-60%)",
+        "improvement_strategies": ["Fast loading (< 3s)", "Immediate visual impact", "Clear 'scroll to begin' cue"]
+      },
+      "average_session_duration": {
+        "definition": "Mean time spent on the experience",
+        "target_for_soty": "3-5 minutes",
+        "benchmark": "Average web page: 52 seconds. Immersive experiences: 2-5 minutes."
+      },
+      "scroll_completion": {
+        "definition": "Percentage of visitors who reach the end",
+        "target_for_soty": "60-70%",
+        "benchmark": "Standard articles: 25-30%. Immersive experiences: 50-70%."
+      },
+      "return_visits": {
+        "definition": "Percentage of visitors who come back",
+        "target_for_soty": "15-25%",
+        "benchmark": "Standard content: 5-10%. Memorable experiences: 15-30%."
+      }
+    }
+  },
+  "cognitive_load_theory": {
+    "description": "Working memory has limited capacity. Cognitive load is the total amount of mental effort used. Three types of load.",
+    "types": {
+      "intrinsic_load": {
+        "description": "Inherent difficulty of the content itself (black hole physics IS complex)",
+        "management": "Use visual metaphors to simplify. Don't explain spaghettification in words — SHOW it. One concept per chapter."
+      },
+      "extraneous_load": {
+        "description": "Load caused by poor design — confusing layout, unclear navigation, unnecessary information",
+        "management": "Minimize: clean layout, clear typography, obvious navigation, no clutter. Every extraneous element wastes cognitive bandwidth."
+      },
+      "germane_load": {
+        "description": "Load used for learning and understanding — this is the GOOD load",
+        "management": "Maximize: design the experience to promote understanding. Visual demonstrations > text explanations. Build on prior knowledge progressively."
+      }
+    },
+    "event_horizon_application": [
+      "Each chapter should manage intrinsic load by presenting ONE concept clearly",
+      "Eliminate all extraneous load: no unnecessary UI, no confusing interactions, no competing visual elements",
+      "Promote germane load: visual demonstrations of physics concepts that build understanding",
+      "The experience teaches through showing, not telling — visual learning has lower intrinsic load than textual learning"
+    ]
+  },
+  "sources": [
+    {"title": "Eyetracking Web Usability", "author": "Jakob Nielsen & Kara Pernice", "type": "book", "year": 2009},
+    {"title": "The central fixation bias in scene viewing", "author": "Benjamin W. Tatler", "type": "research_paper", "year": 2007},
+    {"title": "Gorillas in Our Midst", "author": "Daniel Simons & Christopher Chabris", "type": "research_paper", "year": 1999},
+    {"title": "Thinking, Fast and Slow", "author": "Daniel Kahneman", "type": "book", "year": 2011},
+    {"title": "The Magical Number Seven, Plus or Minus Two", "author": "George A. Miller", "type": "research_paper", "year": 1956},
+    {"title": "The Magical Number Four in Short-Term Memory", "author": "Nelson Cowan", "type": "research_paper", "year": 2001},
+    {"title": "Information Theory of the Human Motor System", "author": "Paul Fitts", "type": "research_paper", "year": 1954},
+    {"title": "Hick's Law — Rate of Gain of Information", "author": "William Hick", "type": "research_paper", "year": 1952},
+    {"title": "The Isolation Effect", "author": "Hedwig von Restorff", "type": "research_paper", "year": 1933},
+    {"title": "On the psychophysics of memory", "author": "Bluma Zeigarnik", "type": "research_paper", "year": 1927},
+    {"title": "Cognitive Load Theory", "author": "John Sweller", "type": "research_paper", "year": 1988},
+    {"title": "Weber-Fechner Law", "author": "Ernst Weber & Gustav Fechner", "type": "theoretical_framework", "year": 1860},
+    {"title": "Don't Make Me Think", "author": "Steve Krug", "type": "book"},
+    {"title": "Scroll Depth Analysis: Understanding User Engagement", "author": "Chartbeat Research", "type": "industry_report"}
+  ]
+}

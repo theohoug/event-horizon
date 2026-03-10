@@ -88,22 +88,6 @@ const CHAPTERS: Chapter[] = [
   },
   {
     id: 8,
-    title: 'THE VOID',
-    subtitle: 'Beyond equations — beyond language — beyond thought — silence',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'flash-bloom',
-  },
-  {
-    id: 9,
-    title: 'HAWKING RADIATION',
-    subtitle: 'Even darkness leaks — quantum whispers at the edge — the universe slowly reclaims what was taken',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'typewriter',
-  },
-  {
-    id: 10,
     title: 'WHAT REMAINS',
     subtitle: 'You have one life — one brief flicker in the dark — what will you do with it?',
     triggerStart: 'top center',
@@ -142,11 +126,11 @@ export class Timeline {
       });
     });
 
-    const lastSection = document.querySelector('[data-chapter="10"]');
+    const lastSection = document.querySelector('[data-chapter="8"]');
     if (lastSection) {
       ScrollTrigger.create({
         trigger: lastSection,
-        start: 'center center',
+        start: 'top+=25% center',
         end: 'bottom bottom',
         onEnter: () => this.showCredits(),
         onLeaveBack: () => this.hideCredits(),
@@ -474,8 +458,6 @@ export class Timeline {
     6: { x: 5, y: -6, align: 'right' },
     7: { x: 0, y: 0, align: 'center' },
     8: { x: 0, y: 0, align: 'center' },
-    9: { x: 0, y: 0, align: 'center' },
-    10: { x: 0, y: 0, align: 'center' },
   };
 
   private createChapterContent(container: HTMLElement, chapter: Chapter) {
@@ -512,7 +494,7 @@ export class Timeline {
     const chapterNum = document.createElement('div');
     chapterNum.className = 'chapter-num-filigrane';
     chapterNum.setAttribute('aria-hidden', 'true');
-    chapterNum.textContent = chapter.id === 6 ? '∞' : String(chapter.id + 1).padStart(2, '0');
+    chapterNum.textContent = String(chapter.id + 1).padStart(2, '0');
     container.appendChild(chapterNum);
     const numDelay = chapter.id === 0 ? 1.5 : 0;
     tl.fromTo(chapterNum,
@@ -526,8 +508,7 @@ export class Timeline {
     if (chapter.id === 0) titleClass = 'line chapter-opening';
     else if (chapter.id === 5) titleClass = 'line chapter-wide';
     else if (chapter.id === 7) titleClass = 'line chapter-impact';
-    else if (chapter.id === 8) titleClass = 'line chapter-void';
-    else if (chapter.id === 10) titleClass = 'line chapter-final';
+    else if (chapter.id === 8) titleClass = 'line chapter-final';
     titleLine.className = titleClass;
     container.appendChild(titleLine);
     this.splitTextToChars(titleLine, chapter.title);
@@ -544,7 +525,7 @@ export class Timeline {
       );
       tl.set(titleChars, { opacity: 1 }, 0);
       tl.add(() => this.markRevealed(titleChars), 0.1);
-    } else if (chapter.id === 10) {
+    } else if (chapter.id === 8) {
       tl.fromTo(
         titleLine,
         { opacity: 0, filter: 'blur(0px) brightness(3)', scale: 0.9 },
@@ -584,9 +565,7 @@ export class Timeline {
         break;
     }
 
-    if (chapter.id === 8) {
-      tl.to(titleLine, { opacity: 0, filter: 'blur(8px)', duration: 3.0, ease: 'power2.in', delay: 2.0 });
-    } else {
+    {
       const subtitleLine = document.createElement('div');
       subtitleLine.className = chapter.id === 0 ? 'line data chapter-opening-sub' : chapter.id === 8 ? 'line data chapter-final-sub' : 'line data';
       container.appendChild(subtitleLine);

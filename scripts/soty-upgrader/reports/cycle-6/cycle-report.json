@@ -1,0 +1,131 @@
+{
+  "cycleNumber": 6,
+  "timestamp": "2026-03-09T20:53:53.352Z",
+  "duration": 499877,
+  "captureCount": 101,
+  "scienceChecks": [],
+  "designScores": [],
+  "performanceReport": {
+    "fpsAverage": 34,
+    "fpsMin": 22,
+    "fpsP5": 23,
+    "fpsDrops": [
+      {
+        "scrollPercent": 0.8,
+        "fps": 24
+      },
+      {
+        "scrollPercent": 0.81,
+        "fps": 24
+      },
+      {
+        "scrollPercent": 0.8200000000000001,
+        "fps": 23
+      },
+      {
+        "scrollPercent": 0.8300000000000001,
+        "fps": 23
+      },
+      {
+        "scrollPercent": 0.84,
+        "fps": 26
+      },
+      {
+        "scrollPercent": 0.85,
+        "fps": 26
+      },
+      {
+        "scrollPercent": 0.86,
+        "fps": 25
+      },
+      {
+        "scrollPercent": 0.87,
+        "fps": 25
+      },
+      {
+        "scrollPercent": 0.88,
+        "fps": 28
+      },
+      {
+        "scrollPercent": 0.89,
+        "fps": 26
+      },
+      {
+        "scrollPercent": 0.9,
+        "fps": 25
+      },
+      {
+        "scrollPercent": 0.91,
+        "fps": 24
+      },
+      {
+        "scrollPercent": 0.92,
+        "fps": 24
+      },
+      {
+        "scrollPercent": 0.93,
+        "fps": 22
+      },
+      {
+        "scrollPercent": 0.9400000000000001,
+        "fps": 24
+      },
+      {
+        "scrollPercent": 0.9500000000000001,
+        "fps": 23
+      },
+      {
+        "scrollPercent": 0.96,
+        "fps": 23
+      },
+      {
+        "scrollPercent": 0.97,
+        "fps": 23
+      },
+      {
+        "scrollPercent": 0.98,
+        "fps": 23
+      },
+      {
+        "scrollPercent": 0.99,
+        "fps": 23
+      },
+      {
+        "scrollPercent": 1,
+        "fps": 23
+      }
+    ],
+    "memoryPeak": 13537442,
+    "memoryLeakDetected": false,
+    "memoryGrowthRate": 93817,
+    "lighthousePerformance": 0,
+    "lighthouseAccessibility": 0,
+    "lighthouseBestPractices": 0,
+    "lighthouseSEO": 0,
+    "fcp": 0,
+    "lcp": 0,
+    "cls": 0,
+    "tti": 0,
+    "tbt": 0
+  },
+  "fixesApplied": [],
+  "overallScore": 90,
+  "improvementFromPrevious": -2,
+  "belowThresholdCount": 0,
+  "audioReport": {
+    "silentZones": [],
+    "layerActivation": [],
+    "emotionalArcMatch": 0,
+    "bassPresence": 0,
+    "dynamicRange": 0
+  },
+  "accessibilityReport": {
+    "contrastIssues": [],
+    "keyboardNavigable": true,
+    "ariaLabelsPresent": true,
+    "reducedMotionRespected": true,
+    "focusIndicatorsVisible": true,
+    "screenReaderFriendly": false,
+    "score": 90
+  }
+}

@@ -1,0 +1,71 @@
+
+########################################################
+# SOTY UPGRADER — CYCLE 3
+# 09/03/2026 21:15:43
+########################################################
+
+====================================================
+ PHASE START: CAPTURE
+====================================================
+2026-03-09 20:15:53.848 [C3] [ERROR] Capture phase error: Error: page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:290:30), <anonymous>:1:1671)
+    at UtilityScript.evaluate (<anonymous>:292:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+2026-03-09 20:15:54.101 [PHASE] Phase Capture completed in 11.0s
+
+====================================================
+ PHASE START: CROSS-BROWSER MATRIX
+====================================================
+2026-03-09 20:15:54.103 [C3] [INFO] Launching chromium...
+
+====================================================
+ PHASE START: MOBILE AUDIT
+====================================================
+2026-03-09 20:16:05.259 [C3] [ERROR] chromium session error: Error: page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:290:30), <anonymous>:1:1671)
+    at UtilityScript.evaluate (<anonymous>:292:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+2026-03-09 20:16:05.577 [C3] [INFO] Launching firefox...
+2026-03-09 20:16:05.580 [C3] [ERROR] Failed to launch firefox: Error: browserType.launch: Executable doesn't exist at C:\Users\theoo\AppData\Local\ms-playwright\firefox-1509\firefox\firefox.exe
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+2026-03-09 20:16:05.581 [C3] [INFO] Launching webkit...
+2026-03-09 20:16:05.583 [C3] [ERROR] Failed to launch webkit: Error: browserType.launch: Executable doesn't exist at C:\Users\theoo\AppData\Local\ms-playwright\webkit-2248\Playwright.exe
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+2026-03-09 20:16:05.584 [PHASE] Phase Cross-Browser Matrix completed in 11.5s
+2026-03-09 20:16:06.886 [C3] [ERROR] Mobile audit error: Error: page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:290:30), <anonymous>:1:1671)
+    at UtilityScript.evaluate (<anonymous>:292:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+2026-03-09 20:16:07.034 [PHASE] Phase Mobile Audit completed in 12.9s
+
+====================================================
+ PHASE START: VISUAL DIFF
+====================================================
+2026-03-09 20:16:07.035 [PHASE] Phase Visual Diff completed in 1ms
+
+====================================================
+ PHASE START: ACCESSIBILITY
+====================================================
+2026-03-09 20:16:17.996 [C3] [INFO] Checking contrast ratios...
+2026-03-09 20:16:18.000 [C3] [ERROR] Accessibility phase error: Error: page.evaluate: ReferenceError: __name is not defined
+    at eval (eval at evaluate (:290:30), <anonymous>:1:197)
+    at UtilityScript.evaluate (<anonymous>:292:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+2026-03-09 20:16:18.246 [C3] [OK] Cycle report saved to C:\Users\theoo\OneDrive\Bureau\SOTY\event-horizon\scripts\soty-upgrader\reports\cycle-3\cycle-report.json
+2026-03-09 20:16:18.251 [C3] [OK] Audit exported to C:\Users\theoo\OneDrive\Bureau\SOTY\audit\cycle-3_2026-03-09T20-16-18
+2026-03-09 20:16:18.252 [C3] [OK] Audit exported to: C:\Users\theoo\OneDrive\Bureau\SOTY\audit\cycle-3_2026-03-09T20-16-18
+2026-03-09 20:16:18.252 [C3] [OK] Cycle 3 finished

@@ -1,0 +1,542 @@
+{
+  "meta": {
+    "title": "Web Audio API Best Practices for SOTY Event Horizon",
+    "version": "1.0.0",
+    "author": "Cleanlystudio",
+    "description": "Comprehensive Web Audio API database for procedural sound design in immersive WebGL experiences"
+  },
+  "architecture": {
+    "audio_context_lifecycle": {
+      "description": "AudioContext is the main entry point for all Web Audio operations",
+      "creation": "const audioCtx = new (window.AudioContext || window.webkitAudioContext)();",
+      "user_gesture_requirement": {
+        "description": "Browsers require a user gesture (click, tap, keypress) before the AudioContext can produce sound",
+        "implementation": [
+          "Create AudioContext in a suspended state",
+          "On first user interaction: audioCtx.resume()",
+          "Show a 'Click to enable audio' or 'Start experience' button",
+          "Alternatively, create AudioContext inside a click event handler"
+        ],
+        "browsers": {
+          "chrome": "Requires user gesture since Chrome 66 (2018). Context starts suspended.",
+          "safari": "Requires user gesture. webkitAudioContext may be needed for older Safari.",
+          "firefox": "Requires user gesture since Firefox 66. Less strict than Chrome in some cases.",
+          "edge": "Same as Chrome (Chromium-based)"
+        }
+      },
+      "states": {
+        "suspended": "Created but not processing audio. No CPU usage.",
+        "running": "Actively processing audio. Uses CPU/GPU resources.",
+        "closed": "Permanently stopped. Cannot be resumed. Resources released."
+      },
+      "best_practices": [
+        "Create one AudioContext per application — don't create multiples",
+        "Resume on user gesture, suspend when tab is not visible (Page Visibility API)",
+        "Close when the experience is completely finished (navigation away)",
+        "Check audioCtx.state before operations: if (audioCtx.state === 'suspended') audioCtx.resume()"
+      ]
+    },
+    "node_graph": {
+      "description": "Web Audio uses a graph of connected audio nodes: source → effects → destination",
+      "basic_chain": "OscillatorNode → GainNode → AudioContext.destination",
+      "complex_chain": "OscillatorNode → BiquadFilterNode → ConvolverNode → DynamicsCompressorNode → GainNode → AnalyserNode → AudioContext.destination",
+      "connection": "sourceNode.connect(effectNode).connect(destinationNode)",
+      "disconnection": "node.disconnect() — important for cleanup and preventing memory leaks",
+      "parallel_chains": "Multiple sources can connect to the same destination. Multiple effects can be in parallel with GainNodes for mix control."
+    },
+    "audio_worklets": {
+      "description": "Custom audio processing in a dedicated audio thread (replacement for deprecated ScriptProcessorNode)",
+      "setup": [
+        "await audioCtx.audioWorklet.addModule('processor.js');",
+        "const node = new AudioWorkletNode(audioCtx, 'my-processor');",
+        "node.connect(audioCtx.destination);"
+      ],
+      "processor_file": {
+        "description": "Runs in AudioWorkletGlobalScope — separate thread from main thread",
+        "pattern": [
+          "class MyProcessor extends AudioWorkletProcessor {",
+          "  process(inputs, outputs, parameters) {",
+          "    const output = outputs[0];",
+          "    for (let channel = 0; channel < output.length; ++channel) {",
+          "      const outputChannel = output[channel];",
+          "      for (let i = 0; i < outputChannel.length; ++i) {",
+          "        outputChannel[i] = /* compute sample */;",
+          "      }",
+          "    }",
+          "    return true; // keep processor alive",
+          "  }",
+          "}",
+          "registerProcessor('my-processor', MyProcessor);"
+        ]
+      },
+      "use_cases": "Custom synthesis, granular synthesis, complex procedural audio that built-in nodes can't handle",
+      "event_horizon_use": "Shepard tone generator, time dilation audio processing, custom gravitational frequency modulation"
+    },
+    "thread_model": {
+      "main_thread": "Node creation, connection, parameter scheduling, buffer loading",
+      "audio_thread": "Sample-by-sample processing, AudioWorklet execution, built-in node processing",
+      "rule": "NEVER do heavy computation on the audio thread (AudioWorklet). It runs at audio rate (44100 or 48000 Hz). Any stutter = audio glitch.",
+      "communication": "Main → Audio: AudioParam.setValueAtTime(), port.postMessage(). Audio → Main: port.postMessage()."
+    }
+  },
+  "synthesis_techniques": {
+    "oscillator_types": {
+      "sine": {
+        "description": "Pure tone. Single frequency. No harmonics.",
+        "sound": "Smooth, clean, gentle",
+        "use": "Sub-bass drones, pure tones, mixing basis, test tones",
+        "event_horizon": "Sub-bass (20-40Hz) for the black hole's presence. Pure tone for singularity emergence."
+      },
+      "square": {
+        "description": "Odd harmonics only (1, 3, 5, 7...). Buzzy, hollow.",
+        "sound": "Retro, digital, buzzy, hollow",
+        "use": "Chiptune, alarms, adding digital edge",
+        "event_horizon": "Data sonification clicks, digital HUD sounds"
+      },
+      "sawtooth": {
+        "description": "All harmonics (1, 2, 3, 4...). Rich, bright, aggressive.",
+        "sound": "Bright, harsh, buzzy, full spectrum",
+        "use": "Basis for subtractive synthesis, pads (when filtered), lead sounds",
+        "event_horizon": "Filtered sawtooth for evolving pad sounds, tension building"
+      },
+      "triangle": {
+        "description": "Odd harmonics at reduced amplitude. Softer than square.",
+        "sound": "Soft, mellow, flute-like",
+        "use": "Soft pads, gentle tones, woodwind-like sounds",
+        "event_horizon": "Gentle atmospheric tones, transition sounds"
+      },
+      "custom": {
+        "description": "Define arbitrary waveform via Fourier coefficients using PeriodicWave",
+        "implementation": "const wave = audioCtx.createPeriodicWave(real, imag); osc.setPeriodicWave(wave);",
+        "use": "Any sound that doesn't fit standard waveforms. Organ-like tones, bell-like tones.",
+        "event_horizon": "Custom gravitational resonance tones"
+      }
+    },
+    "additive_synthesis": {
+      "description": "Build complex sounds by combining multiple sine oscillators at different frequencies and amplitudes",
+      "technique": "Create N OscillatorNodes with frequencies at harmonic multiples. Mix with individual GainNodes.",
+      "example": {
+        "fundamental": "110Hz (A2) at gain 1.0",
+        "harmonic_2": "220Hz at gain 0.5",
+        "harmonic_3": "330Hz at gain 0.33",
+        "harmonic_5": "550Hz at gain 0.2",
+        "harmonic_7": "770Hz at gain 0.14"
+      },
+      "event_horizon_use": "Build rich drone sounds from harmonic series. Evolve harmonic content over time (scroll position controls harmonic amplitudes)."
+    },
+    "subtractive_synthesis": {
+      "description": "Start with harmonically rich waveform (sawtooth, square), remove frequencies with filters",
+      "chain": "OscillatorNode (sawtooth) → BiquadFilterNode (lowpass, sweep cutoff) → GainNode",
+      "technique": "Automate filter cutoff frequency to create sweeping, evolving sounds",
+      "event_horizon_use": "Filtered sweeps for transitions, evolving textures during approach"
+    },
+    "fm_synthesis": {
+      "description": "Frequency Modulation — one oscillator (modulator) modulates the frequency of another (carrier)",
+      "implementation": [
+        "const carrier = audioCtx.createOscillator();",
+        "const modulator = audioCtx.createOscillator();",
+        "const modGain = audioCtx.createGain();",
+        "modulator.connect(modGain);",
+        "modGain.connect(carrier.frequency);",
+        "carrier.connect(audioCtx.destination);"
+      ],
+      "parameters": {
+        "carrier_frequency": "Base pitch of the sound",
+        "modulator_frequency": "Rate of modulation (ratio to carrier affects timbre)",
+        "modulation_depth": "modGain.gain value — controls how much modulation (higher = more metallic/complex)"
+      },
+      "event_horizon_use": "Metallic, bell-like tones for data sonification. Alien, otherworldly timbres for the void."
+    },
+    "noise_generation": {
+      "white_noise": {
+        "description": "Equal energy at all frequencies. Flat spectrum.",
+        "implementation": "AudioWorklet or buffer: for each sample, output = Math.random() * 2 - 1",
+        "use": "Wind, static, hi-hat, texture addition"
+      },
+      "pink_noise": {
+        "description": "Energy decreases 3dB per octave. Sounds more natural than white.",
+        "implementation": "Apply 1/f filter to white noise (Voss-McCartney algorithm or Paul Kellet's filter)",
+        "use": "Ocean/wind sound, calming background, natural-sounding texture"
+      },
+      "brown_noise": {
+        "description": "Energy decreases 6dB per octave. Deep, rumbling.",
+        "implementation": "Integrate white noise (running sum with decay): sample = lastSample * 0.99 + random * 0.02",
+        "use": "Deep rumble, earthquake, volcanic sounds, black hole ambient"
+      },
+      "event_horizon_use": "Brown noise for deep space rumble. Filtered white noise for solar wind. Pink noise for atmospheric texture."
+    }
+  },
+  "spatial_audio": {
+    "panner_node": {
+      "description": "Position audio sources in 3D space relative to the listener",
+      "models": {
+        "equalpower": {
+          "description": "Simple left-right panning using equal-power law",
+          "cost": "Very low — basic stereo panning",
+          "quality": "Adequate for most web audio. No HRTF processing."
+        },
+        "HRTF": {
+          "description": "Head-Related Transfer Function — simulates how human ears perceive 3D sound",
+          "cost": "Higher — convolves with HRTF impulse responses",
+          "quality": "Much more immersive — sounds truly appear to come from specific 3D positions",
+          "requirement": "Browser must have HRTF data loaded (usually built-in)"
+        }
+      },
+      "properties": {
+        "positionX/Y/Z": "Position of the sound source in 3D space",
+        "orientationX/Y/Z": "Direction the sound is pointing (for directional sources)",
+        "coneInnerAngle": "Angle of full-volume cone (degrees)",
+        "coneOuterAngle": "Angle of reduced-volume cone (degrees)",
+        "coneOuterGain": "Volume outside the outer cone",
+        "distanceModel": "'linear' | 'inverse' | 'exponential'",
+        "maxDistance": "Maximum distance for attenuation",
+        "refDistance": "Distance at which volume starts to decrease",
+        "rolloffFactor": "How quickly sound fades with distance"
+      }
+    },
+    "listener": {
+      "description": "audioCtx.listener represents the user's ears in 3D space",
+      "properties": ["positionX/Y/Z", "forwardX/Y/Z (facing direction)", "upX/Y/Z (up vector)"],
+      "synchronization": "Update listener position to match the camera position in the 3D scene each frame"
+    },
+    "distance_models": {
+      "linear": {
+        "formula": "gain = 1 - rolloffFactor × (distance - refDistance) / (maxDistance - refDistance)",
+        "character": "Predictable, steady falloff. Easy to control.",
+        "use": "When you need precise control over audible range"
+      },
+      "inverse": {
+        "formula": "gain = refDistance / (refDistance + rolloffFactor × (distance - refDistance))",
+        "character": "Rapid falloff near source, slow falloff at distance. Most realistic.",
+        "use": "Default — best for most spatial audio scenarios"
+      },
+      "exponential": {
+        "formula": "gain = (distance / refDistance) ^ -rolloffFactor",
+        "character": "Very rapid falloff. Sound drops off dramatically.",
+        "use": "When sources should only be audible very close"
+      }
+    },
+    "event_horizon_spatial_audio": {
+      "black_hole_sound": "Position the black hole's ambient sound at the center of the 3D scene. As scroll approaches, the spatial position stays fixed but gets 'closer' — increasing in volume and bass.",
+      "accretion_disk": "Multiple sound sources orbiting in 3D space — panned left/right as they orbit. Creates immersive rotating sound.",
+      "approach_direction": "Listener (camera) moves toward the sound source — natural Doppler-like intensity increase."
+    }
+  },
+  "effects": {
+    "biquad_filter": {
+      "description": "Versatile filter for shaping frequency content",
+      "types": {
+        "lowpass": {"description": "Allows frequencies below cutoff. Attenuates highs.", "use": "Warmth, distance simulation, muffling"},
+        "highpass": {"description": "Allows frequencies above cutoff. Attenuates lows.", "use": "Thinning, removing rumble, telephone effect"},
+        "bandpass": {"description": "Allows frequencies around center. Attenuates both extremes.", "use": "Radio effect, vocal isolation, resonance"},
+        "lowshelf": {"description": "Boosts/cuts all frequencies below threshold.", "use": "Bass boost/cut"},
+        "highshelf": {"description": "Boosts/cuts all frequencies above threshold.", "use": "Treble boost/cut"},
+        "peaking": {"description": "Boosts/cuts frequencies around center.", "use": "EQ bands, emphasis"},
+        "notch": {"description": "Removes a narrow frequency band.", "use": "Feedback removal, specific frequency elimination"},
+        "allpass": {"description": "Passes all frequencies but changes phase.", "use": "Phaser effects, phase manipulation"}
+      },
+      "parameters": {
+        "frequency": "Center/cutoff frequency in Hz",
+        "Q": "Quality factor — narrowness of the filter. Higher Q = narrower/more resonant.",
+        "gain": "Boost/cut in dB (only for shelf and peaking types)"
+      }
+    },
+    "convolver": {
+      "description": "Applies reverb or acoustic space simulation using an impulse response (IR)",
+      "implementation": [
+        "const convolver = audioCtx.createConvolver();",
+        "const response = await fetch('impulse-response.wav');",
+        "const buffer = await audioCtx.decodeAudioData(await response.arrayBuffer());",
+        "convolver.buffer = buffer;"
+      ],
+      "impulse_response_options": [
+        "Real recorded IRs from famous spaces (cathedrals, studios, halls)",
+        "Synthetic IRs generated algorithmically",
+        "Very short IRs for metallic/resonant effects",
+        "Very long IRs (5-10s) for infinite space reverb"
+      ],
+      "event_horizon_use": "Long reverb tail for deep space ambiance. Cathedral-like reverb for transcendent moments. Metallic short reverb for HUD sounds."
+    },
+    "dynamics_compressor": {
+      "description": "Reduces dynamic range — prevents audio from getting too loud while maintaining quieter sounds",
+      "parameters": {
+        "threshold": "dB level above which compression activates (default: -24)",
+        "knee": "dB range around threshold for soft/hard compression (default: 30)",
+        "ratio": "Compression ratio above threshold (default: 12:1)",
+        "attack": "Seconds for compressor to respond to increase (default: 0.003)",
+        "release": "Seconds for compressor to release after decrease (default: 0.25)"
+      },
+      "use": "Master bus protection — prevent clipping when multiple sounds play simultaneously",
+      "event_horizon_use": "Essential on the master output to prevent distortion during the crescendo/crossing moment"
+    },
+    "wave_shaper": {
+      "description": "Non-linear distortion using a transfer function curve",
+      "implementation": "const shaper = audioCtx.createWaveShaper(); shaper.curve = makeCurve(); shaper.oversample = '4x';",
+      "curve_types": {
+        "soft_clip": "Gentle saturation — warm, analog feel",
+        "hard_clip": "Aggressive distortion — harsh, digital",
+        "asymmetric": "Different positive/negative clipping — odd harmonics"
+      },
+      "event_horizon_use": "Subtle saturation on the black hole drone for warmth. Aggressive distortion during the crossing moment."
+    },
+    "delay": {
+      "description": "Delays audio signal by a specified time",
+      "implementation": "const delay = audioCtx.createDelay(maxDelay); delay.delayTime.value = 0.5;",
+      "derived_effects": {
+        "echo": "Delay with feedback (output → delay → output loop via gain node)",
+        "flanging": "Very short delay (1-10ms) modulated by LFO",
+        "chorus": "Short delay (20-50ms) modulated by LFO, mixed with original"
+      },
+      "event_horizon_use": "Long echo/delay for deep space ambiance. Modulated delay for temporal distortion effects."
+    },
+    "stereo_panner": {
+      "description": "Simple left/right panning control",
+      "implementation": "const panner = audioCtx.createStereoPanner(); panner.pan.value = -1 to 1;",
+      "event_horizon_use": "Pan accretion disk sounds left/right as they orbit. Pan subtle ambient layers for width."
+    }
+  },
+  "advanced_techniques": {
+    "shepard_tone": {
+      "description": "Auditory illusion of an endlessly ascending or descending pitch. Overlapping octaves with carefully managed amplitude envelopes create the perception of infinite pitch change.",
+      "implementation": [
+        "Create N oscillators (typically 6-10) spanning multiple octaves",
+        "Each oscillator's frequency continuously shifts up (or down)",
+        "As an oscillator exits the audible range at the top, fade it out",
+        "Simultaneously, a new oscillator fades in at the bottom of the range",
+        "The result: continuous ascent (or descent) that never resolves",
+        "Frequency: f_i = f_base × 2^(i/N + t × speed) where t is time"
+      ],
+      "parameters": {
+        "num_oscillators": "6-10 (more = smoother illusion)",
+        "frequency_range": "40Hz - 8000Hz (below and above become inaudible)",
+        "amplitude_envelope": "Gaussian or cosine bell centered on mid-frequency. Edges (low/high) are silent.",
+        "speed": "Typically 0.5-2 octaves per minute for subtle effect"
+      },
+      "event_horizon_use": "Descending Shepard tone during the approach to the event horizon — creates perpetual falling sensation. One of the most powerful audio tools for the experience."
+    },
+    "binaural_beats": {
+      "description": "Two slightly different frequencies in each ear create a perceived beat at the difference frequency",
+      "implementation": [
+        "Create two oscillators at slightly different frequencies (e.g., 200Hz left, 210Hz right)",
+        "Pan one fully left, one fully right",
+        "Listener perceives a 10Hz 'beat' (difference frequency)",
+        "REQUIRES HEADPHONES — does not work with speakers"
+      ],
+      "frequency_ranges": {
+        "delta_1_4Hz": "Deep sleep, unconscious — too low for practical use",
+        "theta_4_8Hz": "Meditation, drowsiness, creativity",
+        "alpha_8_14Hz": "Relaxation, calm focus",
+        "beta_14_30Hz": "Alertness, concentration",
+        "gamma_30_100Hz": "High-level cognition, peak performance"
+      },
+      "caveat": "Scientific evidence for cognitive effects is mixed. The SUBJECTIVE experience of binaural beats is real and can be unsettling.",
+      "event_horizon_use": "Low theta (4-6Hz) binaural beats during meditation/contemplation sections. Creates uneasy, altered-state feeling. MUST inform user headphones recommended."
+    },
+    "drone_pads": {
+      "description": "Sustained, evolving tonal background — the foundation of ambient sound design",
+      "technique": [
+        "3-5 detuned oscillators at near-same frequency (±1-3Hz detune)",
+        "Slow amplitude modulation (0.1-0.5Hz) on each oscillator independently",
+        "Low-pass filter with slowly moving cutoff (sweep over 10-30 seconds)",
+        "Long reverb tail (ConvolverNode with 3-8 second IR)",
+        "Subtle pitch drift (oscillator frequency slowly wanders ±5Hz)"
+      ],
+      "detuning_for_richness": {
+        "description": "Multiple oscillators at nearly the same frequency create beating patterns (chorusing)",
+        "example": [
+          "Osc 1: 110.0Hz",
+          "Osc 2: 110.5Hz (+0.5Hz)",
+          "Osc 3: 109.7Hz (-0.3Hz)",
+          "Osc 4: 110.8Hz (+0.8Hz)"
+        ],
+        "result": "Rich, slowly evolving texture that feels alive"
+      },
+      "event_horizon_use": "Foundation of the entire audio experience. Deep drone for the black hole (55-110Hz). Higher drone for cosmic background (220-440Hz). Evolve parameters with scroll position."
+    },
+    "granular_synthesis": {
+      "description": "Decompose audio into tiny grains (10-100ms) and rearrange/overlap them to create new textures",
+      "implementation": "AudioWorklet that reads from a buffer, extracting random or sequential grains with windowing, overlap, and pitch shift",
+      "parameters": {
+        "grain_size": "10-100ms (smaller = more textural, larger = more recognizable)",
+        "grain_density": "Overlapping grains per second (10-100)",
+        "pitch_variation": "Random pitch shift per grain (±semitones)",
+        "position_variation": "Random read position in source buffer"
+      },
+      "event_horizon_use": "Granular processing of the drone during the crossing — sounds decomposing, reality fracturing"
+    },
+    "procedural_sound_effects": {
+      "data_sonification": {
+        "description": "Map data values to audio parameters",
+        "mappings": [
+          {"data": "Black hole mass", "audio": "Base frequency of drone (higher mass = lower pitch)"},
+          {"data": "Distance to event horizon", "audio": "Filter cutoff (closer = more harmonics, brighter)"},
+          {"data": "Scroll velocity", "audio": "Grain density or modulation rate"},
+          {"data": "Particle density", "audio": "Noise floor level"},
+          {"data": "Time dilation factor", "audio": "Playback rate of samples"}
+        ]
+      },
+      "gravitational_waves": {
+        "description": "Sonify gravitational waves — the actual 'sound' of spacetime vibrating",
+        "reference": "LIGO's gravitational wave sonification of GW150914 (first detection)",
+        "implementation": "Frequency chirp: f(t) increases exponentially as two black holes merge",
+        "event_horizon_use": "Play during key moments — the universe itself vibrating"
+      }
+    }
+  },
+  "performance": {
+    "node_count": {
+      "rule": "Minimize total node count. Each node has overhead even when not producing sound.",
+      "guidelines": {
+        "comfortable": "< 50 active nodes",
+        "acceptable": "50-100 active nodes",
+        "caution": "> 100 active nodes — may cause audio glitches on mobile",
+        "danger": "> 200 active nodes — likely to cause issues"
+      }
+    },
+    "offline_audio_context": {
+      "description": "Pre-render audio buffers at faster-than-realtime for use later",
+      "implementation": "const offlineCtx = new OfflineAudioContext(2, sampleRate * duration, sampleRate);",
+      "use": "Pre-render complex reverbs, noise textures, or one-shot effects during loading",
+      "advantage": "Zero runtime cost — the audio is just a buffer playback"
+    },
+    "audio_param_automation": {
+      "description": "Schedule parameter changes on the audio thread — more efficient and precise than setting from JS",
+      "methods": {
+        "setValueAtTime": "Set exact value at exact time",
+        "linearRampToValueAtTime": "Smooth linear interpolation to value by time",
+        "exponentialRampToValueAtTime": "Smooth exponential interpolation (CANNOT reach 0 — use very small value like 0.001)",
+        "setTargetAtTime": "Exponential approach to target with time constant",
+        "setValueCurveAtTime": "Follow an array of values over time",
+        "cancelScheduledValues": "Cancel all scheduled changes after a time"
+      },
+      "best_practice": "Use automation methods instead of setting .value in requestAnimationFrame. Automation runs on the audio thread at audio rate (44100Hz) — infinitely smoother than 60Hz JS updates."
+    },
+    "garbage_collection_prevention": {
+      "description": "Keep references to all audio nodes. If a node is GC'd while connected, audio may glitch.",
+      "rule": "Store all active nodes in an array or Map. Remove references only after disconnecting.",
+      "pattern": [
+        "const activeNodes = [];",
+        "function createOsc(freq) {",
+        "  const osc = audioCtx.createOscillator();",
+        "  osc.frequency.value = freq;",
+        "  activeNodes.push(osc);",
+        "  return osc;",
+        "}",
+        "function cleanup(osc) {",
+        "  osc.stop(); osc.disconnect();",
+        "  activeNodes.splice(activeNodes.indexOf(osc), 1);",
+        "}"
+      ]
+    }
+  },
+  "cross_browser_compatibility": {
+    "safari_quirks": {
+      "issues": [
+        "webkitAudioContext may be needed (check: window.AudioContext || window.webkitAudioContext)",
+        "AudioContext.resume() may not work reliably — create context inside user gesture handler",
+        "OfflineAudioContext has different parameter order in older Safari",
+        "AudioWorklet support added in Safari 14.1 (2021) — older versions need ScriptProcessorNode fallback",
+        "Safari on iOS has a single audio session — your audio competes with music apps"
+      ],
+      "workaround": "Always test on real iOS Safari. The simulator does not accurately reproduce audio behavior."
+    },
+    "ios_audio_unlock": {
+      "description": "iOS requires a user touch event to unlock audio playback",
+      "pattern": [
+        "function unlockAudio() {",
+        "  const buffer = audioCtx.createBuffer(1, 1, 22050);",
+        "  const source = audioCtx.createBufferSource();",
+        "  source.buffer = buffer;",
+        "  source.connect(audioCtx.destination);",
+        "  source.start(0);",
+        "  audioCtx.resume();",
+        "  document.removeEventListener('touchstart', unlockAudio);",
+        "}",
+        "document.addEventListener('touchstart', unlockAudio);"
+      ],
+      "note": "Play a silent buffer on first touch to unlock the audio session"
+    },
+    "chrome_autoplay_policy": {
+      "description": "Chrome blocks audio autoplay until user interaction",
+      "detection": "audioCtx.state === 'suspended' after creation indicates autoplay block",
+      "solution": "Show UI prompting user to click/tap. Resume context on interaction.",
+      "best_ux": "Integrate the unlock into the experience's 'Start' button — user clicks to begin, which also unlocks audio"
+    },
+    "firefox_differences": {
+      "issues": [
+        "AudioContext constructor may throw if too many contexts exist",
+        "Different default sample rate (may be 44100 or 48000 depending on system)",
+        "AudioWorklet implementation may have subtle timing differences"
+      ]
+    }
+  },
+  "emotional_sound_design": {
+    "frequency_ranges": {
+      "sub_bass_20_60Hz": {
+        "description": "Felt more than heard. Physical vibration in the chest.",
+        "emotional_effect": "Dread, power, weight, presence, enormity",
+        "implementation": "Low sine oscillator (30-50Hz) with gain envelope. Use DynamicsCompressor to prevent clipping.",
+        "event_horizon_use": "The black hole's fundamental frequency. Always present, growing with proximity."
+      },
+      "low_100_300Hz": {
+        "description": "Warmth and body of sound. The 'weight' of bass.",
+        "emotional_effect": "Warmth, comfort, fullness, intimacy",
+        "implementation": "Drone pads, low-pass filtered noise, detuned oscillators",
+        "event_horizon_use": "Background warmth for accretion disk. Reduces during void moments."
+      },
+      "mid_300_2000Hz": {
+        "description": "Where most instruments and voices live. The most perceptually important range.",
+        "emotional_effect": "Presence, clarity, emotion, tension",
+        "implementation": "Melodic elements, primary tones, voice (if any)",
+        "event_horizon_use": "Data sonification tones, Shepard tone carrier frequencies"
+      },
+      "high_mid_2000_6000Hz": {
+        "description": "Definition and clarity. Can be fatiguing if excessive.",
+        "emotional_effect": "Clarity, aggression, brightness, urgency",
+        "implementation": "Filtered noise bursts, high harmonics, metallic tones",
+        "event_horizon_use": "HUD interaction sounds, high-tension moments, alarm-like tones near event horizon"
+      },
+      "high_6000_20000Hz": {
+        "description": "Air, sparkle, brilliance. Creates 'space' in the mix.",
+        "emotional_effect": "Airiness, openness, cosmic vastness, brilliance",
+        "implementation": "Filtered white noise, very high harmonics, shimmer reverb",
+        "event_horizon_use": "Starfield shimmer, cosmic ambiance, post-crossing emergence"
+      }
+    },
+    "silence": {
+      "description": "The most powerful tool in the sound designer's arsenal",
+      "principles": [
+        "Silence only works after establishing sound — it's the ABSENCE that creates impact",
+        "1-3 seconds of absolute silence creates maximum psychological impact",
+        "The brain continues processing the 'ghost' of the absent sound for ~500ms",
+        "Return from silence should be gentle — a sudden loud sound after silence is jarring (unless intentional for jump scare)",
+        "Partial silence (reducing to just one quiet element) can be more unsettling than total silence"
+      ],
+      "implementation": {
+        "total_silence": "audioCtx.suspend() for true silence. Or masterGain.gain.setValueAtTime(0, time).",
+        "gradual_fade": "masterGain.gain.exponentialRampToValueAtTime(0.001, time + duration)",
+        "dramatic_cut": "masterGain.gain.setValueAtTime(0, time) — instant, jarring silence"
+      },
+      "event_horizon_use": "The crossing moment: audio crescendo peaks → hard cut to absolute silence for 1.5-2 seconds. This is the single most important audio moment in the experience."
+    },
+    "frequency_masking": {
+      "description": "Louder sounds at similar frequencies mask quieter ones. Important for mix clarity.",
+      "rules": [
+        "Don't layer multiple sounds in the same frequency range at the same time",
+        "Use EQ (BiquadFilterNode) to carve space for each sound",
+        "The sub-bass drone should have no competition — it owns the 20-80Hz range exclusively",
+        "Data sonification tones should occupy a different frequency range than the ambient drone"
+      ]
+    }
+  },
+  "sources": [
+    {"title": "Web Audio API Specification", "author": "W3C", "url": "https://www.w3.org/TR/webaudio/"},
+    {"title": "Web Audio API (MDN)", "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API"},
+    {"title": "Designing Sound", "author": "Andy Farnell", "type": "book"},
+    {"title": "The Audio Programming Book", "author": "Richard Boulanger & Victor Lazzarini", "type": "book"},
+    {"title": "Web Audio API: Advanced Sound for Games and Interactive Apps", "author": "Boris Smus", "type": "book"},
+    {"title": "LIGO Gravitational Wave Sonification", "url": "https://www.ligo.caltech.edu/video/ligo20160211v2"},
+    {"title": "Shepard Tone", "author": "Roger Shepard", "type": "research_paper", "year": 1964},
+    {"title": "AudioWorklet Design Pattern", "author": "Chrome Web Audio Team", "url": "https://developer.chrome.com/blog/audio-worklet-design-pattern/"}
+  ]
+}

@@ -1,0 +1,551 @@
+{
+  "meta": {
+    "title": "Smooth Scroll Implementation Patterns for SOTY Event Horizon",
+    "version": "1.0.0",
+    "author": "Cleanlystudio",
+    "description": "Comprehensive scroll pattern database covering Lenis, GSAP ScrollTrigger, and narrative scroll design"
+  },
+  "lenis": {
+    "description": "Lenis is a lightweight, performant smooth scroll library that normalizes scroll across browsers and devices",
+    "version": "1.2.x",
+    "url": "https://lenis.darkroom.engineering/",
+    "core_concept": "Intercepts native scroll events and applies smoothing (lerp) to create buttery smooth scroll behavior",
+    "configuration": {
+      "basic_setup": {
+        "code": [
+          "import Lenis from 'lenis';",
+          "",
+          "const lenis = new Lenis({",
+          "  duration: 1.2,",
+          "  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),",
+          "  orientation: 'vertical',",
+          "  gestureOrientation: 'vertical',",
+          "  smoothWheel: true,",
+          "  syncTouch: false,",
+          "  touchMultiplier: 2",
+          "});",
+          "",
+          "function raf(time) {",
+          "  lenis.raf(time);",
+          "  requestAnimationFrame(raf);",
+          "}",
+          "requestAnimationFrame(raf);"
+        ]
+      },
+      "parameters": {
+        "duration": {
+          "type": "number",
+          "default": 1.2,
+          "description": "Duration of the smooth scroll animation in seconds",
+          "recommended": {
+            "fast": "0.8 — responsive, minimal smoothing",
+            "balanced": "1.2 — default, good balance",
+            "cinematic": "1.5-2.0 — slow, dreamy, immersive feel",
+            "event_horizon": "1.4 — slightly cinematic but still responsive"
+          }
+        },
+        "easing": {
+          "type": "function",
+          "default": "(t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))",
+          "description": "Easing function for scroll interpolation. Takes progress (0-1), returns eased value.",
+          "alternatives": {
+            "linear": "(t) => t",
+            "ease_out_quint": "(t) => 1 - Math.pow(1 - t, 5)",
+            "ease_out_expo": "(t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t)",
+            "ease_in_out_cubic": "(t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2"
+          }
+        },
+        "lerp": {
+          "type": "number",
+          "range": "0.01 - 1.0",
+          "description": "Linear interpolation factor. Lower = smoother/slower, higher = more responsive. Alternative to duration/easing.",
+          "recommended": {
+            "very_smooth": "0.05",
+            "smooth": "0.1",
+            "responsive": "0.15",
+            "snappy": "0.2"
+          },
+          "note": "Use either duration+easing OR lerp, not both"
+        },
+        "smoothWheel": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable smooth scrolling for mouse wheel events"
+        },
+        "syncTouch": {
+          "type": "boolean",
+          "default": false,
+          "description": "Apply smoothing to touch events. Usually false — touch should feel 1:1.",
+          "event_horizon_recommendation": "false — touch scroll should be direct. Smoothing on touch feels laggy."
+        },
+        "touchMultiplier": {
+          "type": "number",
+          "default": 2,
+          "description": "Multiplier for touch scroll speed. Higher = faster scrolling per swipe.",
+          "range": "1.0-4.0"
+        },
+        "infinite": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable infinite/looping scroll"
+        }
+      }
+    },
+    "gsap_integration": {
+      "description": "Lenis must be connected to GSAP ScrollTrigger for scroll-driven animations to work",
+      "implementation": [
+        "import gsap from 'gsap';",
+        "import { ScrollTrigger } from 'gsap/ScrollTrigger';",
+        "import Lenis from 'lenis';",
+        "",
+        "gsap.registerPlugin(ScrollTrigger);",
+        "",
+        "const lenis = new Lenis();",
+        "",
+        "lenis.on('scroll', ScrollTrigger.update);",
+        "",
+        "gsap.ticker.add((time) => {",
+        "  lenis.raf(time * 1000);",
+        "});",
+        "",
+        "gsap.ticker.lagSmoothing(0);"
+      ],
+      "critical_line": "gsap.ticker.lagSmoothing(0) — disables GSAP's lag smoothing which conflicts with Lenis",
+      "scroller_proxy": {
+        "description": "For advanced setups, use ScrollTrigger.scrollerProxy to connect Lenis as the scroll source",
+        "when_needed": "When using Lenis's wrapper/content pattern instead of native scroll",
+        "implementation": [
+          "ScrollTrigger.scrollerProxy(document.body, {",
+          "  scrollTop(value) {",
+          "    if (arguments.length) {",
+          "      lenis.scrollTo(value, { immediate: true });",
+          "    }",
+          "    return lenis.scroll;",
+          "  },",
+          "  getBoundingClientRect() {",
+          "    return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };",
+          "  }",
+          "});"
+        ]
+      }
+    },
+    "raf_synchronization": {
+      "description": "Lenis must be called in a requestAnimationFrame loop synchronized with the render loop",
+      "patterns": {
+        "standalone": "requestAnimationFrame loop calling lenis.raf(time)",
+        "gsap_ticker": "gsap.ticker.add((time) => lenis.raf(time * 1000)) — synchronized with GSAP's frame loop",
+        "three_js": "Call lenis.raf(time) inside Three.js's animation loop before rendering"
+      },
+      "recommendation": "Use gsap.ticker for single-loop architecture — everything (Lenis, GSAP, Three.js render) in one rAF"
+    },
+    "api": {
+      "scroll_to": {
+        "description": "Programmatically scroll to a position, element, or percentage",
+        "examples": [
+          "lenis.scrollTo(1000) // scroll to 1000px",
+          "lenis.scrollTo('#chapter-3') // scroll to element",
+          "lenis.scrollTo(0.5, { duration: 2 }) // scroll to 50% over 2 seconds",
+          "lenis.scrollTo(0, { immediate: true }) // jump to top instantly"
+        ]
+      },
+      "on_scroll": {
+        "description": "Listen for scroll events",
+        "callback_data": {
+          "scroll": "Current scroll position in pixels",
+          "limit": "Maximum scroll position",
+          "velocity": "Current scroll velocity (pixels per second)",
+          "direction": "1 (down) or -1 (up)",
+          "progress": "Scroll progress from 0 to 1"
+        },
+        "example": "lenis.on('scroll', ({ scroll, limit, velocity, direction, progress }) => { /* update UI */ })"
+      },
+      "stop_start": {
+        "stop": "lenis.stop() — disable scrolling (useful during modals, loading screens)",
+        "start": "lenis.start() — re-enable scrolling"
+      },
+      "destroy": "lenis.destroy() — clean up all event listeners and remove Lenis"
+    },
+    "touch_events": {
+      "description": "Lenis handles touch events for mobile smooth scrolling",
+      "behavior": {
+        "syncTouch_false": "Touch is 1:1 — native feel. Momentum is added after finger lift.",
+        "syncTouch_true": "Touch is smoothed like wheel — can feel sluggish. Not recommended."
+      },
+      "mobile_considerations": [
+        "Mobile users expect 1:1 touch response — any smoothing feels like input lag",
+        "Touch momentum (overscroll after finger lift) should feel natural",
+        "Viewport is smaller — same scroll distance covers more content",
+        "Ensure touchMultiplier is calibrated for your content length"
+      ]
+    },
+    "keyboard_accessibility": {
+      "description": "Lenis respects keyboard navigation (arrow keys, Page Up/Down, Home/End, Space)",
+      "default_behavior": "Arrow keys, Page Up/Down, Home, End, and Space all work with smooth scrolling",
+      "custom": "Can configure keyboard events or add custom key bindings for chapter navigation",
+      "event_horizon_recommendation": "Add arrow key handlers for chapter-by-chapter navigation as an alternative to scroll"
+    },
+    "performance": {
+      "tips": [
+        "Lenis itself is very lightweight (~5KB gzipped)",
+        "The smooth scroll adds no perceptible CPU overhead",
+        "Potential jank comes from WHAT happens during scroll (heavy animations, DOM updates), not from Lenis itself",
+        "On low-end devices, consider disabling smooth scroll entirely: new Lenis({ lerp: 1 }) — instant, no smoothing"
+      ]
+    }
+  },
+  "gsap_scroll_trigger": {
+    "description": "GSAP ScrollTrigger connects animations to scroll position — the industry standard for scroll-driven animation",
+    "version": "3.12+",
+    "url": "https://gsap.com/docs/v3/Plugins/ScrollTrigger/",
+    "core_concepts": {
+      "trigger": "DOM element that defines when the ScrollTrigger activates",
+      "start_end": "Scroll positions (relative to trigger and viewport) that define the active range",
+      "scrub": "Links animation progress directly to scroll position",
+      "pin": "Fixes an element in place while scroll continues",
+      "snap": "Snaps scroll to defined positions"
+    },
+    "pin_behavior": {
+      "description": "Pins an element to the viewport while the user scrolls through a defined scroll distance",
+      "implementation": {
+        "basic_pin": [
+          "ScrollTrigger.create({",
+          "  trigger: '.chapter',",
+          "  start: 'top top',",
+          "  end: '+=3000', // 3000px of scroll while pinned",
+          "  pin: true,",
+          "  scrub: true,",
+          "  animation: chapterTimeline",
+          "});"
+        ]
+      },
+      "how_it_works": "Three.js inserts spacer elements to maintain document flow. The pinned element is fixed in the viewport. Scroll distance between start and end drives the animation.",
+      "pin_spacing": "By default, ScrollTrigger adds equivalent space below the pinned section. Set pinSpacing: false to disable (use when you manually manage layout).",
+      "event_horizon_use": "Each chapter is pinned. Scroll through 3000-5000px per chapter while the WebGL scene animates."
+    },
+    "scrub": {
+      "description": "Links animation progress directly to scroll position",
+      "values": {
+        "true": "Instant — animation progress matches scroll position exactly (can feel jumpy with fast wheel events)",
+        "1": "1 second of catch-up smoothing — animation lags 1 second behind scroll",
+        "0.5": "0.5 second smoothing — responsive but smooth",
+        "2": "2 second smoothing — very smooth but laggy feel"
+      },
+      "recommended": "scrub: 1 for most animations. scrub: 0.5 for time-critical animations. scrub: true only for instant-response needs.",
+      "event_horizon_recommendation": "scrub: 1 — smooth enough for cinematic feel, responsive enough to not feel disconnected"
+    },
+    "snap_points": {
+      "description": "After scroll stops, automatically snap to defined positions (chapter boundaries)",
+      "implementation": {
+        "equal_sections": [
+          "ScrollTrigger.create({",
+          "  snap: {",
+          "    snapTo: 1 / 6, // 7 chapters = 6 snap intervals",
+          "    duration: { min: 0.3, max: 0.6 },",
+          "    ease: 'power2.inOut',",
+          "    delay: 0.1 // wait 100ms after scroll stops before snapping",
+          "  }",
+          "});"
+        ],
+        "custom_positions": [
+          "ScrollTrigger.create({",
+          "  snap: {",
+          "    snapTo: [0, 0.15, 0.30, 0.50, 0.70, 0.85, 1.0], // custom chapter positions",
+          "    duration: 0.5,",
+          "    ease: 'power2.inOut'",
+          "  }",
+          "});"
+        ],
+        "function_based": [
+          "ScrollTrigger.create({",
+          "  snap: {",
+          "    snapTo: (progress, self) => {",
+          "      // Custom logic to find nearest snap point",
+          "      const points = [0, 0.15, 0.30, 0.50, 0.70, 0.85, 1.0];",
+          "      return points.reduce((a, b) => Math.abs(b - progress) < Math.abs(a - progress) ? b : a);",
+          "    }",
+          "  }",
+          "});"
+        ]
+      },
+      "delay": "Snap delay prevents snapping during active scrolling. 0.1-0.3s is typical.",
+      "event_horizon_recommendation": "Snap to chapter boundaries. Duration 0.4-0.6s. Delay 0.15s. This creates a 'chapter book' feel."
+    },
+    "markers": {
+      "description": "Visual debug markers showing trigger positions",
+      "usage": "markers: true in ScrollTrigger config — shows colored lines in the viewport",
+      "colors": {
+        "green": "Start position (trigger element)",
+        "red": "End position (trigger element)",
+        "white": "Start position (viewport/scroller)",
+        "white_dashed": "End position (viewport/scroller)"
+      },
+      "production": "ALWAYS remove markers: true before production. It's a debug-only feature."
+    },
+    "batch_animations": {
+      "description": "ScrollTrigger.batch() creates ScrollTriggers for multiple elements efficiently",
+      "use_case": "Animating a list of items as they scroll into view with stagger",
+      "implementation": [
+        "ScrollTrigger.batch('.data-point', {",
+        "  onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, stagger: 0.1, duration: 0.5 }),",
+        "  onLeave: (batch) => gsap.to(batch, { opacity: 0 }),",
+        "  start: 'top 80%'",
+        "});"
+      ]
+    },
+    "toggle_actions": {
+      "description": "Define what happens at each trigger boundary: onEnter, onLeave, onEnterBack, onLeaveBack",
+      "format": "toggleActions: 'play pause resume reverse'",
+      "common_patterns": {
+        "play_once": "toggleActions: 'play none none none' — plays on enter, never resets",
+        "play_reverse": "toggleActions: 'play none none reverse' — plays on enter, reverses on scroll back",
+        "play_pause": "toggleActions: 'play pause resume pause' — plays/pauses based on visibility",
+        "restart_always": "toggleActions: 'restart none none reverse' — always restart on re-enter"
+      }
+    },
+    "best_practices": [
+      "Limit to 50 ScrollTriggers maximum — beyond this, the per-frame calculation overhead causes jank",
+      "Use batch() for repetitive element animations instead of individual ScrollTriggers",
+      "Invalidate ScrollTriggers on resize: ScrollTrigger.addEventListener('refreshInit', callback)",
+      "Use will-change: transform on pinned and animated elements",
+      "Avoid layout reads (getBoundingClientRect, offsetHeight) inside onUpdate callbacks",
+      "Use ScrollTrigger.refresh() after dynamically adding/removing content",
+      "For long pages, use lazy initialization — create ScrollTriggers only for nearby sections"
+    ],
+    "performance_pitfalls": {
+      "too_many_triggers": {
+        "problem": "> 50 ScrollTriggers causes per-frame overhead",
+        "solution": "Consolidate into fewer, larger ScrollTriggers. Use timeline sub-animations within a single trigger."
+      },
+      "heavy_on_update": {
+        "problem": "Complex computations in onUpdate callback run every frame",
+        "solution": "Minimize onUpdate logic. Pre-compute values. Use GSAP tweens instead of manual updates."
+      },
+      "layout_thrashing": {
+        "problem": "Reading DOM dimensions (offsetHeight, getBoundingClientRect) in scroll callbacks causes forced reflow",
+        "solution": "Cache dimensions on init and resize. Never read layout during scroll."
+      },
+      "scroll_linked_loading": {
+        "problem": "Loading images/assets on scroll causes jank and layout shifts",
+        "solution": "Preload all assets before the experience starts. Use loading screen."
+      },
+      "pinned_memory": {
+        "problem": "Many pinned elements can consume memory (pinned elements + spacers + duplicates)",
+        "solution": "Limit pinned elements to what's visible. Kill/recreate pins for off-screen sections."
+      }
+    }
+  },
+  "scroll_driven_narrative_patterns": {
+    "long_page_scrollytelling": {
+      "description": "The entire narrative exists on a single long page, revealed through scrolling",
+      "architecture": {
+        "total_height": "5000-20000vh equivalent (with pinned sections)",
+        "chapter_height": "300-500vh per chapter (pinned, so scroll distance not actual DOM height)",
+        "transition_zones": "50-100vh between chapters for visual transitions",
+        "padding": "10-20vh of 'breathing room' at start and end"
+      },
+      "advantages": [
+        "Continuous experience — no page loads, no jumps",
+        "Scroll provides natural pacing control (user sets their own speed)",
+        "Easy to track progress (single scroll position)",
+        "Works well with GSAP ScrollTrigger"
+      ],
+      "disadvantages": [
+        "Very long DOM can cause memory issues",
+        "Users may feel overwhelmed by the length",
+        "Hard to link to specific points within the experience"
+      ]
+    },
+    "sticky_elements_with_changing_content": {
+      "description": "Fixed visual container with content that changes as the user scrolls",
+      "pattern": "WebGL canvas is position: fixed. HTML text overlays change based on scroll position.",
+      "implementation": {
+        "canvas": "position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;",
+        "text_overlay": "position: fixed; z-index: 1; pointer-events: none;",
+        "scroll_driver": "A tall empty div provides the scrollable area. Its height = total scroll distance needed."
+      },
+      "event_horizon_application": "The WebGL black hole scene is always visible (fixed). Text and HUD elements overlay on top and change with scroll."
+    },
+    "progress_based_animations": {
+      "description": "Map scroll progress (0 to 1) to any visual property",
+      "mapping_function": "value = startValue + (endValue - startValue) * easedProgress",
+      "examples": [
+        {"property": "Camera zoom", "start": 1.0, "end": 10.0, "description": "Approach the black hole"},
+        {"property": "Black hole scale", "start": 0.1, "end": 5.0, "description": "Black hole grows in viewport"},
+        {"property": "Audio volume", "start": 0.0, "end": 1.0, "description": "Sound fades in"},
+        {"property": "Particle count", "start": 100, "end": 10000, "description": "Density increases near event horizon"},
+        {"property": "Post-processing intensity", "start": 0.0, "end": 1.0, "description": "Effects build to climax"},
+        {"property": "Accretion disk hue", "start": 0.08, "end": 0.0, "description": "Orange to red as temperature rises"},
+        {"property": "Text opacity", "start": 0.0, "end": 1.0, "description": "Text fades in at chapter start"}
+      ],
+      "implementation_with_gsap": [
+        "gsap.to(blackHole, {",
+        "  scale: 5.0,",
+        "  scrollTrigger: {",
+        "    trigger: '.approach-section',",
+        "    start: 'top top',",
+        "    end: 'bottom bottom',",
+        "    scrub: 1",
+        "  }",
+        "});"
+      ]
+    },
+    "chapter_based_navigation": {
+      "description": "Divide the experience into discrete chapters with visual navigation indicators",
+      "ui_patterns": {
+        "dot_navigation": {
+          "description": "Vertical dots on the side of the screen, one per chapter",
+          "position": "Right side, vertically centered",
+          "behavior": "Active dot highlights current chapter. Click dot to scroll to that chapter.",
+          "styling": "Small (8-12px), subtle when inactive, bright when active",
+          "accessibility": "aria-label on each dot, keyboard focusable, role='navigation'"
+        },
+        "progress_bar": {
+          "description": "Thin horizontal or vertical bar showing scroll progress",
+          "position": "Top of viewport (horizontal) or right edge (vertical)",
+          "behavior": "Fills based on scroll position. May show chapter marks.",
+          "styling": "2-3px height, accent color (cyan), on dark background"
+        },
+        "chapter_counter": {
+          "description": "Text showing 'Chapter 3 of 7' or '03/07'",
+          "position": "Top-left or bottom-left corner",
+          "behavior": "Updates as chapters change. Optional chapter title.",
+          "styling": "JetBrains Mono, small (12-14px), muted color"
+        }
+      },
+      "keyboard_navigation": {
+        "arrow_down_or_right": "Next chapter",
+        "arrow_up_or_left": "Previous chapter",
+        "home": "First chapter",
+        "end": "Last chapter",
+        "number_keys": "Jump to chapter N"
+      }
+    },
+    "reduced_motion": {
+      "description": "Respect prefers-reduced-motion media query for users with vestibular disorders",
+      "detection": "const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches",
+      "implementation": [
+        "If reduced motion: disable smooth scroll (use instant scroll)",
+        "Reduce or eliminate parallax effects",
+        "Disable continuous animations (particle orbits, background drift)",
+        "Keep essential animations but remove decorative ones",
+        "Reduce animation durations by 50-70%",
+        "Provide a 'Skip animations' option in the UI"
+      ],
+      "gsap_integration": "ScrollTrigger.config({ limitCallbacks: true }) and reduce scrub smoothing to 0 (instant)",
+      "critical": "Awwwards judges test accessibility. Reduced motion support is expected for SOTY nominees."
+    },
+    "mobile_scroll_considerations": {
+      "viewport_size": {
+        "impact": "Mobile viewport is ~40% of desktop height. Same content requires 2.5x more scrolling.",
+        "solution": "Reduce content per chapter on mobile. Show less text, fewer data points."
+      },
+      "scroll_velocity": {
+        "impact": "Mobile scroll velocity is typically 2-3x higher than desktop (flick gestures)",
+        "solution": "Use Lenis touchMultiplier to calibrate. Content transitions should be speed-aware."
+      },
+      "overscroll_behavior": {
+        "impact": "iOS and Android have different overscroll (bounce/glow) behaviors that can interfere",
+        "solution": "CSS: overscroll-behavior: none; on html/body to prevent browser overscroll effects"
+      },
+      "address_bar": {
+        "impact": "Mobile browsers show/hide the address bar during scroll, changing viewport height",
+        "solution": "Use CSS: height: 100dvh (dynamic viewport height) instead of 100vh. Or use window.visualViewport API."
+      },
+      "performance": {
+        "impact": "Mobile GPUs are 5-10x weaker than desktop. Heavy scroll callbacks cause frame drops.",
+        "solution": "Reduce ScrollTrigger count on mobile. Simplify animations. Lower render resolution."
+      }
+    }
+  },
+  "single_loop_architecture": {
+    "description": "Run everything in a single requestAnimationFrame loop for synchronization",
+    "pattern": [
+      "// Single loop that runs everything in sync",
+      "function animate(time) {",
+      "  // 1. Update smooth scroll",
+      "  lenis.raf(time);",
+      "  ",
+      "  // 2. Update GSAP (ScrollTrigger, tweens)",
+      "  // Handled automatically by gsap.ticker",
+      "  ",
+      "  // 3. Update GPGPU simulation",
+      "  gpuCompute.compute();",
+      "  ",
+      "  // 4. Update audio parameters based on scroll",
+      "  updateAudio(lenis.progress);",
+      "  ",
+      "  // 5. Render Three.js scene",
+      "  renderer.render(scene, camera);",
+      "  ",
+      "  // 6. Post-processing",
+      "  composer.render();",
+      "  ",
+      "  requestAnimationFrame(animate);",
+      "}",
+      "requestAnimationFrame(animate);"
+    ],
+    "why_single_loop": [
+      "Multiple rAF callbacks can execute in different order between frames",
+      "Synchronization prevents visual tearing (scroll position updates in one frame, visuals in the next)",
+      "Easier to debug and profile (one stack trace per frame)",
+      "GSAP ticker is the natural hub — Lenis and Three.js rendering can be added to it"
+    ],
+    "gsap_ticker_integration": [
+      "gsap.ticker.add((time) => {",
+      "  lenis.raf(time * 1000);",
+      "  updateGPGPU();",
+      "  updateAudio();",
+      "  renderer.render(scene, camera);",
+      "});",
+      "gsap.ticker.lagSmoothing(0);"
+    ]
+  },
+  "scroll_performance_profiling": {
+    "metrics_to_monitor": [
+      {"metric": "Frame time", "target": "< 16.67ms", "tool": "performance.now() delta per frame"},
+      {"metric": "Scroll event latency", "target": "< 4ms", "tool": "Chrome DevTools Interactions track"},
+      {"metric": "Layout shifts", "target": "0", "tool": "PerformanceObserver for layout-shift entries"},
+      {"metric": "Long tasks", "target": "0 during scroll", "tool": "PerformanceObserver for longtask entries"},
+      {"metric": "GPU frame time", "target": "< 12ms", "tool": "Chrome DevTools GPU track"},
+      {"metric": "ScrollTrigger refresh time", "target": "< 50ms", "tool": "Measure ScrollTrigger.refresh() duration"}
+    ],
+    "common_scroll_jank_causes": [
+      {
+        "cause": "Heavy onUpdate callbacks",
+        "detection": "Long task markers during scroll in DevTools Performance panel",
+        "fix": "Move computation to GSAP tweens. Cache values. Debounce if non-visual."
+      },
+      {
+        "cause": "DOM layout reads during scroll",
+        "detection": "Forced reflow markers (purple blocks) in DevTools",
+        "fix": "Cache all dimensions on init and resize. Never read layout during scroll."
+      },
+      {
+        "cause": "Non-composited animations during scroll",
+        "detection": "Paint regions (green overlay in DevTools) appearing during scroll",
+        "fix": "Animate only transform and opacity. Add will-change: transform."
+      },
+      {
+        "cause": "Too many scroll event listeners",
+        "detection": "Multiple event handlers in Chrome DevTools Event Listeners panel",
+        "fix": "Consolidate into one handler or use passive: true. Let Lenis handle scroll normalization."
+      },
+      {
+        "cause": "WebGL render time exceeds frame budget",
+        "detection": "GPU time > 12ms in Performance panel",
+        "fix": "Reduce draw calls, simplify shaders, lower resolution. See webgl-best-practices.json."
+      }
+    ]
+  },
+  "sources": [
+    {"title": "Lenis Documentation", "url": "https://lenis.darkroom.engineering/"},
+    {"title": "GSAP ScrollTrigger Documentation", "url": "https://gsap.com/docs/v3/Plugins/ScrollTrigger/"},
+    {"title": "Scroll-driven Animations (CSS)", "url": "https://developer.chrome.com/articles/scroll-driven-animations/"},
+    {"title": "Performant Scroll Animations", "author": "Paul Lewis", "type": "article"},
+    {"title": "The Lean Web", "author": "Chris Ferdinandi", "type": "book"},
+    {"title": "Locomotive Scroll (predecessor to Lenis)", "url": "https://locomotivemtl.github.io/locomotive-scroll/"},
+    {"title": "Building a Scrollytelling Experience", "author": "Pudding.cool", "type": "methodology"},
+    {"title": "prefers-reduced-motion: Taking a no-motion-first approach", "author": "Tatiana Mac", "type": "article"},
+    {"title": "100vh on Mobile: The Lie We Tell", "author": "CSS-Tricks", "type": "article"}
+  ]
+}

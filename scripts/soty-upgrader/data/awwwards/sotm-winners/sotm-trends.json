@@ -1,0 +1,438 @@
+{
+  "meta": {
+    "file": "sotm-trends.json",
+    "description": "Meta-analysis of SOTM trends across 2023-2025 — technology, design, interaction, sound, performance, mobile",
+    "lastUpdated": "2026-03-09",
+    "version": "1.0.0"
+  },
+  "technologyTrends": {
+    "frameworks": {
+      "rendering": [
+        {
+          "name": "Three.js",
+          "status": "Dominant",
+          "marketShare": "85-90% of WebGL award winners",
+          "trend": "Stable — mature, well-documented, huge community",
+          "strengths": ["Ecosystem", "Documentation", "Community", "Plugin availability"],
+          "weaknesses": ["Bundle size", "Abstraction overhead vs raw WebGL", "Not optimized for WebGPU yet"],
+          "verdict": "Safe, respected choice. Won't lose points but won't gain 'innovative framework' points either."
+        },
+        {
+          "name": "React Three Fiber (R3F)",
+          "status": "Growing",
+          "marketShare": "15-20% of Three.js projects in awards",
+          "trend": "Rising among React-based teams",
+          "strengths": ["React integration", "Declarative 3D", "drei helpers"],
+          "weaknesses": ["React overhead", "Abstraction from raw Three.js", "Less control for custom shaders"],
+          "verdict": "Valid for portfolio sites, but SOTY winners tend to use vanilla Three.js for maximum control."
+        },
+        {
+          "name": "Custom WebGL / WebGPU engines",
+          "status": "Elite tier",
+          "marketShare": "5% of award winners (Active Theory, Resn)",
+          "trend": "Rare but highly respected",
+          "strengths": ["Maximum performance", "Zero overhead", "Full control"],
+          "weaknesses": ["Massive development time", "No community support", "Maintenance burden"],
+          "verdict": "Signals the highest technical capability. Developer Award territory."
+        }
+      ],
+      "uiFrameworks": [
+        {
+          "name": "Svelte / SvelteKit",
+          "status": "Rising star for creative web",
+          "marketShare": "25-30% of 2024-2025 award winners",
+          "trend": "Strong upward — Igloo SOTY used it",
+          "strengths": ["Tiny runtime", "Compile-time optimization", "Reactive without virtual DOM"],
+          "verdict": "Currently the 'smart' choice for creative developers. Signals technical awareness."
+        },
+        {
+          "name": "Next.js (React)",
+          "status": "Still dominant overall but declining for creative sites",
+          "marketShare": "40-50% of all award winners, declining for creative/immersive",
+          "trend": "Stable for e-commerce/portfolio, declining for immersive",
+          "strengths": ["SSR/SSG", "Vercel deployment", "Ecosystem"],
+          "verdict": "Won't lose points but increasingly seen as 'default' rather than 'chosen'."
+        },
+        {
+          "name": "Nuxt.js (Vue)",
+          "status": "Niche but loyal",
+          "marketShare": "10-15% of award winners",
+          "trend": "Stable",
+          "strengths": ["Vue ecosystem", "French community strong"],
+          "verdict": "Valid choice, especially for French agencies."
+        },
+        {
+          "name": "Astro",
+          "status": "Growing for content-heavy sites",
+          "marketShare": "5-8% of award winners",
+          "trend": "Rising for portfolio and content sites",
+          "strengths": ["Islands architecture", "Zero JS by default", "Multi-framework support"],
+          "verdict": "Excellent for content + WebGL islands approach."
+        }
+      ],
+      "animationLibraries": [
+        {
+          "name": "GSAP 3 + ScrollTrigger",
+          "status": "Industry standard",
+          "marketShare": "70%+ of award winners",
+          "trend": "Stable",
+          "verdict": "Expected. Not using GSAP is a statement."
+        },
+        {
+          "name": "Framer Motion",
+          "status": "React-specific standard",
+          "marketShare": "30% of React-based winners",
+          "trend": "Stable within React ecosystem",
+          "verdict": "Good for React, but GSAP is more flexible for WebGL integration."
+        },
+        {
+          "name": "Custom animation systems",
+          "status": "Elite tier",
+          "marketShare": "10% — usually SOTY winners",
+          "trend": "Respected",
+          "verdict": "Building custom animation = Developer Award signal."
+        }
+      ],
+      "scrollLibraries": [
+        {
+          "name": "Lenis",
+          "status": "Current standard (2024-2025)",
+          "marketShare": "50%+ of new award submissions",
+          "trend": "Dominant",
+          "verdict": "The safe, excellent choice for 2025."
+        },
+        {
+          "name": "Locomotive Scroll v5",
+          "status": "Just launched, high potential",
+          "marketShare": "5-10% (new)",
+          "trend": "Rising",
+          "verdict": "Using v5 early signals awareness and Locomotive connection."
+        },
+        {
+          "name": "GSAP ScrollSmoother",
+          "status": "Solid alternative",
+          "marketShare": "20%",
+          "trend": "Stable",
+          "verdict": "Good integration with GSAP ecosystem."
+        },
+        {
+          "name": "Custom scroll physics",
+          "status": "Elite tier",
+          "marketShare": "5%",
+          "trend": "Growing interest",
+          "verdict": "Event Horizon opportunity: gravitational scroll physics."
+        }
+      ]
+    },
+    "emergingTech": [
+      {
+        "tech": "WebGPU",
+        "readiness": "Chrome stable, Firefox/Safari behind",
+        "opportunity": "Compute shaders, better particle systems, potential AI integration",
+        "risk": "Browser support gaps require WebGL 2.0 fallback",
+        "recommendation": "Use WebGPU with WebGL 2.0 fallback. The WebGPU path is the 'wow' for cutting-edge judges."
+      },
+      {
+        "tech": "WebXR / Spatial computing",
+        "readiness": "Vision Pro, Quest — still niche for web",
+        "opportunity": "Differentiator if jury members have spatial devices",
+        "risk": "Most jury evaluates on desktop/mobile — VR is bonus, not core",
+        "recommendation": "Nice-to-have, not critical for Event Horizon."
+      },
+      {
+        "tech": "WebTransport / WebCodecs",
+        "readiness": "Growing support",
+        "opportunity": "Low-latency streaming, real-time video processing",
+        "risk": "Limited relevance for Event Horizon's use case",
+        "recommendation": "Not relevant unless streaming live telescope data."
+      }
+    ]
+  },
+  "designTrends": {
+    "colorPalettes": {
+      "in": [
+        {
+          "name": "Deep space",
+          "colors": ["#0A0A14", "#0D1117", "#161B22"],
+          "description": "Near-black backgrounds with subtle blue/purple undertones",
+          "prevalence": "40% of 2024-2025 winners"
+        },
+        {
+          "name": "Warm monochrome",
+          "colors": ["#F5F0E8", "#E8E0D0", "#1A1A1A"],
+          "description": "Cream/beige with black text — editorial, elegant",
+          "prevalence": "25% of 2024-2025 winners"
+        },
+        {
+          "name": "Neon accent on dark",
+          "colors": ["#0A0A0A", "#E8FF00", "#FF3366", "#00FFD4"],
+          "description": "Dark base with single vibrant accent color",
+          "prevalence": "20% of 2024-2025 winners"
+        },
+        {
+          "name": "Atmospheric gradient",
+          "colors": "Dynamic gradients that shift based on scroll/interaction",
+          "description": "No flat colors — everything is gradient and atmosphere",
+          "prevalence": "15% of 2024-2025 winners"
+        }
+      ],
+      "out": [
+        "Bright, multicolor palettes (2018-2020 era)",
+        "Flat material design colors",
+        "Pastel everything (2021-2022 peak)",
+        "Neon-on-neon (overdone)"
+      ],
+      "eventHorizonFit": "Deep space palette is perfect. Black hole = deep black void, accretion disk = warm orange/red/white gradient, gravitational lensing = blue-shifted light on approach side. The color palette IS the astrophysics."
+    },
+    "typographyTrends": {
+      "in": [
+        "Variable fonts with animated weight/width",
+        "Custom/exclusive typefaces (not Google Fonts)",
+        "Extreme scale contrasts (200px headlines, 14px body)",
+        "3D/dimensional typography",
+        "Typography as hero element (not just support)",
+        "Monospace for data/technical content",
+        "Sans-serif dominance for headlines, serif for body (reversal from 2022)"
+      ],
+      "out": [
+        "Decorative script fonts",
+        "Ultra-thin weights for body text (readability issues)",
+        "Google Fonts defaults (Inter, Roboto — too common)",
+        "Justified text (alignment issues)"
+      ],
+      "eventHorizonRecommendation": "Use a custom or premium typeface. Monospace for scientific data (coordinates, measurements). Variable font for the main headline — weight animation as gravity increases."
+    },
+    "layoutTrends": {
+      "in": [
+        "Full-viewport immersive sections",
+        "Asymmetric layouts with intentional tension",
+        "Scroll-triggered layout shifts",
+        "Overlapping elements with z-depth",
+        "Minimal navigation chrome — content IS the navigation",
+        "Horizontal scroll sections within vertical flow"
+      ],
+      "out": [
+        "Traditional grid layouts (boring for awards)",
+        "Sticky sidebars",
+        "Card-based grids (too common)",
+        "Heavy footer designs"
+      ]
+    }
+  },
+  "interactionTrends": {
+    "scrollInteraction": {
+      "in": [
+        "Physics-based scroll momentum (spring, damping)",
+        "Scroll-driven animations via ScrollTimeline API (native browser)",
+        "Scroll velocity affecting visual intensity",
+        "Parallax with depth-correct layering",
+        "Horizontal scroll sections with snap points"
+      ],
+      "out": [
+        "Simple parallax (too basic)",
+        "Fully hijacked scroll without escape (frustrating)",
+        "Scroll-triggered reveal-only animations (entrance animations without substance)"
+      ],
+      "evolving": "Jury becoming more accepting of native scroll behavior — hijacking must be justified by the experience. Offering an 'accessible mode' with native scroll is increasingly valued."
+    },
+    "cursorInteraction": {
+      "in": [
+        "Custom cursor that reflects site personality",
+        "Cursor as physics object (mass, velocity, collision)",
+        "Magnetic snap to interactive elements",
+        "Cursor proximity effects on 3D elements",
+        "Trail effects with particle systems"
+      ],
+      "out": [
+        "Giant circle cursor (overdone 2019-2022)",
+        "Cursor blend mode effects (overdone)",
+        "Cursor that obscures content"
+      ],
+      "eventHorizonIdea": "Cursor as gravitational source — particles near cursor deflect. Near the black hole, cursor itself is pulled toward the singularity (magnetic attraction to the center). Cursor trail becomes spaghettified near event horizon."
+    },
+    "gestureInteraction": {
+      "in": [
+        "Device motion (accelerometer/gyroscope) for 3D views",
+        "Pinch-to-zoom on 3D objects (mobile)",
+        "Swipe gestures for section navigation",
+        "Long press for detail reveals"
+      ],
+      "emerging": [
+        "Voice interaction for accessibility",
+        "Eye tracking (limited browser support)",
+        "Haptic feedback via Vibration API"
+      ]
+    }
+  },
+  "soundTrends": {
+    "status": "Increasingly expected for immersive experiences. 4 out of 5 recent SOTY winners had sound.",
+    "in": [
+      "Spatial audio (Web Audio API with panning)",
+      "Procedural/generative audio (not just loops)",
+      "Sound synchronized with scroll position",
+      "Interaction-triggered sound effects (click, hover)",
+      "Ambient soundscape that evolves with user progress",
+      "Muted by default with elegant enable prompt",
+      "Audio reactive to visual state (louder when more happening visually)"
+    ],
+    "out": [
+      "Background music loop (lazy)",
+      "Autoplay with sound (frustrating)",
+      "Stock music (detectable, unoriginal)",
+      "Sound that doesn't match the visual mood",
+      "Overly loud/aggressive audio"
+    ],
+    "bestPractices": [
+      "Always mute by default — respect user agency",
+      "Elegant sound enable prompt (not a browser default dialog)",
+      "Sound enhances, never competes with visual",
+      "Spatial positioning matches visual positioning",
+      "Volume responds to interaction intensity",
+      "Provide easy mute toggle throughout experience",
+      "Consider reduced-motion users — sound-only experience option?"
+    ],
+    "eventHorizonSoundDesign": {
+      "concept": "The sound of gravity",
+      "layers": [
+        {
+          "layer": "Cosmic silence",
+          "when": "Opening — deep space",
+          "sound": "Near-silence with ultra-subtle high-frequency hiss (cosmic microwave background)",
+          "implementation": "White noise generator with extreme high-pass filter, very low volume"
+        },
+        {
+          "layer": "Gravitational hum",
+          "when": "Black hole first visible",
+          "sound": "Deep, low-frequency oscillation — like a heartbeat of spacetime",
+          "implementation": "Oscillator at 20-40Hz with slow LFO modulation, amplitude tied to visual proximity"
+        },
+        {
+          "layer": "Accretion disk",
+          "when": "Approaching the black hole",
+          "sound": "Swirling, granular texture — heated matter orbiting",
+          "implementation": "Granular synthesis with spatial panning following disk rotation"
+        },
+        {
+          "layer": "Particle interactions",
+          "when": "N-body particles visible",
+          "sound": "Subtle pings and resonances as particles orbit and collide",
+          "implementation": "Procedural: each particle collision triggers a short sine burst, pitch based on velocity"
+        },
+        {
+          "layer": "Time dilation",
+          "when": "Near event horizon",
+          "sound": "All previous sounds pitch-shifted downward, time-stretched, increasingly distorted",
+          "implementation": "Real-time pitch shifting via Web Audio API playbackRate, convolution reverb increasing"
+        },
+        {
+          "layer": "Event horizon crossing",
+          "when": "The moment of crossing",
+          "sound": "Overwhelming bass drop → sudden silence → inverted audio (reversed sounds)",
+          "implementation": "Compressor with extreme ratio, then gain to zero, then reversed buffer playback"
+        },
+        {
+          "layer": "Inside the black hole",
+          "when": "Post-event horizon",
+          "sound": "Inverted, alien audio landscape — familiar sounds playing backwards, information paradox as audio",
+          "implementation": "Reverse all audio buffers, add heavy convolution reverb, introduce Hawking radiation as high-freq digital noise"
+        }
+      ]
+    }
+  },
+  "performanceExpectations": {
+    "evolution": {
+      "2020": "60fps on desktop was impressive. Mobile could be 30fps.",
+      "2022": "60fps on desktop expected. Mobile 30fps minimum.",
+      "2024": "60fps on desktop mandatory. Mobile 30fps minimum, 60fps preferred. Adaptive quality expected.",
+      "2025": "60fps everywhere or adaptive system that maintains perceived smoothness. Performance monitoring visible to judges."
+    },
+    "currentExpectations": {
+      "desktop": {
+        "targetFPS": 60,
+        "loadTime": "Under 3 seconds to first meaningful paint",
+        "totalWeight": "Under 20MB progressive",
+        "adaptiveQuality": "Expected for heavy WebGL sites"
+      },
+      "mobile": {
+        "targetFPS": "30 minimum, 60 preferred",
+        "loadTime": "Under 5 seconds to first meaningful paint",
+        "totalWeight": "Under 10MB",
+        "adaptiveQuality": "Mandatory — mobile GPU variance is extreme"
+      },
+      "lowEndDevices": {
+        "expectation": "Graceful degradation — beautiful static or minimal animation fallback",
+        "notAcceptable": "Broken experience, crashes, blank screen"
+      }
+    },
+    "performanceAsJudgingCriteria": "Jury members test on their own devices. If it's choppy on a 2-year-old MacBook Pro, it will score lower. Mid-range hardware is the real target, not high-end gaming PCs."
+  },
+  "mobileStrategyEvolution": {
+    "evolution": {
+      "2018": "Mobile was optional for WebGL sites",
+      "2020": "Mobile expected but could be simplified significantly",
+      "2022": "Mobile must maintain the essence of the desktop experience",
+      "2024": "Mobile is evaluated as seriously as desktop. ~40% of jury tests on mobile.",
+      "2025": "Mobile-first thinking even for desktop-primary experiences. The mobile experience must stand on its own."
+    },
+    "currentBestPractices": [
+      "Design mobile experience independently, not as a responsive squish",
+      "Touch interaction model designed specifically (not just 'hover → tap')",
+      "Performance budget: mobile gets its own quality tier",
+      "Native scroll on mobile (smooth scroll libraries often worse than native on mobile)",
+      "Orientation awareness — portrait vs landscape can offer different views",
+      "Reduced particle counts, simplified shaders, lower resolution textures on mobile",
+      "Battery-aware: reduce animation intensity when battery is low",
+      "Network-aware: detect connection speed and adjust asset quality"
+    ],
+    "eventHorizonMobileStrategy": {
+      "recommendation": "Dedicated mobile experience",
+      "approach": [
+        "Simplified black hole: mesh-based sphere with custom shader instead of raymarching (much cheaper)",
+        "Fewer GPGPU particles: 1000-5000 instead of 50000+",
+        "Touch interaction: tilt device to orbit, scroll to approach",
+        "Native scroll with scroll-triggered animations (no hijacking)",
+        "Reduced post-processing: no bloom, simplified grain",
+        "Prefers-reduced-motion: static image with scroll-reveal content",
+        "Portrait orientation optimized (95%+ of mobile users in portrait)"
+      ]
+    }
+  },
+  "whatsInWhatsOut": {
+    "definitelyIn": [
+      "Custom GLSL shaders with visible artistic purpose",
+      "Physics-based interactions (not just easing curves)",
+      "Sound design synchronized with visuals",
+      "Dark themes with atmospheric lighting",
+      "Variable/premium typography",
+      "Svelte or minimal framework footprint",
+      "Lenis or custom scroll physics",
+      "Houdini-to-web pipeline",
+      "Adaptive performance (frame budget monitoring)",
+      "Meaningful content (not just tech demos)",
+      "Accessibility considerations",
+      "Technical documentation/writeup"
+    ],
+    "definitelyOut": [
+      "Generic Three.js demos without narrative",
+      "Autoplay sound",
+      "Desktop-only experiences",
+      "Slow loading without engagement",
+      "Gratuitous effects without purpose",
+      "Copy-paste scroll reveal animations",
+      "Giant circle cursors",
+      "Blend mode cursor effects",
+      "Google Fonts defaults",
+      "Card-based layouts",
+      "Console.log statements left in production",
+      "Broken mobile experience"
+    ],
+    "riskZone": [
+      "Full scroll hijacking (acceptable if justified, risky if not)",
+      "Full WebGL UI (impressive but accessibility concerns)",
+      "WebGPU-only (impressive but browser support issues)",
+      "Very long experiences (>5 minutes — jury attention span)",
+      "AI-generated content (novel but potentially gimmicky)",
+      "Crypto/blockchain themes (polarizing)"
+    ]
+  }
+}

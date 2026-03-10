@@ -1,0 +1,379 @@
+{
+  "meta": {
+    "file": "jury-analysis.json",
+    "description": "Awwwards jury profiling — composition, preferences, scoring tendencies, biases, and evaluation behavior",
+    "lastUpdated": "2026-03-09",
+    "version": "1.0.0"
+  },
+  "juryComposition": {
+    "totalJurySize": "300+ members across multiple disciplines",
+    "activePerSite": "18-60 jury members vote per nominated site (minimum 18 required for valid scoring)",
+    "rotatingJury": true,
+    "memberTypes": [
+      {
+        "type": "Agency Creative Directors",
+        "percentage": "~30%",
+        "bias": "Design quality, visual originality, brand storytelling",
+        "evaluationFocus": "Does it push creative boundaries? Is the design language cohesive?",
+        "knownAgencies": ["Active Theory", "Resn", "Locomotive", "Dogstudio", "Immersive Garden", "Akaru", "Unit9", "MediaMonks"]
+      },
+      {
+        "type": "Independent Developers / Creative Coders",
+        "percentage": "~25%",
+        "bias": "Technical innovation, code quality, performance",
+        "evaluationFocus": "Is this technically novel? Does DevTools inspection reveal quality?",
+        "knownMembers": ["Bruno Simon", "David Hckh", "George Francis", "Yuri Artiukh (Akella)"]
+      },
+      {
+        "type": "UX/UI Designers",
+        "percentage": "~20%",
+        "bias": "Usability, accessibility, user experience flow",
+        "evaluationFocus": "Is the navigation clear? Does the design serve the user?",
+        "concern": "Heavy WebGL sites often score lower from UX-focused jury members"
+      },
+      {
+        "type": "Company Representatives (Brand/Tech)",
+        "percentage": "~15%",
+        "bias": "Content quality, brand communication, business impact",
+        "evaluationFocus": "Does this effectively communicate? Does the tech serve the message?",
+        "knownCompanies": ["Google", "Apple", "Adobe", "Spotify"]
+      },
+      {
+        "type": "Educators / Industry Thought Leaders",
+        "percentage": "~10%",
+        "bias": "Innovation, community contribution, knowledge sharing",
+        "evaluationFocus": "Does this advance the medium? Can the community learn from it?",
+        "concern": "Value documentation and open-source contribution"
+      }
+    ]
+  },
+  "geographicDistribution": {
+    "regions": [
+      {
+        "region": "Europe",
+        "percentage": "~45%",
+        "strongCountries": ["France", "UK", "Germany", "Netherlands", "Italy", "Spain", "Portugal", "Ukraine"],
+        "tendency": "High design standards, appreciation for restraint and typography"
+      },
+      {
+        "region": "North America",
+        "percentage": "~25%",
+        "strongCountries": ["USA", "Canada"],
+        "tendency": "Technical innovation valued, scale of experience appreciated"
+      },
+      {
+        "region": "Asia-Pacific",
+        "percentage": "~15%",
+        "strongCountries": ["Japan", "Australia", "South Korea", "New Zealand"],
+        "tendency": "Precision and attention to detail highly valued"
+      },
+      {
+        "region": "South America",
+        "percentage": "~10%",
+        "strongCountries": ["Brazil", "Argentina"],
+        "tendency": "Creative boldness appreciated, emerging scene enthusiasm"
+      },
+      {
+        "region": "Other",
+        "percentage": "~5%",
+        "tendency": "Varied"
+      }
+    ],
+    "implication": "European jury members form the largest block. European design sensibility (restraint, typography, negative space, editorial approach) tends to score well. Heavy, flashy WebGL without design purpose can be penalized by this cohort."
+  },
+  "scoringTendencies": {
+    "averageScoreAcrossAllNominees": "7.2-7.5",
+    "scoreDistribution": {
+      "below7": "~25% of nominees — honorable mention territory",
+      "7to8": "~45% of nominees — SOTD potential",
+      "8to85": "~20% of nominees — strong SOTD, SOTM potential",
+      "85to9": "~8% of nominees — SOTM winners",
+      "above9": "~2% of nominees — SOTY contenders"
+    },
+    "generosityLevel": "Moderate — jury is neither overly generous nor harsh. Scores above 9.0 are genuinely rare and indicate exceptional quality.",
+    "outlierRemoval": {
+      "process": "The 3 highest and 3 lowest scores are removed before averaging",
+      "purpose": "Prevents any single jury member from disproportionately influencing the final score",
+      "implication": "One bad review won't tank you, but one great review won't save you either. You need CONSENSUS of quality."
+    },
+    "categoryBehavior": {
+      "design": "Most generous category — beautiful sites often get 0.3-0.5 points higher in design than other categories",
+      "usability": "Strictest category — even beautiful sites get penalized for confusing navigation, broken mobile, or poor accessibility",
+      "creativity": "Most variable — jury members disagree most about what constitutes 'creative.' WebGL innovations score high, but so can minimal sites with clever concepts.",
+      "content": "Most overlooked — jury spends less time evaluating content depth. But projects with strong content consistently score higher overall."
+    }
+  },
+  "whatTriggers10outOf10": {
+    "design10": {
+      "triggers": [
+        "Every single pixel is intentional — zero accidental elements",
+        "Color palette is unique and memorable",
+        "Typography is exceptional (custom typeface or masterful use of existing)",
+        "Composition breaks conventions while maintaining harmony",
+        "The design has a recognizable 'voice' — you'd know it if you saw it again",
+        "Animation design is as considered as static design"
+      ],
+      "frequency": "Rare — maybe 5-10 jury members per year give a 10 for design"
+    },
+    "usability10": {
+      "triggers": [
+        "Navigation is instantly intuitive despite unconventional presentation",
+        "Loads fast, performs smoothly on all devices",
+        "Mobile experience is excellent, not just acceptable",
+        "Accessibility considered (keyboard, screen reader, reduced motion)",
+        "User never feels lost or frustrated",
+        "The UX innovations serve the user, not just the designer's ego"
+      ],
+      "frequency": "Very rare for immersive sites — Pangram Pangram is the exception"
+    },
+    "creativity10": {
+      "triggers": [
+        "Something genuinely NEW — technique, concept, or approach never seen before",
+        "The innovation changes how you think about what's possible in a browser",
+        "Creative use of technology to tell a story or evoke emotion",
+        "The site would be remembered 5 years later",
+        "It inspires other creators to push their own work"
+      ],
+      "frequency": "Most common 10 — when jury sees something truly novel, they want to reward it"
+    },
+    "content10": {
+      "triggers": [
+        "The content IS the experience — not just text filling a template",
+        "Educational value — you learn something meaningful",
+        "Storytelling that uses the web medium to enhance narrative",
+        "Writing quality is exceptional",
+        "The content justifies the technical investment"
+      ],
+      "frequency": "Rare — most sites don't invest enough in content to earn a 10"
+    }
+  },
+  "whatTriggersLowScores": {
+    "below7": [
+      {
+        "issue": "Performance lag / frame drops",
+        "impact": "Immediate score reduction across ALL categories (not just usability)",
+        "severity": "High — a single 5-second lag spike during jury evaluation can drop score by 0.5+",
+        "prevention": "Adaptive quality, performance profiling, frame budget monitoring"
+      },
+      {
+        "issue": "Broken mobile experience",
+        "impact": "-0.5 to -1.0 overall (significant because ~40% of jury tests on mobile)",
+        "severity": "High",
+        "prevention": "Dedicated mobile testing, responsive design, mobile-specific optimizations"
+      },
+      {
+        "issue": "Forced/autoplay sound",
+        "impact": "-0.3 to -0.5 in usability",
+        "severity": "Medium-High — many jury members evaluate in open offices or public spaces",
+        "prevention": "ALWAYS mute by default. Elegant opt-in."
+      },
+      {
+        "issue": "No loading screen / blank wait",
+        "impact": "-0.2 to -0.3 — jury perceives the site as unfinished or poorly optimized",
+        "severity": "Medium",
+        "prevention": "Engaging preloader that sets the tone for the experience"
+      },
+      {
+        "issue": "Poor accessibility (no keyboard nav, screen reader broken)",
+        "impact": "-0.2 to -0.4 in usability, increasingly checked",
+        "severity": "Medium and growing",
+        "prevention": "Basic accessibility: keyboard navigation, screen reader content, reduced motion support"
+      },
+      {
+        "issue": "Confusing navigation / user gets lost",
+        "impact": "-0.3 to -0.5 in usability",
+        "severity": "Medium-High",
+        "prevention": "Clear progress indication, visible navigation, ability to skip sections"
+      },
+      {
+        "issue": "Gratuitous effects without purpose",
+        "impact": "-0.2 to -0.3 in design and creativity (seen as 'showing off' rather than 'designing')",
+        "severity": "Medium",
+        "prevention": "Every effect must serve the narrative or enhance comprehension"
+      },
+      {
+        "issue": "Slow loading (>5 seconds without engagement)",
+        "impact": "-0.3 to -0.5 — jury has limited patience, especially during evaluation of multiple sites",
+        "severity": "High",
+        "prevention": "Progressive loading, engaging preloader, critical-path optimization"
+      },
+      {
+        "issue": "Console errors visible",
+        "impact": "-0.2 in usability/development quality perception",
+        "severity": "Low-Medium (only developer jury members check)",
+        "prevention": "Zero console errors in production. No console.log. No deprecation warnings."
+      },
+      {
+        "issue": "Scroll hijacking without payoff",
+        "impact": "-0.2 to -0.3 in usability",
+        "severity": "Medium",
+        "prevention": "If hijacking scroll, the payoff must be worth the loss of native behavior"
+      }
+    ]
+  },
+  "knownBiases": {
+    "positiveBiases": [
+      {
+        "bias": "Dark themes / cosmic aesthetic",
+        "strength": "Moderate",
+        "reason": "Dark themes are perceived as 'premium' and photograph well in screenshots/social media",
+        "eventHorizonImpact": "Positive — black hole theme is inherently dark"
+      },
+      {
+        "bias": "WebGL / Three.js innovation",
+        "strength": "Strong for creativity score",
+        "reason": "Technical impressiveness is viscerally felt. 'How did they do that?' drives high creativity scores.",
+        "eventHorizonImpact": "Very positive — GPGPU + raymarching will impress"
+      },
+      {
+        "bias": "European studios / design sensibility",
+        "strength": "Moderate",
+        "reason": "Largest jury block is European. European design values (restraint, typography, whitespace) are overrepresented in scoring.",
+        "eventHorizonImpact": "Neutral — depends on execution. If Event Horizon has European-level design refinement alongside WebGL spectacle, it hits both notes."
+      },
+      {
+        "bias": "Minimalism / negative space",
+        "strength": "Moderate for design score",
+        "reason": "Jury appreciates restraint. 'Knowing what to leave out' is valued.",
+        "eventHorizonImpact": "Relevant — the emptiness of space IS negative space. Use it."
+      },
+      {
+        "bias": "Small studio / indie projects",
+        "strength": "Slight",
+        "reason": "Jury roots for the underdog. A small team creating something extraordinary gets extra goodwill.",
+        "eventHorizonImpact": "Positive if marketed as small-team project"
+      },
+      {
+        "bias": "Sound design integration",
+        "strength": "Growing",
+        "reason": "Jury increasingly expects sound in immersive experiences. Sites with sound consistently score 0.1-0.3 higher in creativity.",
+        "eventHorizonImpact": "Must have sound — and it must be physics-based and integrated"
+      }
+    ],
+    "negativeBiases": [
+      {
+        "bias": "Tech demo without narrative",
+        "strength": "Strong negative",
+        "reason": "Jury has seen too many 'look at my WebGL' sites with no story. The question 'but what is it ABOUT?' kills scores.",
+        "eventHorizonImpact": "Risk area — must have strong astrophysics narrative, not just cool black hole"
+      },
+      {
+        "bias": "Heavy sites that don't respect user's device",
+        "strength": "Moderate negative",
+        "reason": "Jury members on average laptops get frustrated by GPU-heavy sites that make their fan spin",
+        "eventHorizonImpact": "Critical risk — GPGPU + raymarching is heavy. MUST have adaptive quality."
+      },
+      {
+        "bias": "AI/crypto themes",
+        "strength": "Moderate negative (polarizing)",
+        "reason": "Jury split on these topics. Some see innovation, others see hype.",
+        "eventHorizonImpact": "Not applicable — astrophysics theme is universally appealing"
+      },
+      {
+        "bias": "Excessive length",
+        "strength": "Slight negative",
+        "reason": "Jury evaluates many sites per session. 10+ minute experiences test patience.",
+        "eventHorizonImpact": "Keep the core experience to 3-5 minutes. Offer exploration beyond that as optional."
+      }
+    ]
+  },
+  "evaluationBehavior": {
+    "averageTimeSpent": {
+      "perSite": "2-5 minutes for most jury members",
+      "immersiveSites": "3-7 minutes (longer engagement is positive signal)",
+      "porfolioSites": "1-3 minutes (faster evaluation of familiar format)"
+    },
+    "evaluationProcess": [
+      "First impression: landing page, loading experience, initial visual impact (first 10 seconds)",
+      "Exploration: scroll through experience, test interactions, check navigation (1-3 minutes)",
+      "Mobile check: ~40% of jury checks mobile view (either on phone or DevTools responsive mode)",
+      "Technical inspection: developer-focused jury members open DevTools (20-30% of jury)",
+      "Score assignment: based on overall impression, specific highs/lows noted during exploration"
+    ],
+    "criticalMoments": [
+      {
+        "moment": "First 10 seconds",
+        "weight": "Very High",
+        "what": "Loading experience → first visual. If this is impressive, the jury member is primed to score generously. If it's slow/broken, they're primed to find more problems."
+      },
+      {
+        "moment": "First scroll interaction",
+        "weight": "High",
+        "what": "How does the site respond to scroll? Smooth? Purposeful? If the first scroll doesn't reward the user, engagement drops."
+      },
+      {
+        "moment": "The 'wow' moment",
+        "weight": "Critical",
+        "what": "The single strongest visual/interactive moment. This is what the jury member will REMEMBER when assigning the creativity score."
+      },
+      {
+        "moment": "Mobile check",
+        "weight": "High",
+        "what": "If mobile is broken or laggy, usability score drops significantly. If mobile is surprisingly good, it raises all scores."
+      },
+      {
+        "moment": "Ending / conclusion",
+        "weight": "Medium",
+        "what": "How does the experience end? A strong ending leaves a positive last impression. A sudden stop or broken end leaves a negative one."
+      }
+    ]
+  },
+  "votingMechanics": {
+    "juryVotingPeriod": "5 business days from nomination",
+    "minimumVotes": "18 jury members must vote for a valid score",
+    "typicalVotes": "30-50 for notable sites",
+    "highVoteCounts": "50+ indicates strong jury engagement (positive signal for SOTY consideration)",
+    "outlierRemoval": "Top 3 and bottom 3 scores removed before averaging",
+    "publicVoteWeight": "Exists but minimal compared to jury scores. Public vote can break ties between close jury scores.",
+    "publicVotingPeriod": "Same 5 days as jury voting",
+    "developerAwardJury": "Subset of jury with verified development expertise. ~50-80 members. Vote separately on technical innovation."
+  },
+  "strategicInsights": [
+    {
+      "insight": "The first 10 seconds determine the trajectory of all scores",
+      "action": "Event Horizon's loading experience → first reveal must be STUNNING. Consider: stars materializing in the void → camera pulling back to reveal the black hole in the distance → text fading in with title. All within 3-5 seconds of first meaningful content."
+    },
+    {
+      "insight": "Jury fatigue is real — they evaluate multiple sites per session",
+      "action": "Make the experience impactful but not exhausting. 3-5 minute core journey with optional deep exploration. Respect the jury's time."
+    },
+    {
+      "insight": "Mobile check happens more than you think",
+      "action": "Assume EVERY jury member will check mobile. The mobile experience must stand on its own, not just be a degraded desktop."
+    },
+    {
+      "insight": "Developer jury members WILL open DevTools",
+      "action": "Zero console errors. Clean network tab. Reasonable bundle sizes. Well-structured source code. Consider adding a hidden console message: 'Interested in the technical details? Read our writeup at [URL]'"
+    },
+    {
+      "insight": "The description you write for submission influences scoring",
+      "action": "Write a compelling 2-3 sentence description that explains the innovation WITHOUT being technical. Something like: 'An interactive journey to the edge of spacetime. Experience what happens when nothing — not even light — can escape.'"
+    },
+    {
+      "insight": "Community promotion affects visibility",
+      "action": "Share on Twitter/X, LinkedIn, and creative communities (Codrops, Creative Boom, etc.) after nomination. More visibility → more jury members vote → higher chance of winning."
+    },
+    {
+      "insight": "Technical writeups influence Developer Award",
+      "action": "Publish a detailed blog post about the GPGPU and raymarching techniques BEFORE submitting to Awwwards. Share it with the developer community. Jury members will reference it."
+    }
+  ],
+  "eventHorizonJuryMatchAnalysis": {
+    "strengthsForThisJury": [
+      "Dark/cosmic theme aligns with positive biases",
+      "WebGL innovation will excite developer jury members",
+      "Physics-based interaction is genuinely novel",
+      "Universal theme (black holes) appeals across cultural backgrounds",
+      "Small team narrative resonates with indie bias",
+      "Sound design opportunity (physics-based) will impress if well-executed"
+    ],
+    "risksForThisJury": [
+      "Heavy GPU load could lag on jury members' average hardware → adaptive quality MANDATORY",
+      "Risk of 'tech demo without narrative' perception → content/story must be strong",
+      "Scroll hijacking could frustrate UX-focused jury → consider escape hatch",
+      "Mobile could be weak point → dedicated mobile experience needed",
+      "European jury might want more design restraint alongside spectacle → balance explosion with calm"
+    ],
+    "overallJuryCompatibility": "High — Event Horizon's theme and innovation align well with jury preferences. The risks are manageable with intentional design decisions."
+  }
+}

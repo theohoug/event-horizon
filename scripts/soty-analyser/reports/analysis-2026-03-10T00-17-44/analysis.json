@@ -1,0 +1,377 @@
+{
+  "timestamp": "2026-03-10T00:17:44.985Z",
+  "overallScore": 8.5,
+  "confidence": 0.75,
+  "categories": [
+    {
+      "category": "design",
+      "score": 9.04,
+      "confidence": 0.76,
+      "subScores": [
+        {
+          "name": "Visual Hierarchy",
+          "score": 8.8,
+          "maxScore": 10,
+          "confidence": 0.75,
+          "notes": "WebGL full-screen canvas with layered narrative chapters creates strong hierarchy"
+        },
+        {
+          "name": "Color Harmony",
+          "score": 8.5,
+          "maxScore": 10,
+          "confidence": 0.8,
+          "notes": "Scroll-driven color grading creates cohesive palette evolution"
+        },
+        {
+          "name": "Typography",
+          "score": 8.2,
+          "maxScore": 10,
+          "confidence": 0.7,
+          "notes": "Clean chapter titles, but limited typeface variation"
+        },
+        {
+          "name": "Layout & Composition",
+          "score": 9,
+          "maxScore": 10,
+          "confidence": 0.75,
+          "notes": "Centered black hole with gravitational visual pull — excellent composition"
+        },
+        {
+          "name": "Imagery & Assets",
+          "score": 9.5,
+          "maxScore": 10,
+          "confidence": 0.85,
+          "notes": "All procedural — no stock assets. Custom shaders, GPGPU particles, raymarched black hole"
+        },
+        {
+          "name": "Consistency",
+          "score": 9,
+          "maxScore": 10,
+          "confidence": 0.8,
+          "notes": "Unified dark space aesthetic throughout 11 chapters"
+        },
+        {
+          "name": "Branding",
+          "score": 8,
+          "maxScore": 10,
+          "confidence": 0.65,
+          "notes": "Clean Cleanlystudio branding in credits. Subtle but present"
+        },
+        {
+          "name": "Attention to Detail",
+          "score": 9.2,
+          "maxScore": 10,
+          "confidence": 0.8,
+          "notes": "12 custom shaders, 2264 lines of shader code, dithering, Doppler beaming"
+        },
+        {
+          "name": "Emotional Impact",
+          "score": 9.3,
+          "maxScore": 10,
+          "confidence": 0.75,
+          "notes": "Immersive journey into a black hole — awe-inspiring when working well"
+        }
+      ],
+      "penalties": [],
+      "bonuses": [
+        {
+          "name": "Custom shader pipeline",
+          "value": 0.2
+        }
+      ]
+    },
+    {
+      "category": "usability",
+      "score": 6.88,
+      "confidence": 0.74,
+      "subScores": [
+        {
+          "name": "Navigation",
+          "score": 7.5,
+          "maxScore": 10,
+          "confidence": 0.7,
+          "notes": "Scroll-only navigation — simple but limited. No skip, no menu until credits"
+        },
+        {
+          "name": "Loading Performance",
+          "score": 6.5,
+          "maxScore": 10,
+          "confidence": 0.85,
+          "notes": "Load time: 6875ms"
+        },
+        {
+          "name": "Responsiveness",
+          "score": 4,
+          "maxScore": 10,
+          "confidence": 0.7,
+          "notes": "WebGL experience exists on mobile but quality/perf degraded"
+        },
+        {
+          "name": "Accessibility",
+          "score": 7.5,
+          "maxScore": 10,
+          "confidence": 0.8,
+          "notes": "ARIA: 36, keyboard nav: true, reduced motion: true"
+        },
+        {
+          "name": "Interaction Feedback",
+          "score": 8.5,
+          "maxScore": 10,
+          "confidence": 0.7,
+          "notes": "Custom cursor with gravitational distortion, particles react to mouse"
+        },
+        {
+          "name": "Cross-Browser",
+          "score": 7.5,
+          "maxScore": 10,
+          "confidence": 0.65,
+          "notes": "WebGL 2.0 required — may not work on older browsers/devices"
+        },
+        {
+          "name": "Progressive Enhancement",
+          "score": 6.5,
+          "maxScore": 10,
+          "confidence": 0.6,
+          "notes": "No fallback if WebGL unavailable. Quality tiers exist (ultra/high/medium)"
+        },
+        {
+          "name": "Scroll Experience",
+          "score": 8.5,
+          "maxScore": 10,
+          "confidence": 0.75,
+          "notes": "Lenis smooth scrolling with GSAP ScrollTrigger — polished"
+        },
+        {
+          "name": "Error Handling",
+          "score": 8,
+          "maxScore": 10,
+          "confidence": 0.7,
+          "notes": "Console errors: 0"
+        },
+        {
+          "name": "Framerate",
+          "score": 8,
+          "maxScore": 10,
+          "confidence": 0.9,
+          "notes": "Avg FPS: 45, Min: 30"
+        }
+      ],
+      "penalties": [
+        {
+          "name": "FPS below 55",
+          "value": -0.15
+        }
+      ],
+      "bonuses": []
+    },
+    {
+      "category": "creativity",
+      "score": 9.85,
+      "confidence": 0.78,
+      "subScores": [
+        {
+          "name": "Concept Originality",
+          "score": 9.5,
+          "maxScore": 10,
+          "confidence": 0.85,
+          "notes": "Interactive black hole journey — scientifically inspired, emotionally driven"
+        },
+        {
+          "name": "Technical Innovation",
+          "score": 9.7,
+          "maxScore": 10,
+          "confidence": 0.9,
+          "notes": "12 unique techniques: Procedural Web Audio, GPGPU N-body simulation, Scroll-driven narrative, Spectral chromatic aberration, Gravitational raymarching"
+        },
+        {
+          "name": "Animation & Motion",
+          "score": 9.2,
+          "maxScore": 10,
+          "confidence": 0.8,
+          "notes": "Scroll-driven with procedural motion, particle flows, gravitational effects"
+        },
+        {
+          "name": "Storytelling",
+          "score": 9,
+          "maxScore": 10,
+          "confidence": 0.75,
+          "notes": "11-chapter narrative arc from wonder to transcendence"
+        },
+        {
+          "name": "Interactivity",
+          "score": 8.5,
+          "maxScore": 10,
+          "confidence": 0.7,
+          "notes": "Mouse affects particles + black hole rendering, scroll drives narrative"
+        },
+        {
+          "name": "Audio Design",
+          "score": 8.8,
+          "maxScore": 10,
+          "confidence": 0.75,
+          "notes": "Procedural Web Audio API — generates sound from physics"
+        },
+        {
+          "name": "Immersion",
+          "score": 9.3,
+          "maxScore": 10,
+          "confidence": 0.8,
+          "notes": "Full-screen, dark environment, no distracting UI — deeply immersive"
+        },
+        {
+          "name": "Risk Taking",
+          "score": 9,
+          "maxScore": 10,
+          "confidence": 0.7,
+          "notes": "Experimental WebGL experience — bold choice for a portfolio/studio piece"
+        }
+      ],
+      "penalties": [],
+      "bonuses": [
+        {
+          "name": "GPGPU simulation",
+          "value": 0.15
+        },
+        {
+          "name": "Procedural audio",
+          "value": 0.15
+        },
+        {
+          "name": "Narrative arc",
+          "value": 0.2
+        },
+        {
+          "name": "Custom raymarching",
+          "value": 0.15
+        }
+      ]
+    },
+    {
+      "category": "content",
+      "score": 8.25,
+      "confidence": 0.72,
+      "subScores": [
+        {
+          "name": "Copywriting",
+          "score": 8.5,
+          "maxScore": 10,
+          "confidence": 0.7,
+          "notes": "11 poetic chapter titles with evocative descriptions — \"Light bends, stars stretch into arcs\""
+        },
+        {
+          "name": "Information Architecture",
+          "score": 8,
+          "maxScore": 10,
+          "confidence": 0.7,
+          "notes": "Linear scroll journey with clear chapter progression"
+        },
+        {
+          "name": "Value Proposition",
+          "score": 8.2,
+          "maxScore": 10,
+          "confidence": 0.65,
+          "notes": "Showcase of technical + creative capability — implicit studio portfolio"
+        },
+        {
+          "name": "SEO Basics",
+          "score": 7.5,
+          "maxScore": 10,
+          "confidence": 0.8,
+          "notes": "Meta tags: 17, headings: 0"
+        },
+        {
+          "name": "Localization",
+          "score": 7,
+          "maxScore": 10,
+          "confidence": 0.6,
+          "notes": "English only — standard for experimental sites"
+        },
+        {
+          "name": "Content Depth",
+          "score": 8.5,
+          "maxScore": 10,
+          "confidence": 0.7,
+          "notes": "Deep physics-inspired content across 11 chapters, HUD with real-time data"
+        },
+        {
+          "name": "Call to Action",
+          "score": 7.5,
+          "maxScore": 10,
+          "confidence": 0.65,
+          "notes": "Credits page with links — but no explicit CTA during experience"
+        },
+        {
+          "name": "Media Quality",
+          "score": 9.5,
+          "maxScore": 10,
+          "confidence": 0.85,
+          "notes": "100% procedural — raymarched BH, GPGPU particles, custom post-processing"
+        },
+        {
+          "name": "Credits & Attribution",
+          "score": 8.5,
+          "maxScore": 10,
+          "confidence": 0.8,
+          "notes": "Clean credits page with tech stack breakdown"
+        }
+      ],
+      "penalties": [],
+      "bonuses": []
+    }
+  ],
+  "predictions": {
+    "honorableMention": {
+      "probability": 82.6,
+      "confidence": 0.68
+    },
+    "sotd": {
+      "probability": 60.1,
+      "confidence": 0.64
+    },
+    "sotm": {
+      "probability": 1.4,
+      "confidence": 0.52
+    },
+    "soty": {
+      "probability": 0,
+      "confidence": 0.41
+    }
+  },
+  "jurySimulation": {
+    "expectedVotes": 10,
+    "scoreDistribution": {
+      "min": 7.89,
+      "max": 9.08,
+      "median": 8.5,
+      "p25": 8.24,
+      "p75": 8.76
+    },
+    "unanimityProbability": 0.926
+  },
+  "competitiveAnalysis": {
+    "percentileVsAllSubmissions": 80.8,
+    "percentileVsSotdWinners": 27,
+    "percentileVsSotyNominees": 1,
+    "closestReference": "Active Theory — Cyberpunk 2077",
+    "gapToSoty": 1.02
+  },
+  "strengthsAndWeaknesses": {
+    "top3Strengths": [
+      "Technical Innovation (9.7/10) — 12 unique techniques: Procedural Web Audio, GPGPU N-body simulation, Scroll-driven narrative, Spectral chromatic aberration, Gravitational raymarching",
+      "Imagery & Assets (9.5/10) — All procedural — no stock assets. Custom shaders, GPGPU particles, raymarched black hole",
+      "Concept Originality (9.5/10) — Interactive black hole journey — scientifically inspired, emotionally driven"
+    ],
+    "top3Weaknesses": [
+      "Responsiveness (4.0/10) — WebGL experience exists on mobile but quality/perf degraded",
+      "Loading Performance (6.5/10) — Load time: 6875ms",
+      "Progressive Enhancement (6.5/10) — No fallback if WebGL unavailable. Quality tiers exist (ultra/high/medium)"
+    ],
+    "criticalIssues": [],
+    "quickWins": [
+      "Fix \"Responsiveness\" (4/10) — biggest improvement opportunity",
+      "Remove 2 console.log statements",
+      "Add more semantic headings for SEO/accessibility"
+    ]
+  },
+  "detailedReport": "\n╔═══════════════════════════════════════════════════════════════════╗\n║                                                                   ║\n║   ███████╗ ██████╗ ████████╗██╗   ██╗                            ║\n║   ██╔════╝██╔═══██╗╚══██╔══╝╚██╗ ██╔╝                           ║\n║   ███████╗██║   ██║   ██║    ╚████╔╝                             ║\n║   ╚════██║██║   ██║   ██║     ╚██╔╝                              ║\n║   ███████║╚██████╔╝   ██║      ██║                               ║\n║   ╚══════╝ ╚═════╝    ╚═╝      ╚═╝                               ║\n║                                                                   ║\n║   A N A L Y S E R    v 1 . 0                                     ║\n║                                                                   ║\n╚═══════════════════════════════════════════════════════════════════╝\n\nGenerated: 2026-03-10T00:17:44.985Z\nOverall Score: 8.5/10 (confidence: 75%)\n\n════════════════════════════════════════════════════════════════════\n                    AWARD PREDICTIONS\n════════════════════════════════════════════════════════════════════\n\n  Honorable Mention  █████████████████░░░ 82.6%\n  SOTD               ████████████░░░░░░░░ 60.1%\n  SOTM               ░░░░░░░░░░░░░░░░░░░░ 1.4%\n  SOTY               ░░░░░░░░░░░░░░░░░░░░ 0.0%\n\n  Confidence range: 75%\n\n════════════════════════════════════════════════════════════════════\n                    CATEGORY SCORES\n════════════════════════════════════════════════════════════════════\n\n  DESIGN       9.04/10  [confidence: 76%]\n    ● Visual Hierarchy          8.8/10  WebGL full-screen canvas with layered narrative chapters creates strong hierarchy\n    ● Color Harmony             8.5/10  Scroll-driven color grading creates cohesive palette evolution\n    ● Typography                8.2/10  Clean chapter titles, but limited typeface variation\n    ★ Layout & Composition      9.0/10  Centered black hole with gravitational visual pull — excellent composition\n    ★ Imagery & Assets          9.5/10  All procedural — no stock assets. Custom shaders, GPGPU particles, raymarched black hole\n    ★ Consistency               9.0/10  Unified dark space aesthetic throughout 11 chapters\n    ● Branding                  8.0/10  Clean Cleanlystudio branding in credits. Subtle but present\n    ★ Attention to Detail       9.2/10  12 custom shaders, 2264 lines of shader code, dithering, Doppler beaming\n    ★ Emotional Impact          9.3/10  Immersive journey into a black hole — awe-inspiring when working well\n    + Custom shader pipeline: +0.20\n\n  USABILITY    6.88/10  [confidence: 74%]\n    ○ Navigation                7.5/10  Scroll-only navigation — simple but limited. No skip, no menu until credits\n    △ Loading Performance       6.5/10  Load time: 6875ms\n    △ Responsiveness            4.0/10  WebGL experience exists on mobile but quality/perf degraded\n    ○ Accessibility             7.5/10  ARIA: 36, keyboard nav: true, reduced motion: true\n    ● Interaction Feedback      8.5/10  Custom cursor with gravitational distortion, particles react to mouse\n    ○ Cross-Browser             7.5/10  WebGL 2.0 required — may not work on older browsers/devices\n    △ Progressive Enhancement   6.5/10  No fallback if WebGL unavailable. Quality tiers exist (ultra/high/medium)\n    ● Scroll Experience         8.5/10  Lenis smooth scrolling with GSAP ScrollTrigger — polished\n    ● Error Handling            8.0/10  Console errors: 0\n    ● Framerate                 8.0/10  Avg FPS: 45, Min: 30\n    - FPS below 55: -0.15\n\n  CREATIVITY   9.85/10  [confidence: 78%]\n    ★ Concept Originality       9.5/10  Interactive black hole journey — scientifically inspired, emotionally driven\n    ★ Technical Innovation      9.7/10  12 unique techniques: Procedural Web Audio, GPGPU N-body simulation, Scroll-driven narrative, Spectral chromatic aberration, Gravitational raymarching\n    ★ Animation & Motion        9.2/10  Scroll-driven with procedural motion, particle flows, gravitational effects\n    ★ Storytelling              9.0/10  11-chapter narrative arc from wonder to transcendence\n    ● Interactivity             8.5/10  Mouse affects particles + black hole rendering, scroll drives narrative\n    ● Audio Design              8.8/10  Procedural Web Audio API — generates sound from physics\n    ★ Immersion                 9.3/10  Full-screen, dark environment, no distracting UI — deeply immersive\n    ★ Risk Taking               9.0/10  Experimental WebGL experience — bold choice for a portfolio/studio piece\n    + GPGPU simulation: +0.15\n    + Procedural audio: +0.15\n    + Narrative arc: +0.20\n    + Custom raymarching: +0.15\n\n  CONTENT      8.25/10  [confidence: 72%]\n    ● Copywriting               8.5/10  11 poetic chapter titles with evocative descriptions — \"Light bends, stars stretch into arcs\"\n    ● Information Architecture  8.0/10  Linear scroll journey with clear chapter progression\n    ● Value Proposition         8.2/10  Showcase of technical + creative capability — implicit studio portfolio\n    ○ SEO Basics                7.5/10  Meta tags: 17, headings: 0\n    ○ Localization              7.0/10  English only — standard for experimental sites\n    ● Content Depth             8.5/10  Deep physics-inspired content across 11 chapters, HUD with real-time data\n    ○ Call to Action            7.5/10  Credits page with links — but no explicit CTA during experience\n    ★ Media Quality             9.5/10  100% procedural — raymarched BH, GPGPU particles, custom post-processing\n    ● Credits & Attribution     8.5/10  Clean credits page with tech stack breakdown\n\n════════════════════════════════════════════════════════════════════\n                    JURY SIMULATION (1000 runs)\n════════════════════════════════════════════════════════════════════\n\n  Expected jury votes: 10/16\n  Score distribution:\n    Min (P2):  7.89\n    P25:       8.24\n    Median:    8.5\n    P75:       8.76\n    Max (P98): 9.08\n  Probability all jurors score >= 8.0: 92.6%\n\n════════════════════════════════════════════════════════════════════\n                    COMPETITIVE ANALYSIS\n════════════════════════════════════════════════════════════════════\n\n  vs All Submissions:  Top 19.2%\n  vs SOTD Winners:     Bottom 27.0%\n  vs SOTY Nominees:    Bottom 1.0%\n  Closest Reference:   Active Theory — Cyberpunk 2077\n  Gap to SOTY avg:     -1.02\n\n════════════════════════════════════════════════════════════════════\n                    STRENGTHS & WEAKNESSES\n════════════════════════════════════════════════════════════════════\n\n  TOP STRENGTHS:\n    ★ Technical Innovation (9.7/10) — 12 unique techniques: Procedural Web Audio, GPGPU N-body simulation, Scroll-driven narrative, Spectral chromatic aberration, Gravitational raymarching\n    ★ Imagery & Assets (9.5/10) — All procedural — no stock assets. Custom shaders, GPGPU particles, raymarched black hole\n    ★ Concept Originality (9.5/10) — Interactive black hole journey — scientifically inspired, emotionally driven\n\n  TOP WEAKNESSES:\n    △ Responsiveness (4.0/10) — WebGL experience exists on mobile but quality/perf degraded\n    △ Loading Performance (6.5/10) — Load time: 6875ms\n    △ Progressive Enhancement (6.5/10) — No fallback if WebGL unavailable. Quality tiers exist (ultra/high/medium)\n\n  CRITICAL ISSUES:\n    None detected\n\n  QUICK WINS:\n    → Fix \"Responsiveness\" (4/10) — biggest improvement opportunity\n    → Remove 2 console.log statements\n    → Add more semantic headings for SEO/accessibility\n"
+}

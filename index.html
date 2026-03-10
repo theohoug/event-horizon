@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="description" content="Event Horizon — An Interactive Journey Into a Black Hole. Experience the cosmic sublime through your browser." />
   <meta name="author" content="Cleanlystudio" />
+  <meta http-equiv="content-language" content="en" />
+  <link rel="alternate" hreflang="en" href="https://event-horizon.cleanlystudio.com" />
+  <link rel="alternate" hreflang="x-default" href="https://event-horizon.cleanlystudio.com" />
+  <link rel="canonical" href="https://event-horizon.cleanlystudio.com" />
   <meta property="og:title" content="Event Horizon — An Interactive Journey Into a Black Hole" />
   <meta property="og:description" content="Scroll through 9 chapters of cosmic terror. Experience spaghettification, time dilation, and singularity — all in your browser." />
   <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_US" />
   <meta property="og:site_name" content="Cleanlystudio" />
   <meta property="og:url" content="https://event-horizon.cleanlystudio.com" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -19,14 +24,16 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <meta name="theme-color" content="#050505" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="color-scheme" content="dark" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="manifest" href="/manifest.json" />
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
   <title>Event Horizon — An Interactive Journey Into a Black Hole</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@300;400&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/spacegrotesk/v16/V8mDoQDjQSkFtoMM3T6r8E7mPbF4Cw.woff2" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@300;400&family=Space+Grotesk:wght@300;400&display=swap" rel="stylesheet" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -55,18 +62,32 @@
     <canvas id="experience" aria-hidden="true"></canvas>
 
     <div id="scroll-container">
-      <section class="chapter" data-chapter="0" aria-label="Chapter: You"></section>
-      <section class="chapter" data-chapter="1" aria-label="Chapter: The Pull"></section>
-      <section class="chapter" data-chapter="2" aria-label="Chapter: The Warp"></section>
-      <section class="chapter" data-chapter="3" aria-label="Chapter: The Photon Sphere"></section>
-      <section class="chapter" data-chapter="4" aria-label="Chapter: The Fall"></section>
-      <section class="chapter" data-chapter="5" aria-label="Chapter: Spaghettification"></section>
-      <section class="chapter" data-chapter="6" aria-label="Chapter: Time Dilation"></section>
-      <section class="chapter" data-chapter="7" aria-label="Chapter: Singularity"></section>
-      <section class="chapter" data-chapter="8" aria-label="Chapter: The Void"></section>
-      <section class="chapter" data-chapter="9" aria-label="Chapter: Hawking Radiation"></section>
-      <section class="chapter" data-chapter="10" aria-label="Chapter: What Remains"></section>
+      <section class="chapter" data-chapter="0" aria-label="Chapter: You"><h1 class="sr-only">Event Horizon — An Interactive Journey Into a Black Hole</h1><h2 class="sr-only">Chapter 0: You</h2></section>
+      <section class="chapter" data-chapter="1" aria-label="Chapter: The Pull"><h2 class="sr-only">Chapter 1: The Pull</h2></section>
+      <section class="chapter" data-chapter="2" aria-label="Chapter: The Warp"><h2 class="sr-only">Chapter 2: The Warp</h2></section>
+      <section class="chapter" data-chapter="3" aria-label="Chapter: The Photon Sphere"><h2 class="sr-only">Chapter 3: The Photon Sphere</h2></section>
+      <section class="chapter" data-chapter="4" aria-label="Chapter: The Fall"><h2 class="sr-only">Chapter 4: The Fall</h2></section>
+      <section class="chapter" data-chapter="5" aria-label="Chapter: Spaghettification"><h2 class="sr-only">Chapter 5: Spaghettification</h2></section>
+      <section class="chapter" data-chapter="6" aria-label="Chapter: Time Dilation"><h2 class="sr-only">Chapter 6: Time Dilation</h2></section>
+      <section class="chapter" data-chapter="7" aria-label="Chapter: Singularity"><h2 class="sr-only">Chapter 7: Singularity</h2></section>
+      <section class="chapter" data-chapter="8" aria-label="Chapter: What Remains"><h2 class="sr-only">Chapter 8: What Remains</h2></section>
     </div>
+
+    <div id="cinematic-vignette" aria-hidden="true"></div>
+    <div id="depth-aura" aria-hidden="true"></div>
+    <div id="ambient-leaks" aria-hidden="true">
+      <div class="leak"></div>
+      <div class="leak"></div>
+      <div class="leak"></div>
+    </div>
+
+    <div id="scan-line" aria-hidden="true"></div>
+    <div id="chapter-transition-bar" aria-hidden="true"></div>
+
+    <div class="corner-ornament top-left" aria-hidden="true"></div>
+    <div class="corner-ornament top-right" aria-hidden="true"></div>
+    <div class="corner-ornament bottom-left" aria-hidden="true"></div>
+    <div class="corner-ornament bottom-right" aria-hidden="true"></div>
 
     <div id="dust-layer" aria-hidden="true">
       <div class="dust" style="--dx:0.15;--dy:0.25;--dur:28s;--del:0s;--sz:2px;--op:0.08"></div>
@@ -92,16 +113,14 @@
 
       <div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
         <div id="progress-fill"></div>
-        <div class="progress-tick" style="left:9.09%"></div>
-        <div class="progress-tick" style="left:18.18%"></div>
-        <div class="progress-tick" style="left:27.27%"></div>
-        <div class="progress-tick" style="left:36.36%"></div>
-        <div class="progress-tick" style="left:45.45%"></div>
-        <div class="progress-tick" style="left:54.55%"></div>
-        <div class="progress-tick" style="left:63.64%"></div>
-        <div class="progress-tick" style="left:72.73%"></div>
-        <div class="progress-tick" style="left:81.82%"></div>
-        <div class="progress-tick" style="left:90.91%"></div>
+        <div class="progress-tick" style="left:11.11%"></div>
+        <div class="progress-tick" style="left:22.22%"></div>
+        <div class="progress-tick" style="left:33.33%"></div>
+        <div class="progress-tick" style="left:44.44%"></div>
+        <div class="progress-tick" style="left:55.56%"></div>
+        <div class="progress-tick" style="left:66.67%"></div>
+        <div class="progress-tick" style="left:77.78%"></div>
+        <div class="progress-tick" style="left:88.89%"></div>
       </div>
       <div id="chapter-indicator" aria-hidden="true"><span id="chapter-indicator-num"></span><span id="chapter-indicator-title"></span></div>
       <div id="interstitial" aria-hidden="true"></div>
@@ -132,14 +151,14 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
           </div>
         </div>
-        <div id="rotate-text">Rotate your device</div>
-        <div id="rotate-sub">This experience is best in landscape</div>
+        <div id="rotate-text">Best in landscape</div>
+        <div id="rotate-sub"></div>
       </div>
     </div>
 
     <div id="loader" role="alert" aria-label="Loading experience">
       <div id="loader-inner">
-        <div id="loader-star" aria-hidden="true"></div>
+        <div id="loader-star" aria-hidden="true"><span class="orbital-dot"></span><span class="orbital-dot"></span></div>
         <div id="loader-text">EVENT HORIZON</div>
         <div id="loader-sub">Loading the void...</div>
         <div id="loader-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Loading progress"><div id="loader-bar-fill"></div></div>
@@ -199,9 +218,7 @@
       <div class="nav-dot" data-nav="5" data-label="Spaghettification" role="button" tabindex="0" aria-label="Go to chapter: Spaghettification"></div>
       <div class="nav-dot" data-nav="6" data-label="Time Dilation" role="button" tabindex="0" aria-label="Go to chapter: Time Dilation"></div>
       <div class="nav-dot" data-nav="7" data-label="Singularity" role="button" tabindex="0" aria-label="Go to chapter: Singularity"></div>
-      <div class="nav-dot" data-nav="8" data-label="The Void" role="button" tabindex="0" aria-label="Go to chapter: The Void"></div>
-      <div class="nav-dot" data-nav="9" data-label="Hawking Radiation" role="button" tabindex="0" aria-label="Go to chapter: Hawking Radiation"></div>
-      <div class="nav-dot" data-nav="10" data-label="What Remains" role="button" tabindex="0" aria-label="Go to chapter: What Remains"></div>
+      <div class="nav-dot" data-nav="8" data-label="What Remains" role="button" tabindex="0" aria-label="Go to chapter: What Remains"></div>
     </nav>
 
     <div id="mobile-nav" aria-hidden="true">
@@ -229,6 +246,24 @@
   </div>
 
   <div id="grain-overlay" aria-hidden="true"></div>
+  <script>
+    (function(){
+      var c=document.createElement('canvas');
+      var gl=c.getContext('webgl2')||c.getContext('webgl');
+      if(!gl){
+        var f=document.getElementById('webgl-fallback');
+        if(f)f.style.display='flex';
+        var a=document.getElementById('app');
+        if(a)a.style.display='none';
+      }
+    })();
+  </script>
+  <div id="webgl-fallback" role="alert" style="display:none;position:fixed;inset:0;z-index:9999;background:#050505;color:#fff;font-family:system-ui,-apple-system,sans-serif;align-items:center;justify-content:center;text-align:center;padding:2rem">
+    <div>
+      <h1 style="font-size:1.5rem;margin-bottom:1rem;color:#00f5d4">Event Horizon</h1>
+      <p style="max-width:28rem;margin:0 auto;line-height:1.6;opacity:0.8">This experience requires WebGL 2.0 to render the black hole simulation. Please update your browser or enable hardware acceleration in your settings.</p>
+    </div>
+  </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

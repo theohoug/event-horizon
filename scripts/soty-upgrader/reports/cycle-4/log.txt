@@ -1,0 +1,213 @@
+
+########################################################
+# SOTY UPGRADER — CYCLE 4
+# 09/03/2026 21:27:56
+########################################################
+
+====================================================
+ PHASE START: CAPTURE
+====================================================
+2026-03-09 20:28:08.814 [PROGRESS] 1% (1/101) Capturing 0%
+2026-03-09 20:28:11.735 [PROGRESS] 2% (2/101) Capturing 1%
+2026-03-09 20:28:14.601 [PROGRESS] 3% (3/101) Capturing 2%
+2026-03-09 20:28:17.555 [PROGRESS] 4% (4/101) Capturing 3%
+2026-03-09 20:28:20.459 [PROGRESS] 5% (5/101) Capturing 4%
+2026-03-09 20:28:23.441 [PROGRESS] 6% (6/101) Capturing 5%
+2026-03-09 20:28:26.563 [PROGRESS] 7% (7/101) Capturing 6%
+2026-03-09 20:28:29.303 [PROGRESS] 8% (8/101) Capturing 7%
+2026-03-09 20:28:32.270 [PROGRESS] 9% (9/101) Capturing 8%
+2026-03-09 20:28:35.250 [PROGRESS] 10% (10/101) Capturing 9%
+2026-03-09 20:28:38.420 [PROGRESS] 11% (11/101) Capturing 10%
+2026-03-09 20:28:41.632 [PROGRESS] 12% (12/101) Capturing 11%
+2026-03-09 20:28:44.802 [PROGRESS] 13% (13/101) Capturing 12%
+2026-03-09 20:28:48.245 [PROGRESS] 14% (14/101) Capturing 13%
+2026-03-09 20:28:51.467 [PROGRESS] 15% (15/101) Capturing 14%
+2026-03-09 20:28:54.656 [PROGRESS] 16% (16/101) Capturing 15%
+2026-03-09 20:28:57.869 [PROGRESS] 17% (17/101) Capturing 16%
+2026-03-09 20:29:01.033 [PROGRESS] 18% (18/101) Capturing 17%
+2026-03-09 20:29:04.312 [PROGRESS] 19% (19/101) Capturing 18%
+2026-03-09 20:29:07.498 [PROGRESS] 20% (20/101) Capturing 19%
+2026-03-09 20:29:10.804 [PROGRESS] 21% (21/101) Capturing 20%
+2026-03-09 20:29:13.888 [PROGRESS] 22% (22/101) Capturing 21%
+2026-03-09 20:29:17.014 [PROGRESS] 23% (23/101) Capturing 22%
+2026-03-09 20:29:20.121 [PROGRESS] 24% (24/101) Capturing 23%
+2026-03-09 20:29:23.434 [PROGRESS] 25% (25/101) Capturing 24%
+2026-03-09 20:29:26.543 [PROGRESS] 26% (26/101) Capturing 25%
+2026-03-09 20:29:29.734 [PROGRESS] 27% (27/101) Capturing 26%
+2026-03-09 20:29:32.790 [PROGRESS] 28% (28/101) Capturing 27%
+2026-03-09 20:29:35.822 [PROGRESS] 29% (29/101) Capturing 28%
+2026-03-09 20:29:38.841 [PROGRESS] 30% (30/101) Capturing 29%
+2026-03-09 20:29:41.922 [PROGRESS] 31% (31/101) Capturing 30%
+2026-03-09 20:29:44.912 [PROGRESS] 32% (32/101) Capturing 31%
+2026-03-09 20:29:47.976 [PROGRESS] 33% (33/101) Capturing 32%
+2026-03-09 20:29:51.011 [PROGRESS] 34% (34/101) Capturing 33%
+2026-03-09 20:29:54.071 [PROGRESS] 35% (35/101) Capturing 34%
+2026-03-09 20:29:57.181 [PROGRESS] 36% (36/101) Capturing 35%
+2026-03-09 20:30:00.293 [PROGRESS] 37% (37/101) Capturing 36%
+2026-03-09 20:30:03.409 [PROGRESS] 38% (38/101) Capturing 37%
+2026-03-09 20:30:06.437 [PROGRESS] 39% (39/101) Capturing 38%
+2026-03-09 20:30:09.490 [PROGRESS] 40% (40/101) Capturing 39%
+2026-03-09 20:30:12.492 [PROGRESS] 41% (41/101) Capturing 40%
+2026-03-09 20:30:15.449 [PROGRESS] 42% (42/101) Capturing 41%
+2026-03-09 20:30:18.404 [PROGRESS] 43% (43/101) Capturing 42%
+2026-03-09 20:30:21.363 [PROGRESS] 44% (44/101) Capturing 43%
+2026-03-09 20:30:24.215 [PROGRESS] 45% (45/101) Capturing 44%
+2026-03-09 20:30:27.096 [PROGRESS] 46% (46/101) Capturing 45%
+2026-03-09 20:30:29.984 [PROGRESS] 47% (47/101) Capturing 46%
+2026-03-09 20:30:32.914 [PROGRESS] 48% (48/101) Capturing 47%
+2026-03-09 20:30:35.872 [PROGRESS] 49% (49/101) Capturing 48%
+2026-03-09 20:30:38.840 [PROGRESS] 50% (50/101) Capturing 49%
+2026-03-09 20:30:41.789 [PROGRESS] 50% (51/101) Capturing 50%
+2026-03-09 20:30:44.727 [PROGRESS] 51% (52/101) Capturing 51%
+2026-03-09 20:30:47.674 [PROGRESS] 52% (53/101) Capturing 52%
+2026-03-09 20:30:50.568 [PROGRESS] 53% (54/101) Capturing 53%
+2026-03-09 20:30:53.486 [PROGRESS] 54% (55/101) Capturing 54%
+2026-03-09 20:30:56.430 [PROGRESS] 55% (56/101) Capturing 55%
+2026-03-09 20:30:59.593 [PROGRESS] 56% (57/101) Capturing 56%
+2026-03-09 20:31:02.530 [PROGRESS] 57% (58/101) Capturing 57%
+2026-03-09 20:31:05.614 [PROGRESS] 58% (59/101) Capturing 58%
+2026-03-09 20:31:08.749 [PROGRESS] 59% (60/101) Capturing 59%
+2026-03-09 20:31:11.841 [PROGRESS] 60% (61/101) Capturing 60%
+2026-03-09 20:31:14.822 [PROGRESS] 61% (62/101) Capturing 61%
+2026-03-09 20:31:17.805 [PROGRESS] 62% (63/101) Capturing 62%
+2026-03-09 20:31:20.824 [PROGRESS] 63% (64/101) Capturing 63%
+2026-03-09 20:31:23.749 [PROGRESS] 64% (65/101) Capturing 64%
+2026-03-09 20:31:26.708 [PROGRESS] 65% (66/101) Capturing 65%
+2026-03-09 20:31:29.706 [PROGRESS] 66% (67/101) Capturing 66%
+2026-03-09 20:31:32.646 [PROGRESS] 67% (68/101) Capturing 67%
+2026-03-09 20:31:35.656 [PROGRESS] 68% (69/101) Capturing 68%
+2026-03-09 20:31:38.562 [PROGRESS] 69% (70/101) Capturing 69%
+2026-03-09 20:31:41.412 [PROGRESS] 70% (71/101) Capturing 70%
+2026-03-09 20:31:44.378 [PROGRESS] 71% (72/101) Capturing 71%
+2026-03-09 20:31:47.311 [PROGRESS] 72% (73/101) Capturing 72%
+2026-03-09 20:31:50.263 [PROGRESS] 73% (74/101) Capturing 73%
+2026-03-09 20:31:53.157 [PROGRESS] 74% (75/101) Capturing 74%
+2026-03-09 20:31:56.060 [PROGRESS] 75% (76/101) Capturing 75%
+2026-03-09 20:31:58.945 [PROGRESS] 76% (77/101) Capturing 76%
+2026-03-09 20:32:01.856 [PROGRESS] 77% (78/101) Capturing 77%
+2026-03-09 20:32:04.747 [PROGRESS] 78% (79/101) Capturing 78%
+2026-03-09 20:32:07.716 [PROGRESS] 79% (80/101) Capturing 79%
+2026-03-09 20:32:10.529 [PROGRESS] 80% (81/101) Capturing 80%
+2026-03-09 20:32:13.358 [PROGRESS] 81% (82/101) Capturing 81%
+2026-03-09 20:32:16.124 [PROGRESS] 82% (83/101) Capturing 82%
+2026-03-09 20:32:18.927 [PROGRESS] 83% (84/101) Capturing 83%
+2026-03-09 20:32:21.694 [PROGRESS] 84% (85/101) Capturing 84%
+2026-03-09 20:32:24.483 [PROGRESS] 85% (86/101) Capturing 85%
+2026-03-09 20:32:27.242 [PROGRESS] 86% (87/101) Capturing 86%
+2026-03-09 20:32:30.023 [PROGRESS] 87% (88/101) Capturing 87%
+2026-03-09 20:32:32.875 [PROGRESS] 88% (89/101) Capturing 88%
+2026-03-09 20:32:35.759 [PROGRESS] 89% (90/101) Capturing 89%
+2026-03-09 20:32:38.776 [PROGRESS] 90% (91/101) Capturing 90%
+2026-03-09 20:32:41.673 [PROGRESS] 91% (92/101) Capturing 91%
+2026-03-09 20:32:44.595 [PROGRESS] 92% (93/101) Capturing 92%
+2026-03-09 20:32:47.544 [PROGRESS] 93% (94/101) Capturing 93%
+2026-03-09 20:32:50.521 [PROGRESS] 94% (95/101) Capturing 94%
+2026-03-09 20:32:53.491 [PROGRESS] 95% (96/101) Capturing 95%
+2026-03-09 20:32:56.396 [PROGRESS] 96% (97/101) Capturing 96%
+2026-03-09 20:32:59.417 [PROGRESS] 97% (98/101) Capturing 97%
+2026-03-09 20:33:02.575 [PROGRESS] 98% (99/101) Capturing 98%
+2026-03-09 20:33:05.738 [PROGRESS] 99% (100/101) Capturing 99%
+2026-03-09 20:33:08.791 [PROGRESS] 100% (101/101) Capturing 100%
+2026-03-09 20:33:12.030 [PHASE] Phase Capture completed in 5m15s
+
+====================================================
+ PHASE START: CROSS-BROWSER MATRIX
+====================================================
+2026-03-09 20:33:12.032 [C4] [INFO] Launching chromium...
+
+====================================================
+ PHASE START: MOBILE AUDIT
+====================================================
+2026-03-09 20:33:22.731 [PROGRESS] 4% (1/27) chromium @ 0%
+2026-03-09 20:33:24.259 [C4] [INFO] Mobile quality detected: unknown
+2026-03-09 20:33:24.260 [PROGRESS] 5% (1/21) Mobile capture @ 0%
+2026-03-09 20:33:29.252 [PROGRESS] 7% (2/27) chromium @ 10%
+2026-03-09 20:33:30.000 [PROGRESS] 10% (2/21) Mobile capture @ 5%
+2026-03-09 20:33:33.240 [PROGRESS] 11% (3/27) chromium @ 25%
+2026-03-09 20:33:36.190 [PROGRESS] 14% (3/21) Mobile capture @ 10%
+2026-03-09 20:33:37.505 [PROGRESS] 15% (4/27) chromium @ 40%
+2026-03-09 20:33:39.073 [PROGRESS] 19% (4/21) Mobile capture @ 15%
+2026-03-09 20:33:41.749 [PROGRESS] 24% (5/21) Mobile capture @ 20%
+2026-03-09 20:33:44.737 [PROGRESS] 29% (6/21) Mobile capture @ 25%
+2026-03-09 20:33:44.857 [PROGRESS] 19% (5/27) chromium @ 50%
+2026-03-09 20:33:47.384 [PROGRESS] 33% (7/21) Mobile capture @ 30%
+2026-03-09 20:33:48.592 [PROGRESS] 22% (6/27) chromium @ 65%
+2026-03-09 20:33:50.150 [PROGRESS] 38% (8/21) Mobile capture @ 35%
+2026-03-09 20:33:52.157 [PROGRESS] 26% (7/27) chromium @ 75%
+2026-03-09 20:33:52.803 [PROGRESS] 43% (9/21) Mobile capture @ 40%
+2026-03-09 20:33:55.901 [PROGRESS] 30% (8/27) chromium @ 90%
+2026-03-09 20:33:55.990 [PROGRESS] 48% (10/21) Mobile capture @ 45%
+2026-03-09 20:33:58.523 [PROGRESS] 52% (11/21) Mobile capture @ 50%
+2026-03-09 20:33:59.468 [PROGRESS] 33% (9/27) chromium @ 100%
+2026-03-09 20:34:01.142 [PROGRESS] 57% (12/21) Mobile capture @ 55%
+2026-03-09 20:34:03.845 [PROGRESS] 62% (13/21) Mobile capture @ 60%
+2026-03-09 20:34:04.390 [C4] [INFO] Launching firefox...
+2026-03-09 20:34:06.439 [PROGRESS] 67% (14/21) Mobile capture @ 65%
+2026-03-09 20:34:09.202 [PROGRESS] 71% (15/21) Mobile capture @ 70%
+2026-03-09 20:34:15.450 [PROGRESS] 76% (16/21) Mobile capture @ 75%
+2026-03-09 20:34:18.313 [PROGRESS] 81% (17/21) Mobile capture @ 80%
+2026-03-09 20:34:20.585 [PROGRESS] 37% (10/27) firefox @ 0%
+2026-03-09 20:34:20.780 [PROGRESS] 86% (18/21) Mobile capture @ 85%
+2026-03-09 20:34:23.222 [PROGRESS] 41% (11/27) firefox @ 10%
+2026-03-09 20:34:23.338 [PROGRESS] 90% (19/21) Mobile capture @ 90%
+2026-03-09 20:34:25.831 [PROGRESS] 44% (12/27) firefox @ 25%
+2026-03-09 20:34:25.877 [PROGRESS] 95% (20/21) Mobile capture @ 95%
+2026-03-09 20:34:28.373 [PROGRESS] 100% (21/21) Mobile capture @ 100%
+2026-03-09 20:34:28.419 [PROGRESS] 48% (13/27) firefox @ 40%
+2026-03-09 20:34:30.956 [PROGRESS] 52% (14/27) firefox @ 50%
+2026-03-09 20:34:33.627 [PROGRESS] 56% (15/27) firefox @ 65%
+2026-03-09 20:34:36.113 [PHASE] Phase Mobile Audit completed in 1m24s
+2026-03-09 20:34:36.216 [PROGRESS] 59% (16/27) firefox @ 75%
+2026-03-09 20:34:38.681 [PROGRESS] 63% (17/27) firefox @ 90%
+2026-03-09 20:34:41.141 [PROGRESS] 67% (18/27) firefox @ 100%
+2026-03-09 20:34:44.272 [C4] [INFO] Launching webkit...
+2026-03-09 20:34:54.939 [PROGRESS] 70% (19/27) webkit @ 0%
+2026-03-09 20:34:57.434 [PROGRESS] 74% (20/27) webkit @ 10%
+2026-03-09 20:34:59.927 [PROGRESS] 78% (21/27) webkit @ 25%
+2026-03-09 20:35:02.554 [PROGRESS] 81% (22/27) webkit @ 40%
+2026-03-09 20:35:05.172 [PROGRESS] 85% (23/27) webkit @ 50%
+2026-03-09 20:35:07.858 [PROGRESS] 89% (24/27) webkit @ 65%
+2026-03-09 20:35:10.498 [PROGRESS] 93% (25/27) webkit @ 75%
+2026-03-09 20:35:13.012 [PROGRESS] 96% (26/27) webkit @ 90%
+2026-03-09 20:35:15.521 [PROGRESS] 100% (27/27) webkit @ 100%
+2026-03-09 20:35:18.158 [PHASE] Phase Cross-Browser Matrix completed in 2m6s
+
+====================================================
+ PHASE START: VISUAL DIFF
+====================================================
+2026-03-09 20:35:18.651 [C4] [WARN] Significant diff: chromium vs firefox at 0% — 25.8%
+2026-03-09 20:35:19.133 [C4] [WARN] Significant diff: chromium vs webkit at 0% — 29.2%
+2026-03-09 20:35:19.649 [C4] [WARN] Significant diff: firefox vs webkit at 0% — 28.3%
+2026-03-09 20:35:20.703 [C4] [WARN] Significant diff: chromium vs webkit at 10% — 17.8%
+2026-03-09 20:35:21.194 [C4] [WARN] Significant diff: firefox vs webkit at 10% — 17.7%
+2026-03-09 20:35:22.909 [C4] [WARN] Significant diff: chromium vs firefox at 40% — 10.9%
+2026-03-09 20:35:23.302 [C4] [WARN] Significant diff: chromium vs webkit at 40% — 13.4%
+2026-03-09 20:35:24.091 [C4] [WARN] Significant diff: chromium vs firefox at 50% — 24.5%
+2026-03-09 20:35:24.458 [C4] [WARN] Significant diff: chromium vs webkit at 50% — 26.8%
+2026-03-09 20:35:25.277 [C4] [WARN] Significant diff: chromium vs firefox at 65% — 35.0%
+2026-03-09 20:35:25.647 [C4] [WARN] Significant diff: chromium vs webkit at 65% — 38.3%
+2026-03-09 20:35:26.420 [C4] [WARN] Significant diff: chromium vs firefox at 75% — 15.7%
+2026-03-09 20:35:26.772 [C4] [WARN] Significant diff: chromium vs webkit at 75% — 19.6%
+2026-03-09 20:35:27.900 [C4] [WARN] Significant diff: chromium vs webkit at 90% — 10.0%
+2026-03-09 20:35:29.427 [PHASE] Phase Visual Diff completed in 11.3s
+
+====================================================
+ PHASE START: ACCESSIBILITY
+====================================================
+2026-03-09 20:35:39.999 [C4] [INFO] Checking contrast ratios...
+2026-03-09 20:35:40.217 [C4] [OK] Found 0 contrast issue(s)
+2026-03-09 20:35:40.217 [C4] [INFO] Checking keyboard navigation...
+2026-03-09 20:35:40.230 [C4] [OK] Keyboard: navigable=true, focusVisible=true, elements=20
+2026-03-09 20:35:40.231 [C4] [INFO] Checking ARIA labels...
+2026-03-09 20:35:40.241 [C4] [OK] ARIA: sections=true, buttons=true, canvas=false
+2026-03-09 20:35:40.242 [C4] [INFO] Checking prefers-reduced-motion...
+2026-03-09 20:35:41.263 [C4] [OK] Reduced motion: respected
+2026-03-09 20:35:41.264 [C4] [INFO] Checking screen reader friendliness...
+2026-03-09 20:35:41.267 [C4] [OK] Screen reader: headings=false, landmarks=true, skipLink=true
+2026-03-09 20:35:41.267 [C4] [INFO] Checking focus management...
+2026-03-09 20:35:41.898 [C4] [OK] Accessibility score: 90/100
+2026-03-09 20:35:41.899 [PHASE] Phase Accessibility completed in 1.9s
+2026-03-09 20:35:42.227 [C4] [OK] Cycle report saved to C:\Users\theoo\OneDrive\Bureau\SOTY\event-horizon\scripts\soty-upgrader\reports\cycle-4\cycle-report.json
+2026-03-09 20:35:42.548 [C4] [OK] Audit exported to C:\Users\theoo\OneDrive\Bureau\SOTY\audit\cycle-4_2026-03-09T20-35-42
+2026-03-09 20:35:42.549 [C4] [OK] Audit exported to: C:\Users\theoo\OneDrive\Bureau\SOTY\audit\cycle-4_2026-03-09T20-35-42
+2026-03-09 20:35:42.549 [C4] [OK] Cycle 4 finished

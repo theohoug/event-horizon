@@ -1,0 +1,380 @@
+{
+  "meta": {
+    "title": "Three.js Performance Optimization for SOTY Event Horizon",
+    "version": "1.0.0",
+    "author": "Cleanlystudio",
+    "description": "Comprehensive Three.js-specific performance database for high-end WebGL experiences"
+  },
+  "scene_graph": {
+    "minimize_children": {
+      "description": "Three.js traverses the entire scene graph every frame for matrix updates. Fewer objects = faster traversal.",
+      "rules": [
+        "Flatten the scene graph when possible — don't nest objects unnecessarily",
+        "Use InstancedMesh instead of many individual meshes for repeated geometry",
+        "Group static objects and merge their geometry",
+        "Remove objects from the scene when they're not visible (not just set visible: false)"
+      ],
+      "cost_per_object": "~0.01-0.05ms per Object3D for matrix update + frustum check. At 1000 objects = 10-50ms overhead.",
+      "target": "Keep scene graph under 500 objects for consistent 60fps on mid-range hardware"
+    },
+    "frustum_culling": {
+      "description": "Three.js automatically skips rendering objects outside the camera frustum (enabled by default)",
+      "setting": "mesh.frustumCulling = true (default)",
+      "when_to_disable": "For objects that are always visible (fullscreen quads, background spheres, the black hole itself)",
+      "custom_bounding": "Set custom bounding spheres for large/complex objects: mesh.geometry.boundingSphere = new THREE.Sphere(center, radius)",
+      "note": "Frustum culling has a per-object CPU cost. For very large particle systems, it may be cheaper to disable culling and let the GPU handle it."
+    },
+    "matrix_auto_update": {
+      "description": "Every frame, Three.js recalculates the world matrix of every object. For static objects, this is wasted work.",
+      "disable": "object.matrixAutoUpdate = false — stops automatic recalculation",
+      "manual_update": "Call object.updateMatrix() only when position/rotation/scale changes",
+      "apply_to": "Background meshes, static scene elements, any object that doesn't move",
+      "savings": "Significant for scenes with many static objects — eliminates matrix multiplication per object per frame"
+    },
+    "object_pooling": {
+      "description": "Pre-create a pool of objects at initialization. Enable/disable them instead of creating/destroying.",
+      "pattern": {
+        "init": "Create N objects, set all to visible: false. Store in pool array.",
+        "acquire": "Find first invisible object, set visible: true, configure, return reference.",
+        "release": "Set visible: false, reset properties, return to pool."
+      },
+      "ideal_for": "Particle effects, temporary visual effects, debris, any objects that appear/disappear frequently",
+      "advantage": "Zero GC pressure. No memory allocation during gameplay. Predictable performance.",
+      "three_js_specific": "Don't remove/add to scene — just toggle .visible. Adding/removing triggers scene graph rebuild."
+    }
+  },
+  "materials": {
+    "shader_material_vs_built_in": {
+      "ShaderMaterial": {
+        "description": "Raw GLSL shader. Fastest execution. No built-in material overhead.",
+        "overhead": "Minimal — only your uniforms, no automatic uniform generation",
+        "use_when": "Maximum performance required. Custom effects. Black hole rendering. Post-processing.",
+        "drawback": "Must implement everything manually (lighting, shadows, fog, etc.)"
+      },
+      "RawShaderMaterial": {
+        "description": "Like ShaderMaterial but doesn't prepend Three.js standard headers",
+        "overhead": "Absolute minimum — full control over every line of GLSL",
+        "use_when": "GPGPU shaders, post-processing passes, any shader where Three.js prefixes are unwanted"
+      },
+      "MeshStandardMaterial": {
+        "description": "PBR material with environment mapping, roughness, metalness",
+        "overhead": "High — complex shader with many branches and texture lookups",
+        "use_when": "Physically accurate rendering of solid objects. Not needed for Event Horizon's abstract effects.",
+        "avoid_for": "Particles, backgrounds, post-processing, anything custom"
+      }
+    },
+    "material_reuse": {
+      "description": "Reuse the same material instance across multiple meshes. Each unique material = potential draw call break.",
+      "rule": "If two meshes look the same, they MUST share the same material instance",
+      "bad": "meshes.forEach(m => m.material = new THREE.ShaderMaterial(...))",
+      "good": "const sharedMat = new THREE.ShaderMaterial(...); meshes.forEach(m => m.material = sharedMat)",
+      "savings": "Reduces shader program switches and uniform uploads"
+    },
+    "on_before_compile": {
+      "description": "Hook into built-in material shader compilation to inject custom code",
+      "usage": "material.onBeforeCompile = (shader) => { shader.vertexShader = shader.vertexShader.replace('...', '...') }",
+      "use_case": "Add custom vertex displacement to a standard material without writing a full custom shader",
+      "caveat": "Changes are per-material instance. The modified shader is cached — changing onBeforeCompile after first render has no effect unless material.needsUpdate = true"
+    },
+    "needs_update": {
+      "description": "material.needsUpdate = true forces shader recompilation. VERY expensive.",
+      "rule": "Set to false after initial setup. Only set to true if shader #defines change.",
+      "what_doesnt_need_it": "Changing uniform values (including textures). Changing material.opacity, color, etc.",
+      "what_needs_it": "Changing material.defines, changing flatShading, changing vertexColors, switching map on/off"
+    },
+    "transparent_objects": {
+      "description": "Transparent materials require back-to-front sorting and disable early-z rejection",
+      "performance_impact": "2-3x more expensive than opaque rendering due to blending + sort",
+      "optimization": [
+        "Minimize number of transparent objects",
+        "Use alpha test (alphaTest: 0.5) instead of transparency when possible — allows early-z",
+        "Use premultiplied alpha for cleaner blending: material.premultipliedAlpha = true",
+        "For particles: use additive blending (blending: THREE.AdditiveBlending) — no sorting needed because order doesn't matter",
+        "Sort transparent objects manually if Three.js auto-sort is insufficient"
+      ]
+    }
+  },
+  "geometry": {
+    "buffer_geometry_only": {
+      "description": "Always use BufferGeometry. The old Geometry class was removed in r125.",
+      "rule": "Every geometry must be a BufferGeometry with typed array attributes"
+    },
+    "indexed_geometry": {
+      "description": "Share vertices between triangles using an index buffer",
+      "benefit": "Reduces vertex count by 30-60% for typical meshes. Less memory, fewer vertex shader invocations.",
+      "implementation": "geometry.setIndex(new THREE.BufferAttribute(indices, 1))",
+      "when_to_skip": "Flat-shaded meshes where vertices CAN'T be shared (different normals per face)"
+    },
+    "interleaved_buffers": {
+      "description": "Store all vertex attributes (position, normal, uv) in a single interleaved buffer for better GPU cache coherency",
+      "implementation": "Use THREE.InterleavedBuffer and THREE.InterleavedBufferAttribute",
+      "benefit": "When the vertex shader reads position, normal, and UV, they're all in the same cache line",
+      "savings": "5-15% vertex processing speedup on cache-sensitive GPUs (mobile)"
+    },
+    "instanced_buffer_geometry": {
+      "description": "Draw thousands of instances of the same geometry with per-instance attributes",
+      "implementation": {
+        "setup": "new THREE.InstancedBufferGeometry() with InstancedBufferAttribute for per-instance data",
+        "usage": "new THREE.InstancedMesh(geometry, material, count)",
+        "per_instance_data": "Position (vec3), scale (float), color (vec3), rotation (quaternion), velocity (vec3), age (float)",
+        "update": "instancedMesh.instanceMatrix.needsUpdate = true after modifying matrix data"
+      },
+      "ideal_for": "Particle systems (10k-1M particles), star fields, debris, any repeated geometry",
+      "performance": "10,000 particles = 1 draw call. CPU cost is only the matrix/attribute update, not per-particle draw call overhead.",
+      "event_horizon_use": "Star field (50k+ stars), accretion disk particles (10k+), debris particles"
+    },
+    "merge_static_geometry": {
+      "description": "Combine multiple static meshes into a single geometry to reduce draw calls",
+      "implementation": "Use BufferGeometryUtils.mergeGeometries([geo1, geo2, ...]) from three/addons/utils/BufferGeometryUtils",
+      "caveat": "Merged geometry can't be individually transformed or have different materials",
+      "ideal_for": "Background star meshes, static environment elements"
+    },
+    "lod_levels_of_detail": {
+      "description": "Show simpler geometry for distant objects",
+      "implementation": "THREE.LOD object with addLevel(mesh, distance) for each detail level",
+      "event_horizon_relevance": "Low — the scene is mostly particles and shaders, not polygon meshes. But useful if any geometric objects are present."
+    }
+  },
+  "rendering": {
+    "pixel_ratio": {
+      "description": "Control the render resolution relative to CSS pixels",
+      "rule": "renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))",
+      "reasoning": "DPR 3 (iPhone 14 Pro) means 9x more pixels than DPR 1. Cap at 2 — the visual difference between 2 and 3 is negligible but the performance cost is significant.",
+      "dynamic": "On mobile, consider DPR 1.5 for challenging scenes"
+    },
+    "render_targets": {
+      "description": "Off-screen rendering for post-processing, GPGPU, and multi-pass effects",
+      "creation": "new THREE.WebGLRenderTarget(width, height, { type: THREE.FloatType, minFilter: THREE.LinearFilter })",
+      "ping_pong": {
+        "description": "Two render targets that alternate roles (read from A, write to B, swap)",
+        "use": "GPGPU simulation, feedback effects, temporal filtering",
+        "implementation": "let [read, write] = [rtA, rtB]; // ... render to write, read from read ... [read, write] = [write, read];"
+      },
+      "disposal": "renderTarget.dispose() — MUST be called when no longer needed"
+    },
+    "auto_clear": {
+      "description": "renderer.autoClear = false allows manual control of buffer clearing",
+      "usage": [
+        "Set autoClear to false",
+        "Manually call renderer.clear(color, depth, stencil) before first render pass",
+        "Render background layer (no clear)",
+        "Render main scene (no clear — composites on top)",
+        "Render HUD layer (no clear — composites on top)"
+      ],
+      "benefit": "Allows multi-layer rendering without render-to-texture overhead"
+    },
+    "scissor_test": {
+      "description": "Render only within a specified rectangle of the viewport",
+      "usage": "renderer.setScissor(x, y, width, height); renderer.setScissorTest(true);",
+      "use_case": "Partial viewport updates, HUD rendering in corners only, split-screen",
+      "event_horizon_use": "Could optimize HUD rendering to only update corner regions where data changes"
+    },
+    "logarithmic_depth_buffer": {
+      "description": "Replaces the standard depth buffer with a logarithmic distribution for better precision at large distances",
+      "enable": "new THREE.WebGLRenderer({ logarithmicDepthBuffer: true })",
+      "when_needed": "Scenes with extreme depth range (near: 0.01, far: 100000) — like space scenes",
+      "cost": "Small fragment shader overhead (log operation per fragment)",
+      "event_horizon_use": "Essential — the scene spans from near-camera HUD elements to distant star fields"
+    },
+    "render_order": {
+      "description": "Control which objects render first without modifying the scene graph",
+      "usage": "mesh.renderOrder = n — lower values render first",
+      "use_case": [
+        "Force background to render before foreground",
+        "Ensure HUD renders last (on top of everything)",
+        "Control transparent object order"
+      ],
+      "event_horizon_order": [
+        {"order": 0, "element": "Star field background"},
+        {"order": 1, "element": "Nebula/dust particles"},
+        {"order": 2, "element": "Black hole + accretion disk"},
+        {"order": 3, "element": "Close particles (additive blend)"},
+        {"order": 4, "element": "Post-processing fullscreen quad"},
+        {"order": 10, "element": "HUD overlay"}
+      ]
+    }
+  },
+  "gpgpu_in_three_js": {
+    "description": "General-Purpose GPU computing using Three.js render targets as data textures",
+    "architecture": {
+      "data_representation": "Particle state (position, velocity, etc.) stored as RGBA pixels in a texture. Each pixel = one particle. 512×512 texture = 262,144 particles.",
+      "computation": "A fullscreen quad with a simulation shader reads the previous state texture and writes the new state to a render target.",
+      "ping_pong": "Two render targets alternate: read from one, write to other, swap each frame.",
+      "readback": "The result texture is used directly as an attribute source in the particle rendering shader (no CPU readback)."
+    },
+    "data_texture_setup": {
+      "description": "Initialize particle data on CPU, upload as DataTexture",
+      "implementation": [
+        "const size = 512; // 512×512 = 262,144 particles",
+        "const data = new Float32Array(size * size * 4); // RGBA per particle",
+        "// Fill with initial positions (RGB) and mass/age (A)",
+        "const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat, THREE.FloatType);",
+        "texture.needsUpdate = true;"
+      ]
+    },
+    "simulation_shader": {
+      "description": "Fragment shader that reads previous state and computes new state",
+      "pattern": {
+        "vertex": "Standard fullscreen quad vertex shader — just pass UVs",
+        "fragment": [
+          "uniform sampler2D u_positionTexture;",
+          "uniform sampler2D u_velocityTexture;",
+          "uniform float u_deltaTime;",
+          "uniform vec3 u_blackHolePosition;",
+          "uniform float u_blackHoleMass;",
+          "",
+          "void main() {",
+          "  vec2 uv = gl_FragCoord.xy / resolution.xy;",
+          "  vec4 pos = texture2D(u_positionTexture, uv);",
+          "  vec4 vel = texture2D(u_velocityTexture, uv);",
+          "  ",
+          "  // Gravitational acceleration",
+          "  vec3 dir = u_blackHolePosition - pos.xyz;",
+          "  float dist = length(dir);",
+          "  vec3 accel = normalize(dir) * u_blackHoleMass / (dist * dist);",
+          "  ",
+          "  // Integration (Verlet or simple Euler)",
+          "  vel.xyz += accel * u_deltaTime;",
+          "  pos.xyz += vel.xyz * u_deltaTime;",
+          "  ",
+          "  gl_FragColor = pos; // or vel, depending on which texture this pass writes",
+          "}"
+        ]
+      }
+    },
+    "render_target_setup": {
+      "description": "Two render targets for ping-pong pattern",
+      "implementation": [
+        "const rtOptions = {",
+        "  minFilter: THREE.NearestFilter,",
+        "  magFilter: THREE.NearestFilter,",
+        "  format: THREE.RGBAFormat,",
+        "  type: THREE.FloatType",
+        "};",
+        "const rtA = new THREE.WebGLRenderTarget(size, size, rtOptions);",
+        "const rtB = new THREE.WebGLRenderTarget(size, size, rtOptions);"
+      ],
+      "important_settings": [
+        "NearestFilter — do NOT interpolate data textures (would corrupt values)",
+        "FloatType — need full float precision for position/velocity",
+        "Requires EXT_color_buffer_float extension (check availability)"
+      ]
+    },
+    "connecting_to_particle_rendering": {
+      "description": "Use the GPGPU output texture as a vertex attribute source in the particle vertex shader",
+      "technique": [
+        "Create InstancedBufferGeometry with a 'reference' attribute containing UVs that map to the data texture",
+        "In vertex shader: sample the position texture at the reference UV to get particle world position",
+        "This eliminates CPU readback — all computation stays on GPU"
+      ],
+      "vertex_shader_pattern": [
+        "attribute vec2 reference; // UV pointing to this particle's data in the texture",
+        "uniform sampler2D u_positionTexture;",
+        "",
+        "void main() {",
+        "  vec4 particlePos = texture2D(u_positionTexture, reference);",
+        "  vec4 mvPosition = modelViewMatrix * vec4(particlePos.xyz, 1.0);",
+        "  gl_PointSize = 2.0 * (300.0 / -mvPosition.z);",
+        "  gl_Position = projectionMatrix * mvPosition;",
+        "}"
+      ]
+    },
+    "gpgpu_compute_utility": {
+      "description": "Three.js r165+ includes GPUComputationRenderer helper for GPGPU",
+      "location": "three/addons/misc/GPUComputationRenderer",
+      "usage": [
+        "const gpuCompute = new GPUComputationRenderer(size, size, renderer);",
+        "const posTexture = gpuCompute.createTexture();",
+        "// Fill posTexture.image.data with initial values",
+        "const posVariable = gpuCompute.addVariable('texturePosition', simulationShader, posTexture);",
+        "gpuCompute.setVariableDependencies(posVariable, [posVariable, velVariable]);",
+        "gpuCompute.init();",
+        "// In animation loop:",
+        "gpuCompute.compute();",
+        "particleMaterial.uniforms.posMap.value = gpuCompute.getCurrentRenderTarget(posVariable).texture;"
+      ],
+      "advantages": "Handles ping-pong, dependency management, and variable setup automatically",
+      "note": "Internally uses the same FBO ping-pong technique described above"
+    }
+  },
+  "disposal": {
+    "what_must_be_disposed": [
+      {"type": "Geometry", "method": "geometry.dispose()", "what_it_frees": "GPU vertex/index buffers"},
+      {"type": "Material", "method": "material.dispose()", "what_it_frees": "Shader program, uniform buffers"},
+      {"type": "Texture", "method": "texture.dispose()", "what_it_frees": "GPU texture memory"},
+      {"type": "Render Target", "method": "renderTarget.dispose()", "what_it_frees": "Framebuffer + attached textures"},
+      {"type": "Scene (all children)", "method": "scene.traverse(child => { if (child.geometry) child.geometry.dispose(); if (child.material) { if (Array.isArray(child.material)) child.material.forEach(m => m.dispose()); else child.material.dispose(); } })", "what_it_frees": "All GPU resources in scene"}
+    ],
+    "what_does_NOT_need_disposal": [
+      "Object3D (plain groups/containers — no GPU resources)",
+      "Lights (no GPU resources beyond shadow map, which is auto-managed)",
+      "Camera (no GPU resources)"
+    ],
+    "material_texture_disposal": {
+      "description": "Materials may have multiple textures that each need disposal",
+      "textures_to_check": ["map", "normalMap", "roughnessMap", "metalnessMap", "emissiveMap", "alphaMap", "aoMap", "envMap", "lightMap", "displacementMap"],
+      "pattern": "Object.keys(material).forEach(key => { if (material[key] instanceof THREE.Texture) material[key].dispose(); });"
+    },
+    "memory_leak_detection": {
+      "renderer_info": {
+        "description": "renderer.info provides real-time GPU resource counts",
+        "properties": {
+          "render.calls": "Draw calls per frame",
+          "render.triangles": "Triangles rendered per frame",
+          "render.points": "Points rendered per frame",
+          "memory.geometries": "Number of geometry objects in GPU memory",
+          "memory.textures": "Number of texture objects in GPU memory",
+          "programs": "Number of compiled shader programs"
+        },
+        "monitoring": "Log renderer.info.memory every few seconds. If geometries or textures increase over time without corresponding scene additions, you have a leak."
+      }
+    }
+  },
+  "three_js_version_notes": {
+    "version": "r172",
+    "relevant_features": [
+      "WebGPU renderer available (experimental) — future-proofing",
+      "Improved BatchedMesh for automatic draw call batching",
+      "TSL (Three.js Shading Language) for cross-renderer shader authoring",
+      "Improved InstancedMesh performance",
+      "Color management enabled by default (renderer.colorSpace)",
+      "Legacy color management removed — use SRGBColorSpace for textures"
+    ],
+    "color_space_management": {
+      "description": "Three.js r152+ uses color management by default. Textures must specify their color space.",
+      "rules": [
+        "Color textures (albedo, emissive): texture.colorSpace = THREE.SRGBColorSpace",
+        "Data textures (normal, roughness, GPGPU): texture.colorSpace = THREE.LinearSRGBColorSpace (default)",
+        "Renderer output: renderer.outputColorSpace = THREE.SRGBColorSpace (default)",
+        "If colors look washed out: your texture colorSpace is probably wrong"
+      ]
+    }
+  },
+  "performance_checklist": {
+    "before_launch": [
+      "renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)) — capped",
+      "All static objects: matrixAutoUpdate = false",
+      "All unused resources: disposed",
+      "Draw calls < 100 (check renderer.info.render.calls)",
+      "No geometry/texture leaks (monitor renderer.info.memory over 5 minutes)",
+      "All particle systems use instanced rendering",
+      "All post-processing at half resolution where acceptable",
+      "Transparent objects use additive blending where possible (no sort needed)",
+      "logarithmicDepthBuffer enabled for space-scale scenes",
+      "No console.log in render loop",
+      "No object allocation in render loop (no 'new' keyword in animate())",
+      "No DOM reads in render loop (getBoundingClientRect, offsetWidth, etc.)",
+      "Performance tested on: Chrome, Firefox, Safari, mobile Chrome, mobile Safari",
+      "Device tier detection and quality scaling implemented"
+    ]
+  },
+  "sources": [
+    {"title": "Three.js Documentation", "url": "https://threejs.org/docs/"},
+    {"title": "Three.js Fundamentals", "url": "https://threejs.org/manual/"},
+    {"title": "Discover Three.js", "author": "Lewy Blue", "url": "https://discoverthreejs.com/"},
+    {"title": "Three.js Journey", "author": "Bruno Simon", "url": "https://threejs-journey.com/"},
+    {"title": "GPUComputationRenderer", "url": "https://threejs.org/examples/#webgl_gpgpu_birds"},
+    {"title": "Three.js Performance Tips", "author": "Lewy Blue", "type": "article"},
+    {"title": "How to Dispose of Objects in Three.js", "url": "https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects"}
+  ]
+}

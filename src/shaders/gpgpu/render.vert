@@ -64,7 +64,7 @@ void main() {
 
   float diskSizeBoost = 1.0 + diskGlow * 0.5;
   gl_PointSize = sizeBase * sizeAttenuation * uPixelRatio * distFade * scrollFade * speedScale * earlyBoost * lifeFade * diskSizeBoost;
-  gl_PointSize = clamp(gl_PointSize, 2.0, 24.0);
+  gl_PointSize = clamp(gl_PointSize, 0.5, 18.0);
 
   float nearGlow = smoothstep(6.0, 1.5, dist) * uScroll;
   vBrightness = (0.25 + aRandom.y * 0.55) * distFade * scrollFade * life * earlyBoost + nearGlow * 0.25;
@@ -72,28 +72,32 @@ void main() {
   vDiskGlow = diskGlow;
 
   float temp = aRandom.z;
-  vec3 coldStar = vec3(0.6, 0.75, 1.0);
-  vec3 warmStar = vec3(1.0, 0.85, 0.7);
-  vec3 hotStar = vec3(0.85, 0.92, 1.0);
-  vec3 cyanAccent = vec3(0.0, 0.96, 0.83);
-  vec3 violetHot = vec3(0.6, 0.3, 1.0);
+  vec3 coldStar = vec3(0.65, 0.78, 1.0);
+  vec3 warmStar = vec3(1.0, 0.88, 0.72);
+  vec3 hotStar = vec3(1.0, 0.95, 0.88);
 
   vColor = mix(coldStar, mix(warmStar, hotStar, temp), temp);
 
   float nearShift = smoothstep(8.0, 2.0, dist);
-  vColor = mix(vColor, cyanAccent, nearShift * 0.5);
+  vec3 innerHot = vec3(1.0, 0.92, 0.80);
+  vColor = mix(vColor, innerHot, nearShift * 0.4);
 
   float speedShift = smoothstep(1.5, 5.0, speed);
-  vColor = mix(vColor, vec3(0.5, 0.6, 1.3), speedShift * 0.35);
+  vColor = mix(vColor, vec3(0.6, 0.7, 1.2), speedShift * 0.25);
 
   float deepScroll = smoothstep(0.5, 0.9, uScroll);
-  vColor = mix(vColor, violetHot, deepScroll * nearShift * 0.3);
+  vec3 deepBlue = vec3(0.5, 0.6, 1.0);
+  vColor = mix(vColor, deepBlue, deepScroll * nearShift * 0.25);
 
   float dopplerShift = sin(diskAngle + uTime * 0.3) * 0.5 + 0.5;
-  vec3 accretionBlue = vec3(0.4, 0.6, 1.3);
-  vec3 accretionRed = vec3(1.4, 0.5, 0.15);
+  vec3 accretionBlue = vec3(0.6, 0.8, 1.4);
+  vec3 accretionRed = vec3(1.5, 0.65, 0.25);
   vec3 accretionColor = mix(accretionBlue, accretionRed, dopplerShift);
-  vColor = mix(vColor, accretionColor, diskGlow * 0.45);
+  vColor = mix(vColor, accretionColor, diskGlow * 0.75);
+
+  float diskWarmth = diskGlow * smoothstep(6.0, 3.0, dist);
+  vec3 diskHot = vec3(1.0, 0.85, 0.6);
+  vColor = mix(vColor, diskHot, diskWarmth * 0.35);
 
   float twinkle = sin(uTime * (1.0 + aRandom.x * 2.0) + aRandom.y * 6.28) * 0.06 + 0.94;
   vBrightness *= twinkle;
@@ -103,9 +107,12 @@ void main() {
   float cursorDist = length(screenPos - mouseNdc);
   vCursorProximity = smoothstep(0.22, 0.0, cursorDist);
 
-  if (uScroll < 0.2) vScrollTint = vec3(0.9, 0.95, 1.0);
-  else if (uScroll < 0.4) vScrollTint = mix(vec3(0.9, 0.95, 1.0), vec3(0.7, 0.8, 1.2), (uScroll - 0.2) * 5.0);
-  else if (uScroll < 0.6) vScrollTint = mix(vec3(0.7, 0.8, 1.2), vec3(1.1, 0.6, 0.9), (uScroll - 0.4) * 5.0);
-  else if (uScroll < 0.8) vScrollTint = mix(vec3(1.1, 0.6, 0.9), vec3(0.5, 0.3, 0.8), (uScroll - 0.6) * 5.0);
-  else vScrollTint = mix(vec3(0.5, 0.3, 0.8), vec3(0.15, 0.12, 0.35), (uScroll - 0.8) * 5.0);
+  vec3 tint1 = vec3(0.92, 0.95, 1.0);
+  vec3 tint2 = vec3(1.0, 0.92, 0.78);
+  vec3 tint3 = vec3(1.0, 0.78, 0.55);
+  vec3 tint4 = vec3(0.65, 0.75, 1.05);
+  vec3 tint5 = vec3(0.25, 0.25, 0.35);
+  vec3 ab = mix(tint1, tint2, smoothstep(0.15, 0.35, uScroll));
+  vec3 cd = mix(tint3, tint4, smoothstep(0.55, 0.75, uScroll));
+  vScrollTint = mix(ab, mix(cd, tint5, smoothstep(0.75, 0.95, uScroll)), smoothstep(0.35, 0.55, uScroll));
 }

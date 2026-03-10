@@ -1,0 +1,209 @@
+[
+  {
+    "scrollPercent": 0,
+    "diffs": [
+      {
+        "browserA": "chromium",
+        "browserB": "firefox",
+        "diffPercent": 23.63,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-firefox-000.png"
+      },
+      {
+        "browserA": "chromium",
+        "browserB": "webkit",
+        "diffPercent": 24.99,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-webkit-000.png"
+      },
+      {
+        "browserA": "firefox",
+        "browserB": "webkit",
+        "diffPercent": 21.89,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-firefox-webkit-000.png"
+      }
+    ]
+  },
+  {
+    "scrollPercent": 0.1,
+    "diffs": [
+      {
+        "browserA": "chromium",
+        "browserB": "firefox",
+        "diffPercent": 9.96,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-firefox-010.png"
+      },
+      {
+        "browserA": "chromium",
+        "browserB": "webkit",
+        "diffPercent": 16.24,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-webkit-010.png"
+      },
+      {
+        "browserA": "firefox",
+        "browserB": "webkit",
+        "diffPercent": 13.24,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-firefox-webkit-010.png"
+      }
+    ]
+  },
+  {
+    "scrollPercent": 0.25,
+    "diffs": [
+      {
+        "browserA": "chromium",
+        "browserB": "firefox",
+        "diffPercent": 15.29,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-firefox-025.png"
+      },
+      {
+        "browserA": "chromium",
+        "browserB": "webkit",
+        "diffPercent": 19.4,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-webkit-025.png"
+      },
+      {
+        "browserA": "firefox",
+        "browserB": "webkit",
+        "diffPercent": 5.26,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-firefox-webkit-025.png"
+      }
+    ]
+  },
+  {
+    "scrollPercent": 0.4,
+    "diffs": [
+      {
+        "browserA": "chromium",
+        "browserB": "firefox",
+        "diffPercent": 20.75,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-firefox-040.png"
+      },
+      {
+        "browserA": "chromium",
+        "browserB": "webkit",
+        "diffPercent": 23.07,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-webkit-040.png"
+      },
+      {
+        "browserA": "firefox",
+        "browserB": "webkit",
+        "diffPercent": 4.28,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-firefox-webkit-040.png"
+      }
+    ]
+  },
+  {
+    "scrollPercent": 0.5,
+    "diffs": [
+      {
+        "browserA": "chromium",
+        "browserB": "firefox",
+        "diffPercent": 19.39,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-firefox-050.png"
+      },
+      {
+        "browserA": "chromium",
+        "browserB": "webkit",
+        "diffPercent": 20.17,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-webkit-050.png"
+      },
+      {
+        "browserA": "firefox",
+        "browserB": "webkit",
+        "diffPercent": 3.35,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-firefox-webkit-050.png"
+      }
+    ]
+  },
+  {
+    "scrollPercent": 0.65,
+    "diffs": [
+      {
+        "browserA": "chromium",
+        "browserB": "firefox",
+        "diffPercent": 51.05,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-firefox-065.png"
+      },
+      {
+        "browserA": "chromium",
+        "browserB": "webkit",
+        "diffPercent": 51.7,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-webkit-065.png"
+      },
+      {
+        "browserA": "firefox",
+        "browserB": "webkit",
+        "diffPercent": 2.25,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-firefox-webkit-065.png"
+      }
+    ]
+  },
+  {
+    "scrollPercent": 0.75,
+    "diffs": [
+      {
+        "browserA": "chromium",
+        "browserB": "firefox",
+        "diffPercent": 65.65,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-firefox-075.png"
+      },
+      {
+        "browserA": "chromium",
+        "browserB": "webkit",
+        "diffPercent": 66.69,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-webkit-075.png"
+      },
+      {
+        "browserA": "firefox",
+        "browserB": "webkit",
+        "diffPercent": 0.34,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-firefox-webkit-075.png"
+      }
+    ]
+  },
+  {
+    "scrollPercent": 0.9,
+    "diffs": [
+      {
+        "browserA": "chromium",
+        "browserB": "firefox",
+        "diffPercent": 5.91,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-firefox-090.png"
+      },
+      {
+        "browserA": "chromium",
+        "browserB": "webkit",
+        "diffPercent": 4.15,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-webkit-090.png"
+      },
+      {
+        "browserA": "firefox",
+        "browserB": "webkit",
+        "diffPercent": 0.43,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-firefox-webkit-090.png"
+      }
+    ]
+  },
+  {
+    "scrollPercent": 1,
+    "diffs": [
+      {
+        "browserA": "chromium",
+        "browserB": "firefox",
+        "diffPercent": 0.45,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-firefox-100.png"
+      },
+      {
+        "browserA": "chromium",
+        "browserB": "webkit",
+        "diffPercent": 0.36,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-chromium-webkit-100.png"
+      },
+      {
+        "browserA": "firefox",
+        "browserB": "webkit",
+        "diffPercent": 0.22,
+        "diffImagePath": "C:\\Users\\theoo\\OneDrive\\Bureau\\SOTY\\event-horizon\\scripts\\soty-upgrader\\reports\\cycle-8\\cross-browser\\diffs\\diff-firefox-webkit-100.png"
+      }
+    ]
+  }
+]

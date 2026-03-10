@@ -1,0 +1,659 @@
+{
+  "metadata": {
+    "title": "Sagittarius A* Observational Data — Galactic Center Supermassive Black Hole",
+    "description": "Comprehensive observational database of Sgr A*, the supermassive black hole at the center of the Milky Way",
+    "version": "1.0.0",
+    "lastUpdated": "2026-03-09",
+    "primarySources": ["Event Horizon Telescope Collaboration", "GRAVITY Collaboration", "Keck Observatory", "Gemini Observatory"]
+  },
+  "galacticCenter": {
+    "designation": "Sagittarius A*",
+    "alternateNames": ["Sgr A*", "GCBH (Galactic Center Black Hole)"],
+    "discoveryYear": 1974,
+    "discoverers": "Bruce Balick & Robert Brown",
+    "discoveryInstrument": "Green Bank Interferometer",
+    "radioDesignation": "Sgr A* (the asterisk denotes its point-like nature)",
+    "rightAscension": "17h 45m 40.0409s",
+    "declination": "-29° 00' 28.118\"",
+    "galacticCoordinates": {
+      "longitude_deg": 359.94424,
+      "latitude_deg": -0.04616
+    },
+    "constellation": "Sagittarius"
+  },
+  "distance": {
+    "GRAVITY2019": {
+      "value_kpc": 8.178,
+      "uncertainty_stat_kpc": 0.013,
+      "uncertainty_sys_kpc": 0.022,
+      "value_ly": 26670,
+      "value_m": 2.523e20,
+      "method": "S2 stellar orbit geometric distance via GRAVITY interferometry",
+      "source": "GRAVITY Collaboration, A&A 625, L10 (2019)"
+    },
+    "Do2019": {
+      "value_kpc": 7.946,
+      "uncertainty_kpc": 0.050,
+      "method": "S0-2 orbit with Keck adaptive optics + spectroscopy",
+      "source": "Do et al., Science 365, 664 (2019)"
+    },
+    "GRAVITY2021": {
+      "value_kpc": 8.277,
+      "uncertainty_kpc": 0.033,
+      "method": "Updated S2 orbit combined analysis",
+      "source": "GRAVITY Collaboration (2021)"
+    },
+    "adopted": {
+      "value_kpc": 8.178,
+      "uncertainty_kpc": 0.026,
+      "value_ly": 26670,
+      "note": "GRAVITY geometric distance is the most precise"
+    }
+  },
+  "mass": {
+    "GRAVITY2022": {
+      "value_Msun": 4.297e6,
+      "uncertainty_Msun": 0.012e6,
+      "value_kg": 8.544e36,
+      "method": "S2 orbit including Schwarzschild precession",
+      "source": "GRAVITY Collaboration, A&A 657, L12 (2022)"
+    },
+    "Do2019": {
+      "value_Msun": 3.964e6,
+      "uncertainty_Msun": 0.047e6,
+      "method": "S0-2 orbit Keck spectroscopy + imaging",
+      "source": "Do et al., Science 365, 664 (2019)"
+    },
+    "Ghez2008": {
+      "value_Msun": 4.1e6,
+      "uncertainty_Msun": 0.6e6,
+      "method": "Stellar orbits from Keck adaptive optics (16 years of data)",
+      "source": "Ghez et al., ApJ 689, 1044 (2008)",
+      "note": "Nobel Prize 2020 (Andrea Ghez)"
+    },
+    "Genzel2010": {
+      "value_Msun": 4.3e6,
+      "uncertainty_Msun": 0.3e6,
+      "method": "Stellar orbits from VLT (NaCo + SINFONI, 16 years)",
+      "source": "Gillessen et al., ApJ 692, 1075 (2009)",
+      "note": "Nobel Prize 2020 (Reinhard Genzel)"
+    },
+    "EHT2022": {
+      "value_Msun": 4.0e6,
+      "uncertainty_Msun_upper": 1.1e6,
+      "uncertainty_Msun_lower": 0.6e6,
+      "method": "EHT shadow size calibration",
+      "source": "EHT Collaboration, ApJL 930, L12-L17 (2022)"
+    },
+    "adopted": {
+      "value_Msun": 4.0e6,
+      "uncertainty_Msun": 0.1e6,
+      "value_kg": 7.956e36,
+      "note": "Rounded value consistent with multiple measurements"
+    }
+  },
+  "physicalScales": {
+    "schwarzschildRadius": {
+      "value_m": 1.181e10,
+      "value_km": 1.181e7,
+      "value_AU": 0.0790,
+      "value_lightMinutes": 0.657,
+      "angularSize_uas": 9.87,
+      "note": "Rs = 2GM/c²"
+    },
+    "eventHorizonDiameter": {
+      "value_km": 2.362e7,
+      "value_AU": 0.158,
+      "comparison": "About 14 times the diameter of the Sun, easily fits inside Mercury's orbit"
+    },
+    "photonSphere": {
+      "radius_m": 1.772e10,
+      "radius_Rs": 1.5,
+      "angularSize_uas": 14.81
+    },
+    "isco": {
+      "schwarzschild_radius_m": 3.543e10,
+      "schwarzschild_radius_Rs": 3.0,
+      "schwarzschild_angularSize_uas": 29.6,
+      "orbitalPeriod_minutes": 18.1,
+      "orbitalVelocity_c": 0.408
+    },
+    "shadowDiameter": {
+      "predicted_uas": 51.8,
+      "formula_note": "Shadow diameter ≈ 2 × √27/2 × Rs_angular = 5.196 × Rs_angular",
+      "observed_uas": 51.8,
+      "uncertainty_uas": 2.3
+    }
+  },
+  "EHTimaging2022": {
+    "releaseDate": "2022-05-12",
+    "observationDate": "2017-04-06 and 2017-04-07",
+    "wavelength_mm": 1.3,
+    "frequency_GHz": 230,
+    "resolution_uas": 20,
+    "imageMorphology": {
+      "description": "Ring-like emission with a central brightness depression consistent with a shadow",
+      "ringDiameter_uas": 51.8,
+      "ringWidth_uas": 20,
+      "brightnessAsymmetry": "Present but variable across the two observation days",
+      "centralFluxDepression": "Clearly detected in time-averaged images"
+    },
+    "challengesVsM87": {
+      "variabilityTimescale": {
+        "sgrA_minutes": 4,
+        "m87_days": 7,
+        "ratio": 2500,
+        "explanation": "Sgr A* mass is ~1500× smaller than M87*, so its dynamical timescale (∝ M) is proportionally shorter. The source structure changes faster than the observation time."
+      },
+      "interstellarScattering": {
+        "description": "Radio waves from Sgr A* are scattered by the ionized interstellar medium in the Galactic plane",
+        "scatteringAngle_230GHz_uas": 22,
+        "scatteringAngle_86GHz_uas": 200,
+        "mitigation": "Observing at 230 GHz minimizes scattering; deconvolution applied to images"
+      },
+      "calibrationDifficulty": "Much more difficult than M87* due to rapid variability during scans"
+    },
+    "imagingMethods": {
+      "timeAveraged": {
+        "description": "Images averaged over the full observation period to recover the persistent ring structure",
+        "advantage": "Reveals the time-independent shadow geometry"
+      },
+      "snapshot": {
+        "description": "Short-timescale images capturing the variable emission",
+        "timescale_minutes": 10,
+        "note": "Show clumpy, asymmetric emission moving around the ring"
+      },
+      "dynamicalImaging": {
+        "description": "Movie-like reconstructions of the time-variable source",
+        "methods": ["StarWarps", "DPI (Dynamic Phase Imaging)"],
+        "result": "Show hot spots orbiting clockwise as seen from Earth"
+      }
+    },
+    "shadowConsistency": {
+      "observedDiameter_uas": 51.8,
+      "uncertainty_uas": 2.3,
+      "predictedFromStellarOrbits_uas": {
+        "schwarzschild": 50.1,
+        "kerr_a05": 50.3,
+        "note": "Using mass from GRAVITY stellar orbits"
+      },
+      "consistentWithGR": true,
+      "fractionalDeviation": {
+        "delta": -0.04,
+        "uncertainty_1sigma_upper": 0.09,
+        "uncertainty_1sigma_lower": 0.10,
+        "source": "EHT Collaboration Paper VI (2022)"
+      }
+    },
+    "telescopeStations": "Same 8 stations as M87* 2017 campaign",
+    "source": "EHT Collaboration, ApJL 930, L12-L17 (2022)"
+  },
+  "stellarOrbits": {
+    "description": "Orbits of stars around Sgr A* provide the most precise mass and distance measurements of any black hole",
+    "instruments": ["VLT/GRAVITY", "VLT/NaCo", "VLT/SINFONI", "Keck/NIRC2", "Keck/OSIRIS"],
+    "S2_S0_2": {
+      "alternateNames": ["S2 (European)", "S0-2 (American)"],
+      "type": "B-type main-sequence star",
+      "apparentMagnitude_K": 14.1,
+      "spectralType": "B0-B2.5 V",
+      "mass_Msun": 13.6,
+      "age_Myr": 6.6,
+      "orbitalElements": {
+        "period_years": 16.0518,
+        "uncertainty_years": 0.0015,
+        "semiMajorAxis_arcsec": 0.1251,
+        "semiMajorAxis_AU": 1024,
+        "semiMajorAxis_mpc": 4.96,
+        "eccentricity": 0.8843,
+        "uncertainty_eccentricity": 0.0003,
+        "inclination_deg": 134.18,
+        "longitudeOfAscendingNode_deg": 228.17,
+        "argumentOfPericenter_deg": 66.13,
+        "pericenterDistance_AU": 118.6,
+        "pericenterDistance_Rs": 1400,
+        "pericenterVelocity_km_s": 7650,
+        "pericenterVelocity_c": 0.0255,
+        "apocenterDistance_AU": 1929,
+        "lastPericenter": "2018-05-19",
+        "nextPericenter": "2034-06",
+        "source": "GRAVITY Collaboration (2022)"
+      },
+      "relativisticEffects": {
+        "gravitationalRedshift": {
+          "detected": true,
+          "detectionYear": 2018,
+          "maxRedshift_km_s": 200,
+          "atPericenter": true,
+          "significance_sigma": 5,
+          "source": "GRAVITY Collaboration, A&A 615, L15 (2018); Do et al., Science 365, 664 (2019)"
+        },
+        "schwarzschildPrecession": {
+          "detected": true,
+          "detectionYear": 2020,
+          "precessionPerOrbit_arcmin": 12.1,
+          "predictedGR_arcmin": 12.1,
+          "fParameter": {
+            "value": 1.10,
+            "uncertainty": 0.19,
+            "GRprediction": 1.0,
+            "note": "f=1 is pure GR Schwarzschild precession; measured value consistent"
+          },
+          "significance_sigma": 5,
+          "source": "GRAVITY Collaboration, A&A 636, L5 (2020)"
+        },
+        "roemer_specialRelativistic_transverseDopper": {
+          "detected": true,
+          "note": "All included in the orbital fit"
+        }
+      }
+    },
+    "otherKeyStars": [
+      {
+        "name": "S62",
+        "period_years": 9.9,
+        "semiMajorAxis_AU": 740,
+        "eccentricity": 0.976,
+        "pericenterDistance_AU": 17.8,
+        "pericenterDistance_Rs": 215,
+        "pericenterVelocity_c": 0.071,
+        "note": "Closest known approach of any star to Sgr A* at pericenter",
+        "source": "Peissker et al. (2020)"
+      },
+      {
+        "name": "S4714",
+        "period_years": 12.0,
+        "semiMajorAxis_AU": 845,
+        "eccentricity": 0.985,
+        "pericenterDistance_AU": 12.6,
+        "pericenterDistance_Rs": 150,
+        "pericenterVelocity_c": 0.083,
+        "pericenterVelocity_km_s": 24000,
+        "note": "Highest velocity star known near Sgr A* (if confirmed)",
+        "source": "Peissker et al. (2020)"
+      },
+      {
+        "name": "S4711",
+        "period_years": 7.6,
+        "semiMajorAxis_AU": 609,
+        "eccentricity": 0.768,
+        "pericenterDistance_AU": 141,
+        "pericenterDistance_Rs": 1700,
+        "note": "Shortest confirmed period",
+        "source": "Peissker et al. (2020)"
+      },
+      {
+        "name": "S14",
+        "period_years": 55.3,
+        "semiMajorAxis_AU": 2500,
+        "eccentricity": 0.963,
+        "pericenterDistance_AU": 93,
+        "source": "Gillessen et al. (2017)"
+      },
+      {
+        "name": "S38 (S0-38)",
+        "period_years": 19.2,
+        "semiMajorAxis_AU": 1126,
+        "eccentricity": 0.820,
+        "pericenterDistance_AU": 203,
+        "source": "Gillessen et al. (2017)"
+      },
+      {
+        "name": "S55 (S0-102)",
+        "period_years": 12.8,
+        "semiMajorAxis_AU": 870,
+        "eccentricity": 0.721,
+        "pericenterDistance_AU": 243,
+        "note": "Second shortest period after S4711",
+        "source": "Meyer et al. (2012)"
+      },
+      {
+        "name": "S1",
+        "period_years": 166,
+        "semiMajorAxis_AU": 5300,
+        "eccentricity": 0.556,
+        "source": "Gillessen et al. (2017)"
+      },
+      {
+        "name": "S8",
+        "period_years": 92.9,
+        "semiMajorAxis_AU": 3630,
+        "eccentricity": 0.803,
+        "source": "Gillessen et al. (2017)"
+      },
+      {
+        "name": "S12",
+        "period_years": 58.9,
+        "semiMajorAxis_AU": 2610,
+        "eccentricity": 0.888,
+        "source": "Gillessen et al. (2017)"
+      },
+      {
+        "name": "S13",
+        "period_years": 49.0,
+        "semiMajorAxis_AU": 2320,
+        "eccentricity": 0.425,
+        "source": "Gillessen et al. (2017)"
+      }
+    ],
+    "totalKnownOrbitalStars": {
+      "withFullOrbits": 50,
+      "withPartialOrbits": 150,
+      "note": "As of 2024, approximately 50 stars have well-determined orbits around Sgr A*"
+    },
+    "nobleprize2020": {
+      "laureates": ["Roger Penrose (1/2)", "Reinhard Genzel (1/4)", "Andrea Ghez (1/4)"],
+      "reason": "Penrose: 'for the discovery that black hole formation is a robust prediction of the general theory of relativity'; Genzel & Ghez: 'for the discovery of a supermassive compact object at the centre of our galaxy'",
+      "source": "Nobel Prize in Physics 2020"
+    }
+  },
+  "hotSpots": {
+    "GRAVITYdetection2018": {
+      "description": "Near-infrared flares resolved as orbiting hot spots near the ISCO",
+      "instrument": "VLTI/GRAVITY interferometer",
+      "wavelength_um": 2.2,
+      "threeFlares": [
+        {
+          "date": "2018-05-27",
+          "orbitRadius_uas": 50,
+          "orbitRadius_Rs": 6,
+          "orbitalPeriod_minutes": 45,
+          "velocity_c": 0.30,
+          "duration_minutes": 60,
+          "note": "Consistent with a hot spot orbiting near the ISCO"
+        },
+        {
+          "date": "2018-06-22",
+          "orbitRadius_uas": 40,
+          "orbitRadius_Rs": 5,
+          "orbitalPeriod_minutes": 33,
+          "velocity_c": 0.35,
+          "duration_minutes": 50
+        },
+        {
+          "date": "2018-07-28",
+          "orbitRadius_uas": 60,
+          "orbitRadius_Rs": 7,
+          "orbitalPeriod_minutes": 55,
+          "velocity_c": 0.27,
+          "duration_minutes": 70
+        }
+      ],
+      "motionType": "Clockwise (as seen from Earth), consistent with face-on orbital motion",
+      "inclination_deg": {
+        "value": 140,
+        "uncertainty": 20,
+        "note": "Orbital plane inclination consistent with the accretion flow"
+      },
+      "source": "GRAVITY Collaboration, A&A 618, L10 (2018)"
+    },
+    "interpretation": {
+      "description": "The hot spots are thought to be magnetic reconnection events or localized heating in the inner accretion flow",
+      "temperatureEstimate_K": 1e11,
+      "magneticFieldRequired_Gauss": 30,
+      "plasmaModel": "Synchrotron emission from transiently heated electrons"
+    }
+  },
+  "variability": {
+    "timescales": {
+      "lightCrossingTime_Rs_s": 39.4,
+      "orbitalPeriod_ISCO_min": 18.1,
+      "observedVariability_min": {
+        "fastest": 4,
+        "typical": 30,
+        "note": "Fastest variability constrains emission region to a few Rs"
+      }
+    },
+    "nearInfrared": {
+      "flareRate": "4-6 per day",
+      "amplitudeFactor": "2-100× quiescent",
+      "duration_min": { "typical": 60, "range": [10, 200] },
+      "spectralIndex_flare": 0.6,
+      "spectralIndex_quiescent": 3.0
+    },
+    "xray": {
+      "instrument": "Chandra X-ray Observatory",
+      "flareRate": "1-2 bright flares per day",
+      "brightFlareAmplitude": "10-100× quiescent",
+      "moderateFlareRate": "1 per 3 hours",
+      "brightFluxIncrease": ">10×",
+      "veryBrightFlares": {
+        "description": "Rare very bright X-ray flares (>100× quiescent)",
+        "rate": "~1 per week",
+        "examples": [
+          { "date": "2012-02-09", "amplification": 200, "instrument": "Chandra" },
+          { "date": "2013-09-14", "amplification": 400, "instrument": "Chandra", "note": "Largest X-ray flare observed from Sgr A*" },
+          { "date": "2014-08-31", "amplification": 50, "instrument": "Chandra" }
+        ]
+      },
+      "quiescentLuminosity_0p5_8keV_erg_s": 2e33,
+      "flareLuminosity_0p5_8keV_erg_s": { "moderate": 1e34, "bright": 1e35 }
+    },
+    "radio": {
+      "variability230GHz": "15-25% on hour timescales",
+      "variability43GHz": "5-10% on day timescales",
+      "intrinsicVariability": "Decorrelated from NIR/X-ray on most occasions",
+      "simultaneousWithXray": "Millimeter flares sometimes follow X-ray flares by ~2 hours"
+    },
+    "submm": {
+      "variability345GHz": "10-20% rms on hour timescales",
+      "brightnessTemperature_K": 1e10,
+      "note": "Variability at submm wavelengths is key for EHT imaging"
+    }
+  },
+  "quiescentProperties": {
+    "bolometricLuminosity": {
+      "value_erg_s": 1e36,
+      "value_Lsun": 260,
+      "value_W": 1e29,
+      "eddingtonRatio": 2e-9,
+      "note": "Sgr A* is one of the most underluminous AGN known, ~10 billion times below its Eddington limit"
+    },
+    "accretionRate": {
+      "bondiRate_Msun_yr": 1e-5,
+      "actualInflow_Msun_yr": { "estimate": 1e-8, "range": [1e-9, 1e-7] },
+      "note": "Most of the gas captured at the Bondi radius does not reach the horizon — outflows and convection carry it back",
+      "bondiRadius_arcsec": 3,
+      "bondiRadius_pc": 0.12
+    },
+    "accretionFlowType": "RIAF (Radiatively Inefficient Accretion Flow) / ADAF",
+    "electronTemperature_K": { "range": [1e9, 5e10] },
+    "ionTemperature_K": { "range": [1e11, 1e12] },
+    "electronDensity_nearHorizon_cm3": { "range": [1e5, 1e7] },
+    "magneticField_nearHorizon_Gauss": { "range": [5, 50] },
+    "radiationMechanism": "Synchrotron + synchrotron self-Compton (SSC)"
+  },
+  "spectrum": {
+    "radioFluxDensity": [
+      { "frequency_GHz": 1.4, "fluxDensity_Jy": 0.5 },
+      { "frequency_GHz": 5.0, "fluxDensity_Jy": 0.7 },
+      { "frequency_GHz": 8.5, "fluxDensity_Jy": 0.8 },
+      { "frequency_GHz": 15, "fluxDensity_Jy": 0.9 },
+      { "frequency_GHz": 22, "fluxDensity_Jy": 1.0 },
+      { "frequency_GHz": 43, "fluxDensity_Jy": 1.2 },
+      { "frequency_GHz": 86, "fluxDensity_Jy": 2.0 },
+      { "frequency_GHz": 100, "fluxDensity_Jy": 2.2 },
+      { "frequency_GHz": 230, "fluxDensity_Jy": 2.4 },
+      { "frequency_GHz": 345, "fluxDensity_Jy": 3.0 },
+      { "frequency_GHz": 690, "fluxDensity_Jy": 2.5 }
+    ],
+    "spectralIndex_radio": {
+      "lowFrequency_below86GHz": 0.2,
+      "highFrequency_above86GHz": 0.5,
+      "submm_bump": "Peak near 345 GHz (submillimeter bump)"
+    },
+    "nearInfrared_quiescent_mJy": {
+      "K_band_2p2um": 0.2,
+      "H_band_1p6um": 0.05,
+      "L_band_3p8um": 1.0
+    },
+    "xray_quiescent": {
+      "luminosity_2_10keV_erg_s": 2.4e33,
+      "photonIndex": 2.7,
+      "absorptionColumn_NH_cm2": 1.5e23
+    }
+  },
+  "comparisonWithM87": {
+    "massRatio": {
+      "M87_over_SgrA": 1625,
+      "note": "M87* is about 1625 times more massive"
+    },
+    "schwarzschildRadiusRatio": 1625,
+    "angularSizeComparison": {
+      "sgrA_shadow_uas": 51.8,
+      "m87_shadow_uas": 42,
+      "note": "Sgr A* subtends a larger angle despite being less massive because it is much closer"
+    },
+    "variabilityTimescale": {
+      "sgrA_min": 4,
+      "m87_days": 7,
+      "ratio": 2500,
+      "formula": "t_dyn ∝ M"
+    },
+    "accretionState": {
+      "sgrA": "Extremely sub-Eddington (L/L_Edd ~ 10⁻⁹)",
+      "m87": "Sub-Eddington (L/L_Edd ~ 10⁻⁶)"
+    },
+    "jet": {
+      "sgrA": "No confirmed persistent jet (weak or absent)",
+      "m87": "Powerful relativistic jet extending >1 kpc"
+    },
+    "imagingDifficulty": {
+      "sgrA": "Much harder — rapid variability, interstellar scattering",
+      "m87": "Easier — stable structure over observation period"
+    }
+  },
+  "G2cloud": {
+    "description": "Gas cloud G2 that passed close to Sgr A* in 2014",
+    "closestApproach": {
+      "date": "2014-03-15",
+      "distance_AU": 150,
+      "distance_Rs": 1800,
+      "velocity_km_s": 3000
+    },
+    "nature": {
+      "hypothesis1": "Tidally disrupting gas cloud",
+      "hypothesis2": "Compact stellar object (binary merger product) with gas envelope",
+      "survivedPericenter": true,
+      "note": "G2 survived pericenter largely intact, supporting the stellar hypothesis"
+    },
+    "expectedBrighteningOfSgrA": "Not observed — Sgr A* did not significantly brighten during G2 pericenter",
+    "source": "Gillessen et al. (2012, 2019), Witzel et al. (2014)"
+  },
+  "interstellarScatteringScreen": {
+    "description": "Ionized interstellar medium scatters radio waves, blurring Sgr A*",
+    "scatteringLaw": "θ_scatter ∝ λ²",
+    "scatteringMeasurements": [
+      { "frequency_GHz": 1.0, "scatteringAngle_mas": 1000 },
+      { "frequency_GHz": 5.0, "scatteringAngle_mas": 40 },
+      { "frequency_GHz": 8.5, "scatteringAngle_mas": 14 },
+      { "frequency_GHz": 22, "scatteringAngle_mas": 2.1 },
+      { "frequency_GHz": 43, "scatteringAngle_mas": 0.54 },
+      { "frequency_GHz": 86, "scatteringAngle_mas": 0.13 },
+      { "frequency_GHz": 230, "scatteringAngle_uas": 22 },
+      { "frequency_GHz": 345, "scatteringAngle_uas": 10 }
+    ],
+    "scatteringAnisotropy": {
+      "majorAxis_PA_deg": 78,
+      "axisRatio": 0.5,
+      "note": "Scattering is anisotropic — elongated east-west"
+    },
+    "screenDistance_kpc": 5.8,
+    "source": "Bower et al. (2006), Johnson et al. (2018)"
+  },
+  "spinConstraints": {
+    "currentBestEstimate": {
+      "note": "Spin of Sgr A* is not well constrained as of 2024"
+    },
+    "EHT2022": {
+      "constraint": "Spin a/M > 0 mildly preferred based on image morphology",
+      "note": "Not strongly constraining"
+    },
+    "lackOfJet": {
+      "implication": "Suggests either low spin or unfavorable magnetic field geometry",
+      "note": "But absence of jet could also be due to very low accretion rate"
+    },
+    "hotSpotOrbits": {
+      "implication": "Orbital radius consistent with ISCO, which for Schwarzschild is 6M",
+      "spinConstraint": "Weak — compatible with a/M = 0 to 0.9"
+    },
+    "futureMeasurements": {
+      "ngEHT": "Next-generation EHT should constrain spin from shadow shape",
+      "pulsarTiming": "A pulsar in close orbit would provide the most precise spin measurement"
+    }
+  },
+  "EHTpapers2022": [
+    {
+      "number": "I",
+      "title": "First Sagittarius A* Event Horizon Telescope Results. I. The Shadow of the Supermassive Black Hole in the Center of the Milky Way",
+      "journal": "ApJL",
+      "volume": 930,
+      "id": "L12",
+      "year": 2022,
+      "doi": "10.3847/2041-8213/ac6674"
+    },
+    {
+      "number": "II",
+      "title": "First Sagittarius A* Event Horizon Telescope Results. II. EHT and Multiwavelength Observations, Data Processing, and Calibration",
+      "journal": "ApJL",
+      "volume": 930,
+      "id": "L13",
+      "year": 2022,
+      "doi": "10.3847/2041-8213/ac6675"
+    },
+    {
+      "number": "III",
+      "title": "First Sagittarius A* Event Horizon Telescope Results. III. Imaging of the Galactic Center Supermassive Black Hole",
+      "journal": "ApJL",
+      "volume": 930,
+      "id": "L14",
+      "year": 2022,
+      "doi": "10.3847/2041-8213/ac6429"
+    },
+    {
+      "number": "IV",
+      "title": "First Sagittarius A* Event Horizon Telescope Results. IV. Variability, Morphology, and Black Hole Mass",
+      "journal": "ApJL",
+      "volume": 930,
+      "id": "L15",
+      "year": 2022,
+      "doi": "10.3847/2041-8213/ac6736"
+    },
+    {
+      "number": "V",
+      "title": "First Sagittarius A* Event Horizon Telescope Results. V. Testing Astrophysical Models of the Galactic Center Black Hole",
+      "journal": "ApJL",
+      "volume": 930,
+      "id": "L16",
+      "year": 2022,
+      "doi": "10.3847/2041-8213/ac6672"
+    },
+    {
+      "number": "VI",
+      "title": "First Sagittarius A* Event Horizon Telescope Results. VI. Testing the Black Hole Metric",
+      "journal": "ApJL",
+      "volume": 930,
+      "id": "L17",
+      "year": 2022,
+      "doi": "10.3847/2041-8213/ac6756"
+    }
+  ],
+  "sources": [
+    "Event Horizon Telescope Collaboration, ApJL 930, L12-L17 (2022)",
+    "GRAVITY Collaboration, A&A 615, L15 (2018)",
+    "GRAVITY Collaboration, A&A 618, L10 (2018)",
+    "GRAVITY Collaboration, A&A 625, L10 (2019)",
+    "GRAVITY Collaboration, A&A 636, L5 (2020)",
+    "GRAVITY Collaboration, A&A 657, L12 (2022)",
+    "Ghez et al., ApJ 689, 1044 (2008)",
+    "Gillessen et al., ApJ 692, 1075 (2009)",
+    "Gillessen et al., ApJ 837, 30 (2017)",
+    "Do et al., Science 365, 664 (2019)",
+    "Peissker et al., ApJ 899, 50 (2020)",
+    "Bower et al., Science 304, 704 (2004)",
+    "Marrone et al., ApJ 640, 308 (2006)",
+    "Baganoff et al., Nature 413, 45 (2001)",
+    "Yuan & Narayan, ARAA 52, 529 (2014)",
+    "Genzel, Eisenhauer & Gillessen, Rev. Mod. Phys. 82, 3121 (2010)",
+    "Johnson et al., ApJ 865, 104 (2018)"
+  ]
+}

@@ -1,0 +1,421 @@
+{
+  "metadata": {
+    "title": "Kerr vs Schwarzschild Black Hole Comparison",
+    "description": "Detailed comparison of non-rotating (Schwarzschild) and rotating (Kerr) black holes including metrics, orbital properties, shadow shapes, and astrophysical implications",
+    "version": "1.0.0",
+    "lastUpdated": "2026-03-09"
+  },
+  "schwarzschildMetric": {
+    "name": "Schwarzschild Solution (1916)",
+    "description": "The unique spherically symmetric vacuum solution to Einstein's field equations. Describes a non-rotating, uncharged black hole.",
+    "metric": {
+      "lineElement": "ds² = -(1 - Rs/r)c²dt² + (1 - Rs/r)⁻¹dr² + r²(dθ² + sin²θ dφ²)",
+      "lineElementLatex": "ds^2 = -\\left(1 - \\frac{R_s}{r}\\right)c^2 dt^2 + \\left(1 - \\frac{R_s}{r}\\right)^{-1}dr^2 + r^2 d\\Omega^2",
+      "naturalUnits": "ds² = -(1 - 2M/r)dt² + (1 - 2M/r)⁻¹dr² + r²dΩ²",
+      "where": {
+        "Rs": "2GM/c² (Schwarzschild radius)",
+        "dOmega2": "dθ² + sin²θ dφ² (solid angle element)"
+      }
+    },
+    "parameters": {
+      "mass": { "symbol": "M", "description": "The only parameter — mass completely determines the solution" },
+      "spin": 0,
+      "charge": 0
+    },
+    "symmetries": {
+      "spherical": true,
+      "static": true,
+      "killingVectors": ["∂/∂t (time translation)", "∂/∂φ (rotation)", "plus two more for full SO(3)"],
+      "conservedQuantities": ["Energy E", "Angular momentum L (magnitude and z-component)", "Total: 4 constants of motion"]
+    },
+    "singularity": {
+      "location": "r = 0",
+      "type": "Point singularity",
+      "nature": "Spacelike — lies in the future of every observer inside the horizon",
+      "avoidable": false,
+      "kretschnerScalar": "K = R_abcd R^abcd = 48 M² / r⁶",
+      "diverges_at_r0": true
+    },
+    "horizons": {
+      "eventHorizon": {
+        "radius": "r = Rs = 2GM/c²",
+        "nature": "Null surface",
+        "surfaceGravity": "κ = c⁴/(4GM)",
+        "area": "A = 4π Rs² = 16πG²M²/c⁴",
+        "numberOfHorizons": 1
+      }
+    },
+    "noHairProperties": {
+      "determinedBy": ["Mass M"],
+      "externalFields": {
+        "gravitationalMultipoles": {
+          "monopole": "M",
+          "quadrupole": 0,
+          "allHigherMultipoles": 0,
+          "note": "Schwarzschild BH has ONLY a mass monopole — perfect spherical symmetry"
+        }
+      }
+    }
+  },
+  "kerrMetric": {
+    "name": "Kerr Solution (1963)",
+    "description": "The unique axially symmetric, stationary vacuum solution to Einstein's field equations. Describes a rotating, uncharged black hole.",
+    "discoveredBy": "Roy Kerr (1963)",
+    "metric": {
+      "boyerLindquistForm": {
+        "lineElementLatex": "ds^2 = -\\left(1 - \\frac{2Mr}{\\Sigma}\\right)dt^2 - \\frac{4Mar\\sin^2\\theta}{\\Sigma}dt\\,d\\phi + \\frac{\\Sigma}{\\Delta}dr^2 + \\Sigma\\,d\\theta^2 + \\left(r^2 + a^2 + \\frac{2Ma^2r\\sin^2\\theta}{\\Sigma}\\right)\\sin^2\\theta\\,d\\phi^2",
+        "where": {
+          "Sigma": "Σ = r² + a²cos²θ",
+          "Delta": "Δ = r² - 2Mr + a²",
+          "a": "a = J/(Mc) = spin parameter (angular momentum per unit mass)"
+        }
+      },
+      "naturalUnits": "ds² = -(1 - 2Mr/Σ)dt² - (4Mar sin²θ/Σ)dt dφ + (Σ/Δ)dr² + Σ dθ² + (r² + a² + 2Ma²r sin²θ/Σ) sin²θ dφ²",
+      "note": "The off-diagonal dtdφ term (frame-dragging) is the key difference from Schwarzschild"
+    },
+    "parameters": {
+      "mass": { "symbol": "M", "description": "Total mass-energy" },
+      "spin": { "symbol": "a", "definition": "a = J/M (in natural units)", "range": "0 ≤ a ≤ M (0 ≤ a/M ≤ 1)", "dimensionless": "a* = a/M = J/(M²) in [0,1)" },
+      "charge": 0
+    },
+    "symmetries": {
+      "axial": true,
+      "spherical": false,
+      "static": false,
+      "stationary": true,
+      "killingVectors": ["∂/∂t (time translation)", "∂/∂φ (axial rotation)"],
+      "hiddenSymmetry": "Killing tensor (2nd rank) → Carter constant Q",
+      "conservedQuantities": ["Energy E", "Axial angular momentum Lz", "Carter constant Q", "Total: 4 constants of motion (geodesics are integrable)"]
+    },
+    "singularity": {
+      "location": "Σ = 0, i.e., r = 0 AND θ = π/2",
+      "type": "Ring singularity of radius a in the equatorial plane",
+      "nature": "Timelike",
+      "avoidable": true,
+      "note": "One can pass through the ring (r = 0, θ ≠ π/2) to reach a region with r < 0"
+    },
+    "horizons": {
+      "outerHorizon": {
+        "name": "Event horizon",
+        "radius": "r_+ = M + √(M² - a²)",
+        "nature": "Null surface (Killing horizon)",
+        "surfaceGravity": "κ = √(M² - a²) / (2M r_+)",
+        "area": "A = 4π(r_+² + a²) = 8πM(M + √(M² - a²))",
+        "angularVelocity": "Ω_H = a/(r_+² + a²) = a c/(2Mr_+)",
+        "numberOfHorizons": 2
+      },
+      "innerHorizon": {
+        "name": "Cauchy horizon (inner horizon)",
+        "radius": "r_- = M - √(M² - a²)",
+        "nature": "Null surface",
+        "instability": "Mass inflation singularity forms here in realistic collapse scenarios"
+      },
+      "horizonExistence": "Requires M² ≥ a² (equivalently a/M ≤ 1). If a > M: no horizons → naked singularity (cosmic censorship forbids this)."
+    },
+    "ergosphere": {
+      "outerBoundary": "r_ergo(θ) = M + √(M² - a²cos²θ)",
+      "equatorial": "r_ergo = 2M (always, regardless of spin)",
+      "polar": "r_ergo = M + √(M² - a²) = r_+ (touches horizon at poles)",
+      "shape": "Oblate — thickest at equator, zero thickness at poles",
+      "physics": "Inside the ergosphere, no observer can remain stationary — frame-dragging forces co-rotation"
+    },
+    "noHairProperties": {
+      "determinedBy": ["Mass M", "Angular momentum J (or spin parameter a)"],
+      "externalFields": {
+        "gravitationalMultipoles": {
+          "monopole": "M",
+          "quadrupole": "Q₂ = -Ma² = -J²/M (determined by M and J alone!)",
+          "allHigherMultipoles": "M_l + iS_l = M(ia)^l (all multipoles determined by M and a)",
+          "note": "This is the essence of the no-hair theorem: ALL multipoles are determined by just M and J"
+        }
+      }
+    }
+  },
+  "comparisonTable": {
+    "description": "Side-by-side comparison of key properties",
+    "properties": [
+      {
+        "property": "Parameters",
+        "schwarzschild": "M only",
+        "kerr": "M and a (or J)",
+        "note": "Schwarzschild is a special case of Kerr with a=0"
+      },
+      {
+        "property": "Symmetry",
+        "schwarzschild": "Spherically symmetric, static",
+        "kerr": "Axially symmetric, stationary"
+      },
+      {
+        "property": "Metric off-diagonal",
+        "schwarzschild": "Diagonal",
+        "kerr": "Off-diagonal g_tφ term (frame-dragging)"
+      },
+      {
+        "property": "Event horizon radius (over M)",
+        "schwarzschild": "2M",
+        "kerr": "M + √(M² - a²), ranges from 2M (a=0) to M (a=M)"
+      },
+      {
+        "property": "Number of horizons",
+        "schwarzschild": 1,
+        "kerr": "2 (event + Cauchy)"
+      },
+      {
+        "property": "Ergosphere",
+        "schwarzschild": "None",
+        "kerr": "Exists between event horizon and stationary limit"
+      },
+      {
+        "property": "Singularity type",
+        "schwarzschild": "Point (r=0), spacelike",
+        "kerr": "Ring (r=0, θ=π/2), timelike"
+      },
+      {
+        "property": "Singularity avoidable?",
+        "schwarzschild": false,
+        "kerr": true
+      },
+      {
+        "property": "ISCO radius (prograde, over M)",
+        "schwarzschild": 6.0,
+        "kerr": "From 6M (a=0) to 1M (a=M prograde) to 9M (a=M retrograde)"
+      },
+      {
+        "property": "Photon orbit radius (prograde, over M)",
+        "schwarzschild": 3.0,
+        "kerr": "From 3M (a=0) to 1M (a=M prograde) to 4M (a=M retrograde)"
+      },
+      {
+        "property": "Shadow shape",
+        "schwarzschild": "Perfect circle",
+        "kerr": "D-shaped (flattened on approaching side) for edge-on view"
+      },
+      {
+        "property": "Shadow radius (over M, edge-on)",
+        "schwarzschild": "3√3 ≈ 5.196",
+        "kerr": "Slightly smaller and asymmetric for spinning BHs"
+      },
+      {
+        "property": "Accretion efficiency (prograde)",
+        "schwarzschild": "5.72%",
+        "kerr": "Up to 42.3% (a→M)"
+      },
+      {
+        "property": "Penrose energy extraction",
+        "schwarzschild": "Not possible",
+        "kerr": "Possible in ergosphere (up to 29% of irreducible mass)"
+      },
+      {
+        "property": "Superradiance",
+        "schwarzschild": "No",
+        "kerr": "Yes — waves with ω < mΩ_H are amplified"
+      },
+      {
+        "property": "Frame dragging",
+        "schwarzschild": "None",
+        "kerr": "Present everywhere, strongest near horizon"
+      },
+      {
+        "property": "Hawking temperature (relative)",
+        "schwarzschild": "T_H = ℏc³/(8πGMk_B)",
+        "kerr": "Lower than Schwarzschild for same mass; T→0 as a→M"
+      }
+    ]
+  },
+  "orbitalComparison": {
+    "ISCO": {
+      "description": "Innermost Stable Circular Orbit — the key boundary for accretion physics",
+      "detailedValues": [
+        { "a_over_M": -1.0, "prograde_r_over_M": 9.000, "retrograde_note": "Extremal retrograde", "efficiency_percent": 3.44 },
+        { "a_over_M": -0.9, "prograde_r_over_M": 8.587, "efficiency_percent": 3.68 },
+        { "a_over_M": -0.5, "prograde_r_over_M": 7.494, "efficiency_percent": 4.38 },
+        { "a_over_M": 0.0, "prograde_r_over_M": 6.000, "note": "Schwarzschild", "efficiency_percent": 5.72 },
+        { "a_over_M": 0.1, "prograde_r_over_M": 5.669, "efficiency_percent": 6.08 },
+        { "a_over_M": 0.2, "prograde_r_over_M": 5.329, "efficiency_percent": 6.50 },
+        { "a_over_M": 0.3, "prograde_r_over_M": 4.979, "efficiency_percent": 6.98 },
+        { "a_over_M": 0.4, "prograde_r_over_M": 4.614, "efficiency_percent": 7.56 },
+        { "a_over_M": 0.5, "prograde_r_over_M": 4.233, "efficiency_percent": 8.28 },
+        { "a_over_M": 0.6, "prograde_r_over_M": 3.829, "efficiency_percent": 9.16 },
+        { "a_over_M": 0.7, "prograde_r_over_M": 3.393, "efficiency_percent": 10.31 },
+        { "a_over_M": 0.75, "prograde_r_over_M": 3.162, "efficiency_percent": 11.01 },
+        { "a_over_M": 0.8, "prograde_r_over_M": 2.907, "efficiency_percent": 11.90 },
+        { "a_over_M": 0.85, "prograde_r_over_M": 2.618, "efficiency_percent": 13.09 },
+        { "a_over_M": 0.9, "prograde_r_over_M": 2.321, "efficiency_percent": 15.58 },
+        { "a_over_M": 0.92, "prograde_r_over_M": 2.176, "efficiency_percent": 16.78 },
+        { "a_over_M": 0.94, "prograde_r_over_M": 2.017, "efficiency_percent": 18.27 },
+        { "a_over_M": 0.95, "prograde_r_over_M": 1.937, "efficiency_percent": 19.20 },
+        { "a_over_M": 0.96, "prograde_r_over_M": 1.849, "efficiency_percent": 20.27 },
+        { "a_over_M": 0.97, "prograde_r_over_M": 1.751, "efficiency_percent": 21.57 },
+        { "a_over_M": 0.98, "prograde_r_over_M": 1.612, "efficiency_percent": 23.72 },
+        { "a_over_M": 0.99, "prograde_r_over_M": 1.455, "efficiency_percent": 26.38 },
+        { "a_over_M": 0.995, "prograde_r_over_M": 1.340, "efficiency_percent": 29.05 },
+        { "a_over_M": 0.998, "prograde_r_over_M": 1.237, "efficiency_percent": 32.05 },
+        { "a_over_M": 0.999, "prograde_r_over_M": 1.170, "efficiency_percent": 34.27 },
+        { "a_over_M": 0.9999, "prograde_r_over_M": 1.064, "efficiency_percent": 39.41 },
+        { "a_over_M": 1.0, "prograde_r_over_M": 1.000, "note": "Extremal Kerr", "efficiency_percent": 42.26 }
+      ],
+      "formulaSchwarzschild": "r_ISCO = 6M",
+      "formulaKerr_prograde_extremal": "r_ISCO = M"
+    },
+    "photonOrbit": {
+      "description": "Unstable circular photon orbit (determines the shadow boundary)",
+      "detailedValues": [
+        { "a_over_M": 0.0, "prograde_r_over_M": 3.000, "retrograde_r_over_M": 3.000 },
+        { "a_over_M": 0.2, "prograde_r_over_M": 2.838, "retrograde_r_over_M": 3.157 },
+        { "a_over_M": 0.4, "prograde_r_over_M": 2.663, "retrograde_r_over_M": 3.307 },
+        { "a_over_M": 0.5, "prograde_r_over_M": 2.571, "retrograde_r_over_M": 3.380 },
+        { "a_over_M": 0.6, "prograde_r_over_M": 2.474, "retrograde_r_over_M": 3.451 },
+        { "a_over_M": 0.7, "prograde_r_over_M": 2.372, "retrograde_r_over_M": 3.520 },
+        { "a_over_M": 0.8, "prograde_r_over_M": 2.263, "retrograde_r_over_M": 3.587 },
+        { "a_over_M": 0.9, "prograde_r_over_M": 2.143, "retrograde_r_over_M": 3.652 },
+        { "a_over_M": 0.95, "prograde_r_over_M": 2.073, "retrograde_r_over_M": 3.684 },
+        { "a_over_M": 0.99, "prograde_r_over_M": 2.014, "retrograde_r_over_M": 3.709 },
+        { "a_over_M": 0.998, "prograde_r_over_M": 2.003, "retrograde_r_over_M": 3.714 },
+        { "a_over_M": 1.0, "prograde_r_over_M": 1.000, "retrograde_r_over_M": 4.000 }
+      ],
+      "formulaSchwarzschild": "r_ph = 3M",
+      "formulaKerr_prograde_extremal": "r_ph = M",
+      "formulaKerr_retrograde_extremal": "r_ph = 4M"
+    }
+  },
+  "shadowComparison": {
+    "description": "How the shadow shape changes from Schwarzschild to Kerr",
+    "schwarzschild": {
+      "shape": "Perfect circle regardless of viewing angle",
+      "radius": "r_shadow = √27/2 × Rs = 3√3 M ≈ 5.196 M",
+      "area": "A_shadow = 27π M²"
+    },
+    "kerr": {
+      "shape": "Depends on spin parameter and viewing inclination",
+      "edgeOn_i90deg": {
+        "description": "Viewed from the equatorial plane — maximum asymmetry",
+        "approachingSide": "Flattened (D-shape)",
+        "recedingSide": "Rounder",
+        "cause": "Prograde photon orbits are closer to the BH, retrograde are farther"
+      },
+      "faceOn_i0deg": {
+        "description": "Viewed along the spin axis",
+        "shape": "Always circular (but slightly smaller than Schwarzschild)",
+        "note": "Axial symmetry means the shadow is circular when viewed on-axis"
+      },
+      "observabilityOfDShape": {
+        "M87star": {
+          "estimatedSpin": "a/M ≈ 0.9",
+          "inclination_deg": 17,
+          "expectedAsymmetry_percent": 4,
+          "currentEHT_canDetect": false,
+          "futureNgEHT_canDetect": true
+        },
+        "sgrAstar": {
+          "spinUnknown": true,
+          "inclinationEstimate_deg": { "range": [20, 70] },
+          "note": "If Sgr A* has high spin and is viewed at moderate inclination, the D-shape might be detectable by ngEHT"
+        }
+      }
+    }
+  },
+  "thorneLimit": {
+    "description": "The maximum spin a black hole can reach through thin-disk accretion",
+    "value": 0.998,
+    "discoveredBy": "Kip Thorne (1974)",
+    "mechanism": "Photons from the inner disk are preferentially captured in retrograde orbits, providing a counter-torque that prevents spin-up beyond a/M ≈ 0.998",
+    "formula": "The equilibrium spin depends on the radiation capture cross-section, which favors retrograde photon capture",
+    "implication": "Real astrophysical black holes accreting via thin disks should not exceed a/M ≈ 0.998",
+    "exceptions": [
+      "BH-BH mergers can produce higher spins (up to a/M ~ 0.96 for equal-mass, aligned mergers)",
+      "MAD accretion may allow slightly different equilibrium spins",
+      "Chaotic accretion (random disk orientations) tends to spin BHs DOWN"
+    ],
+    "source": "Thorne, ApJ 191, 507 (1974)"
+  },
+  "frameDraggingComparison": {
+    "schwarzschild": {
+      "frameDragging": "None — static spacetime",
+      "ZAMO": "Zero Angular Momentum Observers are truly stationary"
+    },
+    "kerr": {
+      "frameDragging": "Present everywhere, strongest near the horizon",
+      "ZAMO": "Zero Angular Momentum Observers are dragged with angular velocity ω = -g_tφ/g_φφ",
+      "inErgosphere": "ALL observers must co-rotate — even light is dragged",
+      "atHorizon": "Frame dragging angular velocity = Ω_H (horizon angular velocity)"
+    },
+    "frameDraggingVelocity": {
+      "description": "The angular velocity at which ZAMOs are dragged",
+      "formula": "ω(r,θ) = 2Mar / ((r² + a²)² - a²Δ sin²θ) (in natural units)",
+      "values_equatorial": [
+        { "a_over_M": 0.5, "r_over_M": 2, "omega_times_M": 0.0909 },
+        { "a_over_M": 0.5, "r_over_M": 5, "omega_times_M": 0.0085 },
+        { "a_over_M": 0.5, "r_over_M": 10, "omega_times_M": 0.0010 },
+        { "a_over_M": 0.9, "r_over_M": 2, "omega_times_M": 0.2093 },
+        { "a_over_M": 0.9, "r_over_M": 5, "omega_times_M": 0.0154 },
+        { "a_over_M": 0.9, "r_over_M": 10, "omega_times_M": 0.0018 },
+        { "a_over_M": 0.99, "r_over_M": 1.5, "omega_times_M": 0.3835 },
+        { "a_over_M": 0.99, "r_over_M": 2, "omega_times_M": 0.2429 },
+        { "a_over_M": 0.99, "r_over_M": 5, "omega_times_M": 0.0169 }
+      ]
+    }
+  },
+  "astrophysicalRelevance": {
+    "description": "Why Kerr matters more than Schwarzschild for real black holes",
+    "allRealBHsSpin": "Every known astrophysical process that forms a black hole imparts angular momentum. Schwarzschild (a=0) is a theoretical idealization.",
+    "spinMeasurements": [
+      {
+        "object": "GRS 1915+105",
+        "type": "X-ray binary",
+        "spin": "> 0.98",
+        "method": "X-ray reflection spectroscopy",
+        "source": "McClintock et al. (2006)"
+      },
+      {
+        "object": "Cygnus X-1",
+        "type": "X-ray binary",
+        "spin": "> 0.95",
+        "method": "Continuum fitting + reflection",
+        "source": "Gou et al. (2014)"
+      },
+      {
+        "object": "M87*",
+        "type": "SMBH",
+        "spin": "~0.9 ± 0.1",
+        "method": "Jet power + EHT morphology",
+        "source": "Nokhrina et al. (2019), EHT Collaboration"
+      },
+      {
+        "object": "MCG-6-30-15",
+        "type": "Seyfert galaxy",
+        "spin": "> 0.98",
+        "method": "Broad iron line",
+        "source": "Brenneman & Reynolds (2006)"
+      },
+      {
+        "object": "GW150914 remnant",
+        "type": "Merger remnant",
+        "spin": "0.67",
+        "method": "Gravitational wave ringdown",
+        "source": "LIGO Collaboration (2016)"
+      }
+    ],
+    "whySpinMatters": [
+      "Determines accretion efficiency (5.7% to 42%)",
+      "Powers relativistic jets (Blandford-Znajek process)",
+      "Affects shadow shape (testable with EHT)",
+      "Sets the ISCO radius (inner disk boundary)",
+      "Determines Hawking temperature (lower for spinning BHs)",
+      "Produces the ergosphere (energy extraction region)"
+    ]
+  },
+  "sources": [
+    "Schwarzschild, Sitzungsberichte der Preussischen Akademie der Wissenschaften, 189 (1916)",
+    "Kerr, PRL 11, 237 (1963)",
+    "Boyer & Lindquist, Journal of Mathematical Physics 8, 265 (1967)",
+    "Bardeen, Press & Teukolsky, ApJ 178, 347 (1972)",
+    "Thorne, ApJ 191, 507 (1974) — Thorne limit",
+    "Carter, Physical Review 174, 1559 (1968)",
+    "Chandrasekhar, 'The Mathematical Theory of Black Holes' (1983)",
+    "Misner, Thorne & Wheeler, 'Gravitation' (1973)",
+    "Visser, 'The Kerr Spacetime: A Brief Introduction' (2007)",
+    "McClintock et al., ApJ 652, 518 (2006)",
+    "Gou et al., ApJ 790, 29 (2014)",
+    "Reynolds, ARA&A 59, 117 (2021) — Spin measurements review"
+  ]
+}

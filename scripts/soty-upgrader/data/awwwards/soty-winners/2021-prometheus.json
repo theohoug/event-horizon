@@ -1,0 +1,265 @@
+{
+  "meta": {
+    "file": "2021-prometheus.json",
+    "description": "Full analysis of Prometheus Fuels, Awwwards SOTY 2021",
+    "lastUpdated": "2026-03-09",
+    "version": "1.0.0"
+  },
+  "project": {
+    "name": "Prometheus Fuels",
+    "url": "https://prometheusfuels.com",
+    "year": 2021,
+    "award": "Site of the Year 2021",
+    "category": "Technology / Clean Energy / Corporate",
+    "client": "Prometheus Fuels",
+    "tagline": "Removing CO2 from the air and turning it into zero-net-carbon gasoline"
+  },
+  "agency": {
+    "name": "Active Theory",
+    "location": "Los Angeles, California, USA",
+    "website": "https://activetheory.net",
+    "founded": 2011,
+    "specialty": "WebGL experiences, immersive web, creative technology",
+    "notableWorks": [
+      "A-Ha Take on Me (SOTY 2018 runner-up)",
+      "NASA Prospect",
+      "Nightjar",
+      "Under Armour UA Clone",
+      "National Geographic: The Okavango Experience",
+      "Within (VR platform)"
+    ],
+    "teamSize": "20-30",
+    "keyPeople": [
+      {
+        "name": "Michael Anthony",
+        "role": "Co-founder / Creative Director"
+      },
+      {
+        "name": "Nick Keenan",
+        "role": "Co-founder / Technical Director"
+      }
+    ]
+  },
+  "scores": {
+    "overall": 8.91,
+    "design": 9.02,
+    "usability": 8.54,
+    "creativity": 9.31,
+    "content": 8.77,
+    "publicVote": 8.38,
+    "juryVotes": 45,
+    "noteOnScoring": "Highest creativity score of any SOTY winner at the time"
+  },
+  "techStack": {
+    "primary": "Custom WebGL engine by Active Theory",
+    "details": {
+      "renderer": "Custom WebGL 2.0 engine — Active Theory builds bespoke rendering pipelines for each project, no Three.js dependency",
+      "shaders": "Custom GLSL shaders for all visual effects — no post-processing libraries",
+      "sceneManagement": "Ping-pong scene technique — two render targets alternate, allowing seamless blending between radically different visual styles",
+      "animation": "Custom animation system with timeline scrubbing tied to scroll",
+      "textRendering": "MSDF text rendering in WebGL for crisp typography at any scale",
+      "assetPipeline": "Custom toolchain: Houdini → custom exporter → optimized WebGL buffers",
+      "videoIntegration": "HTML5 video layers composited with WebGL scenes",
+      "compression": "Custom binary format for geometry and animation data"
+    },
+    "thirdParty": [
+      "Web Audio API (native, no libraries)",
+      "Intersection Observer for lazy loading",
+      "Custom service worker for caching"
+    ],
+    "customTools": [
+      "Proprietary WebGL rendering engine",
+      "Ping-pong scene compositor",
+      "Houdini-to-web export pipeline",
+      "Custom MSDF text rendering system",
+      "Binary geometry format"
+    ]
+  },
+  "keyInnovation": {
+    "name": "Ping-pong scene technique with intentional framerate contrast",
+    "description": "The site alternates between two radically different visual modes: hand-drawn Frank Moth-style collage illustrations rendered at intentional 12fps, and sleek 3D WebGL scenes at smooth 60fps. The CONTRAST between these framerates was the artistic statement.",
+    "technicalBreakdown": {
+      "pingPongRendering": {
+        "description": "Two offscreen render targets (FBOs) alternate. Scene A renders to target 1 while scene B renders to target 2. A custom compositor blends between them during transitions.",
+        "benefit": "Allows instant switching between completely different rendering paradigms without loading screens or visible transitions",
+        "implementation": "WebGL 2.0 framebuffer objects with float textures for HDR compositing. Custom blend shaders with controllable transition curves (ease, wipe, dissolve, etc.)"
+      },
+      "intentional12fps": {
+        "description": "The illustration sequences deliberately drop to 12fps — the traditional animation framerate. This makes them feel handcrafted, stop-motion-like, and warm.",
+        "implementation": "Frame dropping in the render loop with accumulated delta time. Only renders new illustration frames every ~83ms while keeping the compositing layer at 60fps for smooth scroll response.",
+        "artisticReason": "12fps = film/animation tradition = human warmth. 60fps = digital precision = technological power. The oscillation between them mirrors Prometheus's narrative: ancient element (carbon) + future technology."
+      },
+      "frankMothStyle": {
+        "description": "Collage art style inspired by Frank Moth — mixing photographic elements, illustrations, and 3D renders on mesh surfaces. Photographic textures mapped onto 3D geometry with hand-drawn overlay elements.",
+        "implementation": "Multi-pass rendering: base 3D mesh → photographic texture projection → hand-drawn overlay compositing → final color grading per scene"
+      }
+    }
+  },
+  "visualAnalysis": {
+    "colorPalette": {
+      "primary": ["#0A0A0A", "#1A1A2E", "#FFFFFF"],
+      "secondary": ["#FF6B35", "#E8D5B7", "#2E4057"],
+      "collageScenes": ["#D4A574", "#8B6914", "#C17817", "#F5DEB3"],
+      "techScenes": ["#00D4FF", "#0066FF", "#000000"],
+      "philosophy": "Stark contrast between warm collage (sepia, gold, earth tones) and cold technology (blues, blacks, whites). The color shift signals the mode change to the viewer."
+    },
+    "typography": {
+      "headings": {
+        "font": "Editorial serif — Playfair Display-style with high contrast strokes",
+        "style": "Large, confident, often split across multiple lines for dramatic effect",
+        "webglRendered": true,
+        "technique": "MSDF rendering for resolution independence"
+      },
+      "body": {
+        "font": "Clean geometric sans-serif",
+        "style": "Small, functional, high readability",
+        "mixedRendering": "DOM-based for accessibility, WebGL-based for integrated scenes"
+      }
+    },
+    "compositionPatterns": [
+      "Full-viewport collage scenes with layered depth (parallax within illustration)",
+      "3D scenes with dramatic camera angles — low angle looking up = power, high angle looking down = vulnerability",
+      "Split composition: illustration on one side, data/text on other",
+      "Generous negative space in tech scenes vs. dense layering in collage scenes",
+      "Text integrated INTO the 3D scene, not overlaid — exists in the same space",
+      "Vignetting to focus attention on center of composition"
+    ],
+    "motionDesign": {
+      "collageTransitions": "Elements peel away, fold, or dissolve like paper — referencing physical collage craft",
+      "techTransitions": "Clean geometric wipes, matrix-like data reveals",
+      "cameraMovement": "Smooth orbital movements in 3D scenes, parallax drift in 2D scenes",
+      "microAnimations": "Subtle breathing on illustration elements, gentle sway on collage layers"
+    }
+  },
+  "interactionModel": {
+    "type": "Scroll-driven narrative with mode alternation",
+    "scrollBehavior": {
+      "hijacked": true,
+      "smoothing": "Custom momentum scrolling with adaptive friction",
+      "modeDetection": "Scroll velocity affects transition speed between collage ↔ tech scenes",
+      "breakpoints": "Hard scene breaks at specific scroll percentages"
+    },
+    "navigation": {
+      "type": "Chapter-based with subtle progress indicator",
+      "chapters": [
+        "The Problem (CO2 in atmosphere)",
+        "The Vision (collage: human relationship with energy)",
+        "The Science (3D: molecular process visualization)",
+        "The Technology (collage+3D: factory/process)",
+        "The Future (3D: scaled impact)"
+      ]
+    },
+    "cursorInteraction": {
+      "custom": true,
+      "behavior": "Cursor influences parallax depth in collage scenes, creates subtle light source in 3D scenes"
+    }
+  },
+  "performance": {
+    "fps": {
+      "target": "60fps for tech scenes, intentional 12fps for illustration scenes",
+      "composite": "Compositor always runs at 60fps — only content framerate varies",
+      "strategy": "Per-scene render budgets, adaptive quality for compositing layer"
+    },
+    "loadTime": {
+      "initialLoad": "2-3 seconds",
+      "totalAssets": "~18MB progressively loaded",
+      "strategy": "Binary geometry format loads 3-5x faster than glTF. Scene preloading during transitions."
+    },
+    "optimizations": [
+      "Ping-pong FBO technique eliminates transition loading — both scenes pre-rendered to textures",
+      "Custom binary geometry format — smaller and faster to parse than glTF/OBJ",
+      "Texture atlasing for collage elements — single draw call per scene",
+      "WebGL 2.0 instanced rendering for repeated elements",
+      "Adaptive resolution: render at lower res and upscale on weaker GPUs",
+      "Frame budget monitoring with automatic quality reduction",
+      "Memory: aggressive texture disposal when scenes are 2+ screens away"
+    ]
+  },
+  "soundDesign": {
+    "hasSound": true,
+    "implementation": "Native Web Audio API — no libraries",
+    "details": {
+      "collageScenes": "Warm analog audio — vinyl crackle, ambient tones, organic sounds",
+      "techScenes": "Clean digital audio — synthesized tones, data-driven sounds",
+      "transitionAudio": "Audio crossfades mirror visual transitions — seamless blend between warm and cold sound palettes",
+      "spatialAudio": "Subtle stereo panning based on cursor position",
+      "muteDefault": true,
+      "promptToEnable": "Elegant 'Enable Sound for Full Experience' prompt on first interaction"
+    }
+  },
+  "mobileStrategy": {
+    "approach": "Responsive adaptation — same story, optimized delivery",
+    "details": {
+      "webglOnMobile": true,
+      "reducedComplexity": "Simpler shader variants, fewer collage layers, lower texture resolution",
+      "touchOptimized": "Swipe-driven with momentum, larger tap targets",
+      "performanceBudget": "30fps minimum, 24fps for collage scenes (still feels intentional)",
+      "orientationLock": "Portrait preferred, landscape supported",
+      "batteryConsideration": "Reduced particle counts and shader complexity on battery-powered devices"
+    }
+  },
+  "loadingExperience": {
+    "type": "Minimalist progress with brand storytelling",
+    "details": {
+      "design": "Simple percentage counter with brand colors, subtle molecular animation in background",
+      "duration": "2-3 seconds on broadband",
+      "messaging": "Brief brand statement during load — sets narrative context",
+      "technique": "Priority-based loading: first scene assets → WebGL context → subsequent scenes in background"
+    }
+  },
+  "keyInnovations": [
+    {
+      "innovation": "Intentional framerate as artistic tool",
+      "description": "First major web project to deliberately use different framerates as an artistic device. 12fps for warmth, 60fps for technology. The framerate itself tells the story.",
+      "technicalDepth": "Custom render loop with accumulator-based frame dropping. Keeps compositor at 60fps while dropping content frames. Delta time accumulation ensures consistent animation speed regardless of framerate.",
+      "impactOnIndustry": "Inspired a wave of projects mixing intentional 'lo-fi' aesthetics with high-tech rendering. Proved that 60fps isn't always the goal — sometimes slower is more artistic."
+    },
+    {
+      "innovation": "Ping-pong scene architecture",
+      "description": "Dual render target system allowing instant switching between completely different rendering paradigms. No loading, no visible transition infrastructure.",
+      "technicalDepth": "Two WebGL framebuffer objects with float16 color attachments. Each scene renders independently to its own target. Custom compositor shader blends between targets with configurable transition functions. Allows completely different shader programs, geometry, and rendering approaches per scene."
+    },
+    {
+      "innovation": "Collage art in WebGL",
+      "description": "Frank Moth-inspired collage aesthetic rendered in WebGL — photographic elements projected onto 3D meshes with hand-drawn overlays. Brought traditional art technique into real-time rendering.",
+      "technicalDepth": "Multi-pass rendering pipeline: (1) base mesh rendering, (2) photographic texture projection with custom UV mapping, (3) hand-drawn overlay compositing with alpha blending, (4) per-scene color grading via LUT. Each collage 'layer' has independent parallax depth."
+    }
+  ],
+  "lessonsForEventHorizon": [
+    {
+      "lesson": "Framerate as artistic expression",
+      "application": "Event Horizon deals with TIME itself (time dilation near black holes). Use framerate artistically: normal speed far from the hole, slowing/stuttering near the event horizon, frozen at the singularity. The physics concept maps perfectly to a framerate-based artistic device.",
+      "priority": "Critical",
+      "implementation": "Variable render framerate based on proximity to black hole. Far = smooth 60fps. Approaching = 30fps (tension). Event horizon = 15fps (time freezing). Singularity = single frame held (time stops). The content framerate slows while UI always stays at 60fps."
+    },
+    {
+      "lesson": "Dual rendering paradigm creates contrast",
+      "application": "Event Horizon could alternate between scientific visualization (clean, precise, data-driven) and artistic interpretation (abstract, emotional, overwhelming). The contrast between these modes would mirror Prometheus's technique.",
+      "priority": "High"
+    },
+    {
+      "lesson": "Custom rendering engine signals serious craft",
+      "application": "Active Theory won with a completely custom WebGL engine. Event Horizon's GPGPU N-body + raymarched black hole is already custom — make sure the technical write-up emphasizes this for the Developer Award judges.",
+      "priority": "High"
+    },
+    {
+      "lesson": "Sound design matches visual mode",
+      "application": "Prometheus had warm/cold audio matching warm/cold visuals. Event Horizon should have silence in space, growing bass rumble near the black hole, and overwhelming sub-bass at the event horizon. Sound is physics-accurate storytelling.",
+      "priority": "Medium"
+    },
+    {
+      "lesson": "Accessibility doesn't mean dumbing down",
+      "application": "Prometheus made complex science (carbon capture) accessible through visual metaphor. Event Horizon should make astrophysics (gravitational lensing, Hawking radiation, spaghettification) accessible through interactive experience.",
+      "priority": "Medium"
+    }
+  ],
+  "competitiveAnalysis": {
+    "whatPrometheusDid": "Proved that artistic vision + technical innovation > raw technical complexity. The framerate trick was simple but profound.",
+    "whatEventHorizonCanDoBetter": [
+      "Real physics simulation (N-body + gravitational lensing) goes beyond Prometheus's aesthetic tricks",
+      "Black hole raymarching is genuinely novel — no SOTY winner has done real-time raymarching of astrophysical phenomena",
+      "Interactive gravity: users don't just scroll through a story — they interact with actual gravitational physics",
+      "The 'time dilation as framerate' concept directly evolves Prometheus's intentional framerate technique with a scientific basis"
+    ]
+  }
+}

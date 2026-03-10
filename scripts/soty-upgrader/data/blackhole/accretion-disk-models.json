@@ -1,0 +1,478 @@
+{
+  "metadata": {
+    "title": "Accretion Disk Physics Models",
+    "description": "Comprehensive database of accretion disk models, temperature profiles, luminosity calculations, and radiation mechanisms for black hole accretion",
+    "version": "1.0.0",
+    "lastUpdated": "2026-03-09"
+  },
+  "fundamentalConcepts": {
+    "accretionPower": {
+      "formula": "L = η Ṁ c²",
+      "formulaLatex": "L = \\eta \\dot{M} c^2",
+      "description": "Accretion luminosity is the mass accretion rate times c² times the radiative efficiency η",
+      "efficiencies": {
+        "schwarzschild": 0.0572,
+        "kerr_a05": 0.0828,
+        "kerr_a09": 0.1558,
+        "kerr_a098": 0.2372,
+        "kerr_a0998": 0.3205,
+        "kerr_maximal": 0.4226,
+        "comparison_nuclear_fusion": 0.007
+      }
+    },
+    "eddingtonAccretionRate": {
+      "formula": "Ṁ_Edd = L_Edd / (η c²)",
+      "forEta01_perSolarMass": {
+        "value_Msun_yr": 2.2e-8,
+        "value_kg_s": 1.4e15
+      }
+    },
+    "bondiAccretion": {
+      "formula": "Ṁ_Bondi = 4π ρ_∞ (GM)² / c_s³",
+      "formulaLatex": "\\dot{M}_{Bondi} = \\frac{4\\pi \\rho_\\infty (GM)^2}{c_s^3}",
+      "bondiRadius_formula": "r_B = 2GM / c_s²",
+      "description": "Spherical accretion rate from ambient medium with density ρ_∞ and sound speed c_s"
+    },
+    "viscosity": {
+      "alphaParameter": {
+        "description": "Shakura-Sunyaev α parameter: parameterizes turbulent viscosity as ν = α c_s H",
+        "typicalValues": {
+          "thinDisk": { "range": [0.01, 0.3], "typical": 0.1 },
+          "thickDisk": { "range": [0.01, 0.1], "typical": 0.03 },
+          "note": "α is now understood to arise from the MRI (Magnetorotational Instability)"
+        }
+      },
+      "MRI": {
+        "name": "Magnetorotational Instability",
+        "discoveredBy": "Velikhov (1959), Chandrasekhar (1960), rediscovered by Balbus & Hawley (1991)",
+        "description": "Weak magnetic fields in a differentially rotating disk are amplified by the MRI, creating turbulence that transports angular momentum outward",
+        "growthRate": "Ω (orbital frequency)",
+        "wavelengthMostUnstable": "λ = 2π v_A / Ω where v_A is Alfvén speed",
+        "effectiveAlpha": { "range": [0.01, 0.1], "note": "MRI-driven turbulence produces effective α ~ 0.01-0.1 in simulations" }
+      }
+    }
+  },
+  "shakuraSunyaevThinDisk": {
+    "name": "Shakura-Sunyaev α-disk (Standard Thin Disk)",
+    "reference": "Shakura & Sunyaev, A&A 24, 337 (1973)",
+    "assumptions": [
+      "Geometrically thin: H/R << 1",
+      "Optically thick: τ >> 1",
+      "Radiatively efficient: all viscous heating radiated locally",
+      "Steady-state: Ṁ = constant through the disk",
+      "Keplerian rotation: Ω = √(GM/r³)",
+      "No-torque inner boundary at ISCO"
+    ],
+    "temperatureProfile": {
+      "formula": "T(r) = T* × (R_in/r)^(3/4) × [1 - √(R_in/r)]^(1/4)",
+      "formulaLatex": "T(r) = T_* \\left(\\frac{R_{in}}{r}\\right)^{3/4} \\left[1 - \\sqrt{\\frac{R_{in}}{r}}\\right]^{1/4}",
+      "T_star_formula": "T* = [3GMṀ/(8π R_in³ σ)]^(1/4)",
+      "T_star_formulaLatex": "T_* = \\left[\\frac{3GM\\dot{M}}{8\\pi R_{in}^3 \\sigma}\\right]^{1/4}",
+      "peakTemperatureRadius": "r_peak ≈ (49/36) R_in ≈ 1.361 R_in",
+      "peakTemperature": "T_max = 0.4882 × T*",
+      "asymptoticBehavior": "T ∝ r^(-3/4) at large r"
+    },
+    "luminosityProfile": {
+      "formula": "dL/dr = (3GMṀ)/(2r²) × [1 - √(R_in/r)]",
+      "totalLuminosity": "L = GMṀ/(2R_in) = η Ṁ c²",
+      "halfLuminosityRadius": "r ≈ 4.5 R_in (half the luminosity comes from inside this radius)"
+    },
+    "surfaceDensityProfile": {
+      "formula": "Σ(r) ∝ α⁻¹ Ṁ r^(-3/2) × [1 - √(R_in/r)]⁻¹",
+      "note": "Surface density has a maximum and then drops near ISCO"
+    },
+    "scaleHeight": {
+      "formula": "H/R = c_s / v_K = (kT/(μm_p))^(1/2) / (GM/r)^(1/2)",
+      "typical_H_over_R": 0.01,
+      "range_H_over_R": [0.001, 0.1],
+      "note": "Thin disk condition: H/R << 1"
+    },
+    "spectrum": {
+      "description": "Multi-temperature blackbody (sum of blackbody annuli)",
+      "spectralShape": "Modified blackbody: F_ν ∝ ν^(1/3) exp(-hν/kT_max) for hν << kT_max and exponential cutoff at high energies",
+      "lowEnergy": "F_ν ∝ ν^(1/3) (Rayleigh-Jeans regime modified by temperature gradient)",
+      "peakEnergy": "E_peak ≈ 2.82 kT_max (Wien's law)",
+      "highEnergy": "Exponential cutoff at ~kT_max"
+    },
+    "temperatureExamplesForDifferentMasses": [
+      {
+        "massLabel": "10 M_sun stellar BH",
+        "massSolarMasses": 10,
+        "accretionRate_Msun_yr": 1e-8,
+        "accretionRate_fraction_Edd": 0.1,
+        "T_max_K": 6.3e6,
+        "T_max_keV": 0.54,
+        "peakWavelength_nm": 0.46,
+        "peakBand": "Soft X-ray",
+        "innerDiskColor": "Invisible (X-ray)",
+        "luminosity_erg_s": 3.6e37,
+        "luminosity_Lsun": 9400
+      },
+      {
+        "massLabel": "10 M_sun at Eddington",
+        "massSolarMasses": 10,
+        "accretionRate_Msun_yr": 1e-7,
+        "accretionRate_fraction_Edd": 1.0,
+        "T_max_K": 1.1e7,
+        "T_max_keV": 0.95,
+        "peakWavelength_nm": 0.26,
+        "peakBand": "Soft X-ray",
+        "luminosity_erg_s": 1.26e39,
+        "luminosity_Lsun": 329000
+      },
+      {
+        "massLabel": "10^6 M_sun SMBH",
+        "massSolarMasses": 1e6,
+        "accretionRate_Msun_yr": 0.002,
+        "accretionRate_fraction_Edd": 0.1,
+        "T_max_K": 3.5e5,
+        "T_max_eV": 30,
+        "peakWavelength_nm": 8.3,
+        "peakBand": "EUV",
+        "luminosity_erg_s": 1.26e44,
+        "luminosity_Lsun": 3.3e10
+      },
+      {
+        "massLabel": "10^8 M_sun quasar",
+        "massSolarMasses": 1e8,
+        "accretionRate_Msun_yr": 2.0,
+        "accretionRate_fraction_Edd": 1.0,
+        "T_max_K": 6.3e4,
+        "T_max_eV": 5.4,
+        "peakWavelength_nm": 46,
+        "peakBand": "UV",
+        "innerDiskColor": "Blue-white (~30000K)",
+        "luminosity_erg_s": 1.26e46,
+        "luminosity_Lsun": 3.3e12
+      },
+      {
+        "massLabel": "10^9 M_sun quasar",
+        "massSolarMasses": 1e9,
+        "accretionRate_Msun_yr": 20,
+        "accretionRate_fraction_Edd": 1.0,
+        "T_max_K": 3.5e4,
+        "T_max_eV": 3.0,
+        "peakWavelength_nm": 83,
+        "peakBand": "UV",
+        "innerDiskColor": "Blue-white (~20000K)",
+        "luminosity_erg_s": 1.26e47,
+        "luminosity_Lsun": 3.3e13
+      },
+      {
+        "massLabel": "6.5×10^9 M_sun (M87*)",
+        "massSolarMasses": 6.5e9,
+        "accretionRate_Msun_yr": 0.1,
+        "accretionRate_fraction_Edd": 5e-7,
+        "note": "Thin disk model NOT applicable — Sgr A* and M87* are in RIAF regime",
+        "T_max_K": "N/A — ADAF/RIAF applies instead"
+      }
+    ],
+    "diskColorsForVisualization": {
+      "description": "Approximate RGB colors of different disk annuli for a 10^8 M_sun BH accreting at 10% Eddington",
+      "annuli": [
+        { "r_over_Rin": 1.0, "T_K": 63000, "color_hex": "#9bb0ff", "description": "Inner edge — hot blue-white" },
+        { "r_over_Rin": 1.5, "T_K": 48000, "color_hex": "#aabfff", "description": "Near inner edge — blue-white" },
+        { "r_over_Rin": 2.0, "T_K": 38000, "color_hex": "#b5c7ff", "description": "Blue-white" },
+        { "r_over_Rin": 3.0, "T_K": 27000, "color_hex": "#c4d2ff", "description": "Pale blue-white" },
+        { "r_over_Rin": 5.0, "T_K": 17000, "color_hex": "#d1dbff", "description": "White-blue" },
+        { "r_over_Rin": 10.0, "T_K": 10000, "color_hex": "#e4e8ff", "description": "White" },
+        { "r_over_Rin": 20.0, "T_K": 5900, "color_hex": "#fff4e8", "description": "Yellow-white (solar)" },
+        { "r_over_Rin": 50.0, "T_K": 3200, "color_hex": "#ffbd6f", "description": "Orange" },
+        { "r_over_Rin": 100.0, "T_K": 2100, "color_hex": "#ff8b3d", "description": "Red-orange" },
+        { "r_over_Rin": 200.0, "T_K": 1400, "color_hex": "#ff3800", "description": "Deep red" },
+        { "r_over_Rin": 500.0, "T_K": 800, "color_hex": "#550000", "description": "Infrared (barely visible)" }
+      ]
+    },
+    "validity": {
+      "validWhen": "L/L_Edd > 0.01 (above ~1% Eddington)",
+      "invalidWhen": "L/L_Edd < 0.01 — transitions to ADAF/RIAF",
+      "upperLimit": "L/L_Edd ~ 0.3 — above this, radiation pressure important (slim disk regime)",
+      "superEddington": "L/L_Edd >> 1 — photon trapping, advection important"
+    }
+  },
+  "novikovThorneModel": {
+    "name": "Novikov-Thorne Relativistic Thin Disk",
+    "reference": "Novikov & Thorne, in 'Black Holes' (1973); Page & Thorne, ApJ 191, 499 (1974)",
+    "description": "Full general relativistic version of the thin disk model including GR corrections to the energy, angular momentum, and torque",
+    "improvements_over_SS73": [
+      "Proper GR metric used for orbital dynamics",
+      "Gravitational redshift of emitted radiation",
+      "Light bending (ray tracing needed for observed flux)",
+      "ISCO stress boundary condition in curved spacetime",
+      "Frame dragging for Kerr black holes"
+    ],
+    "fluxFormula": {
+      "description": "The local flux from the disk surface",
+      "formula": "F(r) = -Ṁ/(4π√(-g)) × Ω,r / (E-ΩL)² × ∫[R_in to r] (E-ΩL) L,r dr",
+      "note": "E, L, Ω are the specific energy, angular momentum, and angular velocity of circular orbits"
+    },
+    "radiativeEfficiency": {
+      "formula": "η = 1 - E_ISCO",
+      "schwarzschild": { "eta": 0.0572, "E_ISCO": 0.9428 },
+      "kerr_a05": { "eta": 0.0828, "E_ISCO": 0.9172 },
+      "kerr_a09": { "eta": 0.1558, "E_ISCO": 0.8442 },
+      "kerr_a0998": { "eta": 0.3205, "E_ISCO": 0.6795 },
+      "kerr_extremal": { "eta": 0.4226, "E_ISCO": 0.5774 }
+    },
+    "GRcorrectionFactors": {
+      "description": "Correction factors relative to Newtonian disk",
+      "luminosityEnhancement_atISCO": 1.6,
+      "temperatureEnhancement_atISCO": 1.1,
+      "note": "GR effects make the inner disk brighter and hotter than the Newtonian prediction"
+    }
+  },
+  "ADAF": {
+    "name": "Advection-Dominated Accretion Flow",
+    "alternateNames": ["RIAF (Radiatively Inefficient Accretion Flow)"],
+    "references": ["Narayan & Yi, ApJ 428, L13 (1994)", "Abramowicz et al., ApJ 438, L37 (1995)"],
+    "description": "At low accretion rates, the disk becomes optically thin and geometrically thick. Most of the viscous heating energy is advected with the flow into the black hole rather than radiated",
+    "properties": {
+      "geometryThick": true,
+      "opticallyThin": true,
+      "radiativelyInefficient": true,
+      "twoTemperaturePlasma": true,
+      "H_over_R": { "typical": 0.5, "range": [0.3, 1.0] },
+      "electronTemperature_K": { "range": [1e9, 1e11] },
+      "ionTemperature_K": { "range": [1e11, 1e12] },
+      "Te_over_Ti": { "range": [0.01, 0.3], "note": "Electrons are much cooler than ions" }
+    },
+    "validityRange": {
+      "accretionRate_fraction_Edd": { "max": 0.01, "note": "Roughly below 1% Eddington" },
+      "criticalAccretionRate": "ṁ_crit ≈ α² (in Eddington units)"
+    },
+    "radiationMechanisms": [
+      "Synchrotron emission (radio/submm)",
+      "Bremsstrahlung (X-ray)",
+      "Inverse Compton scattering (X-ray/gamma)",
+      "Synchrotron self-Compton (SSC)"
+    ],
+    "luminosity": {
+      "scaling": "L ∝ Ṁ² (quadratic in accretion rate, much less efficient than thin disk L ∝ Ṁ)",
+      "explanation": "Because radiative efficiency drops with decreasing Ṁ, the luminosity falls faster than linearly"
+    },
+    "temperatureProfile": {
+      "electrons": "T_e ≈ const ≈ few × 10⁹ K (electron temperature saturates via Coulomb coupling floor)",
+      "ions": "T_i ∝ r⁻¹ (virial temperature, ions are nearly virial)"
+    },
+    "applications": [
+      "Sgr A* (L/L_Edd ~ 10⁻⁹)",
+      "M87* (L/L_Edd ~ 10⁻⁶)",
+      "Low-luminosity AGN (LLAGN)",
+      "Quiescent X-ray binaries"
+    ],
+    "convection": {
+      "CDAF": {
+        "name": "Convection-Dominated Accretion Flow",
+        "description": "At very low Ṁ, convection transports energy outward faster than advection carries it inward",
+        "densityProfile": "ρ ∝ r⁻¹/² (flatter than ADAF)",
+        "reference": "Narayan, Igumenshchev & Abramowicz, ApJ 539, 798 (2000)"
+      }
+    },
+    "outflows": {
+      "ADIOS": {
+        "name": "Advection-Dominated Inflow-Outflow Solution",
+        "description": "Significant mass loss in winds/outflows, so Ṁ decreases inward as Ṁ ∝ r^p",
+        "p_range": [0.3, 1.0],
+        "reference": "Blandford & Begelman, MNRAS 303, L1 (1999)"
+      }
+    }
+  },
+  "MAD": {
+    "name": "Magnetically Arrested Disk",
+    "reference": "Narayan, Igumenshchev & Abramowicz, PASJ 55, L69 (2003); Tchekhovskoy, Narayan & McKinney, MNRAS 418, L79 (2011)",
+    "description": "When the magnetic flux on the black hole reaches saturation, the magnetic pressure at the horizon becomes strong enough to obstruct the accretion flow",
+    "properties": {
+      "magneticFluxSaturated": true,
+      "magneticPressureDominant": true,
+      "interchangeInstability": true,
+      "episodicAccretion": true,
+      "strongJets": true
+    },
+    "jetEfficiency": {
+      "description": "MAD state can extract rotational energy of the black hole via the Blandford-Znajek process",
+      "maxJetEfficiency": "η_jet > 100% of Ṁc² for rapid spin (extracting BH spin energy)",
+      "scalingWithSpin": "P_jet ∝ a² Φ_BH² (jet power scales with spin² and magnetic flux²)",
+      "values": [
+        { "spinParameter": 0.0, "jetEfficiency_percent": 0 },
+        { "spinParameter": 0.5, "jetEfficiency_percent": 30 },
+        { "spinParameter": 0.9, "jetEfficiency_percent": 100 },
+        { "spinParameter": 0.99, "jetEfficiency_percent": 200 },
+        { "spinParameter": 0.9999, "jetEfficiency_percent": 300 }
+      ],
+      "note": "Efficiencies >100% possible because energy is extracted from BH spin, not just accretion"
+    },
+    "magneticFluxParameter": {
+      "name": "φ_BH (dimensionless magnetic flux)",
+      "formula": "φ_BH = Φ_BH / √(Ṁ r_g² c)",
+      "MADsaturation_value": { "range": [40, 60], "typical": 50 },
+      "SANEvalue": { "range": [1, 10] }
+    },
+    "observationalEvidence": {
+      "M87": "EHT polarimetry strongly suggests MAD state",
+      "jetPower_vs_accretionPower": "Many AGN jets show P_jet >> L_disk, requiring MAD-like extraction"
+    }
+  },
+  "SANE": {
+    "name": "Standard And Normal Evolution",
+    "description": "The 'normal' accretion state where magnetic flux on the BH is below the MAD saturation limit",
+    "properties": {
+      "magneticFluxSubSaturated": true,
+      "turbulentDisk": true,
+      "weakerJets": true,
+      "smootherAccretion": true
+    },
+    "comparisonWithMAD": {
+      "magneticFlux_phi": { "SANE": "1-10", "MAD": "40-60" },
+      "jetPower": { "SANE": "Weak or absent", "MAD": "Powerful, BZ-driven" },
+      "accretionVariability": { "SANE": "Moderate", "MAD": "Highly variable (episodic)" },
+      "diskStructure": { "SANE": "Relatively smooth", "MAD": "Flux eruptions, magnetic barriers" },
+      "EHTpreference_M87": "MAD preferred",
+      "EHTpreference_SgrA": "Both viable, MAD mildly preferred"
+    }
+  },
+  "slimDisk": {
+    "name": "Slim Disk (Super-Eddington Accretion)",
+    "reference": "Abramowicz et al., ApJ 332, 646 (1988)",
+    "description": "At super-Eddington accretion rates, radiation is trapped in the flow and advected inward",
+    "properties": {
+      "H_over_R": { "range": [0.1, 1.0] },
+      "photonTrapping": true,
+      "radiativelyInefficient_highMdot": true,
+      "luminosity": "L ~ L_Edd × [1 + ln(Ṁ/Ṁ_Edd)] (logarithmic increase above Eddington)",
+      "temperatureProfile": "T ∝ r⁻¹/² (flatter than thin disk r⁻³/⁴)"
+    },
+    "applications": [
+      "Ultra-luminous X-ray sources (ULXs)",
+      "Narrow-line Seyfert 1 galaxies",
+      "Tidal disruption events (TDEs)",
+      "Early rapid growth of supermassive BH seeds",
+      "SS 433"
+    ]
+  },
+  "jetFormation": {
+    "blandfordZnajek": {
+      "name": "Blandford-Znajek Process",
+      "reference": "Blandford & Znajek, MNRAS 179, 433 (1977)",
+      "description": "Electromagnetic extraction of black hole rotational energy via large-scale magnetic fields threading the event horizon",
+      "jetPowerFormula": "P_BZ ≈ (κ/4πc) Φ_BH² Ω_H² f(Ω_H)",
+      "jetPowerLatex": "P_{BZ} \\approx \\frac{\\kappa}{4\\pi c} \\Phi_{BH}^2 \\Omega_H^2 f(\\Omega_H)",
+      "where": {
+        "Phi_BH": "Magnetic flux threading the horizon",
+        "Omega_H": "Angular velocity of the horizon = ac/(2Mr_+)",
+        "f": "Numerical factor of order unity",
+        "kappa": "Dimensionless constant ≈ 0.044"
+      },
+      "spinDependence": "P_BZ ∝ a² for small spin, saturates for high spin",
+      "requiresMagneticField": true,
+      "requiresSpin": true,
+      "note": "This is the leading model for relativistic jets in AGN and GRBs"
+    },
+    "blandfordPayne": {
+      "name": "Blandford-Payne Process",
+      "reference": "Blandford & Payne, MNRAS 199, 883 (1982)",
+      "description": "Centrifugally driven wind/jet from the disk surface along open magnetic field lines",
+      "criticalAngle_deg": 60,
+      "criticalAngle_note": "Field lines must make less than 60° with the disk plane to launch a wind",
+      "spinIndependent": true,
+      "produces": "Mildly relativistic disk winds rather than highly relativistic jets"
+    },
+    "jetComposition": {
+      "possibilities": ["Electron-positron pair plasma (leptonic)", "Electron-proton plasma (baryonic)", "Hybrid"],
+      "M87jet": "Likely pair-dominated near base, with entrainment of baryonic matter further out",
+      "evidence": "Jet polarization, Faraday rotation, emission spectra constrain composition"
+    }
+  },
+  "GRMHDsimulations": {
+    "description": "General Relativistic Magnetohydrodynamic simulations are the gold standard for modeling black hole accretion",
+    "codes": [
+      { "name": "HARM", "reference": "Gammie, McKinney & Tóth (2003)", "type": "Conservative GRMHD" },
+      { "name": "iharm3d", "reference": "Gammie et al.", "type": "Higher-order GRMHD" },
+      { "name": "BHAC", "reference": "Porth et al. (2017)", "type": "Adaptive mesh GRMHD" },
+      { "name": "Athena++", "reference": "White et al. (2016)", "type": "AMR GRMHD" },
+      { "name": "KORAL", "reference": "Sadowski et al. (2013)", "type": "Radiation GRMHD" },
+      { "name": "H-AMR", "reference": "Liska et al. (2022)", "type": "AMR GRMHD with GPU" },
+      { "name": "PATOKA", "reference": "Wong et al.", "type": "GPU GRMHD" },
+      { "name": "ebhlight", "reference": "Ryan et al. (2017)", "type": "Monte Carlo radiation transport + GRMHD" }
+    ],
+    "rayTracingCodes": [
+      { "name": "BHOSS", "description": "Black Hole Observations with Simulated Spectra" },
+      { "name": "ipole", "description": "Polarized ray tracing with Stokes parameters" },
+      { "name": "RAPTOR", "description": "Relativistic Astrophysics of Pulsars and Tori" },
+      { "name": "ODYSSEY", "description": "GPU-accelerated ray tracing" },
+      { "name": "GRay", "description": "General Relativistic Ray tracing" },
+      { "name": "Gyoto", "description": "General relativitY Orbit Tracer of Observatoire de Paris" }
+    ],
+    "typicalResults": {
+      "turbulentDisk": "MRI-driven turbulence develops after ~10 orbital periods",
+      "jetFormation": "Spontaneous jet formation in MAD state with spinning BH",
+      "diskVariability": "Quasi-periodic oscillations, magnetic flux eruptions",
+      "resolution": "Typical grid: 256×128×128 (r,θ,φ) in 3D, with AMR up to effective 4096³"
+    }
+  },
+  "radiationMechanisms": {
+    "thermalBlackbody": {
+      "relevantFor": "Optically thick thin disks",
+      "spectrum": "Planck function B_ν(T)",
+      "peakTemperature": "Determined by local disk temperature"
+    },
+    "synchrotron": {
+      "relevantFor": "ADAF/RIAF, jets",
+      "description": "Radiation from relativistic electrons spiraling in magnetic fields",
+      "characteristicFrequency": "ν_c = 3eB γ²/(4πm_e c)",
+      "spectralIndex": "F_ν ∝ ν^(-(p-1)/2) for power-law electron distribution ∝ γ^(-p)",
+      "selfAbsorption": "At low frequencies, synchrotron becomes self-absorbed: F_ν ∝ ν^(5/2)"
+    },
+    "inverseCompton": {
+      "relevantFor": "Hot coronae, ADAF",
+      "description": "Low-energy photons upscattered by hot electrons",
+      "comptonY": "y = (4kT_e/m_e c²) max(τ, τ²)",
+      "spectrumModification": "Creates power-law X-ray tail above the disk thermal peak"
+    },
+    "bremsstrahlung": {
+      "relevantFor": "Hot, low-density plasma",
+      "description": "Free-free emission from electron-ion collisions",
+      "emissivity": "j_ff ∝ n_e² T^(-1/2) exp(-hν/kT)"
+    },
+    "comptonization": {
+      "relevantFor": "X-ray binaries, AGN coronae",
+      "description": "Repeated Compton scatterings create a power-law spectrum",
+      "spectralIndex": "Γ ≈ 1.5-2.5 (photon index of power-law)",
+      "corona": {
+        "temperature_keV": { "range": [50, 200] },
+        "opticalDepth_tau": { "range": [0.5, 3] }
+      }
+    }
+  },
+  "diskStability": {
+    "thermalInstability": {
+      "description": "Radiation-pressure-dominated inner disk regions are thermally unstable in the α-prescription",
+      "condition": "Radiation pressure > gas pressure, which occurs for L/L_Edd > 0.01-0.1",
+      "consequence": "Limit-cycle behavior, possible disk truncation",
+      "observationalEvidence": "Heartbeat oscillations in GRS 1915+105"
+    },
+    "viscousInstability": {
+      "description": "Disk may be secularly unstable if dΣ/dṀ < 0",
+      "relatedTo": "Dwarf nova outbursts, X-ray transient state transitions"
+    },
+    "diskTearing": {
+      "description": "Misaligned disks around spinning BHs can be torn apart by Lense-Thirring precession",
+      "reference": "Nixon et al. (2012), Liska et al. (2021)",
+      "observationalEvidence": "Possible explanation for quasi-periodic eruptions (QPEs)"
+    }
+  },
+  "sources": [
+    "Shakura & Sunyaev, A&A 24, 337 (1973)",
+    "Novikov & Thorne, in 'Black Holes' ed. DeWitt & DeWitt (1973)",
+    "Page & Thorne, ApJ 191, 499 (1974)",
+    "Narayan & Yi, ApJ 428, L13 (1994)",
+    "Abramowicz et al., ApJ 332, 646 (1988)",
+    "Blandford & Znajek, MNRAS 179, 433 (1977)",
+    "Blandford & Payne, MNRAS 199, 883 (1982)",
+    "Balbus & Hawley, ApJ 376, 214 (1991)",
+    "Narayan, Igumenshchev & Abramowicz, PASJ 55, L69 (2003)",
+    "Tchekhovskoy, Narayan & McKinney, MNRAS 418, L79 (2011)",
+    "Yuan & Narayan, ARAA 52, 529 (2014)",
+    "Abramowicz & Fragile, Living Reviews in Relativity 16, 1 (2013)",
+    "EHT Collaboration Papers V, VIII (2019, 2021)"
+  ]
+}

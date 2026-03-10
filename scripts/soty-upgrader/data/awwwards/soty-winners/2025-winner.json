@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "file": "2025-winner.json",
+    "description": "Analysis of top 2025 SOTY contenders and emerging trends (based on knowledge up to early 2025)",
+    "lastUpdated": "2026-03-09",
+    "version": "1.0.0"
+  },
+  "year": 2025,
+  "status": "Analysis based on early 2025 nominees and SOTD/SOTM winners",
+  "topContenders": [
+    {
+      "name": "Monopo London",
+      "url": "https://monopo.london",
+      "agency": "Monopo (Tokyo/London)",
+      "techStack": ["Three.js", "Next.js", "Custom GLSL", "Houdini"],
+      "innovation": "Fluid-based page transitions where entire pages dissolve into liquid and reform. Custom fluid simulation in WebGL that reacts to page content.",
+      "scores": {
+        "estimated": "9.0+",
+        "design": "High",
+        "creativity": "Very High",
+        "usability": "Good"
+      },
+      "strengths": [
+        "Japanese attention to detail — every pixel intentional",
+        "Fluid simulation is visually stunning and technically impressive",
+        "Strong portfolio format (SOTY-winning category)",
+        "Clean, minimal design that lets the tech shine"
+      ],
+      "weaknesses": [
+        "Fluid simulation has been explored before (Felix Turner, etc.)",
+        "May feel more like a tech demo than a narrative experience"
+      ],
+      "sotyProbability": "Medium-High"
+    },
+    {
+      "name": "Aristide Benoist Portfolio",
+      "url": "https://aristidebenoist.com",
+      "agency": "Aristide Benoist (freelance, France)",
+      "techStack": ["Three.js", "Custom shaders", "GSAP", "Nuxt.js"],
+      "innovation": "Photography-meets-WebGL: photographs deconstructed into 3D particle systems that reform on scroll. Each project reveals through a unique particle transition.",
+      "scores": {
+        "estimated": "8.8+",
+        "design": "Very High",
+        "creativity": "High",
+        "usability": "Good"
+      },
+      "strengths": [
+        "French design sensibility — elegant and refined",
+        "Particle-from-photo technique is visually striking",
+        "Personal portfolio with strong identity"
+      ],
+      "weaknesses": [
+        "Solo developer — may lack the polish of a studio",
+        "Particle effects, while beautiful, aren't as novel in 2025"
+      ],
+      "sotyProbability": "Medium"
+    },
+    {
+      "name": "Wope AI",
+      "url": "https://wope.com",
+      "agency": "Internal + agency collaboration",
+      "techStack": ["WebGPU", "Three.js", "React", "Custom WGSL shaders"],
+      "innovation": "One of the first production sites leveraging WebGPU (not just WebGL). AI-themed with neural network visualizations rendered via compute shaders. Data-driven generative art.",
+      "scores": {
+        "estimated": "8.5-9.0",
+        "design": "High",
+        "creativity": "Very High",
+        "usability": "Medium-High"
+      },
+      "strengths": [
+        "WebGPU is genuinely bleeding-edge tech in 2025",
+        "AI theme is culturally relevant",
+        "Compute shader visualizations are novel for web"
+      ],
+      "weaknesses": [
+        "WebGPU browser support still limited in early 2025",
+        "AI-themed sites becoming common",
+        "Fallback experience for non-WebGPU browsers may suffer"
+      ],
+      "sotyProbability": "Medium"
+    },
+    {
+      "name": "Obys Agency v4",
+      "url": "https://obys.agency",
+      "agency": "Obys (Ukraine)",
+      "techStack": ["Three.js", "Custom WebGL", "GSAP", "Next.js"],
+      "innovation": "Typographic 3D experience — letters become 3D objects that users navigate through. Typography IS the architecture.",
+      "scores": {
+        "estimated": "8.8+",
+        "design": "Very High",
+        "creativity": "High",
+        "usability": "Good"
+      },
+      "strengths": [
+        "Strong brand with Awwwards history (multiple SOTD wins)",
+        "3D typography is on-trend for 2025",
+        "Eastern European dev talent is recognized by Awwwards community"
+      ],
+      "weaknesses": [
+        "Agency portfolio — competing in the same category as recent SOTY winners",
+        "3D typography has been explored by others (Acidctrl, etc.)"
+      ],
+      "sotyProbability": "Medium-High"
+    },
+    {
+      "name": "Satoshi Ventures",
+      "url": "https://satoshi.ventures",
+      "agency": "Unknown studio",
+      "techStack": ["WebGPU", "Custom engine", "Svelte"],
+      "innovation": "Blockchain visualization using real transaction data rendered in real-time with WebGPU compute shaders. Living, breathing data visualization.",
+      "scores": {
+        "estimated": "8.5-9.0",
+        "design": "High",
+        "creativity": "Very High",
+        "usability": "Medium"
+      },
+      "strengths": [
+        "Live data integration is genuinely novel",
+        "WebGPU compute for real data processing",
+        "Visually unique — no two visits are the same"
+      ],
+      "weaknesses": [
+        "Crypto/blockchain theme may polarize jury",
+        "Data dependency = potential for broken experience",
+        "Usability challenges with abstract data viz"
+      ],
+      "sotyProbability": "Low-Medium"
+    }
+  ],
+  "emergingTrends2025": {
+    "technology": [
+      {
+        "trend": "WebGPU adoption",
+        "description": "WebGPU starting to appear in production sites. Compute shaders, WGSL, better GPU utilization. Chrome supports it, Firefox and Safari catching up.",
+        "maturity": "Early adoption — fallback to WebGL 2.0 still required",
+        "relevanceToEventHorizon": "Critical — if Event Horizon uses WebGPU with WebGL fallback, it signals cutting-edge tech. If WebGPU-only, it risks jury members on Safari seeing a broken experience."
+      },
+      {
+        "trend": "AI-generated content integration",
+        "description": "Sites incorporating real-time AI generation — images, text, 3D models generated on-the-fly based on user input.",
+        "maturity": "Experimental",
+        "relevanceToEventHorizon": "Low direct relevance, but shows judges are open to novel tech integration."
+      },
+      {
+        "trend": "3D typography renaissance",
+        "description": "After Pangram Pangram proved 2D typography could win, studios are now pushing typography into 3D — extruded, volumetric, particle-based text.",
+        "maturity": "Growing",
+        "relevanceToEventHorizon": "Medium — Event Horizon's text near the black hole could be gravitationally warped 3D typography."
+      },
+      {
+        "trend": "Svelte/SvelteKit over React for creative sites",
+        "description": "Creative developers choosing Svelte for its lighter runtime and better animation performance. React's virtual DOM overhead is seen as a disadvantage for animation-heavy sites.",
+        "maturity": "Mainstream in creative web",
+        "relevanceToEventHorizon": "Medium — framework choice signals technical awareness to Developer Award judges."
+      },
+      {
+        "trend": "Compute shader particle systems",
+        "description": "Moving particle simulation from vertex/fragment shaders to compute shaders (WebGPU) or transform feedback (WebGL 2.0). Orders of magnitude more particles.",
+        "maturity": "Growing",
+        "relevanceToEventHorizon": "Critical — Event Horizon's GPGPU N-body simulation is exactly this. It's on-trend but must go FURTHER than what others are doing."
+      }
+    ],
+    "design": [
+      {
+        "trend": "Volumetric and atmospheric effects",
+        "description": "Fog, god rays, volumetric lighting becoming more common. Inspired by Igloo's VDB success.",
+        "relevanceToEventHorizon": "High — accretion disk glow, gravitational lensing haze"
+      },
+      {
+        "trend": "Dark mode as default",
+        "description": "Space/cosmic/dark themes dominant in creative web. Light themes for SOTY are now rare.",
+        "relevanceToEventHorizon": "Positive — black hole theme naturally fits this trend"
+      },
+      {
+        "trend": "Organic/natural form language",
+        "description": "Moving away from geometric/angular forms toward organic, flowing, nature-inspired shapes. Crystals (Igloo), cloth (Lusion), fluid dynamics.",
+        "relevanceToEventHorizon": "Medium — gravitational accretion and particle flows are inherently organic"
+      },
+      {
+        "trend": "Brutalist retro-modern hybrid",
+        "description": "Mixing brutalist web aesthetics (raw, exposed) with modern WebGL. Intentionally imperfect overlaying perfect 3D.",
+        "relevanceToEventHorizon": "Low — Event Horizon's aesthetic is cinematic, not brutalist"
+      }
+    ],
+    "interaction": [
+      {
+        "trend": "Physics-based interaction",
+        "description": "User interactions governed by physics simulation — not just animation curves but actual physics (gravity, springs, collision).",
+        "relevanceToEventHorizon": "Critical — gravitational interaction IS the core metaphor"
+      },
+      {
+        "trend": "Reduced scroll hijacking",
+        "description": "Jury showing slight fatigue with fully hijacked scroll. Sites that offer both hijacked 'experience mode' and native scroll are being rewarded.",
+        "relevanceToEventHorizon": "Important — consider offering a navigation mode that doesn't fully hijack scroll"
+      },
+      {
+        "trend": "Gesture and motion input",
+        "description": "Accelerometer, gyroscope on mobile. Device motion as input for 3D scenes.",
+        "relevanceToEventHorizon": "Medium — tilting phone could orbit the black hole view"
+      }
+    ]
+  },
+  "whatEventHorizonNeedsToBeat": {
+    "technicalBar": {
+      "minimum": "Three.js + custom GLSL + smooth 60fps + custom transitions",
+      "competitive": "Full WebGL UI OR novel rendering technique OR custom data pipeline",
+      "winning": "Multiple novel techniques combined into a cohesive experience that pushes the medium forward"
+    },
+    "designBar": {
+      "minimum": "Cohesive visual language, professional typography, intentional color palette",
+      "competitive": "Every detail polished, unique visual identity, memorable compositions",
+      "winning": "Visual quality that makes people question if it's really a browser. Emotional impact through design."
+    },
+    "innovationBar": {
+      "minimum": "One notable technical achievement",
+      "competitive": "A genuinely novel technique that the community can learn from",
+      "winning": "An innovation that redefines what's possible in a browser — the 'holy shit' moment"
+    },
+    "eventHorizonPosition": {
+      "strengths": [
+        "GPGPU N-body gravitational simulation — genuinely novel for web",
+        "Raymarched black hole — never done in an Awwwards context",
+        "Real astrophysics — scientifically grounded, not just pretty",
+        "Universal appeal — black holes fascinate everyone",
+        "Time dilation as UX metaphor — deeply conceptual"
+      ],
+      "gaps": [
+        "Mobile experience must be world-class — cannot be an afterthought",
+        "Sound design must be physics-based and integrated",
+        "Loading experience must be engaging, not just a progress bar",
+        "Content/narrative must be as strong as the visuals",
+        "Usability must not be sacrificed for spectacle",
+        "The technical story must be told clearly for Developer Award judges"
+      ],
+      "verdict": "Event Horizon has SOTY-winning potential IF every gap is addressed. The core innovation (GPGPU + raymarching) is genuinely novel. The astrophysics theme is universally appealing. The risk is in execution details: mobile, sound, loading, usability, and storytelling."
+    }
+  },
+  "juryTrends2025": {
+    "increasinglyValued": [
+      "Performance on ALL devices — not just powerful desktops",
+      "Accessibility considerations (even for WebGL sites)",
+      "Meaningful content — not just tech demos",
+      "Sound design integration",
+      "Novel technical approaches with clear documentation",
+      "Environmental consciousness (carbon footprint of heavy sites)"
+    ],
+    "decreasinglyValued": [
+      "WebGL for the sake of WebGL — must serve a purpose",
+      "Scroll hijacking without meaningful payoff",
+      "Forced sound autoplay",
+      "Desktop-only experiences",
+      "Sites that take >5 seconds to load without engagement"
+    ]
+  }
+}

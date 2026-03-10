@@ -1,0 +1,340 @@
+{
+  "meta": {
+    "file": "submission-strategy.json",
+    "description": "Optimal submission strategy for Awwwards — timing, preparation, promotion, and common pitfalls",
+    "lastUpdated": "2026-03-09",
+    "version": "1.0.0"
+  },
+  "preSubmission": {
+    "timeline": {
+      "T-8weeks": "Begin final polish phase — performance, mobile, sound, loading, accessibility",
+      "T-4weeks": "Publish technical writeup (blog post / case study) about the innovations",
+      "T-2weeks": "Final cross-browser testing (Chrome, Firefox, Safari, Edge) on multiple devices",
+      "T-1week": "Performance profiling on mid-range hardware. Fix any frame drops. Clear all console errors.",
+      "T-3days": "Prepare submission materials: description, thumbnail, category tags",
+      "T-1day": "Final review — fresh eyes on the entire experience. Check everything one more time.",
+      "T-0": "Submit"
+    },
+    "checklist": [
+      {
+        "item": "Performance: 60fps on mid-range desktop",
+        "critical": true,
+        "how": "Profile on a 2-year-old MacBook Pro or equivalent Windows laptop. Not your development machine.",
+        "eventHorizon": "Test GPGPU particle system + raymarching on Intel integrated GPU. If it lags, adaptive quality must handle it."
+      },
+      {
+        "item": "Performance: 30fps+ on mobile",
+        "critical": true,
+        "how": "Test on iPhone 12/13 and a mid-range Android (Samsung Galaxy A-series). Both orientations.",
+        "eventHorizon": "Mobile version must have simplified black hole and fewer particles."
+      },
+      {
+        "item": "Loading time: Under 3 seconds to first meaningful content",
+        "critical": true,
+        "how": "Test on throttled connection (Fast 3G in DevTools). Measure Time to First Contentful Paint.",
+        "eventHorizon": "Stars appearing within 2 seconds. Full experience loads progressively."
+      },
+      {
+        "item": "Zero console errors",
+        "critical": true,
+        "how": "Open DevTools console. No errors, no warnings, no deprecation notices. No console.log.",
+        "eventHorizon": "Check all browsers. WebGPU fallback to WebGL must be seamless — no WebGPU errors on Safari."
+      },
+      {
+        "item": "Sound: Muted by default, elegant enable",
+        "critical": true,
+        "how": "Sound never plays without user consent. Enable prompt is designed, not a browser default.",
+        "eventHorizon": "Physics-based sound design, muted by default, icon prompt in first section."
+      },
+      {
+        "item": "Cross-browser: Chrome, Firefox, Safari, Edge",
+        "critical": true,
+        "how": "Test each browser on both macOS and Windows. Safari is often the problematic one for WebGL.",
+        "eventHorizon": "Safari's WebGL limitations may require shader modifications. Test extensively."
+      },
+      {
+        "item": "Mobile responsive: Portrait and landscape",
+        "critical": true,
+        "how": "Test on real devices, not just DevTools responsive mode. Touch interactions, scroll behavior.",
+        "eventHorizon": "Portrait primary. Landscape optional but shouldn't break."
+      },
+      {
+        "item": "Accessibility basics",
+        "critical": false,
+        "how": "Tab through the site. Check with screen reader (VoiceOver/NVDA). Add prefers-reduced-motion support.",
+        "eventHorizon": "Hidden DOM layer for screen readers. Static fallback for reduced motion. Keyboard navigation for sections."
+      },
+      {
+        "item": "OG / social meta tags",
+        "critical": false,
+        "how": "Open Graph image, title, description for social sharing. Twitter card meta.",
+        "eventHorizon": "Stunning OG image of the black hole. Title: 'Event Horizon — An Interactive Journey to the Edge of Spacetime'. Description short and compelling."
+      },
+      {
+        "item": "Favicon and browser tab",
+        "critical": false,
+        "how": "Custom favicon (not default). Tab title is descriptive.",
+        "eventHorizon": "Black hole icon as favicon. Animated favicon during experience (optional but impressive)."
+      },
+      {
+        "item": "SSL certificate valid",
+        "critical": true,
+        "how": "HTTPS with valid certificate. No mixed content warnings.",
+        "eventHorizon": "Standard for any modern deployment."
+      },
+      {
+        "item": "404 page designed",
+        "critical": false,
+        "how": "If someone navigates to a wrong URL, they should see a designed 404, not a server error.",
+        "eventHorizon": "404: 'You've ventured beyond the observable universe.' with link back to home."
+      },
+      {
+        "item": "Technical writeup published",
+        "critical": false,
+        "how": "Blog post or case study explaining the technical innovations. Link to it in the Awwwards description.",
+        "eventHorizon": "Article: 'Raymarching a Black Hole in the Browser: GPGPU N-Body Simulation and Gravitational Lensing in WebGL'"
+      },
+      {
+        "item": "Credits page or section",
+        "critical": false,
+        "how": "Acknowledge all contributors, tools, and references.",
+        "eventHorizon": "Credits: developer, designer, astrophysics references, tools (Three.js, etc.), music/sound credits."
+      },
+      {
+        "item": "Analytics in place",
+        "critical": false,
+        "how": "Track visits, scroll depth, time on site, device distribution. Useful data for after nomination.",
+        "eventHorizon": "Minimal analytics (Plausible or Simple Analytics — privacy-friendly)."
+      },
+      {
+        "item": "CDN and caching configured",
+        "critical": true,
+        "how": "Assets served from CDN. Proper cache headers. Brotli/gzip compression.",
+        "eventHorizon": "Vercel handles this if deployed there. Verify asset compression."
+      },
+      {
+        "item": "No third-party bloat",
+        "critical": false,
+        "how": "No heavy analytics (Google Analytics is fine), no chat widgets, no cookie banners blocking the experience.",
+        "eventHorizon": "Minimal third-party. Cookie banner if legally required — designed to match the aesthetic."
+      },
+      {
+        "item": "Backup/stability",
+        "critical": true,
+        "how": "Site must stay up during the 5-day voting period. No deployments during voting unless critical fix.",
+        "eventHorizon": "Deploy to stable environment (Vercel production). No pushes during voting."
+      }
+    ]
+  },
+  "submissionDetails": {
+    "bestDayOfWeek": {
+      "recommended": ["Tuesday", "Wednesday"],
+      "reasoning": "Monday: jury catching up from weekend, lower engagement. Thursday: jury winding down. Friday: minimal engagement. Tuesday/Wednesday: peak jury activity and attention.",
+      "avoid": ["Friday", "Saturday", "Sunday"]
+    },
+    "bestTimeOfYear": {
+      "optimal": ["March", "April", "May", "September", "October", "November"],
+      "reasoning": "Spring and fall are peak engagement periods. Jury is most active and attentive. Summer vacation and December holidays reduce engagement.",
+      "avoid": ["December", "January", "July", "August"],
+      "sotyTiming": "If targeting SOTY for a given year, submit in the first half to maximize time in consideration. April-May is ideal — early enough for SOTY but not so early that it's forgotten."
+    },
+    "categorySelection": {
+      "primary": "Select the most specific relevant category",
+      "recommended": "Experimental / Interactive",
+      "alternatives": ["Portfolio", "Art / Illustration"],
+      "tip": "Less competitive categories can help win SOTD. 'Experimental' often has fewer daily competitors than 'Portfolio'.",
+      "eventHorizonCategory": "Experimental — this is not a standard portfolio or corporate site. It's an experimental interactive experience."
+    },
+    "tagOptimization": {
+      "purpose": "Tags help jury members find and categorize the site. Also affect discovery.",
+      "recommendedTags": [
+        "WebGL",
+        "Three.js",
+        "Interactive",
+        "Experimental",
+        "3D",
+        "Immersive",
+        "Science",
+        "Space",
+        "Animation",
+        "Creative Development"
+      ],
+      "maxTags": 10,
+      "tip": "Include both technical tags (WebGL, Three.js) and conceptual tags (Immersive, Experimental). Jury members filter by tags."
+    },
+    "descriptionWriting": {
+      "format": "2-3 sentences. Compelling, not technical. Explain what the user will EXPERIENCE, not what technology you used.",
+      "structure": {
+        "sentence1": "What it IS (the hook)",
+        "sentence2": "What makes it SPECIAL (the innovation)",
+        "sentence3": "Optional — emotional/conceptual framing"
+      },
+      "eventHorizonDescription": {
+        "english": "An interactive journey to the edge of spacetime. Experience what happens when gravity becomes so extreme that nothing — not even light — can escape. Built with real astrophysics data and GPU-accelerated gravitational simulation.",
+        "alternativeShort": "Fall into a black hole. A WebGL experience where real physics drives every particle, every photon, every distortion of spacetime."
+      },
+      "doNot": [
+        "List technologies in the description (save for tech tags)",
+        "Use buzzwords without substance ('cutting-edge', 'revolutionary')",
+        "Make it longer than 3 sentences",
+        "Sound like a press release"
+      ]
+    },
+    "thumbnailOptimization": {
+      "purpose": "The thumbnail is the first thing jury members see in the nominee list. It must be striking.",
+      "specs": {
+        "resolution": "1200x630px minimum (OG image ratio)",
+        "format": "JPEG or PNG, high quality"
+      },
+      "guidelines": [
+        "Show the most visually impressive moment of the experience",
+        "Dark backgrounds with bright focal points perform well",
+        "Avoid text-heavy thumbnails — the visual should speak for itself",
+        "Show the site in context (browser frame) or as a standalone visual"
+      ],
+      "eventHorizonThumbnail": "The black hole with gravitational lensing — starfield warping around the dark sphere, accretion disk glowing. The most 'Interstellar-like' frame from the experience."
+    }
+  },
+  "postNomination": {
+    "promotionStrategy": {
+      "day1": {
+        "actions": [
+          "Share on Twitter/X with compelling visual (video clip or GIF)",
+          "Post on LinkedIn with professional framing",
+          "Share in creative web communities (Codrops, Creative Boom, Abduzeedo)",
+          "Share in developer communities (DEV.to, Hacker News, Reddit r/webdev)",
+          "Email the technical writeup to relevant newsletters"
+        ],
+        "twitterPost": {
+          "structure": "Visual hook (video/GIF) + brief description + Awwwards link + relevant hashtags",
+          "eventHorizonExample": "We built a black hole in a browser. Real gravitational physics. Real spacetime curvature. Real-time raymarching.\n\nNominated for @awwwards — vote if you think the web should push boundaries.\n\n[Awwwards link]\n\n#webgl #threejs #creativecoding #awwwards",
+          "hashtags": ["#webgl", "#threejs", "#creativecoding", "#awwwards", "#webdesign", "#GLSL", "#webdev"]
+        }
+      },
+      "day2to4": {
+        "actions": [
+          "Share behind-the-scenes content (shader code, development process)",
+          "Engage with community comments and questions",
+          "Share the technical writeup more broadly",
+          "Direct message influential creative developers who might share it"
+        ]
+      },
+      "day5": {
+        "actions": [
+          "Final push — 'last day to vote' reminder",
+          "Thank the community for engagement"
+        ]
+      }
+    },
+    "communityEngagement": {
+      "purpose": "Higher visibility → more jury members see and vote → higher vote count → stronger SOTM/SOTY candidacy",
+      "platforms": [
+        {
+          "platform": "Twitter/X",
+          "audience": "Creative developers, designers, agencies",
+          "contentType": "Visual (video clips, GIFs, screenshots) + brief technical highlights"
+        },
+        {
+          "platform": "LinkedIn",
+          "audience": "Professional network, agencies, potential clients",
+          "contentType": "Professional framing — 'proud to share' with career context"
+        },
+        {
+          "platform": "Codrops / Tympanus",
+          "audience": "Creative web developers",
+          "contentType": "Technical article about the innovations"
+        },
+        {
+          "platform": "Hacker News",
+          "audience": "General tech, skeptical but high-impact if it hits front page",
+          "contentType": "Title focused on the technical achievement, not the award"
+        },
+        {
+          "platform": "Reddit (r/webdev, r/threejs, r/creativecoding)",
+          "audience": "Developer communities",
+          "contentType": "Technical showcase with code discussion"
+        },
+        {
+          "platform": "DEV.to",
+          "audience": "Developer blog readers",
+          "contentType": "Full technical writeup article"
+        },
+        {
+          "platform": "Three.js Discord",
+          "audience": "Three.js community",
+          "contentType": "Share in showcase channel with technical details"
+        }
+      ]
+    },
+    "doNotDo": [
+      "Spam jury members with direct messages asking for votes",
+      "Create fake accounts to boost public vote",
+      "Deploy changes to the site during the 5-day voting period (risk of breaking things)",
+      "Argue with negative feedback publicly",
+      "Over-promote — 2-3 posts across platforms is sufficient, 10+ looks desperate"
+    ]
+  },
+  "commonRejectionReasons": [
+    {
+      "reason": "Poor mobile experience",
+      "frequency": "Most common",
+      "prevention": "Dedicated mobile testing on real devices. At minimum: responsive layout, working touch interactions, 30fps+."
+    },
+    {
+      "reason": "Performance issues / lag",
+      "frequency": "Very common",
+      "prevention": "Test on mid-range hardware, not development machine. Adaptive quality system."
+    },
+    {
+      "reason": "Browser incompatibility",
+      "frequency": "Common",
+      "prevention": "Test on Chrome, Firefox, Safari, Edge. Safari is usually the problem child for WebGL."
+    },
+    {
+      "reason": "Slow loading without feedback",
+      "frequency": "Common",
+      "prevention": "Preloader that engages within 2 seconds. Progressive loading for heavy assets."
+    },
+    {
+      "reason": "Navigation confusion",
+      "frequency": "Moderate",
+      "prevention": "Clear progress indicator, visible navigation options, ability to skip sections."
+    },
+    {
+      "reason": "Sound autoplay",
+      "frequency": "Moderate",
+      "prevention": "ALWAYS mute by default. Elegant opt-in prompt."
+    },
+    {
+      "reason": "Tech demo without content",
+      "frequency": "Moderate (especially for WebGL projects)",
+      "prevention": "Every visual must serve a narrative. Content gives meaning to spectacle."
+    },
+    {
+      "reason": "Not HTTPS / mixed content",
+      "frequency": "Low but automatic rejection",
+      "prevention": "Valid SSL. No mixed content."
+    },
+    {
+      "reason": "Under construction / placeholder content",
+      "frequency": "Rare (but it happens)",
+      "prevention": "Everything must be complete. No 'coming soon' sections."
+    },
+    {
+      "reason": "Duplicate submission",
+      "frequency": "Rare",
+      "prevention": "Only submit once. Resubmissions after significant updates are allowed but check Awwwards rules."
+    }
+  ],
+  "eventHorizonSubmissionPlan": {
+    "targetDate": "April-May 2025",
+    "targetDay": "Tuesday or Wednesday",
+    "category": "Experimental / Interactive",
+    "tags": ["WebGL", "Three.js", "Interactive", "Experimental", "3D", "Immersive", "Science", "Space", "GLSL", "WebGPU"],
+    "description": "An interactive journey to the edge of spacetime. Experience what happens when gravity becomes so extreme that nothing — not even light — can escape. Built with real astrophysics data and GPU-accelerated gravitational simulation.",
+    "thumbnailConcept": "Black hole with gravitational lensing warping starfield behind it, accretion disk glowing, viewed from just outside the photon sphere",
+    "technicalWriteupTitle": "Raymarching a Black Hole: GPGPU N-Body Simulation and Gravitational Lensing in WebGL",
+    "promotionPlan": "Twitter/X (video clip), LinkedIn (professional), Codrops (article), Three.js Discord (showcase), Reddit r/threejs (technical), Hacker News (Show HN)",
+    "targetAwards": ["SOTD", "Developer SOTD", "SOTM", "SOTY 2025", "Developer Award 2025"]
+  }
+}

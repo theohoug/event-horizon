@@ -1,0 +1,579 @@
+{
+  "metadata": {
+    "title": "M87* Observational Data — Event Horizon Telescope and Multi-wavelength Studies",
+    "description": "Comprehensive observational database of the supermassive black hole M87* (Virgo A, NGC 4486) from EHT and supporting observations",
+    "version": "1.0.0",
+    "lastUpdated": "2026-03-09",
+    "primarySource": "Event Horizon Telescope Collaboration"
+  },
+  "hostGalaxy": {
+    "name": "Messier 87 (M87)",
+    "alternateNames": ["Virgo A", "NGC 4486", "3C 274", "Arp 152"],
+    "type": "Elliptical galaxy (cD type, giant elliptical)",
+    "constellation": "Virgo",
+    "clusterMembership": "Virgo Cluster (central dominant galaxy)",
+    "rightAscension": "12h 30m 49.4234s",
+    "declination": "+12° 23' 28.044\"",
+    "distance": {
+      "value_Mpc": 16.8,
+      "uncertainty_Mpc": 0.8,
+      "value_Mly": 54.7,
+      "uncertainty_Mly": 2.6,
+      "value_m": 5.184e23,
+      "angularDiameterDistance_Mpc": 16.8,
+      "method": "Surface brightness fluctuation, Hubble constant",
+      "EHTpaper_value_Mpc": 16.8,
+      "source": "EHT Collaboration Paper I (2019), Bird et al. (2010)"
+    },
+    "stellarMass_Msun": 2.4e12,
+    "effectiveRadius_kpc": 7.8,
+    "stellarVelocityDispersion_km_s": 375,
+    "apparentMagnitude_V": 8.6,
+    "absoluteMagnitude_V": -22.8
+  },
+  "blackHole": {
+    "designation": "M87*",
+    "mass": {
+      "EHT2019": {
+        "value_Msun": 6.5e9,
+        "uncertainty_Msun": 0.7e9,
+        "value_kg": 1.292798e40,
+        "method": "EHT shadow size combined with GR models",
+        "source": "EHT Collaboration Paper VI (2019)"
+      },
+      "stellarDynamics_Gebhardt2011": {
+        "value_Msun": 6.6e9,
+        "uncertainty_Msun_upper": 0.4e9,
+        "uncertainty_Msun_lower": 0.4e9,
+        "method": "Stellar dynamics modeling",
+        "source": "Gebhardt et al. (2011)"
+      },
+      "gasDynamics_Walsh2013": {
+        "value_Msun": 3.5e9,
+        "uncertainty_Msun_upper": 0.9e9,
+        "uncertainty_Msun_lower": 0.7e9,
+        "method": "Gas dynamics with HST",
+        "source": "Walsh et al. (2013)"
+      },
+      "stellarDynamics_Liepold2023": {
+        "value_Msun": 5.37e9,
+        "uncertainty_Msun_upper": 0.22e9,
+        "uncertainty_Msun_lower": 0.25e9,
+        "method": "Stellar orbit-superposition models with axisymmetric Jeans modeling",
+        "source": "Liepold et al. (2023)"
+      },
+      "adopted": {
+        "value_Msun": 6.5e9,
+        "uncertainty_Msun": 0.7e9,
+        "note": "EHT result is consistent with stellar dynamics and provides the most direct measurement"
+      }
+    },
+    "schwarzschildRadius": {
+      "value_m": 1.9196e13,
+      "value_km": 1.9196e10,
+      "value_AU": 128.3,
+      "value_lightHours": 17.8,
+      "note": "Rs = 2GM/c²"
+    },
+    "eventHorizonDiameter": {
+      "value_km": 3.8392e10,
+      "value_AU": 256.6,
+      "comparison": "About 2.5 times the diameter of Pluto's orbit"
+    },
+    "angularSize": {
+      "shadowDiameter_uas": 42,
+      "uncertainty_uas": 3,
+      "ringDiameter_uas": 42,
+      "source": "EHT Collaboration Paper I (2019)",
+      "note": "The ring diameter is consistent with the predicted shadow size for the measured mass"
+    },
+    "spin": {
+      "estimateFromJet": {
+        "value_a_over_M": 0.9,
+        "uncertainty": 0.1,
+        "method": "Jet power and morphology modeling",
+        "source": "Nokhrina et al. (2019)"
+      },
+      "EHTconstraint2023": {
+        "lowerLimit_a_over_M": 0.5,
+        "note": "EHT polarimetric observations suggest significant spin",
+        "source": "EHT Collaboration Paper VII, VIII (2021)"
+      },
+      "jetsRequireHighSpin": {
+        "note": "The powerful relativistic jet of M87 almost certainly requires a rapidly spinning black hole to power via the Blandford-Znajek mechanism"
+      }
+    }
+  },
+  "EHTimaging": {
+    "firstImage": {
+      "releaseDate": "2019-04-10",
+      "observationDates": ["2017-04-05", "2017-04-06", "2017-04-10", "2017-04-11"],
+      "wavelength_mm": 1.3,
+      "frequency_GHz": 230,
+      "band": "Band 6 (1.3 mm)",
+      "resolution_uas": 20,
+      "note": "Equivalent angular resolution to reading a newspaper in New York from a cafe in Paris"
+    },
+    "telescopeArray": {
+      "name": "Event Horizon Telescope",
+      "effectiveDiameter_km": 10700,
+      "note": "Earth-sized virtual telescope via VLBI",
+      "stations2017": [
+        { "name": "ALMA", "location": "Atacama Desert, Chile", "altitude_m": 5058, "dishes": 54, "note": "Most sensitive station" },
+        { "name": "APEX", "location": "Atacama Desert, Chile", "altitude_m": 5100, "dishes": 1 },
+        { "name": "IRAM 30m", "location": "Pico Veleta, Spain", "altitude_m": 2850, "dishes": 1 },
+        { "name": "JCMT", "location": "Maunakea, Hawaii", "altitude_m": 4092, "dishes": 1 },
+        { "name": "LMT", "location": "Sierra Negra, Mexico", "altitude_m": 4600, "dishes": 1, "note": "Large Millimeter Telescope Alfonso Serrano" },
+        { "name": "SMA", "location": "Maunakea, Hawaii", "altitude_m": 4080, "dishes": 8, "note": "Submillimeter Array" },
+        { "name": "SMT", "location": "Mt. Graham, Arizona", "altitude_m": 3185, "dishes": 1, "note": "Submillimeter Telescope" },
+        { "name": "SPT", "location": "South Pole, Antarctica", "altitude_m": 2835, "dishes": 1, "note": "South Pole Telescope" }
+      ],
+      "stations2018additions": [
+        { "name": "GLT", "location": "Thule, Greenland", "altitude_m": 77, "note": "Greenland Telescope" },
+        { "name": "NOEMA", "location": "Plateau de Bure, France", "altitude_m": 2560, "note": "Added in later campaigns" }
+      ],
+      "totalDataRecorded_PB": 3.5,
+      "dataRate_Gbps": 64,
+      "correlatedAt": ["MIT Haystack Observatory", "Max Planck Institute for Radio Astronomy, Bonn"]
+    },
+    "imageMorphology": {
+      "ringDiameter_uas": 42,
+      "ringWidth_uas": 20,
+      "brightnessAsymmetry": {
+        "description": "The south side of the ring is brighter than the north",
+        "brightSide": "south",
+        "contrastRatio": "approximately 2:1 to 4:1",
+        "cause": "Relativistic Doppler beaming from the approaching side of the accretion flow",
+        "approachingJetSide": "south (counterclockwise orbital motion as seen from Earth)"
+      },
+      "centralBrightnessDepression": {
+        "description": "The interior of the ring (the 'shadow') is significantly dimmer",
+        "fluxRatio_ring_to_center": ">10:1",
+        "cause": "Photon capture by the black hole — the shadow is the black hole's silhouette against the emission"
+      },
+      "azimuthalStructure": {
+        "description": "The ring brightness varies with azimuthal angle",
+        "peakBrightnessPA_deg": 170,
+        "note": "Position angle measured east of north"
+      }
+    },
+    "ringProperties": {
+      "peakBrightnessTemperature_K": 6.0e9,
+      "totalFluxDensity_Jy": 0.5,
+      "uncertainty_Jy": 0.2,
+      "ringCircularity": {
+        "axisRatio": 1.0,
+        "uncertainty": 0.1,
+        "note": "Consistent with a circular ring to within 10%, constraining the inclination and spin"
+      }
+    },
+    "shadowConsistency": {
+      "observedShadowDiameter_uas": 42,
+      "predictedFromMass_uas": {
+        "schwarzschild": 39.0,
+        "kerr_a09": 40.5,
+        "note": "Shadow diameter ≈ 2 × √27 × GM/(c²D) = 9.87 GM/(c²D) radians"
+      },
+      "deviationFromGR_percent": "<10",
+      "consistentWithGR": true,
+      "fractionalDeviation": {
+        "delta": 0.01,
+        "uncertainty": 0.17,
+        "source": "EHT Collaboration Paper VI (2019)"
+      }
+    },
+    "multiEpochObservations": {
+      "description": "M87* was observed in multiple years showing evolving ring morphology",
+      "epochs": [
+        {
+          "year": 2009,
+          "instrument": "Prototype EHT (3 stations)",
+          "result": "Compact structure detected, size consistent with shadow",
+          "source": "Doeleman et al. (2012)"
+        },
+        {
+          "year": 2012,
+          "instrument": "Expanded EHT (4-5 stations)",
+          "result": "Compact asymmetric structure confirmed",
+          "source": "Akiyama et al. (2015)"
+        },
+        {
+          "year": 2017,
+          "instrument": "Full EHT (8 stations)",
+          "result": "First resolved image — asymmetric bright ring with central depression",
+          "brightestRegion": "south",
+          "source": "EHT Collaboration Papers I-VI (2019)"
+        },
+        {
+          "year": 2018,
+          "instrument": "EHT (8+ stations with GLT)",
+          "result": "Ring structure maintained, brightness peak shifted in position angle",
+          "brightestRegion": "southwest shifted",
+          "source": "EHT Collaboration (2024)"
+        },
+        {
+          "year": 2021,
+          "instrument": "EHT expanded array",
+          "result": "Image quality improved, ring morphology persistent",
+          "source": "EHT Collaboration (2024)"
+        }
+      ],
+      "morphologicalEvolution": {
+        "description": "The ring diameter remains constant across epochs, but the azimuthal brightness distribution changes",
+        "interpretation": "The ring size is set by the black hole mass (constant), while the brightness distribution reflects turbulent accretion dynamics",
+        "rotationOfBrightSpot": "The position angle of peak brightness rotates over years, consistent with turbulent accretion flow variability"
+      }
+    }
+  },
+  "polarimetry": {
+    "releaseDate": "2021-03-24",
+    "description": "First resolved polarimetric image of a black hole shadow",
+    "linearPolarizationFraction": {
+      "net": 0.03,
+      "resolvedPeak": 0.15,
+      "note": "Up to 15% linear polarization in resolved regions"
+    },
+    "EVPApattern": {
+      "description": "Electric Vector Position Angle shows a nearly azimuthal pattern around the ring",
+      "interpretation": "Indicates a coherent, ordered magnetic field with a significant poloidal component near the event horizon",
+      "consistentWithMAD": true,
+      "note": "The ordered spiral EVPA pattern is a signature of MAD (Magnetically Arrested Disk) state"
+    },
+    "magneticFieldStrength": {
+      "nearHorizon_Gauss": {
+        "min": 1,
+        "max": 30,
+        "bestEstimate": 5,
+        "note": "Field strength estimated from synchrotron modeling"
+      },
+      "nearHorizon_Tesla": {
+        "min": 1e-4,
+        "max": 3e-3,
+        "bestEstimate": 5e-4
+      }
+    },
+    "faradayRotation": {
+      "rotationMeasure_rad_m2": {
+        "range": [-7e5, 7e5],
+        "note": "Large Faraday rotation measures indicate significant magnetized plasma"
+      }
+    },
+    "implicationsForJetLaunching": {
+      "description": "The polarimetric results strongly support jet launching via the Blandford-Znajek mechanism",
+      "magneticFluxOnHorizon": "Near the MAD saturation limit",
+      "jetPowerEstimate_W": 1e37,
+      "jetPowerEstimate_erg_s": 1e44
+    },
+    "source": "EHT Collaboration Papers VII and VIII (2021)"
+  },
+  "jet": {
+    "type": "Relativistic jet (FR I type)",
+    "discoveryYear": 1918,
+    "discoverer": "Heber Curtis",
+    "positionAngle_deg": 288,
+    "note_PA": "Position angle of the approaching jet, measured east of north",
+    "inclination_deg": {
+      "toLineOfSight": 17,
+      "uncertainty": 3,
+      "note": "Nearly pointing toward Earth but not close enough for blazar classification"
+    },
+    "apparentLength_kpc": 1.5,
+    "apparentLength_arcsec": 20,
+    "trueLength_kpc": {
+      "estimate": 5,
+      "note": "Deprojected assuming inclination of 17°"
+    },
+    "bulkLorentzFactor": {
+      "innerJet": { "min": 2, "max": 6, "note": "Near the core, measured from proper motions" },
+      "outerJet": { "min": 1.5, "max": 3 }
+    },
+    "apparentSuperluminalVelocity": {
+      "max_beta_app": 6.3,
+      "unit": "c",
+      "source": "Biretta et al. (1999)"
+    },
+    "jetPower": {
+      "value_W": 1e37,
+      "value_erg_s": 1e44,
+      "range_erg_s": [1e43, 1e45],
+      "source": "Various estimates from radio/X-ray observations"
+    },
+    "knots": [
+      { "name": "HST-1", "distance_arcsec": 0.86, "distance_pc": 70, "note": "Major flaring knot, superluminal components" },
+      { "name": "D", "distance_arcsec": 3.3, "distance_pc": 270 },
+      { "name": "E", "distance_arcsec": 5.0, "distance_pc": 410 },
+      { "name": "F", "distance_arcsec": 6.1, "distance_pc": 500 },
+      { "name": "A", "distance_arcsec": 12.3, "distance_pc": 1010, "note": "Brightest knot in optical" },
+      { "name": "B", "distance_arcsec": 14.0, "distance_pc": 1150 },
+      { "name": "C", "distance_arcsec": 17.0, "distance_pc": 1390 }
+    ],
+    "counterjet": {
+      "detected": true,
+      "jetToCounterjetRatio": ">10",
+      "note": "Counter-jet is much fainter due to Doppler deboosting"
+    },
+    "openingAngle_deg": {
+      "innermost_100Rs": 60,
+      "at_1000Rs": 10,
+      "parabolicRegion_pc": 1000,
+      "note": "Jet initially has wide opening angle and collimates into a parabolic shape"
+    },
+    "collimationProfile": {
+      "innerRegion": "Parabolic (z ∝ r^1.73)",
+      "transitionDistance_pc": 900,
+      "outerRegion": "Conical",
+      "source": "Asada & Nakamura (2012), Nakamura & Asada (2013)"
+    }
+  },
+  "accretionProperties": {
+    "accretionRate": {
+      "estimate_Msun_yr": 0.1,
+      "range_Msun_yr": [0.001, 1.0],
+      "note": "Highly uncertain; estimated from Faraday rotation measurements and modeling",
+      "eddingtonRatio": {
+        "value": 1e-6,
+        "note": "M87* accretes at about one millionth of its Eddington rate"
+      }
+    },
+    "accretionFlowType": {
+      "primary": "RIAF (Radiatively Inefficient Accretion Flow)",
+      "subType": "ADAF or MAD state",
+      "note": "Low accretion rate means the flow is geometrically thick and optically thin"
+    },
+    "electronTemperature": {
+      "nearHorizon_K": { "min": 1e9, "max": 1e11 },
+      "description": "Electrons are relativistic with kT ~ mec²"
+    },
+    "ionTemperature": {
+      "nearHorizon_K": { "min": 1e11, "max": 1e12 },
+      "description": "Ions are significantly hotter than electrons (two-temperature plasma)"
+    },
+    "electronDensity": {
+      "nearHorizon_cm3": { "min": 1e4, "max": 1e7 },
+      "unit": "particles per cm³"
+    },
+    "radiationMechanism": "Synchrotron emission from relativistic electrons in magnetic fields",
+    "spectrumPeak_GHz": 230,
+    "spectralIndex": {
+      "submm": 0.5,
+      "radio": -0.7,
+      "note": "α where Fν ∝ ν^α"
+    }
+  },
+  "multiwavelengthData": {
+    "radio": {
+      "flux_43GHz_Jy": 1.0,
+      "flux_86GHz_Jy": 0.8,
+      "flux_230GHz_Jy": 0.5,
+      "coreSize_43GHz_uas": 200,
+      "coreSize_86GHz_uas": 100,
+      "source": "VLBA, GMVA observations"
+    },
+    "infrared": {
+      "nucleus_Jy_2um": 0.003,
+      "note": "Contribution from both jet and accretion flow"
+    },
+    "optical": {
+      "nucleusMagnitude_V": 15.4,
+      "jetKnot_A_magnitude_V": 14.5,
+      "HST1_magnitude_V": 16.0,
+      "note": "Optical emission dominated by synchrotron from jet"
+    },
+    "xray": {
+      "luminosity_keV_erg_s": 7e40,
+      "spectralIndex_alpha": 1.3,
+      "instrument": "Chandra X-ray Observatory",
+      "nucleusFlux_0p5_7keV_erg_cm2_s": 5e-13,
+      "note": "X-ray emission from jet and hot accretion flow"
+    },
+    "gammaRay": {
+      "detected": true,
+      "luminosity_GeV_erg_s": 1e41,
+      "variability": "TeV flares on timescale of days",
+      "instruments": ["Fermi-LAT (GeV)", "MAGIC (TeV)", "VERITAS (TeV)", "H.E.S.S. (TeV)"],
+      "VHEflares": {
+        "2005": { "instrument": "H.E.S.S.", "peakFlux_crab": 0.1 },
+        "2008": { "instrument": "MAGIC", "variabilityTimescale_days": 1 },
+        "2010": { "instrument": "VERITAS", "peakFlux_crab": 0.08 }
+      }
+    },
+    "neutrino": {
+      "detected": false,
+      "upperLimits": "IceCube constraints exist",
+      "note": "No significant neutrino signal associated with M87"
+    }
+  },
+  "GRMHDsimulations": {
+    "description": "General Relativistic Magnetohydrodynamic simulations used to interpret EHT data",
+    "libraryUsed": "Comprehensive library of >60,000 GRMHD snapshot images",
+    "codes": ["BHAC", "iharm3d", "KORAL", "H-AMR", "PATOKA", "Athena++"],
+    "rayTracingCodes": ["BHOSS", "ipole", "RAPTOR", "ODYSSEY"],
+    "parameterSpace": {
+      "spinValues": [-0.94, -0.5, 0.0, 0.5, 0.94],
+      "accretionModels": ["MAD", "SANE"],
+      "electronHeatingModels": ["R-beta prescription", "Turbulent heating", "Reconnection heating"],
+      "Rhigh_values": [1, 10, 20, 40, 80, 160]
+    },
+    "bestFitModels": {
+      "preferredAccretionState": "MAD",
+      "preferredSpin": { "magnitude": "high (|a/M| > 0.5)", "direction": "aligned with jet (positive spin)" },
+      "preferredRhigh": { "range": [10, 80], "note": "Controls electron temperature in disk vs jet" },
+      "source": "EHT Collaboration Papers V, VIII (2019, 2021)"
+    }
+  },
+  "comparisonWithTheory": {
+    "shadowSizePrediction": {
+      "GR_prediction_uas": 40.5,
+      "observedSize_uas": 42,
+      "uncertainty_uas": 3,
+      "deviation_sigma": "<1σ",
+      "conclusion": "Consistent with general relativity"
+    },
+    "alternativeGravityConstraints": {
+      "description": "EHT observations constrain deviations from Kerr metric",
+      "constrainedTheories": [
+        "Dilaton black holes",
+        "Regular (non-singular) black holes",
+        "Boson stars",
+        "Gravastars",
+        "Naked singularities (excluded for M87*)",
+        "Wormholes (some models excluded)"
+      ],
+      "metricDeviationParameter": {
+        "name": "δ (fractional deviation from Kerr shadow size)",
+        "value": 0.01,
+        "uncertainty_1sigma": 0.17,
+        "source": "Psaltis et al. (2020), EHT Paper VI"
+      }
+    },
+    "noHairTheoremTest": {
+      "description": "Shadow circularity constrains independent multipole moments",
+      "axialRatio": { "value": 1.0, "uncertainty": 0.1 },
+      "note": "Consistent with the Kerr solution (no-hair theorem)"
+    }
+  },
+  "EHTpapers": [
+    {
+      "number": "I",
+      "title": "First M87 Event Horizon Telescope Results. I. The Shadow of the Supermassive Black Hole",
+      "journal": "The Astrophysical Journal Letters",
+      "volume": 875,
+      "id": "L1",
+      "year": 2019,
+      "doi": "10.3847/2041-8213/ab0ec7"
+    },
+    {
+      "number": "II",
+      "title": "First M87 Event Horizon Telescope Results. II. Array and Instrumentation",
+      "journal": "ApJL",
+      "volume": 875,
+      "id": "L2",
+      "year": 2019,
+      "doi": "10.3847/2041-8213/ab0c96"
+    },
+    {
+      "number": "III",
+      "title": "First M87 Event Horizon Telescope Results. III. Data Processing and Calibration",
+      "journal": "ApJL",
+      "volume": 875,
+      "id": "L3",
+      "year": 2019,
+      "doi": "10.3847/2041-8213/ab0c57"
+    },
+    {
+      "number": "IV",
+      "title": "First M87 Event Horizon Telescope Results. IV. Imaging the Central Supermassive Black Hole",
+      "journal": "ApJL",
+      "volume": 875,
+      "id": "L4",
+      "year": 2019,
+      "doi": "10.3847/2041-8213/ab0e85"
+    },
+    {
+      "number": "V",
+      "title": "First M87 Event Horizon Telescope Results. V. Physical Origin of the Asymmetric Ring",
+      "journal": "ApJL",
+      "volume": 875,
+      "id": "L5",
+      "year": 2019,
+      "doi": "10.3847/2041-8213/ab0f43"
+    },
+    {
+      "number": "VI",
+      "title": "First M87 Event Horizon Telescope Results. VI. The Shadow and Mass of the Central Black Hole",
+      "journal": "ApJL",
+      "volume": 875,
+      "id": "L6",
+      "year": 2019,
+      "doi": "10.3847/2041-8213/ab1141"
+    },
+    {
+      "number": "VII",
+      "title": "First M87 Event Horizon Telescope Results. VII. Polarization of the Ring",
+      "journal": "ApJL",
+      "volume": 910,
+      "id": "L12",
+      "year": 2021,
+      "doi": "10.3847/2041-8213/abe71d"
+    },
+    {
+      "number": "VIII",
+      "title": "First M87 Event Horizon Telescope Results. VIII. Magnetic Field Structure near The Event Horizon",
+      "journal": "ApJL",
+      "volume": 910,
+      "id": "L13",
+      "year": 2021,
+      "doi": "10.3847/2041-8213/abe4de"
+    },
+    {
+      "number": "IX",
+      "title": "First M87 Event Horizon Telescope Results. IX. Detection of Near-horizon Circular Polarization",
+      "journal": "ApJL",
+      "volume": 957,
+      "id": "L20",
+      "year": 2023,
+      "doi": "10.3847/2041-8213/acff70"
+    }
+  ],
+  "historicalContext": {
+    "firstMassEstimate": {
+      "year": 1978,
+      "authors": "Sargent et al.",
+      "mass_Msun": 5e9,
+      "method": "Spectroscopic stellar velocity dispersion",
+      "note": "Remarkably close to modern measurements"
+    },
+    "jetDiscovery": {
+      "year": 1918,
+      "discoverer": "Heber Curtis",
+      "description": "Observed as a 'curious straight ray' extending from the nucleus",
+      "source": "Lick Observatory Bulletin No. 497"
+    },
+    "radioSource": {
+      "year": 1947,
+      "discoverers": "Hey, Parsons & Phillips; Bolton, Stanley & Slee",
+      "designation": "Virgo A / 3C 274"
+    },
+    "superluminalMotion": {
+      "year": 1970,
+      "note": "Among first sources where apparent superluminal motion was identified"
+    }
+  },
+  "sources": [
+    "Event Horizon Telescope Collaboration, ApJL 875, L1-L6 (2019)",
+    "Event Horizon Telescope Collaboration, ApJL 910, L12-L13 (2021)",
+    "Event Horizon Telescope Collaboration, ApJL 957, L20 (2023)",
+    "Gebhardt et al., ApJ 729, 119 (2011)",
+    "Walsh et al., ApJ 770, 86 (2013)",
+    "Liepold et al., ApJL 945, L35 (2023)",
+    "Nokhrina et al., MNRAS 489, 1197 (2019)",
+    "Biretta et al., ApJ 520, 621 (1999)",
+    "Asada & Nakamura, ApJL 745, L28 (2012)",
+    "Psaltis et al., PRL 125, 141104 (2020)",
+    "Doeleman et al., Science 338, 355 (2012)",
+    "Akiyama et al., ApJ 807, 150 (2015)",
+    "Walker et al., ApJ 855, 128 (2018)",
+    "Hada et al., ApJ 817, 131 (2016)",
+    "Kim et al., A&A 616, A188 (2018)"
+  ]
+}

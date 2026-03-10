@@ -1,9 +1,8 @@
 /**
  * @file particles.frag
- * @description Particle fragment shader with flyby speed-lines, soft glow,
- *              gravitational trails, and absorption near black hole
+ * @description Clean star rendering with sharp core, subtle glow, and diffraction
  * @author Cleanlystudio
- * @version 3.0.0
+ * @version 4.0.0
  */
 
 precision highp float;
@@ -18,29 +17,28 @@ void main() {
   float dist = length(center);
   if (dist > 0.5) discard;
 
-  float flyStretch = vFlybySpeed * 4.0;
-  vec2 flyCenter = center;
-  flyCenter.y *= 1.0 + flyStretch;
-  float flyDist = length(flyCenter);
+  float core = exp(-dist * dist * 120.0);
+  float glow = exp(-dist * dist * 20.0);
+  float outerGlow = exp(-dist * dist * 6.0) * 0.3;
 
-  float core = exp(-dist * dist * 50.0);
-  float glow = exp(-dist * dist * 10.0);
-  float outerGlow = exp(-dist * dist * 3.0);
+  float crossX = exp(-center.y * center.y * 800.0) * exp(-center.x * center.x * 8.0);
+  float crossY = exp(-center.x * center.x * 800.0) * exp(-center.y * center.y * 8.0);
+  float diffraction = (crossX + crossY) * 0.07 * smoothstep(0.4, 1.0, vBrightness);
 
-  float flyBlend = min(vFlybySpeed * 1.8, 0.85);
+  float flyBlend = min(vFlybySpeed * 2.0, 0.7);
   if (flyBlend > 0.01) {
-    float flyCore = exp(-flyDist * flyDist * max(12.0, 50.0 - flyStretch * 8.0));
-    float flyGlow = exp(-flyDist * flyDist * max(3.0, 10.0 - flyStretch * 2.0));
+    vec2 flyCenter = center;
+    flyCenter.y *= 1.0 + vFlybySpeed * 5.0;
+    float flyDist = length(flyCenter);
+    float flyCore = exp(-flyDist * flyDist * 30.0);
+    float flyGlow = exp(-flyDist * flyDist * 5.0);
+    float flyTrail = exp(-flyCenter.x * flyCenter.x * 200.0) * exp(-max(flyCenter.y, 0.0) * 4.0) * flyBlend * 0.3;
     core = mix(core, flyCore, flyBlend);
     glow = mix(glow, flyGlow, flyBlend * 0.6);
+    glow += flyTrail;
   }
 
-  float alpha = (core * 0.55 + glow * 0.18 + outerGlow * 0.04) * vBrightness;
-
-  if (flyBlend > 0.01) {
-    float flyTrail = exp(-flyDist * flyDist * max(1.5, 5.0 - flyStretch * 1.5)) * flyBlend * 0.08;
-    alpha += flyTrail * vBrightness;
-  }
+  float alpha = (core * 0.7 + glow * 0.15 + outerGlow * 0.03 + diffraction) * vBrightness;
 
   float absorption = smoothstep(4.0, 1.0, vDistToCenter);
   alpha *= 1.0 - absorption * 0.98;
@@ -48,33 +46,22 @@ void main() {
   float spaghetti = smoothstep(3.0, 0.8, vDistToCenter);
   if (spaghetti > 0.01) {
     vec2 stretch = center;
-    stretch.x *= 1.0 + spaghetti * 4.0;
-    stretch.y *= 1.0 - spaghetti * 0.3;
+    stretch.x *= 1.0 + spaghetti * 3.0;
     float stretchedDist = length(stretch);
-    float stretchedCore = exp(-stretchedDist * stretchedDist * 8.0);
-    float trail = exp(-stretchedDist * stretchedDist * 3.0);
-    core = mix(core, stretchedCore, spaghetti * 0.7);
-    alpha += trail * spaghetti * vBrightness * 0.04;
+    float stretchedCore = exp(-stretchedDist * stretchedDist * 12.0);
+    core = mix(core, stretchedCore, spaghetti * 0.6);
   }
 
-  vec3 color = vColor * (core * 0.5 + glow * 0.16 + outerGlow * 0.05);
+  vec3 color = vColor * (core * 0.6 + glow * 0.15 + outerGlow * 0.04 + diffraction * 0.5);
 
-  vec3 cyanShift = vec3(0.0, 0.96, 0.83) * absorption * 0.1;
-  vec3 violetShift = vec3(0.3, 0.05, 0.5) * spaghetti * 0.06;
-  color += cyanShift + violetShift;
-
-  float _c2 = core * core; float hotCenter = _c2 * _c2 * core * 0.12;
-  color += vec3(0.7, 0.85, 1.0) * hotCenter;
+  float _c2 = core * core;
+  float hotCenter = _c2 * _c2 * 0.15;
+  color += vec3(0.8, 0.9, 1.0) * hotCenter;
 
   float blueshift = smoothstep(5.0, 2.0, vDistToCenter);
-  color = mix(color, color * vec3(0.7, 0.8, 1.3), blueshift * 0.4);
+  color = mix(color, color * vec3(0.75, 0.82, 1.2), blueshift * 0.3);
 
-  float ignition = smoothstep(6.0, 3.0, vDistToCenter) * (1.0 - absorption);
-  color += vec3(0.4, 0.15, 0.8) * ignition * core * 0.15;
-  color += vec3(0.1, 0.3, 0.5) * ignition * glow * 0.06;
-
-  vec3 speedTint = vec3(0.6, 0.75, 1.0);
-  color = mix(color, color * speedTint, flyBlend * 0.3);
+  color = mix(color, color * vec3(0.7, 0.85, 1.15), flyBlend * 0.35);
 
   if (alpha < 0.001) discard;
 

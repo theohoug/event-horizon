@@ -1,0 +1,171 @@
+{
+  "cycleNumber": 4,
+  "timestamp": "2026-03-09T20:35:42.226Z",
+  "duration": 465629,
+  "captureCount": 101,
+  "scienceChecks": [],
+  "designScores": [],
+  "performanceReport": {
+    "fpsAverage": 30,
+    "fpsMin": 16,
+    "fpsP5": 18,
+    "fpsDrops": [
+      {
+        "scrollPercent": 0,
+        "fps": 26
+      },
+      {
+        "scrollPercent": 0.01,
+        "fps": 24
+      },
+      {
+        "scrollPercent": 0.02,
+        "fps": 21
+      },
+      {
+        "scrollPercent": 0.03,
+        "fps": 19
+      },
+      {
+        "scrollPercent": 0.04,
+        "fps": 19
+      },
+      {
+        "scrollPercent": 0.05,
+        "fps": 22
+      },
+      {
+        "scrollPercent": 0.09,
+        "fps": 22
+      },
+      {
+        "scrollPercent": 0.1,
+        "fps": 18
+      },
+      {
+        "scrollPercent": 0.11,
+        "fps": 18
+      },
+      {
+        "scrollPercent": 0.12,
+        "fps": 16
+      },
+      {
+        "scrollPercent": 0.13,
+        "fps": 18
+      },
+      {
+        "scrollPercent": 0.14,
+        "fps": 19
+      },
+      {
+        "scrollPercent": 0.15,
+        "fps": 19
+      },
+      {
+        "scrollPercent": 0.16,
+        "fps": 19
+      },
+      {
+        "scrollPercent": 0.17,
+        "fps": 18
+      },
+      {
+        "scrollPercent": 0.18,
+        "fps": 19
+      },
+      {
+        "scrollPercent": 0.19,
+        "fps": 19
+      },
+      {
+        "scrollPercent": 0.2,
+        "fps": 19
+      },
+      {
+        "scrollPercent": 0.21,
+        "fps": 18
+      },
+      {
+        "scrollPercent": 0.22,
+        "fps": 18
+      },
+      {
+        "scrollPercent": 0.23,
+        "fps": 16
+      },
+      {
+        "scrollPercent": 0.24,
+        "fps": 26
+      },
+      {
+        "scrollPercent": 0.25,
+        "fps": 29
+      },
+      {
+        "scrollPercent": 0.31,
+        "fps": 29
+      },
+      {
+        "scrollPercent": 0.33,
+        "fps": 28
+      },
+      {
+        "scrollPercent": 0.34,
+        "fps": 28
+      },
+      {
+        "scrollPercent": 0.35000000000000003,
+        "fps": 29
+      },
+      {
+        "scrollPercent": 0.36,
+        "fps": 26
+      },
+      {
+        "scrollPercent": 0.37,
+        "fps": 27
+      },
+      {
+        "scrollPercent": 0.5,
+        "fps": 28
+      },
+      {
+        "scrollPercent": 0.58,
+        "fps": 28
+      }
+    ],
+    "memoryPeak": 13087445,
+    "memoryLeakDetected": false,
+    "memoryGrowthRate": 789782,
+    "lighthousePerformance": 0,
+    "lighthouseAccessibility": 0,
+    "lighthouseBestPractices": 0,
+    "lighthouseSEO": 0,
+    "fcp": 0,
+    "lcp": 0,
+    "cls": 0,
+    "tti": 0,
+    "tbt": 0
+  },
+  "fixesApplied": [],
+  "overallScore": 90,
+  "improvementFromPrevious": 30,
+  "belowThresholdCount": 0,
+  "audioReport": {
+    "silentZones": [],
+    "layerActivation": [],
+    "emotionalArcMatch": 0,
+    "bassPresence": 0,
+    "dynamicRange": 0
+  },
+  "accessibilityReport": {
+    "contrastIssues": [],
+    "keyboardNavigable": true,
+    "ariaLabelsPresent": true,
+    "reducedMotionRespected": true,
+    "focusIndicatorsVisible": true,
+    "screenReaderFriendly": false,
+    "score": 90
+  }
+}

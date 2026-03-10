@@ -1,0 +1,652 @@
+{
+  "meta": {
+    "title": "Premium Typography Rules for SOTY Event Horizon",
+    "version": "1.0.0",
+    "author": "Cleanlystudio",
+    "description": "Comprehensive typography database for auditing and upgrading the Event Horizon WebGL experience"
+  },
+  "font_pairing_principles": {
+    "core_rules": [
+      "Pair fonts with contrasting classifications but similar proportions (x-height, cap height)",
+      "Never pair two fonts from the same classification (two geometrics, two humanists)",
+      "Limit to 2-3 fonts maximum per project — one heading, one body, optional mono",
+      "Ensure sufficient visual contrast between heading and body fonts",
+      "Test pairings at multiple sizes — what works at 48px may not work at 14px"
+    ],
+    "pairing_strategies": {
+      "serif_plus_sans": {
+        "description": "Classic contrast pairing — traditional meets modern",
+        "effect": "Elegant hierarchy with clear role separation",
+        "examples": [
+          {"heading": "Playfair Display", "body": "Source Sans Pro", "vibe": "Editorial luxury"},
+          {"heading": "Merriweather", "body": "Open Sans", "vibe": "Readable sophistication"},
+          {"heading": "Cormorant", "body": "Montserrat", "vibe": "High contrast elegance"}
+        ]
+      },
+      "geometric_plus_humanist": {
+        "description": "Technical precision meets human warmth",
+        "effect": "Modern and approachable — tech that feels human",
+        "examples": [
+          {"heading": "Space Grotesk", "body": "Inter", "vibe": "Tech-forward clarity"},
+          {"heading": "Poppins", "body": "Lora", "vibe": "Geometric energy with readable flow"},
+          {"heading": "Futura", "body": "Gill Sans", "vibe": "Bauhaus meets British elegance"}
+        ]
+      },
+      "sans_plus_mono": {
+        "description": "Clean hierarchy with technical precision accent",
+        "effect": "Data-driven aesthetic — dashboards, terminals, sci-fi",
+        "examples": [
+          {"heading": "Space Grotesk", "body": "JetBrains Mono", "vibe": "Mission control aesthetic"},
+          {"heading": "Inter", "body": "Fira Code", "vibe": "Developer tool elegance"},
+          {"heading": "Manrope", "body": "IBM Plex Mono", "vibe": "Tech documentation premium"}
+        ]
+      },
+      "display_plus_sans": {
+        "description": "High-impact headings with neutral body",
+        "effect": "Dramatic hierarchy for immersive experiences",
+        "examples": [
+          {"heading": "Clash Display", "body": "General Sans", "vibe": "Bold editorial"},
+          {"heading": "Cabinet Grotesk", "body": "Satoshi", "vibe": "Contemporary premium"},
+          {"heading": "Neue Montreal", "body": "Inter", "vibe": "Swiss modernism"}
+        ]
+      }
+    }
+  },
+  "project_fonts": {
+    "space_grotesk": {
+      "name": "Space Grotesk",
+      "classification": "Geometric sans-serif",
+      "designer": "Florian Karsten",
+      "year": 2018,
+      "based_on": "Space Mono (Colophon Foundry) — proportional version",
+      "characteristics": {
+        "style": "Geometric, slightly quirky, techy yet approachable",
+        "x_height": "Tall — improves readability at smaller sizes",
+        "contrast": "Low stroke contrast — even weight distribution",
+        "terminals": "Flat, geometric terminals",
+        "distinctive_letters": "Distinctive g, a, and t — prevents generic feel",
+        "weight_range": "300 (Light) to 700 (Bold)",
+        "optical_sizes": false
+      },
+      "strengths": [
+        "Excellent for headings and display text",
+        "Geometric precision aligns with sci-fi/tech aesthetic",
+        "Distinctive enough to be memorable, neutral enough to not distract",
+        "Good at large sizes — clean and impactful",
+        "Open-source (SIL Open Font License)"
+      ],
+      "weaknesses": [
+        "Can feel too casual at very small sizes for serious data",
+        "Limited weight range compared to superfamilies",
+        "Not ideal for long-form body text (geometric sans tend to tire the eye)"
+      ],
+      "best_usage_in_project": [
+        "Chapter titles (48-120px)",
+        "Section headings (24-36px)",
+        "Key data callouts (18-24px)",
+        "Navigation labels (14-16px)",
+        "UI button text (14-16px)"
+      ],
+      "recommended_settings": {
+        "headings": {
+          "weight": 700,
+          "letter_spacing": "-0.02em to -0.04em (tighten at large sizes)",
+          "line_height": 1.1,
+          "text_transform": "uppercase for labels, sentence case for titles"
+        },
+        "subheadings": {
+          "weight": 500,
+          "letter_spacing": "0em",
+          "line_height": 1.2
+        },
+        "body_alternative": {
+          "weight": 300,
+          "letter_spacing": "0.01em",
+          "line_height": 1.5,
+          "note": "Only for short paragraphs — not long-form"
+        }
+      }
+    },
+    "jetbrains_mono": {
+      "name": "JetBrains Mono",
+      "classification": "Monospaced sans-serif",
+      "designer": "Philipp Nurullin & Alisa Nowak (JetBrains)",
+      "year": 2020,
+      "characteristics": {
+        "style": "Technical precision, code-native aesthetic",
+        "x_height": "Increased x-height compared to most monospace — better readability",
+        "contrast": "Low — consistent stroke width",
+        "terminals": "Clean geometric terminals",
+        "distinctive_features": [
+          "Increased height for better readability of code",
+          "178 code-specific ligatures",
+          "Oval-shaped forms reduce visual noise",
+          "Designed for reading speed, not just aesthetics"
+        ],
+        "weight_range": "100 (Thin) to 800 (ExtraBold)",
+        "optical_sizes": false
+      },
+      "strengths": [
+        "Purpose-built for screen reading",
+        "Excellent character distinction (l vs 1, O vs 0)",
+        "Wide weight range for hierarchy within mono",
+        "Ligatures add visual polish to code/data display",
+        "Open-source (SIL Open Font License)"
+      ],
+      "weaknesses": [
+        "Monospaced fonts are inherently wider — use more horizontal space",
+        "Can look too 'developer tool' if overused — needs careful application",
+        "Not suitable for general body text"
+      ],
+      "best_usage_in_project": [
+        "Data readouts and HUD numbers",
+        "Scientific notation and measurements",
+        "Terminal/console text elements",
+        "Code snippets in educational content",
+        "Counters, timers, coordinates",
+        "Technical labels (mass, distance, temperature)"
+      ],
+      "recommended_settings": {
+        "data_display": {
+          "weight": 400,
+          "letter_spacing": "0.05em",
+          "line_height": 1.4,
+          "font_feature_settings": "'liga' 1, 'calt' 1"
+        },
+        "labels": {
+          "weight": 300,
+          "letter_spacing": "0.08em",
+          "line_height": 1.2,
+          "text_transform": "uppercase",
+          "font_size": "11-12px"
+        },
+        "large_numbers": {
+          "weight": 200,
+          "letter_spacing": "0.02em",
+          "line_height": 1.0,
+          "font_size": "48-96px"
+        }
+      }
+    }
+  },
+  "type_scale_ratios": {
+    "description": "Mathematical ratios for establishing harmonious type hierarchies",
+    "ratios": {
+      "minor_second": {
+        "ratio": 1.067,
+        "name": "Minor Second",
+        "music_analog": "Semitone",
+        "character": "Very tight — minimal contrast between sizes. Useful for dense data interfaces.",
+        "scale_from_16": [16, 17.07, 18.22, 19.44, 20.74, 22.13],
+        "best_for": "Dense data dashboards, small viewport experiences"
+      },
+      "major_second": {
+        "ratio": 1.125,
+        "name": "Major Second",
+        "music_analog": "Whole tone",
+        "character": "Subtle progression — professional and restrained.",
+        "scale_from_16": [16, 18, 20.25, 22.78, 25.63, 28.83],
+        "best_for": "Long-form reading, documentation, subtle hierarchy"
+      },
+      "minor_third": {
+        "ratio": 1.2,
+        "name": "Minor Third",
+        "music_analog": "Minor third interval",
+        "character": "Comfortable range — good for most web applications.",
+        "scale_from_16": [16, 19.2, 23.04, 27.65, 33.18, 39.81],
+        "best_for": "General purpose web design, balanced hierarchy"
+      },
+      "major_third": {
+        "ratio": 1.25,
+        "name": "Major Third",
+        "music_analog": "Major third interval",
+        "character": "Clear hierarchy — classic web design scale.",
+        "scale_from_16": [16, 20, 25, 31.25, 39.06, 48.83],
+        "best_for": "Marketing pages, portfolios, clear visual hierarchy"
+      },
+      "perfect_fourth": {
+        "ratio": 1.333,
+        "name": "Perfect Fourth",
+        "music_analog": "Perfect fourth interval",
+        "character": "Strong hierarchy — dramatic size differences. Great for immersive experiences.",
+        "scale_from_16": [16, 21.33, 28.43, 37.9, 50.52, 67.34],
+        "best_for": "Editorial, immersive experiences, bold designs"
+      },
+      "augmented_fourth": {
+        "ratio": 1.414,
+        "name": "Augmented Fourth (√2)",
+        "music_analog": "Tritone — the devil's interval",
+        "character": "Based on √2 — mathematically significant. Creates tension and drama.",
+        "scale_from_16": [16, 22.63, 32, 45.25, 64, 90.51],
+        "best_for": "Dramatic presentations, experimental design, Event Horizon chapter titles"
+      },
+      "perfect_fifth": {
+        "ratio": 1.5,
+        "name": "Perfect Fifth",
+        "music_analog": "Perfect fifth — the most consonant interval",
+        "character": "Very dramatic — large jumps between sizes. Bold and impactful.",
+        "scale_from_16": [16, 24, 36, 54, 81, 121.5],
+        "best_for": "Poster design, hero sections, cinematic typography"
+      },
+      "golden_ratio": {
+        "ratio": 1.618,
+        "name": "Golden Ratio (φ)",
+        "music_analog": "Between minor and major sixth",
+        "character": "The most aesthetically pleasing ratio found in nature. Extreme hierarchy.",
+        "scale_from_16": [16, 25.89, 41.89, 67.77, 109.66, 177.42],
+        "best_for": "Art-directed one-off pages, maximum visual drama"
+      }
+    },
+    "recommended_for_event_horizon": {
+      "ratio": "augmented_fourth",
+      "reasoning": "The √2 ratio creates dramatic size differences that match the cosmic scale of the experience. The 'tritone' musical analog (historically called 'diabolus in musica') fits the ominous black hole theme.",
+      "scale": {
+        "xs": "11px — Fine print, metadata, timestamps",
+        "sm": "14px — Secondary text, labels, captions",
+        "base": "16px — Body text, descriptions",
+        "md": "22px — Subheadings, emphasis text",
+        "lg": "32px — Section headings",
+        "xl": "45px — Chapter titles",
+        "2xl": "64px — Hero display text",
+        "3xl": "90px — Full-screen impact text"
+      }
+    }
+  },
+  "line_height_rules": {
+    "body_text": {
+      "range": "1.4 to 1.6",
+      "optimal": 1.5,
+      "notes": [
+        "1.4 for tight, modern designs with short paragraphs",
+        "1.5 for general purpose — most readable",
+        "1.6 for long-form content or wider columns",
+        "On dark backgrounds, increase by 0.05-0.1 (text feels tighter on dark)"
+      ]
+    },
+    "headings": {
+      "range": "1.0 to 1.3",
+      "optimal": 1.15,
+      "notes": [
+        "1.0 for single-line display text",
+        "1.1 for tight multi-line headings (impact feel)",
+        "1.15 for comfortable multi-line headings",
+        "1.2-1.3 for smaller headings (h3-h6) that approach body size"
+      ]
+    },
+    "display_text": {
+      "range": "0.9 to 1.1",
+      "optimal": 1.0,
+      "notes": [
+        "Very large text (64px+) needs tighter line height",
+        "0.9 can work for uppercase display text",
+        "1.0 is safe for most display scenarios",
+        "Negative line height (< 1.0) creates visual density and weight"
+      ]
+    },
+    "mono_text": {
+      "range": "1.4 to 1.8",
+      "optimal": 1.6,
+      "notes": [
+        "Monospaced text needs more vertical space due to uniform width",
+        "Data readouts: 1.4 (tight, dashboard feel)",
+        "Code blocks: 1.6 (readable, scannable)",
+        "1.8 for mixed content (code with annotations)"
+      ]
+    },
+    "size_dependent_adjustment": [
+      {"size_range": "12-14px", "line_height": "1.5-1.6", "reason": "Small text needs more leading for readability"},
+      {"size_range": "16-20px", "line_height": "1.4-1.5", "reason": "Standard body text range"},
+      {"size_range": "24-36px", "line_height": "1.2-1.3", "reason": "Subheading range — tighten up"},
+      {"size_range": "40-64px", "line_height": "1.0-1.15", "reason": "Display text — tight and impactful"},
+      {"size_range": "72px+", "line_height": "0.9-1.05", "reason": "Hero text — maximum density"}
+    ]
+  },
+  "letter_spacing_rules": {
+    "general_principles": [
+      "Tracking (letter-spacing) should DECREASE as font size INCREASES",
+      "Uppercase text needs MORE tracking than mixed case",
+      "Light font weights need slightly MORE tracking than bold",
+      "Monospaced fonts should never have letter-spacing modified (defeats purpose)",
+      "Geometric sans-serifs tolerate tighter tracking than humanist"
+    ],
+    "specific_values": {
+      "uppercase_labels": {
+        "value": "0.05em to 0.15em",
+        "example": "letter-spacing: 0.08em",
+        "note": "Essential for readability of uppercase text. Without tracking, uppercase feels cramped."
+      },
+      "body_text": {
+        "value": "0em to 0.01em",
+        "example": "letter-spacing: 0",
+        "note": "Body text usually needs no adjustment — the font designer optimized for this."
+      },
+      "subheadings_24_36": {
+        "value": "-0.01em to 0em",
+        "example": "letter-spacing: -0.005em",
+        "note": "Slightly tighter than body for visual weight."
+      },
+      "headings_40_64": {
+        "value": "-0.02em to -0.01em",
+        "example": "letter-spacing: -0.02em",
+        "note": "Tighten for headline impact."
+      },
+      "display_72_plus": {
+        "value": "-0.04em to -0.02em",
+        "example": "letter-spacing: -0.03em",
+        "note": "Large text looks too loose at default tracking."
+      },
+      "small_caps": {
+        "value": "0.05em to 0.1em",
+        "example": "letter-spacing: 0.06em",
+        "note": "Small caps need extra tracking for readability."
+      }
+    },
+    "dark_background_adjustment": {
+      "description": "Text on dark backgrounds suffers from halation (light spread). Compensate with slightly wider tracking.",
+      "adjustment": "+0.01em to +0.02em compared to light background values",
+      "applies_to": "Body text and small text. Headings are less affected."
+    }
+  },
+  "line_length": {
+    "optimal_characters": {
+      "min": 45,
+      "ideal": 65,
+      "max": 75,
+      "unit": "characters per line"
+    },
+    "rules": [
+      "45-75 characters per line is the established optimal range (Robert Bringhurst, Elements of Typographic Style)",
+      "65 characters is the ideal — most comfortable for sustained reading",
+      "Below 40 characters: too many line breaks, feels choppy",
+      "Above 80 characters: eye loses its place when returning to next line",
+      "For immersive experiences with short text blocks, 40-55 characters works well (more intimate)",
+      "Monospaced text: reduce by 10-15 characters (80ch mono ≈ 65ch proportional)"
+    ],
+    "implementation": {
+      "css_ch_unit": "max-width: 65ch — uses the '0' character width as reference",
+      "responsive": "Fluid width with clamp(40ch, 50vw, 70ch)",
+      "centered_text": "Text blocks should be centered with max-width for long-form in immersive experiences"
+    },
+    "event_horizon_specific": {
+      "narrative_text": "max-width: 55ch — intimate, poetic feel for story text",
+      "data_readouts": "No max-width restriction — data fills available space",
+      "chapter_titles": "No max-width — display text sizes self-limit naturally",
+      "descriptions": "max-width: 50ch — concise, scannable"
+    }
+  },
+  "text_animation": {
+    "reveal_patterns": {
+      "character_by_character": {
+        "description": "Each character animates in sequentially",
+        "stagger": "20-40ms per character",
+        "easing": "ease-out or back.out(1.7)",
+        "properties": ["opacity: 0 → 1", "y: 20px → 0", "optional: rotateX: -90deg → 0deg"],
+        "best_for": "Chapter titles, key phrases, impactful moments",
+        "performance": "Split text with GSAP SplitText or manual span wrapping. GPU-composited transforms only.",
+        "gsap_example": "gsap.from('.char', { opacity: 0, y: 20, stagger: 0.03, duration: 0.6, ease: 'back.out(1.7)' })"
+      },
+      "word_by_word": {
+        "description": "Each word animates in sequentially",
+        "stagger": "50-100ms per word",
+        "easing": "power2.out or power3.out",
+        "properties": ["opacity: 0 → 1", "y: 30px → 0"],
+        "best_for": "Subheadings, descriptions, narrative text",
+        "performance": "Lighter than character animation — fewer elements to animate"
+      },
+      "line_by_line": {
+        "description": "Each line animates in sequentially",
+        "stagger": "100-200ms per line",
+        "easing": "power2.out",
+        "properties": ["opacity: 0 → 1", "y: 40px → 0", "optional: clipPath reveal"],
+        "best_for": "Body text paragraphs, lists, longer content",
+        "performance": "Most performant text animation — fewest animated elements"
+      },
+      "typewriter": {
+        "description": "Characters appear as if being typed",
+        "speed": "30-60ms per character",
+        "cursor": "Blinking cursor at end (optional)",
+        "best_for": "Terminal/console aesthetic, data readouts, commands",
+        "event_horizon_use": "Scientific data appearing on HUD"
+      },
+      "blur_reveal": {
+        "description": "Text starts blurred and comes into focus",
+        "duration": "400-800ms",
+        "properties": ["filter: blur(8px) → blur(0px)", "opacity: 0.3 → 1"],
+        "best_for": "Dream-like reveals, focus shifts, transitions",
+        "performance_warning": "filter: blur is expensive — use sparingly and only on GPU-composited layers"
+      },
+      "mask_reveal": {
+        "description": "Text revealed by a moving mask/clip-path",
+        "duration": "600-1000ms per line",
+        "properties": ["clipPath: inset(0 100% 0 0) → inset(0 0% 0 0)"],
+        "best_for": "Elegant reveals, editorial style, premium feel",
+        "performance": "Excellent — clipPath is GPU-composited in modern browsers"
+      },
+      "scramble_resolve": {
+        "description": "Characters cycle through random glyphs before resolving to correct text",
+        "duration": "500-1500ms total",
+        "character_set": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()",
+        "best_for": "Sci-fi aesthetic, data decryption, glitch effects",
+        "event_horizon_use": "Scientific data resolving, chapter number reveals",
+        "gsap_plugin": "GSAP ScrambleText plugin"
+      },
+      "gravity_pull": {
+        "description": "Characters fall or are pulled toward a central point (singularity)",
+        "custom": true,
+        "physics": "Characters accelerate toward black hole center, spaghettify",
+        "best_for": "Event Horizon specific — text being consumed by the void",
+        "implementation": "Custom GSAP timeline with per-character physics calculation"
+      }
+    },
+    "timing_guidelines": {
+      "micro_text_animation": {"duration": "100-300ms", "example": "Button hover text color change"},
+      "text_reveal_per_element": {"duration": "300-600ms", "example": "Single line appearing"},
+      "full_block_reveal": {"duration": "800-1500ms", "example": "Paragraph with staggered lines"},
+      "dramatic_title_reveal": {"duration": "1500-3000ms", "example": "Chapter title with character stagger"},
+      "scroll_driven": {"note": "Duration becomes progress-based — 0 to 1 mapped to scroll position"}
+    },
+    "easing_for_text": {
+      "appear": "power2.out or power3.out — decelerate into resting position",
+      "disappear": "power2.in — accelerate out of view",
+      "emphasis": "elastic.out(1, 0.3) — bouncy arrival for attention",
+      "gravity": "power4.in — accelerating fall (being pulled)",
+      "float": "sine.inOut — gentle oscillation for ambient text"
+    }
+  },
+  "typography_on_dark_backgrounds": {
+    "font_weight_adjustment": {
+      "description": "Light text on dark backgrounds appears heavier due to halation (light bleed). Compensate by using lighter weights.",
+      "rules": [
+        "If you'd use 400 (regular) on light, use 300 (light) on dark",
+        "If you'd use 700 (bold) on light, use 600 (semibold) on dark — or keep 700 but reduce size",
+        "Very thin weights (100-200) work better on dark backgrounds for large display text",
+        "The effect is more pronounced on lower-resolution screens and non-Retina displays"
+      ]
+    },
+    "antialiasing": {
+      "mac_webkit": "-webkit-font-smoothing: antialiased — reduces halation on macOS",
+      "mac_moz": "-moz-osx-font-smoothing: grayscale — Firefox equivalent",
+      "windows": "No equivalent — Windows ClearType handles this differently",
+      "note": "These properties thin the rendered font — perfect for dark backgrounds, too thin for light backgrounds"
+    },
+    "text_shadow_for_legibility": {
+      "over_noisy_backgrounds": "text-shadow: 0 0 20px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.4)",
+      "over_moving_content": "Add a subtle dark vignette or backdrop behind text areas",
+      "glow_effect": "text-shadow: 0 0 10px rgba(0, 229, 255, 0.5), 0 0 20px rgba(0, 229, 255, 0.2)",
+      "principle": "On WebGL backgrounds, text needs either shadow, backdrop, or guaranteed contrast zone"
+    },
+    "backdrop_techniques": [
+      {
+        "name": "Gradient fade",
+        "css": "background: linear-gradient(transparent, rgba(0,0,0,0.8))",
+        "use": "Text at bottom of full-screen visuals"
+      },
+      {
+        "name": "Frosted glass",
+        "css": "backdrop-filter: blur(10px); background: rgba(0,0,0,0.3)",
+        "use": "Floating text panels over dynamic content"
+      },
+      {
+        "name": "Solid backing",
+        "css": "background: rgba(0,0,0,0.6); padding: 1em 2em; border-radius: 4px",
+        "use": "Guaranteed readability for critical information"
+      },
+      {
+        "name": "Safe zone",
+        "description": "Render a guaranteed dark area in the WebGL scene behind text regions",
+        "use": "When CSS overlays aren't sufficient"
+      }
+    ]
+  },
+  "responsive_typography": {
+    "fluid_type": {
+      "description": "Type size scales smoothly between viewport breakpoints using CSS clamp()",
+      "formula": "clamp(min, preferred, max)",
+      "technique": "preferred value uses viewport units for smooth scaling",
+      "examples": [
+        {
+          "element": "body",
+          "css": "font-size: clamp(14px, 1vw + 0.5rem, 18px)",
+          "explanation": "Scales from 14px on small screens to 18px on large screens"
+        },
+        {
+          "element": "h1",
+          "css": "font-size: clamp(32px, 5vw + 1rem, 90px)",
+          "explanation": "Dramatic scaling for display headings"
+        },
+        {
+          "element": "h2",
+          "css": "font-size: clamp(24px, 3vw + 0.5rem, 48px)",
+          "explanation": "Section headings with moderate scaling"
+        }
+      ]
+    },
+    "breakpoint_adjustments": [
+      {"breakpoint": "320px", "base_size": "14px", "scale_ratio": 1.2, "note": "Small phones — tight scale"},
+      {"breakpoint": "768px", "base_size": "16px", "scale_ratio": 1.25, "note": "Tablets — standard"},
+      {"breakpoint": "1024px", "base_size": "16px", "scale_ratio": 1.333, "note": "Desktop — open up hierarchy"},
+      {"breakpoint": "1440px", "base_size": "18px", "scale_ratio": 1.414, "note": "Large desktop — dramatic"},
+      {"breakpoint": "1920px+", "base_size": "18px", "scale_ratio": 1.5, "note": "Ultra-wide — cinematic"}
+    ],
+    "event_horizon_specific": {
+      "canvas_overlay_text": "Use absolute positioning with viewport units for text overlaying the WebGL canvas",
+      "dynamic_sizing": "Chapter title size should correlate with viewport height (vh units) for cinematic impact",
+      "mobile_narrative": "On mobile (< 768px), narrative text needs larger relative size (18-20px) due to closer reading distance"
+    }
+  },
+  "typography_in_webgl": {
+    "sdf_rendering": {
+      "name": "Signed Distance Field text rendering",
+      "description": "Pre-compute distance field for each glyph — allows crisp text at any scale with a single texture",
+      "advantages": [
+        "Resolution-independent — scales cleanly from tiny to huge",
+        "Efficient — one texture atlas serves all sizes",
+        "Supports effects: outlines, shadows, glow — all in shader",
+        "Better quality than texture-mapped text"
+      ],
+      "libraries": [
+        {"name": "troika-three-text", "description": "Best SDF text for Three.js — handles layout, wrapping, styling"},
+        {"name": "three-bmfont-text", "description": "Bitmap font rendering — fast but limited styling"},
+        {"name": "msdf-bmfont-xml", "description": "Multi-channel SDF — highest quality edges"}
+      ],
+      "performance_tips": [
+        "Generate SDF atlas at build time, not runtime",
+        "Use MSDF (multi-channel) for complex glyphs and sharp corners",
+        "Batch text meshes that share the same font/material",
+        "Disable raycasting on text meshes if not interactive"
+      ]
+    },
+    "html_overlay_vs_webgl_text": {
+      "html_overlay": {
+        "pros": ["Full CSS typography features", "Perfect subpixel rendering", "Accessible (screen readers)", "Easy to style and animate with CSS/GSAP"],
+        "cons": ["Cannot participate in 3D scene (no depth testing)", "Compositing overhead", "Cannot be affected by post-processing"],
+        "best_for": "HUD elements, narrative text, UI overlays"
+      },
+      "webgl_text": {
+        "pros": ["Full 3D integration", "Affected by post-processing", "Can interact with scene geometry", "Depth-tested against other objects"],
+        "cons": ["Lower quality than native text", "No native selection/copying", "Harder to make accessible", "More complex implementation"],
+        "best_for": "In-scene labels, 3D floating text, text that interacts with black hole"
+      },
+      "recommendation": "Use HTML overlay for 90% of text (narrative, HUD, UI). Use WebGL text only for text that must exist IN the 3D scene (being pulled into black hole, floating in space)."
+    }
+  },
+  "readability_over_animated_backgrounds": {
+    "challenges": [
+      "Constantly changing luminance behind text makes contrast ratio dynamic",
+      "Motion behind text competes for attention and reduces reading comprehension",
+      "Particle effects can overlap with text strokes"
+    ],
+    "solutions": [
+      {
+        "name": "Dedicated text safe zone",
+        "description": "Reserve screen regions where the WebGL scene is guaranteed dark/consistent",
+        "implementation": "Shader uniform or render mask that dims/clears areas behind text"
+      },
+      {
+        "name": "Text backdrop layer",
+        "description": "CSS semi-transparent dark panel behind text",
+        "implementation": "position: absolute; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px)"
+      },
+      {
+        "name": "Dynamic contrast",
+        "description": "Sample the WebGL framebuffer behind text and adjust text color/shadow accordingly",
+        "implementation": "Read pixels from render target, compute average luminance, toggle text color"
+      },
+      {
+        "name": "Temporal separation",
+        "description": "Dim or pause background animation when text appears",
+        "implementation": "Fade background to 30% opacity during text reveal, restore after reading time"
+      }
+    ]
+  },
+  "awwwards_typography_examples": [
+    {
+      "site": "Bruno Simon — Portfolio",
+      "url": "https://bruno-simon.com",
+      "technique": "3D text integrated into WebGL scene with physics",
+      "takeaway": "Text as a 3D object — playful and memorable"
+    },
+    {
+      "site": "Aristide Benoist — Portfolio",
+      "url": "https://aristidebenoist.com",
+      "technique": "Oversized serif headings with smooth scroll reveal",
+      "takeaway": "Typography as the primary visual element — the font IS the design"
+    },
+    {
+      "site": "Locomotive",
+      "url": "https://locomotive.ca",
+      "technique": "Split-text animations with custom easing",
+      "takeaway": "Character-level animation creates premium feel"
+    },
+    {
+      "site": "Active Theory",
+      "url": "https://activetheory.net",
+      "technique": "Minimal type over immersive WebGL backgrounds",
+      "takeaway": "Restraint in typography lets the experience breathe"
+    },
+    {
+      "site": "Resn",
+      "url": "https://resn.co.nz",
+      "technique": "Playful type animations with physics and interaction",
+      "takeaway": "Typography can be interactive and experiential"
+    },
+    {
+      "site": "AKQA",
+      "url": "https://akqa.com",
+      "technique": "Clean geometric sans with extreme whitespace",
+      "takeaway": "Whitespace and restraint signal premium quality"
+    }
+  ],
+  "sources": [
+    {"title": "The Elements of Typographic Style", "author": "Robert Bringhurst", "type": "book"},
+    {"title": "Thinking with Type", "author": "Ellen Lupton", "type": "book"},
+    {"title": "On Web Typography", "author": "Jason Santa Maria", "type": "book"},
+    {"title": "Butterick's Practical Typography", "author": "Matthew Butterick", "url": "https://practicaltypography.com"},
+    {"title": "Responsive Typography: The Basics", "author": "Information Architects", "type": "article"},
+    {"title": "Space Grotesk", "author": "Florian Karsten", "url": "https://fonts.google.com/specimen/Space+Grotesk"},
+    {"title": "JetBrains Mono", "author": "JetBrains", "url": "https://www.jetbrains.com/lp/mono/"},
+    {"title": "WCAG 2.1 Text Spacing", "author": "W3C", "url": "https://www.w3.org/WAI/WCAG21/Understanding/text-spacing"},
+    {"title": "Troika Three Text", "author": "Troika", "url": "https://github.com/protectwise/troika/tree/main/packages/troika-three-text"},
+    {"title": "Modular Scale", "author": "Tim Brown & Scott Kellum", "url": "https://www.modularscale.com"}
+  ]
+}

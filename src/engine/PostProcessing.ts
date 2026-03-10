@@ -39,7 +39,7 @@ export class PostProcessing {
     this.renderer = renderer;
     this.quality = quality;
 
-    this.bloomPasses = quality === 'ultra' ? 5 : quality === 'high' ? 4 : 3;
+    this.bloomPasses = quality === 'ultra' ? 4 : quality === 'high' ? 3 : 2;
 
     this.bgScene = new THREE.Scene();
     this.bgCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -68,7 +68,7 @@ export class PostProcessing {
     const sw = Math.floor(w * pr);
     const sh = Math.floor(h * pr);
     this.sceneTarget = new THREE.WebGLRenderTarget(sw, sh, rtParams);
-    const bloomScale = quality === 'medium' ? 0.25 : 0.5;
+    const bloomScale = quality === 'ultra' ? 0.5 : quality === 'high' ? 0.35 : 0.25;
     const bw = Math.max(1, Math.floor(sw * bloomScale));
     const bh = Math.max(1, Math.floor(sh * bloomScale));
     this.bloomTargetA = new THREE.WebGLRenderTarget(bw, bh, rtParams);
@@ -86,8 +86,8 @@ export class PostProcessing {
       uniforms: {
         tDiffuse: { value: null },
         uResolution: { value: new THREE.Vector2(w * pr * bloomScale, h * pr * bloomScale) },
-        uThreshold: { value: 0.92 },
-        uIntensity: { value: 1.0 },
+        uThreshold: { value: 0.82 },
+        uIntensity: { value: 0.85 },
         uPass: { value: 0 },
         uDirection: { value: new THREE.Vector2(1.0, 0.0) },
         uPassIndex: { value: 0 },
@@ -96,9 +96,10 @@ export class PostProcessing {
       depthWrite: false,
     });
 
+    const compositePrefix = quality === 'medium' ? '#define QUALITY_MEDIUM 1\n' : '';
     this.compositeMaterial = new THREE.ShaderMaterial({
       vertexShader: fullscreenVert,
-      fragmentShader: compositeFrag,
+      fragmentShader: compositePrefix + compositeFrag,
       uniforms: {
         tDiffuse: { value: null },
         tBloom: { value: null },
@@ -108,7 +109,7 @@ export class PostProcessing {
         uChromaticIntensity: { value: 0.8 },
         uGrainIntensity: { value: 0.04 },
         uVignetteIntensity: { value: 0.6 },
-        uBloomMix: { value: 0.28 },
+        uBloomMix: { value: 0.22 },
         uScrollVelocity: { value: 0 },
         uChapterFlash: { value: 0 },
         uShockwaves: { value: [
@@ -285,7 +286,7 @@ export class PostProcessing {
     const w = window.innerWidth;
     const h = window.innerHeight;
     const pr = this.renderer.getPixelRatio();
-    const bloomScale = this.quality === 'medium' ? 0.25 : 0.5;
+    const bloomScale = this.quality === 'ultra' ? 0.5 : this.quality === 'high' ? 0.35 : 0.25;
 
     const sw = Math.floor(w * pr);
     const sh = Math.floor(h * pr);

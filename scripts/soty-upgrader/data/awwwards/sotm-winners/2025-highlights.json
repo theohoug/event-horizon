@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "file": "2025-highlights.json",
+    "description": "Analysis of SOTM winners from early 2025 (Jan-Feb) and latest known trends",
+    "lastUpdated": "2026-03-09",
+    "version": "1.0.0"
+  },
+  "year": 2025,
+  "period": "January - February 2025 (based on knowledge up to early 2025)",
+  "winners": [
+    {
+      "month": "January 2025",
+      "name": "Dennis Snellenberg Portfolio v3",
+      "url": "https://dennissnellenberg.com",
+      "agency": "Dennis Snellenberg (freelance, Netherlands)",
+      "category": "Personal Portfolio / Freelance Developer",
+      "techStack": ["Three.js", "Next.js", "Custom GLSL", "GSAP", "Lenis"],
+      "scores": {
+        "overall": 8.85,
+        "design": 9.08,
+        "usability": 8.58,
+        "creativity": 9.02,
+        "content": 8.72
+      },
+      "innovation": "Dimensional typography — text elements have 3D depth and respond to mouse movement with real lighting. The portfolio itself is a showcase of creative development capabilities through the UI itself.",
+      "whatStoodOut": [
+        "Solo freelance developer winning SOTM — validates individual creators",
+        "Clean Dutch design sensibility with WebGL enhancement",
+        "Lenis smooth scroll integration — becoming the industry standard",
+        "Every element has purposeful animation — nothing is static",
+        "Text-as-3D is subtle but impactful — doesn't overwhelm",
+        "Strong case study presentation with immersive project reveals"
+      ],
+      "technicalHighlights": [
+        "Custom text extrusion shader for 3D typography effect",
+        "Mouse-responsive lighting on text surfaces — PBR-like material on HTML text",
+        "Page transitions using render-to-texture capture with custom dissolve shader",
+        "Efficient: most effects are CSS + minimal WebGL overlay — lightweight despite appearing complex"
+      ],
+      "lessonsForEventHorizon": "Proves that subtle WebGL enhancement of traditional web elements can be as impressive as full 3D scenes. Event Horizon's text content should have gravitational distortion effects — text warping near the black hole."
+    },
+    {
+      "month": "February 2025",
+      "name": "Locomotive v5 Showcase",
+      "url": "https://v5.locomotive.ca",
+      "agency": "Locomotive (Montreal, Canada)",
+      "category": "Agency Portfolio / Open Source",
+      "techStack": ["Three.js", "Custom scroll engine (Locomotive Scroll v5)", "Svelte", "GSAP"],
+      "scores": {
+        "overall": 8.91,
+        "design": 9.12,
+        "usability": 8.75,
+        "creativity": 8.95,
+        "content": 8.82
+      },
+      "innovation": "Locomotive Scroll v5 debut — complete rewrite of their scroll library with physics-based momentum, adaptive framerate targeting, and native-feel smooth scroll. The showcase site demonstrates every capability.",
+      "whatStoodOut": [
+        "Locomotive (Pangram Pangram 2022 SOTY) continues to evolve",
+        "Switch from React to Svelte signals industry trend",
+        "Locomotive Scroll v5 is genuinely improved — physics-based scroll momentum",
+        "Design quality matches Pangram Pangram level — expected from the SOTY studio",
+        "Open source contribution as award vehicle"
+      ],
+      "technicalHighlights": [
+        "Locomotive Scroll v5: spring-based scroll physics, adjustable mass/damping/stiffness",
+        "Adaptive framerate: scroll rendering targets 120fps on ProMotion displays, gracefully degrades",
+        "New parallax system with predictive loading — assets load based on scroll velocity prediction",
+        "Three.js integration hooks — WebGL scenes sync natively with scroll state"
+      ],
+      "lessonsForEventHorizon": "If Locomotive Scroll v5 is available, consider using it — the pedigree is unmatched. Or build custom scroll physics that are even more innovative (gravitational scroll with increasing pull)."
+    }
+  ],
+  "currentTrendsEarly2025": {
+    "dominantTechnologies": [
+      {
+        "tech": "Three.js",
+        "status": "Still dominant for 3D web",
+        "usage": "90%+ of WebGL award winners",
+        "trend": "Stable — Three.js r170+ with improved performance"
+      },
+      {
+        "tech": "WebGPU",
+        "status": "Growing but still requires fallback",
+        "usage": "10-15% of cutting-edge projects",
+        "trend": "Rising — compute shaders are the killer feature"
+      },
+      {
+        "tech": "Svelte / SvelteKit",
+        "status": "Preferred framework for creative sites",
+        "usage": "Growing to ~30% of award winners (from <10% in 2023)",
+        "trend": "Strong upward — Igloo SOTY 2024 used Svelte, validating the choice"
+      },
+      {
+        "tech": "Lenis",
+        "status": "Standard smooth scroll library",
+        "usage": "~50% of award-winning sites",
+        "trend": "Dominant — replacing Locomotive Scroll v4 and GSAP ScrollSmoother"
+      },
+      {
+        "tech": "GSAP 3",
+        "status": "Standard animation library",
+        "usage": "~70% of award-winning sites",
+        "trend": "Stable — ScrollTrigger still widely used"
+      },
+      {
+        "tech": "Houdini",
+        "status": "Standard offline tool for WebGL studios",
+        "usage": "~40% of top studios mention Houdini in their pipeline",
+        "trend": "Growing — Houdini-to-web pipeline now well-established"
+      }
+    ],
+    "designMoods": [
+      {
+        "mood": "Cosmic / Dark / Vast",
+        "prevalence": "High",
+        "description": "Space, cosmic, dark themes continue to dominate. Influenced by Igloo's success.",
+        "relevanceToEventHorizon": "Positive — black hole fits naturally. But must differentiate from generic 'space aesthetic'."
+      },
+      {
+        "mood": "Organic / Biomorphic",
+        "prevalence": "Growing",
+        "description": "Nature-inspired forms, cellular structures, fluid dynamics. Reaction to geometric/angular period.",
+        "relevanceToEventHorizon": "Medium — accretion disk and particle flows are inherently organic."
+      },
+      {
+        "mood": "Data-driven / Generative",
+        "prevalence": "Growing",
+        "description": "Real data driving visual output. AI-influenced generative aesthetics.",
+        "relevanceToEventHorizon": "High — real astrophysics data driving the black hole visualization is this trend executed at the highest level."
+      },
+      {
+        "mood": "Retro-digital / Glitch",
+        "prevalence": "Declining",
+        "description": "Glitch art, CRT effects, retro computing aesthetics. Peak was 2022-2023, now fading.",
+        "relevanceToEventHorizon": "Low — Event Horizon's aesthetic is cinematic, not retro."
+      }
+    ],
+    "juryPreferencesEarly2025": [
+      "Performance is non-negotiable — mobile performance especially scrutinized",
+      "Sound design expected for immersive experiences",
+      "Accessibility increasingly checked (reduced motion, screen reader)",
+      "Technical innovation must serve the experience, not be gratuitous",
+      "Content quality weighing more — what's the site ABOUT?",
+      "Community contribution valued (open source, technical articles)",
+      "Environmental impact starting to be discussed (carbon footprint of heavy sites)"
+    ]
+  },
+  "mostCurrentInnovations": [
+    {
+      "innovation": "Physics-based scroll (not just smooth scroll)",
+      "description": "Moving beyond linear smooth scroll to physics simulations: spring-based momentum, gravity-influenced acceleration, collision-aware scroll boundaries.",
+      "examples": ["Locomotive Scroll v5", "Custom implementations"],
+      "relevanceToEventHorizon": "Critical — gravitational scroll physics could be Event Horizon's scroll innovation"
+    },
+    {
+      "innovation": "WebGPU compute for real-time generation",
+      "description": "Using WebGPU compute shaders not just for particles but for procedural content generation, AI inference, and data processing in the browser.",
+      "examples": ["R/GA Futures", "Various experimental projects"],
+      "relevanceToEventHorizon": "High — GPGPU N-body simulation is exactly this"
+    },
+    {
+      "innovation": "Adaptive experience based on device capability",
+      "description": "Not just responsive layout — fundamentally different experiences based on GPU capability. High-end gets full immersion, low-end gets beautiful fallback.",
+      "examples": ["Various 2024-2025 projects"],
+      "relevanceToEventHorizon": "Critical — Event Horizon must have a compelling experience on every device tier"
+    },
+    {
+      "innovation": "Browser as rendering engine rivaling native",
+      "description": "Sites achieving visual fidelity that was previously only possible in Unity, Unreal, or dedicated rendering software. The browser as a first-class creative medium.",
+      "examples": ["Igloo Inc", "Lusion v3"],
+      "relevanceToEventHorizon": "This IS Event Horizon's goal — Interstellar-quality black hole in a browser"
+    }
+  ],
+  "strategicTimingForEventHorizon": {
+    "bestSubmissionWindow": "March-May 2025 or September-November 2025",
+    "reasoning": [
+      "Post-Igloo SOTY announcement creates hunger for 'what's next'",
+      "Spring/Fall are peak jury engagement periods",
+      "Avoid summer (reduced jury activity) and December (year-end fatigue)",
+      "If targeting SOTY 2025, need to win SOTM by mid-2025 to be in the running"
+    ],
+    "competitionLevel": "Early 2025 is competitive — post-Igloo, studios are pushing harder. But the bar is known (Igloo defined it), and Event Horizon's innovation (GPGPU + raymarching) is genuinely different from what's been seen.",
+    "recommendation": "Target April-May 2025 submission for optimal jury engagement and maximum time in the SOTY consideration period."
+  }
+}

@@ -1,0 +1,446 @@
+{
+  "meta": {
+    "title": "GLSL Shader Optimization Techniques for SOTY Event Horizon",
+    "version": "1.0.0",
+    "author": "Cleanlystudio",
+    "description": "Comprehensive shader optimization database for high-performance fragment-heavy rendering"
+  },
+  "alu_optimization": {
+    "description": "Arithmetic Logic Unit optimizations — reducing the computational cost of shader math",
+    "techniques": [
+      {
+        "name": "Prefer MAD (multiply-add) operations",
+        "description": "a * b + c is a single instruction (FMA/MAD) on most GPUs. Restructure math to use this pattern.",
+        "before": "float result = a * b; result = result + c;",
+        "after": "float result = a * b + c;",
+        "savings": "1 instruction instead of 2"
+      },
+      {
+        "name": "Use swizzling instead of constructors",
+        "description": "Accessing .xyz is free — constructing a new vec3 may not be",
+        "before": "vec3 color = vec3(fullColor.x, fullColor.y, fullColor.z);",
+        "after": "vec3 color = fullColor.xyz;",
+        "savings": "Eliminates constructor overhead"
+      },
+      {
+        "name": "Replace pow(x, 2.0) with x*x",
+        "description": "pow() is a transcendental function (expensive). For small integer exponents, multiply is faster.",
+        "before": "float result = pow(x, 2.0);",
+        "after": "float result = x * x;",
+        "savings": "pow: ~8 cycles. Multiply: 1 cycle.",
+        "more_examples": {
+          "pow_3": {"before": "pow(x, 3.0)", "after": "x * x * x"},
+          "pow_4": {"before": "pow(x, 4.0)", "after": "float x2 = x*x; float result = x2*x2;"},
+          "pow_0_5": {"before": "pow(x, 0.5)", "after": "sqrt(x)"},
+          "pow_negative": {"before": "pow(x, -1.0)", "after": "1.0 / x"}
+        }
+      },
+      {
+        "name": "Use step() instead of if/else",
+        "description": "step(edge, x) returns 0.0 if x < edge, else 1.0. Branchless on all GPUs.",
+        "before": "float result; if (x > threshold) { result = a; } else { result = b; }",
+        "after": "float s = step(threshold, x); float result = mix(b, a, s);",
+        "savings": "Eliminates dynamic branching (see flow control section)"
+      },
+      {
+        "name": "smoothstep() is practically free",
+        "description": "smoothstep(a, b, x) computes a smooth Hermite interpolation. On most GPUs this maps to 1-2 instructions.",
+        "usage": "Use for soft transitions, edge anti-aliasing, distance-based falloffs",
+        "cost": "~1-2 cycles on most GPUs (hardware-accelerated)"
+      },
+      {
+        "name": "Avoid division — multiply by reciprocal",
+        "description": "Division is 4-8x slower than multiplication on most GPUs",
+        "before": "float result = a / b;",
+        "after": "float invB = 1.0 / b; float result = a * invB;",
+        "when_beneficial": "When dividing by the same value multiple times. For single use, compiler usually optimizes.",
+        "note": "Pre-compute reciprocals on CPU when possible and pass as uniforms"
+      },
+      {
+        "name": "Avoid sqrt when comparing distances",
+        "description": "length() uses sqrt internally. For comparisons, squared distance is sufficient.",
+        "before": "if (length(a - b) < radius) { ... }",
+        "after": "vec3 diff = a - b; if (dot(diff, diff) < radius * radius) { ... }",
+        "savings": "Eliminates sqrt (4-8 cycles)"
+      },
+      {
+        "name": "Use built-in functions over manual implementations",
+        "description": "GPU built-ins (dot, cross, normalize, reflect, refract, clamp, mix, fract) are hardware-accelerated",
+        "rule": "NEVER implement your own version of a GLSL built-in function. The hardware version is always faster.",
+        "examples": {
+          "dot_product": "dot(a, b) — hardware 1 cycle vs manual a.x*b.x + a.y*b.y + a.z*b.z (3+ cycles)",
+          "normalize": "normalize(v) — hardware accelerated vs v / length(v) (division + sqrt)",
+          "clamp": "clamp(x, 0.0, 1.0) — hardware vs max(0.0, min(x, 1.0)) (2 instructions)"
+        }
+      },
+      {
+        "name": "Minimize transcendental functions",
+        "description": "sin, cos, tan, exp, log, pow, sqrt are expensive (4-16 cycles). Use sparingly.",
+        "alternatives": [
+          "Pre-compute sin/cos values in a texture lookup",
+          "Use polynomial approximations for rough estimates",
+          "Compute on CPU and pass as uniforms when value doesn't change per-pixel"
+        ],
+        "cost_ranking": [
+          {"function": "add/sub/mul", "cycles": "1"},
+          {"function": "mad/fma", "cycles": "1"},
+          {"function": "abs/neg/saturate", "cycles": "0 (free modifier)"},
+          {"function": "min/max/clamp", "cycles": "1"},
+          {"function": "dot", "cycles": "1"},
+          {"function": "mix/lerp", "cycles": "1"},
+          {"function": "step/smoothstep", "cycles": "1-2"},
+          {"function": "sqrt/rsqrt", "cycles": "2-4"},
+          {"function": "reciprocal (1/x)", "cycles": "2-4"},
+          {"function": "sin/cos", "cycles": "4-8"},
+          {"function": "exp/log", "cycles": "4-8"},
+          {"function": "pow", "cycles": "8-16"},
+          {"function": "tan/asin/acos/atan", "cycles": "8-16"},
+          {"function": "texture2D/texture", "cycles": "Variable — depends on cache"}
+        ]
+      }
+    ]
+  },
+  "texture_fetch_optimization": {
+    "dependent_texture_reads": {
+      "description": "A dependent texture read is when the UV coordinate used for a texture fetch is computed FROM another texture read. Very expensive.",
+      "example_bad": "vec2 uv = texture(noiseMap, coord).rg; vec4 color = texture(colorMap, uv);",
+      "problem": "GPU cannot pre-fetch the second texture because it doesn't know the address until the first read completes. Stalls the pipeline.",
+      "solutions": [
+        "Pre-compute UV offsets on CPU when possible",
+        "Use the vertex shader to compute UVs and pass via varying (vertex shader is rarely the bottleneck)",
+        "Combine textures to reduce dependency chains",
+        "If unavoidable, minimize the number of dependent reads in the chain"
+      ]
+    },
+    "texture_lod": {
+      "description": "textureLod() explicitly specifies the mipmap level, avoiding automatic LOD calculation",
+      "when_to_use": "When you know the exact LOD needed (e.g., GPGPU reads from data textures, screen-space effects at known resolution)",
+      "benefit": "Eliminates derivative calculation for LOD and allows more aggressive pre-fetching",
+      "example": "vec4 data = textureLod(dataTexture, uv, 0.0); // Always sample mip level 0"
+    },
+    "cache_texture_reads": {
+      "description": "If you need the same texture value multiple times, read it once into a local variable",
+      "before": "float r = texture(tex, uv).r; float g = texture(tex, uv).g;",
+      "after": "vec4 sample = texture(tex, uv); float r = sample.r; float g = sample.g;",
+      "note": "The compiler may optimize this, but don't rely on it. Be explicit."
+    },
+    "texture_cache_locality": {
+      "description": "GPUs have texture caches. Adjacent pixels reading from adjacent UV coordinates benefit from cache hits.",
+      "implications": [
+        "Sequential UV patterns (linear gradients) are cache-friendly",
+        "Random UV patterns (noise-based lookups) cause cache thrashing",
+        "Smaller textures fit better in cache — don't use 4096×4096 when 1024×1024 suffices"
+      ]
+    }
+  },
+  "flow_control": {
+    "dynamic_branching": {
+      "description": "if/else in fragment shaders causes GPU inefficiency because fragments in the same warp/wavefront may take different paths",
+      "mechanism": "GPUs process fragments in groups (warps: 32 on NVIDIA, wavefronts: 64 on AMD). If any fragment in the group takes a branch, ALL fragments execute BOTH branches and discard the unused result.",
+      "worst_case": "If 1 of 32 fragments takes the 'if' path and 31 take the 'else', all 32 execute both paths — 2x the work.",
+      "rules": [
+        "Avoid dynamic branching in fragment shaders when possible",
+        "Branches on uniform values are free (all fragments take the same path)",
+        "Branches on varying/attribute values may cause divergence",
+        "Branches on texture-derived values are the worst (unpredictable)"
+      ]
+    },
+    "compile_time_branching": {
+      "description": "Use #ifdef / #if for quality levels instead of runtime if statements",
+      "example": {
+        "bad": "if (u_quality > 2) { /* expensive raymarching */ } else { /* cheap approximation */ }",
+        "good": "#ifdef HIGH_QUALITY\n  /* expensive raymarching */\n#else\n  /* cheap approximation */\n#endif"
+      },
+      "implementation": "Compile different shader variants for each quality level. Switch programs based on device capability.",
+      "note": "This means maintaining multiple shader versions, but the performance gain is significant"
+    },
+    "branchless_techniques": {
+      "step_for_if": {
+        "description": "Replace if (x > threshold) { result = a; } else { result = b; }",
+        "code": "float s = step(threshold, x); float result = mix(b, a, s);"
+      },
+      "clamp_for_bounds_check": {
+        "description": "Replace if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0;",
+        "code": "x = clamp(x, 0.0, 1.0);"
+      },
+      "max_for_lower_bound": {
+        "description": "Replace if (x < 0.0) x = 0.0;",
+        "code": "x = max(x, 0.0);"
+      },
+      "abs_for_symmetry": {
+        "description": "Replace if (x < 0.0) x = -x;",
+        "code": "x = abs(x);"
+      },
+      "sign_for_direction": {
+        "description": "Replace if (x > 0.0) return 1.0; else if (x < 0.0) return -1.0; else return 0.0;",
+        "code": "return sign(x);"
+      }
+    },
+    "loop_optimization": {
+      "unroll_small_loops": {
+        "description": "For loops with small, known iteration counts, manual unrolling avoids loop overhead",
+        "threshold": "Unroll loops with < 4 iterations. Let compiler handle 4-16. Avoid > 64 iterations in fragment shader.",
+        "example": {
+          "before": "for (int i = 0; i < 3; i++) { result += weights[i] * texture(tex, uv + offsets[i]).rgb; }",
+          "after": "result += weights[0] * texture(tex, uv + offsets[0]).rgb;\nresult += weights[1] * texture(tex, uv + offsets[1]).rgb;\nresult += weights[2] * texture(tex, uv + offsets[2]).rgb;"
+        }
+      },
+      "early_termination": {
+        "description": "Break out of loops early when the result is determined",
+        "example": "In raymarching: if (totalOpacity > 0.99) break;",
+        "caveat": "Only beneficial if MOST fragments terminate early. If only a few do, it doesn't help (warp divergence)."
+      }
+    }
+  },
+  "precision": {
+    "description": "GLSL precision qualifiers control floating-point precision and performance",
+    "qualifiers": {
+      "highp": {
+        "bits": "32-bit float (IEEE 754 single precision)",
+        "range": "±3.4 × 10³⁸",
+        "precision": "~7 decimal digits",
+        "use": "Position calculations, world-space coordinates, time (accumulated values), ray origin/direction",
+        "performance": "1x (baseline)"
+      },
+      "mediump": {
+        "bits": "16-bit float (IEEE 754 half precision)",
+        "range": "±65504",
+        "precision": "~3 decimal digits",
+        "use": "Colors, UV coordinates, normals, most intermediate calculations",
+        "performance": "Up to 2x faster than highp on mobile (no difference on desktop)"
+      },
+      "lowp": {
+        "bits": "10-bit fixed point (minimum spec) or 8-bit",
+        "range": "±2.0",
+        "precision": "~2 decimal digits in [0,1] range",
+        "use": "Final color output, alpha, simple multipliers",
+        "performance": "Fastest on mobile (marginal vs mediump on most modern mobile GPUs)"
+      }
+    },
+    "platform_differences": {
+      "desktop": "All qualifiers map to 32-bit float. Precision qualifiers are essentially ignored. No performance difference.",
+      "mobile": "Precision qualifiers are respected. mediump is significantly faster than highp on Adreno/Mali/PowerVR.",
+      "apple_mobile": "Apple GPUs (A-series, M-series) handle precision well. mediump is faster but highp is not dramatically slow."
+    },
+    "strategy": {
+      "default_fragment_precision": "precision mediump float; — default to mediump in fragment shaders",
+      "explicit_highp": "Use highp explicitly for: accumulated time, world positions, raymarching steps, anything that accumulates error",
+      "explicit_lowp": "Use lowp for: final fragColor output, simple alpha calculations"
+    },
+    "common_precision_bugs": [
+      {
+        "bug": "Banding in gradients on mobile",
+        "cause": "mediump doesn't have enough precision for subtle gradient transitions",
+        "fix": "Use highp for the gradient calculation, or add dithering noise"
+      },
+      {
+        "bug": "Jittery positions on mobile",
+        "cause": "World-space positions too large for mediump (values > 65504 overflow)",
+        "fix": "Use highp for position calculations, or work in view-space (smaller values)"
+      },
+      {
+        "bug": "Time-based animations break after ~60 seconds on mobile",
+        "cause": "u_time accumulates beyond mediump precision. At 60fps, time = 60.0 has only 0.03 precision.",
+        "fix": "Use highp for time, or use fract(time * frequency) to keep values small"
+      }
+    ]
+  },
+  "raymarching_optimization": {
+    "description": "Raymarching (sphere tracing) is the core technique for rendering the black hole. Optimization is critical for 60fps.",
+    "basic_algorithm": "For each pixel: cast ray from camera. Step along ray, evaluating SDF. When distance < threshold, record hit.",
+    "optimization_techniques": {
+      "variable_step_size": {
+        "description": "Step by the SDF distance (sphere tracing). Near surfaces, steps are tiny. Far from surfaces, steps are huge.",
+        "implementation": "float d = sdf(p); p += rayDir * d; // step exactly by the distance to nearest surface",
+        "advantage": "Converges to surface in O(log n) steps instead of O(n)"
+      },
+      "early_termination": {
+        "description": "Stop marching when accumulated opacity exceeds threshold or ray has traveled too far",
+        "implementation": "if (totalAlpha > 0.99 || totalDist > MAX_DIST) break;",
+        "savings": "Avoids wasting cycles on fully opaque or empty regions"
+      },
+      "bounding_volume_pretest": {
+        "description": "Before raymarching, test if the ray intersects a simple bounding shape (sphere, box)",
+        "implementation": "Analytically test ray-sphere intersection. If miss, skip raymarching entirely.",
+        "savings": "Pixels not pointing at the black hole skip the expensive loop entirely (~50-80% of pixels in many frames)"
+      },
+      "distance_field_acceleration": {
+        "description": "Use a pre-computed 3D distance field texture for complex shapes",
+        "implementation": "Sample 3D texture instead of computing SDF analytically. Requires 3D texture support (WebGL 2.0).",
+        "trade_off": "Memory (3D texture) vs. compute (analytical SDF)"
+      },
+      "adaptive_step_count": {
+        "description": "Reduce MAX_STEPS on mobile or lower quality tiers",
+        "values": {
+          "high": {"max_steps": 128, "max_distance": 100.0},
+          "medium": {"max_steps": 64, "max_distance": 50.0},
+          "low": {"max_steps": 32, "max_distance": 30.0}
+        },
+        "implementation": "#define MAX_STEPS 128 // change via shader variant per quality tier"
+      },
+      "depth_buffer_rejection": {
+        "description": "Use the depth buffer from the rasterized scene to skip raymarching behind opaque geometry",
+        "implementation": "Sample depth texture at fragment UV. Convert to world distance. If ray start distance > depth, discard.",
+        "savings": "Eliminates raymarching for pixels fully occluded by rasterized geometry"
+      },
+      "temporal_reprojection": {
+        "description": "Reuse previous frame's raymarching results, only re-march pixels that changed significantly",
+        "implementation": "Store previous frame's result in a texture. Reproject to current frame using motion vectors. Only re-march if reprojection error exceeds threshold.",
+        "savings": "50-80% reduction in per-frame raymarching cost for slow-moving scenes",
+        "caveat": "Introduces ghosting artifacts if not properly handled. Requires motion vector computation."
+      }
+    },
+    "black_hole_specific": {
+      "geodesic_raytracing": {
+        "description": "Light bends around black holes following geodesics in curved spacetime (Schwarzschild metric)",
+        "implementation": "Instead of straight-line raymarching, integrate the geodesic equation: d²x/dλ² + Γ dx/dλ dx/dλ = 0",
+        "simplification": "For visual accuracy without full GR: deflect rays using an angular deflection formula based on impact parameter",
+        "formula": "δ ≈ 4GM / (c²b) for weak field (far from black hole). For strong field, use numerical integration.",
+        "optimization": "Pre-compute deflection table as a 1D texture indexed by impact parameter. Lookup instead of computing."
+      },
+      "accretion_disk_rendering": {
+        "description": "The disk is a thin torus of hot material. Render it as a flat ring with volumetric scattering.",
+        "optimization": [
+          "Analytical ray-plane intersection for the disk midplane — no raymarching needed for the basic hit test",
+          "Add volumetric thickness with just 2-4 additional samples above/below the midplane",
+          "Color from temperature profile: T ∝ r^(-3/4) from the Shakura-Sunyaev model"
+        ]
+      }
+    }
+  },
+  "post_processing_optimization": {
+    "bloom": {
+      "kawase_blur": {
+        "description": "Iterative dual-filter blur — cheaper than Gaussian for same visual quality at large radii",
+        "algorithm": "Downsample with 2×2 filter → blur at each mip level → upsample and accumulate",
+        "iterations": "4-6 iterations for smooth bloom",
+        "cost": "~40% cheaper than equivalent Gaussian blur",
+        "implementation_steps": [
+          "1. Extract bright pixels (threshold pass)",
+          "2. Downsample to 1/2 res with bilinear 4-tap filter",
+          "3. Repeat downsample 3-5 more times",
+          "4. Upsample with bilinear interpolation, accumulating",
+          "5. Composite with original at full res"
+        ]
+      },
+      "half_resolution": {
+        "description": "Bloom at half resolution is visually indistinguishable from full resolution because bloom is inherently blurry",
+        "savings": "4x fewer fragment shader invocations for the bloom pass",
+        "implementation": "Render bright-pass to half-res FBO. Blur at half res. Upsample and composite."
+      },
+      "bilateral_upsample": {
+        "description": "When upsampling half-res effects, use depth-aware bilateral filter to prevent bleeding across depth edges",
+        "implementation": "Compare depth at each sample point. Weight contribution by depth similarity.",
+        "benefit": "Sharp edges preserved despite half-res processing"
+      }
+    },
+    "chromatic_aberration": {
+      "description": "Separate RGB channels with slight offset — simulates lens imperfection and gravitational lensing",
+      "cheap_version": "Sample texture 3 times with slightly offset UVs for R, G, B",
+      "expensive_version": "Radial chromatic aberration — offset increases with distance from center (physically accurate for lens distortion)",
+      "cost": "3 texture reads instead of 1 — reasonable. Don't use more than 3 samples.",
+      "event_horizon_use": "Chromatic aberration increases near the black hole edge — simulates extreme spacetime curvature splitting wavelengths"
+    },
+    "tone_mapping": {
+      "description": "Map HDR render values to displayable LDR range",
+      "operators": [
+        {"name": "Reinhard", "formula": "color / (1.0 + color)", "character": "Gentle rolloff. Classic. Can look washed out."},
+        {"name": "ACES", "formula": "Custom fit — (color*(2.51*color+0.03))/(color*(2.43*color+0.59)+0.14)", "character": "Film-like. Rich shadows, controlled highlights. Industry standard."},
+        {"name": "Uncharted 2", "formula": "John Hable's filmic curve", "character": "Similar to ACES. Slightly different shoulder."},
+        {"name": "AgX", "formula": "Per-channel with Blender-style desaturation", "character": "Better color preservation in highlights. Modern best practice."}
+      ],
+      "recommendation": "ACES for cinematic feel. AgX for more accurate color preservation. Both are single-pass and trivially cheap."
+    },
+    "vignette": {
+      "description": "Darken edges of the screen — focuses attention on center (the black hole)",
+      "implementation": "float vignette = 1.0 - smoothstep(0.3, 1.0, length(uv - 0.5) * 1.5);",
+      "cost": "Essentially free — 1 smoothstep operation per pixel",
+      "event_horizon_use": "Strong vignette draws focus to the central black hole. Vary intensity with scroll position."
+    },
+    "film_grain": {
+      "description": "Subtle noise overlay simulating photographic film grain — adds organic feel and breaks banding",
+      "implementation": "float grain = fract(sin(dot(uv * time, vec2(12.9898, 78.233))) * 43758.5453);",
+      "intensity": "0.02-0.05 (2-5% opacity) — subtle enough to not be consciously noticed but breaks gradient banding",
+      "cost": "Essentially free — 1 sin, 1 fract per pixel",
+      "event_horizon_use": "Critical for preventing banding on dark gradients (space backgrounds). Apply after tone mapping."
+    }
+  },
+  "profiling": {
+    "ext_disjoint_timer_query": {
+      "description": "WebGL 2.0 extension for measuring GPU time of operations",
+      "implementation": [
+        "const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2');",
+        "const query = gl.createQuery();",
+        "gl.beginQuery(ext.TIME_ELAPSED_EXT, query);",
+        "// ... draw calls ...",
+        "gl.endQuery(ext.TIME_ELAPSED_EXT);",
+        "// ... later, after flush ...",
+        "const available = gl.getQueryParameter(query, gl.QUERY_RESULT_AVAILABLE);",
+        "if (available) { const gpuTime = gl.getQueryParameter(query, gl.QUERY_RESULT); }"
+      ],
+      "note": "Results are in nanoseconds. Check for disjoint with gl.getParameter(ext.GPU_DISJOINT_EXT).",
+      "availability": "May be disabled in some browsers (Firefox hides it by default, Chrome enables it)"
+    },
+    "spector_js": {
+      "description": "Capture a complete WebGL frame — all draw calls, state changes, textures, buffers",
+      "url": "https://spector.babylonjs.com/",
+      "usage": "Install as browser extension. Click capture button. Inspect the full frame breakdown.",
+      "what_to_look_for": [
+        "Redundant state changes (same texture bound multiple times)",
+        "Excessive draw calls",
+        "Large textures that could be smaller",
+        "Unused attachments on framebuffers"
+      ]
+    },
+    "performance_panel": {
+      "description": "Chrome DevTools Performance panel for frame-level analysis",
+      "what_to_record": "Start recording → interact with the experience → stop recording",
+      "what_to_look_for": [
+        "Frames exceeding 16.67ms (highlighted in red)",
+        "Long JavaScript tasks blocking the main thread",
+        "Frequent garbage collection pauses",
+        "Layout thrashing (forced reflows)",
+        "GPU time (in the GPU lane of the timeline)"
+      ],
+      "target_frame_time": {
+        "60fps": "< 16.67ms total (JS + Render + Composite)",
+        "budget": "JS: < 8ms, Render: < 4ms, Composite: < 2ms, Buffer: ~3ms"
+      }
+    }
+  },
+  "shader_organization": {
+    "chunk_system": {
+      "description": "Break shaders into reusable chunks/includes to avoid code duplication",
+      "technique": "Use string concatenation or template literals to compose shaders from chunks",
+      "chunks": [
+        {"name": "common_uniforms", "content": "Shared uniforms: time, resolution, mouse, scrollProgress"},
+        {"name": "noise_functions", "content": "Simplex, Perlin, Worley noise implementations"},
+        {"name": "sdf_primitives", "content": "Sphere, box, torus, cylinder, capsule SDF functions"},
+        {"name": "color_utils", "content": "HSV↔RGB, linear↔sRGB, tone mapping"},
+        {"name": "math_utils", "content": "remap, smootherstep, rotation matrices"},
+        {"name": "black_hole", "content": "Schwarzschild metric, geodesic ray bending, accretion disk"}
+      ]
+    },
+    "quality_variants": {
+      "description": "Compile different shader variants for different quality tiers using #define",
+      "defines": {
+        "HIGH": ["MAX_STEPS 128", "ENABLE_VOLUMETRICS", "ENABLE_CHROMATIC_ABERRATION", "BLOOM_ITERATIONS 6"],
+        "MEDIUM": ["MAX_STEPS 64", "ENABLE_VOLUMETRICS", "BLOOM_ITERATIONS 4"],
+        "LOW": ["MAX_STEPS 32", "BLOOM_ITERATIONS 2"]
+      },
+      "implementation": "Prepend #define statements to shader source before compilation based on detected quality tier"
+    }
+  },
+  "sources": [
+    {"title": "GPU Gems 2 — Chapter 35: GPU Program Optimization", "author": "NVIDIA", "type": "book_chapter"},
+    {"title": "GPU Gems 3 — Chapter 14: Advanced Techniques for Realistic Real-Time Skin Rendering", "author": "NVIDIA", "type": "book_chapter"},
+    {"title": "The Book of Shaders", "author": "Patricio Gonzalez Vivo", "url": "https://thebookofshaders.com/"},
+    {"title": "Shader Performance Best Practices (ARM Mali)", "url": "https://developer.arm.com/documentation/102643/latest"},
+    {"title": "Adreno GPU Shader Optimization (Qualcomm)", "url": "https://developer.qualcomm.com/software/adreno-gpu-sdk"},
+    {"title": "PowerVR Performance Recommendations", "author": "Imagination Technologies", "type": "documentation"},
+    {"title": "Real-Time Rendering (4th Edition)", "author": "Tomas Akenine-Möller, Eric Haines, Naty Hoffman", "type": "book"},
+    {"title": "Shadertoy", "url": "https://shadertoy.com/", "note": "Community shader optimization examples"},
+    {"title": "Rendering a Black Hole with Raymarching", "author": "Various — Shadertoy community", "type": "community_resource"},
+    {"title": "Interstellar: Gravitational Lensing", "author": "Oliver James et al. (DNEG)", "type": "research_paper", "year": 2015}
+  ]
+}

@@ -1,0 +1,385 @@
+{
+  "meta": {
+    "file": "patterns-communs.json",
+    "description": "Common DNA across all SOTY winners 2020-2024 — patterns, scoring analysis, and gap analysis for Event Horizon",
+    "lastUpdated": "2026-03-09",
+    "version": "1.0.0"
+  },
+  "recurringPatterns": [
+    {
+      "id": 1,
+      "pattern": "Three.js / WebGL as primary rendering",
+      "prevalence": "4 out of 5 SOTY winners (2020-2024) used WebGL. Exception: Pangram Pangram 2022.",
+      "details": "Three.js is the most common foundation, but winners always customize heavily — custom shaders, custom render pipelines, custom post-processing. Using Three.js out of the box is NOT enough.",
+      "winners": {
+        "2020_Pioneer": "Jelly engine (Three.js wrapped)",
+        "2021_Prometheus": "Custom WebGL engine (no Three.js)",
+        "2022_Pangram": "NO WebGL — pure HTML/CSS/JS",
+        "2023_Lusion": "Three.js with extensive custom shaders",
+        "2024_Igloo": "Three.js with full WebGL UI"
+      },
+      "eventHorizonMapping": {
+        "status": "Strong",
+        "detail": "Event Horizon uses Three.js with GPGPU compute and custom raymarching shaders. This is highly customized, not vanilla Three.js.",
+        "gap": "None — this pattern is well-covered"
+      }
+    },
+    {
+      "id": 2,
+      "pattern": "Custom GLSL shaders as differentiator",
+      "prevalence": "All WebGL winners (4/5) had bespoke GLSL. The shader work IS what makes each site unique.",
+      "details": "Generic post-processing (bloom, DOF, etc.) is table stakes. Winners have NOVEL shader techniques — cloth playback, SDF text, ping-pong compositing, crystal PBR, CGI compositing. The custom shader is often the Developer Award justification.",
+      "winners": {
+        "2020_Pioneer": "Custom CGI compositing shaders",
+        "2021_Prometheus": "Ping-pong scene compositor, 12fps shader trick",
+        "2023_Lusion": "Cloth playback vertex shader, custom post-processing chain",
+        "2024_Igloo": "SDF text shader, crystal PBR with subsurface scattering, VDB raymarching"
+      },
+      "eventHorizonMapping": {
+        "status": "Very Strong",
+        "detail": "Raymarched black hole with gravitational lensing, photon sphere rendering, accretion disk emission — all custom GLSL. GPGPU N-body compute shader. This is the strongest technical differentiator.",
+        "gap": "Ensure the shaders are VISUALLY stunning, not just technically correct. Judges see the visual, not the code."
+      }
+    },
+    {
+      "id": 3,
+      "pattern": "Scroll-driven narrative experience",
+      "prevalence": "5 out of 5 SOTY winners use scroll as the primary interaction driver.",
+      "details": "Every SOTY winner tells a story through scroll. The scroll IS the interaction model. But each implements it differently — some hijack scroll completely, others use smooth scroll libraries, one (Pangram) uses Locomotive Scroll. The key: scroll drives a narrative, not just reveals content.",
+      "winners": {
+        "2020_Pioneer": "Scroll → timeline progress → CGI scene progression",
+        "2021_Prometheus": "Scroll → mode alternation (collage ↔ tech)",
+        "2022_Pangram": "Locomotive Scroll → smooth parallax browsing",
+        "2023_Lusion": "Scroll → cloth animation playback + camera movement",
+        "2024_Igloo": "Scroll → crystal growth + camera spline path"
+      },
+      "eventHorizonMapping": {
+        "status": "Strong",
+        "detail": "Scroll drives the approach to the black hole — user scrolls toward the event horizon. Scroll position maps to gravitational proximity.",
+        "gap": "The narrative arc needs to be as strong as the visual arc. What STORY does the scroll tell? Scientific discovery? Personal journey? Cosmic insignificance? Define the narrative clearly.",
+        "recommendation": "Scroll = approaching the black hole. Each section = new astrophysical concept revealed. Climax = crossing the event horizon. Resolution = what lies beyond (theoretical)."
+      }
+    },
+    {
+      "id": 4,
+      "pattern": "Smooth scroll / custom scroll engine",
+      "prevalence": "5 out of 5 SOTY winners have custom or smooth scroll implementations.",
+      "details": "Native browser scroll is never used as-is. Every winner either hijacks scroll entirely (mapping to a virtual scroll position) or uses a smooth scroll library. The smoothness of scrolling IS a quality signal to judges.",
+      "winners": {
+        "2020_Pioneer": "Custom scroll-to-timeline mapper via Jelly",
+        "2021_Prometheus": "Custom momentum scrolling",
+        "2022_Pangram": "Locomotive Scroll v4",
+        "2023_Lusion": "GSAP ScrollSmoother",
+        "2024_Igloo": "Custom physics-based scroll inertia"
+      },
+      "eventHorizonMapping": {
+        "status": "Must verify",
+        "detail": "Event Horizon needs buttery smooth scroll that feels connected to the gravitational physics metaphor.",
+        "gap": "Consider: scroll momentum could increase as user gets closer to the black hole (time dilation = scroll feels different). The scroll physics should CHANGE as the narrative progresses.",
+        "recommendation": "Use Lenis or GSAP ScrollSmoother as base, customize with gravitational scroll physics: far = normal, close = accelerating (gravity pulls you in), event horizon = scroll becomes irreversible."
+      }
+    },
+    {
+      "id": 5,
+      "pattern": "60fps obsession",
+      "prevalence": "5 out of 5 SOTY winners maintain 60fps on target devices (or have intentional framerate variations like Prometheus).",
+      "details": "Any frame drop is noticed by judges. Performance optimization is not optional — it's the foundation. Winners invest heavily in: frame budget monitoring, adaptive quality, LOD systems, efficient rendering pipelines, and performance testing across devices.",
+      "winners": {
+        "2020_Pioneer": "Pre-rendered CGI approach avoids GPU bottlenecks",
+        "2021_Prometheus": "Intentional 12fps was artistic, but compositing always 60fps",
+        "2022_Pangram": "CSS-only animations = trivial 60fps",
+        "2023_Lusion": "Pre-computed simulation = near-zero runtime cost",
+        "2024_Igloo": "Adaptive quality system maintains 60fps"
+      },
+      "eventHorizonMapping": {
+        "status": "Critical risk area",
+        "detail": "GPGPU N-body simulation + raymarched black hole + particles + post-processing = heavy GPU load. 60fps is the biggest technical challenge.",
+        "gap": "High risk of frame drops on mid-range hardware. MUST implement aggressive adaptive quality.",
+        "recommendation": "Adaptive quality system: (1) Monitor frame time rolling average. (2) If >16.6ms: reduce particle count → lower raymarching steps → reduce render resolution → simplify post-processing. (3) Never let judges see a stutter."
+      }
+    },
+    {
+      "id": 6,
+      "pattern": "Sound design integration",
+      "prevalence": "4 out of 5 SOTY winners have sound design. Exception: Pangram Pangram 2022 (intentional silence).",
+      "details": "Sound is not background music — it's synchronized with the visual experience. Scroll-triggered audio, spatial positioning, volume tied to interaction. Sound ENHANCES the narrative.",
+      "winners": {
+        "2020_Pioneer": "Ambient soundtrack + scroll-triggered effects via Howler.js",
+        "2021_Prometheus": "Warm/cold audio matching visual modes, spatial panning",
+        "2022_Pangram": "No sound (intentional — typography is the voice)",
+        "2023_Lusion": "Fabric sounds synced with cloth animation, spatial audio",
+        "2024_Igloo": "Crystal resonance sounds, procedural audio, spatial positioning"
+      },
+      "eventHorizonMapping": {
+        "status": "Must implement",
+        "detail": "Sound design is non-negotiable for Event Horizon. The theme demands it.",
+        "gap": "No sound design mentioned in current implementation.",
+        "recommendation": "Physics-based sound design: (1) Silence of space in opening. (2) Low-frequency rumble growing as black hole approaches. (3) Doppler-shifted tones for orbiting particles. (4) Overwhelming sub-bass at event horizon. (5) Hawking radiation as high-frequency digital noise. (6) Time dilation = audio pitch-shifting and time-stretching. (7) Inside the black hole = reversed, distorted audio suggesting information paradox."
+      }
+    },
+    {
+      "id": 7,
+      "pattern": "Unique innovation / 'holy shit' moment",
+      "prevalence": "5 out of 5 SOTY winners have at least one moment/technique that makes you say 'I didn't know a browser could do that.'",
+      "details": "This is the most important pattern. Every SOTY winner has a UNIQUE innovation that defines the project. It's never just excellent execution of known techniques — it's something NEW.",
+      "winners": {
+        "2020_Pioneer": "Making corn cinematic (conceptual innovation)",
+        "2021_Prometheus": "Intentional 12fps as artistic device (framerate innovation)",
+        "2022_Pangram": "Winning without WebGL (scope innovation)",
+        "2023_Lusion": "983KB cloth simulation via ArrayBuffer (data innovation)",
+        "2024_Igloo": "Full WebGL UI with zero DOM text (rendering innovation)"
+      },
+      "eventHorizonMapping": {
+        "status": "Very Strong potential",
+        "detail": "Event Horizon has multiple potential 'holy shit' moments: (1) Real-time GPGPU N-body gravitational simulation with thousands of particles. (2) Raymarched black hole with accurate gravitational lensing. (3) Real astrophysics data visualization. (4) Time dilation as UX (framerate + scroll speed change near singularity).",
+        "gap": "The innovations must be VISIBLE and VISCERAL. Technical complexity alone doesn't win — the judge must FEEL it.",
+        "recommendation": "The 'holy shit' moment should be: scrolling past the event horizon and seeing reality warp — the entire webpage bends, stretches, the background stars gravitationally lens around the black hole, particles accelerate to visible velocity. The physics are real, the feeling is overwhelming."
+      }
+    }
+  ],
+  "scoringBreakdowns": {
+    "averageSOTYScores": {
+      "overall": {
+        "2020": 8.83,
+        "2021": 8.91,
+        "2022": 8.78,
+        "2023": 9.12,
+        "2024": 9.21,
+        "trend": "Increasing year over year — the bar rises"
+      },
+      "design": {
+        "2020": 8.87,
+        "2021": 9.02,
+        "2022": 9.15,
+        "2023": 9.23,
+        "2024": 9.34,
+        "trend": "Design scores consistently highest — it's the most valued category at 40% weight"
+      },
+      "usability": {
+        "2020": 8.65,
+        "2021": 8.54,
+        "2022": 8.89,
+        "2023": 8.76,
+        "2024": 8.85,
+        "trend": "Usability is typically the lowest score — immersive experiences sacrifice some usability. But Pangram Pangram proved high usability can win."
+      },
+      "creativity": {
+        "2020": 9.12,
+        "2021": 9.31,
+        "2022": 8.47,
+        "2023": 9.45,
+        "2024": 9.52,
+        "trend": "Creativity scores have the widest range. WebGL innovations score highest. Pangram Pangram's lower creativity score was offset by exceptional design and usability."
+      },
+      "content": {
+        "2020": 8.68,
+        "2021": 8.77,
+        "2022": 8.61,
+        "2023": 8.94,
+        "2024": 9.13,
+        "trend": "Content importance increasing — judges want meaningful content, not just pretty visuals"
+      }
+    },
+    "targetScoresForEventHorizon": {
+      "design": "9.3+ — must match or exceed Igloo's visual quality",
+      "usability": "8.8+ — immersive but navigable, clear user path",
+      "creativity": "9.5+ — the raymarched black hole + GPGPU should push this high",
+      "content": "9.0+ — real astrophysics content elevates beyond 'tech demo'",
+      "overall": "9.2+ — to beat Igloo's record"
+    }
+  },
+  "whatSeparatesGoodFromSOTY": {
+    "goodSite": {
+      "description": "Beautifully designed, well-coded, nice animations, smooth performance",
+      "score": "7.5-8.0 (Honoree level)",
+      "missing": "Nothing UNIQUE. It's excellent execution of known techniques."
+    },
+    "greatSite": {
+      "description": "Stunning design, novel interactions, strong narrative, technical sophistication",
+      "score": "8.0-8.5 (SOTD level)",
+      "missing": "The innovation doesn't push the medium forward. It's the best version of something that exists."
+    },
+    "exceptionalSite": {
+      "description": "Redefines expectations, has a 'holy shit' moment, tells a compelling story, technically innovative, beautifully designed",
+      "score": "8.5-9.0 (SOTM level)",
+      "missing": "Consistency — maybe mobile is weaker, maybe one section isn't as polished, maybe the innovation doesn't sustain throughout."
+    },
+    "sotyWinner": {
+      "description": "Everything above PLUS: the innovation sustains the entire experience, every detail is perfected, mobile is strong, sound enhances, loading delights, and it makes people FEEL something they haven't felt in a browser before.",
+      "score": "9.0+ (SOTY level)",
+      "requirements": [
+        "At least one genuinely novel technique",
+        "Sustained quality from first pixel to last",
+        "Strong narrative that gives meaning to the spectacle",
+        "Mobile experience that maintains the essence",
+        "Sound design that enhances (or intentional silence that speaks)",
+        "Loading experience that sets the tone",
+        "Technical innovation that the community can learn from",
+        "Emotional impact — judges REMEMBER it months later"
+      ]
+    }
+  },
+  "wowFactorAnalysis": {
+    "definition": "The 'wow factor' is the moment when a judge leans forward, involuntarily. It's not planned — it's a physical reaction to seeing something they didn't think was possible.",
+    "whatTriggersWow": [
+      {
+        "trigger": "Visual impossibility",
+        "description": "Seeing something in a browser that looks like it should require a dedicated app or rendering software",
+        "examples": ["Lusion's cinema-quality cloth", "Igloo's full WebGL UI", "Pioneer's Pixar-level CGI"],
+        "eventHorizonPotential": "Raymarched black hole with accurate gravitational lensing — looks like Interstellar in a browser"
+      },
+      {
+        "trigger": "Interactive responsiveness",
+        "description": "Real-time feedback that feels magical — the site responds to you in ways you didn't expect",
+        "examples": ["Cursor affecting cloth simulation", "Crystal growing with scroll", "Particles following cursor"],
+        "eventHorizonPotential": "Cursor creates gravitational influence on particles — your mouse IS a gravity source"
+      },
+      {
+        "trigger": "Scale revelation",
+        "description": "A moment where the scale of the experience suddenly becomes apparent — zoom in/out reveals unexpected depth",
+        "examples": ["Pioneer's macro-to-micro corn journey", "Igloo's crystal formation revealing macro structure"],
+        "eventHorizonPotential": "Starting at cosmic scale, zooming into the black hole to atomic scale, revealing Hawking radiation particles"
+      },
+      {
+        "trigger": "Narrative surprise",
+        "description": "The story takes an unexpected turn that's enhanced by the interactive medium",
+        "examples": ["Prometheus's mode switch from collage to 3D", "Pioneer's 'it's about corn' reveal"],
+        "eventHorizonPotential": "Crossing the event horizon — the entire visual paradigm inverts. What was outside is now inside. Time flows differently. The narrative breaks the fourth wall."
+      },
+      {
+        "trigger": "Sensory immersion",
+        "description": "Multiple senses engaged simultaneously — visual + audio + interaction creates a total immersion moment",
+        "examples": ["Lusion's cloth + fabric sounds", "Igloo's crystals + resonance audio"],
+        "eventHorizonPotential": "Deep sub-bass vibration + visual gravitational lensing + scroll acceleration near event horizon — total immersion in the gravity well"
+      }
+    ],
+    "eventHorizonWowMoments": [
+      {
+        "moment": "First sight of the raymarched black hole",
+        "description": "User scrolls and the black hole comes into view — genuine gravitational lensing warping the starfield behind it. Accretion disk glowing. This should look like Interstellar or better.",
+        "trigger": "Visual impossibility"
+      },
+      {
+        "moment": "Gravitational particle interaction",
+        "description": "Moving the cursor near the black hole causes particles to orbit/accrete. The physics are real — it's not just animation, it's simulation.",
+        "trigger": "Interactive responsiveness"
+      },
+      {
+        "moment": "Crossing the event horizon",
+        "description": "The defining moment. Everything changes — visuals invert, time dilates (framerate drops intentionally), scroll behavior changes (can't scroll back — like real black holes, information doesn't escape).",
+        "trigger": "Narrative surprise + Sensory immersion"
+      },
+      {
+        "moment": "Spaghettification visualization",
+        "description": "Near the singularity, the viewport itself stretches vertically — as if the screen is being pulled into the singularity. The browser chrome seems to distort.",
+        "trigger": "Scale revelation + Visual impossibility"
+      }
+    ]
+  },
+  "innovationUniquenessRequirement": {
+    "principle": "Every SOTY winner brings something the web has never seen before. It's not enough to do existing things better — you must do something NEW.",
+    "innovationTypes": {
+      "technicalNovelty": {
+        "description": "A new rendering technique, data format, or engineering approach",
+        "examples": ["ArrayBuffer cloth (Lusion)", "Full WebGL UI (Igloo)", "VDB compression (Igloo)"],
+        "eventHorizonCandidate": "GPGPU N-body gravitational simulation + raymarched black hole with accurate lensing"
+      },
+      "conceptualNovelty": {
+        "description": "A new way of thinking about web experiences — reframing what a website can be",
+        "examples": ["Corn as cinema (Pioneer)", "12fps as art (Prometheus)", "No WebGL SOTY (Pangram)"],
+        "eventHorizonCandidate": "Real astrophysics as interactive experience — black hole physics as UX metaphor"
+      },
+      "experientialNovelty": {
+        "description": "A new FEELING delivered through the browser — emotional territory unexplored in web",
+        "examples": ["The awe of corn science (Pioneer)", "The warmth of analog in digital (Prometheus)"],
+        "eventHorizonCandidate": "The sublime terror of cosmic scale — the feeling of approaching something from which nothing escapes"
+      }
+    },
+    "eventHorizonUniqueValue": "No Awwwards winner has ever: (1) raymarched a black hole in a browser, (2) used real gravitational physics as the interaction model, (3) visualized real astrophysical phenomena (lensing, accretion, Hawking radiation) interactively, (4) used time dilation as a UX device. This is genuinely novel on multiple axes."
+  },
+  "gapAnalysis": {
+    "categories": [
+      {
+        "category": "Technical Innovation",
+        "sotyStandard": "At least one novel technique that pushes the medium",
+        "eventHorizonStatus": "Exceeds",
+        "detail": "GPGPU N-body + raymarching = multiple novel techniques",
+        "action": "None needed — this is the strongest area"
+      },
+      {
+        "category": "Visual Quality",
+        "sotyStandard": "Cinema-quality rendering in browser",
+        "eventHorizonStatus": "Potentially meets",
+        "detail": "Raymarched black hole must look physically accurate AND visually stunning",
+        "action": "Reference Interstellar's black hole (Kip Thorne's equations). The visual benchmark is Christopher Nolan, not Three.js demos."
+      },
+      {
+        "category": "Narrative / Content",
+        "sotyStandard": "Meaningful story that gives context to the spectacle",
+        "eventHorizonStatus": "Needs work",
+        "detail": "Tech demo vs. experience. Must have real astrophysics content — teach the user about black holes.",
+        "action": "Write narrative content: what is a black hole, event horizon, gravitational lensing, Hawking radiation, spaghettification, information paradox. Each section of the scroll experience maps to a concept."
+      },
+      {
+        "category": "Sound Design",
+        "sotyStandard": "Integrated, synchronized, enhancing",
+        "eventHorizonStatus": "Missing",
+        "detail": "No sound design mentioned",
+        "action": "Implement physics-based sound: sub-bass for gravity, Doppler for orbiting particles, time-stretch for dilation, silence for space"
+      },
+      {
+        "category": "Loading Experience",
+        "sotyStandard": "Engaging preloader that sets the tone",
+        "eventHorizonStatus": "Unknown",
+        "detail": "Heavy assets (GPGPU shaders, textures, HDR) will need significant load time",
+        "action": "Design a preloader that IS the experience: stars appearing one by one, forming a distant view of the black hole, then zooming in as loading completes"
+      },
+      {
+        "category": "Mobile Experience",
+        "sotyStandard": "Adapted but maintaining essence, 30fps minimum",
+        "eventHorizonStatus": "Critical risk",
+        "detail": "GPGPU + raymarching is extremely heavy on mobile GPUs",
+        "action": "Dedicated mobile version: simplified black hole (mesh-based instead of raymarched), fewer particles, native scroll, touch-optimized interactions"
+      },
+      {
+        "category": "Usability",
+        "sotyStandard": "Navigable, understandable, doesn't lose the user",
+        "eventHorizonStatus": "Needs verification",
+        "detail": "Immersive black hole experience must not confuse users",
+        "action": "Clear navigation, progress indication, ability to skip/restart sections, visible controls"
+      },
+      {
+        "category": "Performance",
+        "sotyStandard": "60fps on target devices, adaptive quality for weaker devices",
+        "eventHorizonStatus": "Critical risk",
+        "detail": "Heaviest GPU load of any potential SOTY candidate",
+        "action": "Implement frame budget monitoring with aggressive adaptive quality. Pre-computed fallbacks for weaker devices. LOD for particles."
+      },
+      {
+        "category": "Accessibility",
+        "sotyStandard": "Basic accessibility (keyboard nav, screen reader content, reduced motion support)",
+        "eventHorizonStatus": "Unknown",
+        "detail": "WebGL-heavy sites often fail accessibility",
+        "action": "Hidden DOM layer for screen readers, prefers-reduced-motion support (static black hole image fallback), keyboard navigation, high contrast mode"
+      },
+      {
+        "category": "Community/Documentation",
+        "sotyStandard": "Technical writeup that helps the community learn",
+        "eventHorizonStatus": "Not started",
+        "detail": "Developer Award winners publish technical breakdowns",
+        "action": "Write a detailed technical article: how the GPGPU N-body works, how the raymarching achieves accurate lensing, performance optimization strategies. Publish on Medium/personal blog before submission."
+      }
+    ],
+    "overallReadiness": {
+      "score": "65/100",
+      "verdict": "Strong technical foundation but significant gaps in narrative, sound, mobile, and documentation. Technical innovation is SOTY-caliber but the complete experience needs more work.",
+      "criticalBlockers": [
+        "Mobile experience",
+        "Sound design",
+        "Narrative content",
+        "60fps performance guarantee"
+      ],
+      "timeEstimate": "4-8 weeks of dedicated work to close all gaps"
+    }
+  }
+}

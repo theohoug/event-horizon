@@ -150,8 +150,8 @@ body {
 }
 
 .chapter:first-child {
-  height: 300vh;
-  height: 300dvh;
+  height: 400vh;
+  height: 400dvh;
 }
 
 .chapter:last-child {
@@ -496,6 +496,7 @@ body {
   transform: translateX(-50%);
   width: min(100%, 1200px);
   height: 100%;
+  z-index: 12;
   display: flex;
   flex-direction: column;
   align-items: center;

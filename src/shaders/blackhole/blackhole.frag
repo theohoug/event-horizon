@@ -332,11 +332,13 @@ float photonRing(vec3 pos, float r) {
   float ring1 = g2((r - PHOTON_SPHERE) * 12.0);
   float ring2 = g2((r - PHOTON_SPHERE * 1.02) * 18.0) * 0.7;
   float ring3 = g2((r - PHOTON_SPHERE * 0.98) * 22.0) * 0.35;
-  float ringWide = g2((r - PHOTON_SPHERE) * 5.0) * 0.15;
+  float ringWide = g2((r - PHOTON_SPHERE) * 5.0) * 0.2;
 
   float angle = atan(pos.z, pos.x);
-  float shimmer = sin(angle * 30.0 + uTime * 4.0) * 0.12;
-  float shimmer2 = sin(angle * 50.0 - uTime * 6.0) * 0.05;
+  float shimmer = sin(angle * 30.0 + uTime * 4.0) * 0.10;
+  float shimmer2 = sin(angle * 50.0 - uTime * 6.0) * 0.04;
+
+  float earlyBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 1.5;
 
   float heartbeatPhase = uScroll > 0.35 ? 1.0 : 0.0;
   float hbSpeed = 50.0 + max(uScroll - 0.35, 0.0) * 200.0;
@@ -344,7 +346,7 @@ float photonRing(vec3 pos, float r) {
   float pulse = sin(uTime * 1.5) * 0.08 + 1.0 + heartbeatPulse;
   float breathe = sin(uTime * 0.4) * 0.1 + 1.0;
 
-  return (ring1 + ring2 + ring3 + ringWide) * (1.0 + shimmer + shimmer2) * pulse * breathe;
+  return (ring1 + ring2 + ring3 + ringWide) * (1.0 + shimmer + shimmer2) * pulse * breathe * earlyBoost;
 }
 
 /* ─── Einstein Ring ─── */
@@ -356,12 +358,13 @@ vec3 einsteinRingColor(vec3 rd, vec3 camPos) {
   float breathe = sin(uTime * 0.6) * 0.1 + 1.0;
   float breathe2 = sin(uTime * 1.1) * 0.04 + 1.0;
 
-  float chromaticSpread = 0.004;
-  float ringR = g2((viewAngle - einsteinAngle * (1.0 + chromaticSpread)) * 100.0) * 0.25 * breathe;
-  float ringG = g2((viewAngle - einsteinAngle) * 100.0) * 0.18 * breathe;
-  float ringB = g2((viewAngle - einsteinAngle * (1.0 - chromaticSpread)) * 100.0) * 0.12 * breathe;
+  float chromaticSpread = 0.006;
+  float earlyRingBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 2.0;
+  float ringR = g2((viewAngle - einsteinAngle * (1.0 + chromaticSpread)) * 80.0) * 0.30 * breathe * earlyRingBoost;
+  float ringG = g2((viewAngle - einsteinAngle) * 80.0) * 0.28 * breathe * earlyRingBoost;
+  float ringB = g2((viewAngle - einsteinAngle * (1.0 - chromaticSpread)) * 80.0) * 0.25 * breathe * earlyRingBoost;
 
-  float glow = g2((viewAngle - einsteinAngle) * 30.0) * 0.12 * breathe2;
+  float glow = g2((viewAngle - einsteinAngle) * 25.0) * 0.18 * breathe2 * earlyRingBoost;
   float shimmer = sin(viewAngle * 200.0 + uTime * 3.0) * 0.02 + 1.0;
 
   vec3 ring = vec3(ringR, ringG, ringB) * shimmer + vec3(glow);
@@ -394,9 +397,11 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
     float r = length(pos);
 
     if (r < SCHWARZSCHILD_RADIUS) {
+      float edgeDist = smoothstep(SCHWARZSCHILD_RADIUS * 0.4, SCHWARZSCHILD_RADIUS, r);
+      vec3 edgeRim = vec3(0.4, 0.55, 0.9) * edgeDist * edgeDist * 0.06;
       float captureRedshift = smoothstep(SCHWARZSCHILD_RADIUS, SCHWARZSCHILD_RADIUS * 0.3, r);
-      color = accumulatedDiskColor * (1.0 - captureRedshift);
-      glow = 0.0;
+      color = accumulatedDiskColor * (1.0 - captureRedshift) + edgeRim;
+      glow = edgeDist * 0.15;
       return;
     }
 
@@ -411,9 +416,12 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
       return;
     }
 
-    if (r < 3.0) {
+    if (r < 3.5) {
       float photon = photonRing(pos, r);
-      glow = min(glow + photon * 0.065 * (1.0 - dimBell * 0.25), 2.5);
+      float photonBright = photon * 0.09 * (1.0 - dimBell * 0.25);
+      glow = min(glow + photonBright, 2.5);
+      vec3 photonColor = mix(vec3(0.6, 0.7, 1.0), vec3(1.0, 0.85, 0.6), smoothstep(1.4, 1.7, r));
+      accumulatedDiskColor += photonColor * photonBright * 0.4 * (1.0 - accumulatedDisk);
     }
 
     float currentY = pos.y;
@@ -480,15 +488,14 @@ void main() {
   float glow;
   traceRay(camPos, rd, color, glow);
 
-  float scrollGlowDim = 1.0 - sqrt(scrollEffect) * 0.45;
+  float scrollGlowDim = 1.0 - sqrt(scrollEffect) * 0.4;
   float glowBell = g2((scrollEffect - 0.62) * 5.0);
   scrollGlowDim *= 1.0 - glowBell * 0.2;
-  float earlyGlowBoost = 1.0 + smoothstep(0.2, 0.0, scrollEffect) * 0.5;
-  vec3 warmGlow = vec3(1.0, 0.55, 0.12) * glow * 0.28 * scrollGlowDim * earlyGlowBoost;
-  vec3 hotGlow = vec3(1.0, 0.75, 0.3) * glow * 0.18 * scrollGlowDim * earlyGlowBoost;
-  vec3 deepBlueGlow = vec3(0.1, 0.15, 0.35) * glow * 0.10 * scrollGlowDim;
-  vec3 subtleCyan = vec3(0.0, 0.35, 0.4) * glow * 0.06 * scrollGlowDim;
-  color += warmGlow + hotGlow + deepBlueGlow + subtleCyan;
+  float earlyGlowBoost = 1.0 + smoothstep(0.2, 0.0, scrollEffect) * 0.8;
+  vec3 blueWhiteGlow = vec3(0.6, 0.7, 1.0) * glow * 0.22 * scrollGlowDim * earlyGlowBoost;
+  vec3 warmGlow = vec3(1.0, 0.6, 0.2) * glow * 0.12 * scrollGlowDim * earlyGlowBoost;
+  vec3 deepGlow = vec3(0.15, 0.2, 0.45) * glow * 0.10 * scrollGlowDim;
+  color += blueWhiteGlow + warmGlow + deepGlow;
 
   float diskPlaneY = uv.y + 0.01 * (1.0 - scrollEffect);
   float diskHaze = exp(-diskPlaneY * diskPlaneY * mix(25.0, 150.0, scrollEffect));
@@ -536,12 +543,14 @@ void main() {
   color += vec3(0.3, 0.5, 0.9) * jetIntensity;
 
 
-  if (scrollEffect < 0.35) {
-    float earlyFade = smoothstep(0.35, 0.0, scrollEffect);
-    float warmHalo = exp(-lensDist * lensDist * 1.2) * earlyFade * 0.06;
-    color += vec3(0.4, 0.18, 0.04) * warmHalo;
-    float cosmicAura = exp(-lensDist * lensDist * 0.6) * earlyFade * 0.025;
-    color += vec3(0.2, 0.1, 0.05) * cosmicAura;
+  if (scrollEffect < 0.4) {
+    float earlyFade = smoothstep(0.4, 0.0, scrollEffect);
+    float warmHalo = exp(-lensDist * lensDist * 2.0) * earlyFade * 0.08;
+    color += vec3(0.35, 0.4, 0.7) * warmHalo;
+    float cosmicAura = exp(-lensDist * lensDist * 0.8) * earlyFade * 0.03;
+    color += vec3(0.15, 0.12, 0.2) * cosmicAura;
+    float centerPinpoint = exp(-lensDist * lensDist * 8.0) * earlyFade * 0.05;
+    color += vec3(0.7, 0.8, 1.0) * centerPinpoint;
   }
 
   float gravitationalRedshift = 1.0 + smoothstep(0.0, 1.5, 1.0 / (lensDist + 0.1)) * uDistortion * 0.02;

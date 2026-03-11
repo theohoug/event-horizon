@@ -155,8 +155,8 @@ body {
 }
 
 .chapter:first-child {
-  height: 200vh;
-  height: 200dvh;
+  height: 300vh;
+  height: 300dvh;
 }
 
 .chapter:last-child {
@@ -1878,6 +1878,20 @@ body {
   transform: translateY(15px);
 }
 
+.credits-epigraph {
+  font-family: var(--font-serif);
+  font-size: clamp(0.75rem, 1.3vw, 1rem);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 2;
+  letter-spacing: 0.04em;
+  color: rgba(200, 210, 255, 0.35);
+  margin-bottom: 2rem;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .credits-title {
   font-family: var(--font-primary);
   font-weight: 200;
@@ -2006,6 +2020,7 @@ body {
   transition: background 2s ease;
 }
 
+#credits.white-mode .credits-epigraph,
 #credits.white-mode .credits-title,
 #credits.white-mode .credits-sub,
 #credits.white-mode .credits-role,
@@ -2013,6 +2028,10 @@ body {
 #credits.white-mode .credits-footer,
 #credits.white-mode .credits-footer a {
   transition: color 2.5s ease, text-shadow 2.5s ease;
+}
+
+#credits.white-mode .credits-epigraph {
+  color: rgba(60, 60, 60, 0.5);
 }
 
 #credits.white-mode::after {
@@ -2622,8 +2641,8 @@ body {
   }
 
   .chapter:first-child {
-    height: 180vh;
-    height: 180dvh;
+    height: 260vh;
+    height: 260dvh;
   }
 
   .chapter:last-child {

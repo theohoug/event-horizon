@@ -79,7 +79,7 @@ export class Timeline {
     if (lastSection) {
       ScrollTrigger.create({
         trigger: lastSection,
-        start: 'top+=25% center',
+        start: 'top+=15% center',
         end: 'bottom bottom',
         onEnter: () => this.showCredits(),
         onLeaveBack: () => this.hideCredits(),
@@ -118,40 +118,47 @@ export class Timeline {
 
     const lines = credits.querySelectorAll('.credits-line');
     lines.forEach((line, i) => {
+      const isEpigraph = line.classList.contains('credits-epigraph');
       const isSpacer = line.classList.contains('credits-spacer');
       const isTitle = line.classList.contains('credits-title');
       const isSub = line.classList.contains('credits-sub');
       const isFooter = line.classList.contains('credits-footer');
 
-      if (isTitle) {
+      if (isEpigraph) {
+        this.creditsTl!.fromTo(line,
+          { opacity: 0, y: 10, filter: 'blur(12px)' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 3.0, ease: 'power2.out' },
+          0.3
+        );
+      } else if (isTitle) {
         this.creditsTl!.fromTo(line,
           { opacity: 0, scale: 1.4, filter: 'blur(25px)', letterSpacing: '0.8em' },
           { opacity: 1, scale: 1, filter: 'blur(0px)', letterSpacing: '0.3em', duration: 2.5, ease: 'power4.out' },
-          0.5
+          2.0
         );
       } else if (isSub) {
         this.creditsTl!.fromTo(line,
           { opacity: 0, y: 15, filter: 'blur(10px)', letterSpacing: '0.06em' },
           { opacity: 1, y: 0, filter: 'blur(0px)', letterSpacing: '0.04em', duration: 1.5, ease: 'power3.out' },
-          2.5
+          4.0
         );
       } else if (isSpacer) {
         this.creditsTl!.fromTo(line,
           { opacity: 0, scaleX: 0 },
           { opacity: 1, scaleX: 1, duration: 1.2, ease: 'power2.out' },
-          3.0 + i * 0.25
+          4.5 + i * 0.2
         );
       } else if (isFooter) {
         this.creditsTl!.fromTo(line,
           { opacity: 0, y: 20, filter: 'blur(8px)' },
           { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.5, ease: 'power3.out' },
-          4.5 + i * 0.3
+          6.0 + i * 0.2
         );
       } else {
         this.creditsTl!.fromTo(line,
           { opacity: 0, y: 20, filter: 'blur(8px)', letterSpacing: '0.05em' },
           { opacity: 1, y: 0, filter: 'blur(0px)', letterSpacing: '0.02em', duration: 1.2, ease: 'power3.out' },
-          3.0 + i * 0.3
+          4.5 + i * 0.25
         );
       }
     });

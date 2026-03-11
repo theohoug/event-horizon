@@ -987,8 +987,8 @@ export class Experience {
   private updateGravityPull(dt: number) {
     const scroll = this.state.scroll;
 
-    if (this.state.introActive || scroll > 0.95) {
-      this.gravityVelocity *= 0.9;
+    if (this.state.introActive || scroll > 0.93) {
+      this.gravityVelocity *= 0.85;
       return;
     }
 
@@ -997,11 +997,11 @@ export class Experience {
     const isScrollingUp = this.state.scrollVelocity < -0.3;
 
     let totalForce = 0;
-    totalForce += scroll * scroll * 2;
-    if (scroll > 0.15) { const g1 = (scroll - 0.15) / 0.85; totalForce += g1 * Math.sqrt(g1) * 5; }
-    if (scroll > 0.35) { const g2 = (scroll - 0.35) / 0.65; totalForce += g2 * Math.sqrt(g2) * 12; }
-    if (scroll > 0.55) { const g3 = (scroll - 0.55) / 0.45; totalForce += g3 * g3 * 25; }
-    if (scroll > 0.75) { const g4 = (scroll - 0.75) / 0.25; totalForce += g4 * g4 * 40; }
+    totalForce += scroll * scroll * 1.5;
+    if (scroll > 0.15) { const g1 = (scroll - 0.15) / 0.85; totalForce += g1 * Math.sqrt(g1) * 4; }
+    if (scroll > 0.35) { const g2 = (scroll - 0.35) / 0.65; totalForce += g2 * Math.sqrt(g2) * 9; }
+    if (scroll > 0.55) { const g3 = (scroll - 0.55) / 0.45; totalForce += g3 * g3 * 18; }
+    if (scroll > 0.75) { const g4 = (scroll - 0.75) / 0.25; totalForce += g4 * g4 * 28; }
 
     const extraVisits = Math.min(this.visitCount - 1, 4);
     if (extraVisits > 0) totalForce *= 1 + extraVisits * 0.2;
@@ -1010,18 +1010,20 @@ export class Experience {
       totalForce *= 1 - this.holdStrength * 0.6;
     }
 
-    const voidDelta = (scroll - 0.82) * 12.0;
+    const voidCenter = 0.80;
+    const voidWidth = 8.0;
+    const voidDelta = (scroll - voidCenter) * voidWidth;
     const voidResistance = Math.exp(-voidDelta * voidDelta);
     if (voidResistance > 0.01) {
-      totalForce *= 1 - voidResistance * 0.7;
+      totalForce *= 1 - voidResistance * 0.75;
     }
 
     if (isScrollingUp && scroll > 0.40) {
-      this.gravityVelocity += totalForce * dt * 8;
+      this.gravityVelocity += totalForce * dt * 7;
     } else if (isStopped) {
-      this.gravityVelocity += totalForce * dt * 5;
+      this.gravityVelocity += totalForce * dt * 4;
     } else {
-      this.gravityVelocity += totalForce * dt * 2;
+      this.gravityVelocity += totalForce * dt * 1.8;
     }
 
     if (!this.pointOfNoReturnTriggered && scroll >= 0.65) {
@@ -1034,8 +1036,8 @@ export class Experience {
       if (this.state.soundEnabled) this.audio.triggerSingularity();
     }
 
-    this.gravityVelocity = Math.min(this.gravityVelocity, 5 + scroll * 20);
-    this.gravityVelocity *= 0.97;
+    this.gravityVelocity = Math.min(this.gravityVelocity, 4 + scroll * 14);
+    this.gravityVelocity *= 0.96;
 
     if (this.gravityVelocity > 0.02) {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
@@ -1706,29 +1708,18 @@ export class Experience {
       if (betweenChapters && interstitialText && scroll > 0.05 && scroll < 0.92) {
         this.interstitialEl.textContent = interstitialText;
         this.interstitialEl.classList.add('visible');
-        const positions = ['12%', '18%', '8%', '22%', '15%', '10%', '20%', '14%', '16%'];
-        const aligns = ['center', 'left', 'right', 'center', 'right', 'left', 'center', 'right', 'center'];
-        this.interstitialEl.style.bottom = positions[chapterIndex] || '15%';
-        this.interstitialEl.style.textAlign = aligns[chapterIndex] || 'center';
-        if (aligns[chapterIndex] === 'left') {
-          this.interstitialEl.style.left = '8%';
-          this.interstitialEl.style.transform = 'none';
-        } else if (aligns[chapterIndex] === 'right') {
-          this.interstitialEl.style.left = 'auto';
-          this.interstitialEl.style.right = '8%';
-          this.interstitialEl.style.transform = 'none';
-        } else {
-          this.interstitialEl.style.left = '50%';
-          this.interstitialEl.style.right = 'auto';
-          this.interstitialEl.style.transform = 'translateX(-50%)';
-        }
+        this.interstitialEl.style.left = '50%';
+        this.interstitialEl.style.right = 'auto';
+        this.interstitialEl.style.transform = 'translateX(-50%)';
+        this.interstitialEl.style.textAlign = 'center';
+        this.interstitialEl.style.bottom = '12%';
       } else {
         this.interstitialEl.classList.remove('visible');
       }
     }
 
     if (this.creditsEl) {
-      const shouldBeWhite = scroll > 0.90;
+      const shouldBeWhite = scroll > 0.88;
       if (shouldBeWhite && !this.whiteModeActive) {
         this.creditsEl.classList.add('white-mode');
         this.whiteModeActive = true;
@@ -1736,7 +1727,7 @@ export class Experience {
         this.creditsEl.classList.remove('white-mode');
         this.whiteModeActive = false;
       }
-      if (scroll > 0.97 && !this.postCreditsShown) {
+      if (scroll > 0.95 && !this.postCreditsShown) {
         this.postCreditsTimer += 0.016;
         if (this.postCreditsTimer > 20) {
           this.postCreditsShown = true;
@@ -1746,7 +1737,7 @@ export class Experience {
           document.body.appendChild(msg);
           requestAnimationFrame(() => { msg.style.opacity = '1'; });
         }
-      } else if (scroll <= 0.97) {
+      } else if (scroll <= 0.95) {
         this.postCreditsTimer = 0;
       }
     }

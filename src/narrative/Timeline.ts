@@ -7,6 +7,7 @@
 
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { t } from '../i18n/translations';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,80 +22,27 @@ interface Chapter {
   reveal: RevealPattern;
 }
 
-const CHAPTERS: Chapter[] = [
-  {
-    id: 0,
-    title: 'YOU',
-    subtitle: '13.8 billion years after the beginning — atoms, briefly alive, looking up',
-    triggerStart: 'top top',
-    triggerEnd: 'bottom center',
-    reveal: 'center-out',
-  },
-  {
-    id: 1,
-    title: 'THE PULL',
-    subtitle: 'Ten billion solar masses — silent, patient — bending spacetime like a hand closing around you',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'char-rise',
-  },
-  {
-    id: 2,
-    title: 'THE WARP',
-    subtitle: 'Light bends — stars stretch into arcs — straight lines no longer exist here',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'char-rise',
-  },
-  {
-    id: 3,
-    title: 'THE PHOTON SPHERE',
-    subtitle: 'At 1.5 Schwarzschild radii — light itself orbits — photons trapped in endless circles — a prison made of gravity',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'word-cascade',
-  },
-  {
-    id: 4,
-    title: 'THE FALL',
-    subtitle: 'You cross the point of no return — and the strange thing is — you feel nothing',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'flash-bloom',
-  },
-  {
-    id: 5,
-    title: 'SPAGHETTIFICATION',
-    subtitle: 'Tidal forces pull you apart — atom by atom — into threads thinner than light',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'center-out',
-  },
-  {
-    id: 6,
-    title: 'TIME DILATION',
-    subtitle: 'One heartbeat here — outside, civilizations rise and fall — stars are born and die',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'flash-bloom',
-  },
-  {
-    id: 7,
-    title: 'SINGULARITY',
-    subtitle: 'Where physics breaks — where space becomes time — where infinity becomes a point',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom center',
-    reveal: 'center-out',
-  },
-  {
-    id: 8,
-    title: 'WHAT REMAINS',
-    subtitle: 'You have one life — one brief flicker in the dark — what will you do with it?',
-    triggerStart: 'top center',
-    triggerEnd: 'bottom bottom',
-    reveal: 'center-out',
-  },
+const CHAPTER_REVEALS: { triggerStart: string; triggerEnd: string; reveal: RevealPattern }[] = [
+  { triggerStart: 'top top', triggerEnd: 'bottom center', reveal: 'center-out' },
+  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'char-rise' },
+  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'char-rise' },
+  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'word-cascade' },
+  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'flash-bloom' },
+  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'center-out' },
+  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'flash-bloom' },
+  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'center-out' },
+  { triggerStart: 'top center', triggerEnd: 'bottom bottom', reveal: 'center-out' },
 ];
+
+function getChapters(): Chapter[] {
+  const tr = t();
+  return tr.chapters.map((ch, i) => ({
+    id: i,
+    title: ch.title,
+    subtitle: ch.subtitle,
+    ...CHAPTER_REVEALS[i],
+  }));
+}
 
 export class Timeline {
   private started = false;
@@ -109,7 +57,8 @@ export class Timeline {
     if (this.started) return;
     this.started = true;
 
-    CHAPTERS.forEach((chapter) => {
+    const chapters = getChapters();
+    chapters.forEach((chapter) => {
       const section = document.querySelector(`[data-chapter="${chapter.id}"]`);
       if (!section) return;
 
@@ -120,7 +69,7 @@ export class Timeline {
         onEnter: () => this.showChapter(chapter),
         onLeaveBack: () => {
           if (chapter.id > 0) {
-            this.showChapter(CHAPTERS[chapter.id - 1]);
+            this.showChapter(getChapters()[chapter.id - 1]);
           }
         },
       });
@@ -137,7 +86,7 @@ export class Timeline {
       });
     }
 
-    setTimeout(() => this.showChapter(CHAPTERS[0]), 300);
+    setTimeout(() => this.showChapter(getChapters()[0]), 300);
   }
 
   private showCredits() {
@@ -451,11 +400,11 @@ export class Timeline {
   private static TEXT_OFFSETS: Record<number, { x: number; y: number; align: string }> = {
     0: { x: 0, y: 0, align: 'center' },
     1: { x: 0, y: 0, align: 'center' },
-    2: { x: -6, y: 0, align: 'left' },
+    2: { x: 0, y: 0, align: 'center' },
     3: { x: 0, y: 0, align: 'center' },
-    4: { x: 0, y: 8, align: 'center' },
+    4: { x: 0, y: 0, align: 'center' },
     5: { x: 0, y: 0, align: 'center' },
-    6: { x: 5, y: -6, align: 'right' },
+    6: { x: 0, y: 0, align: 'center' },
     7: { x: 0, y: 0, align: 'center' },
     8: { x: 0, y: 0, align: 'center' },
   };
@@ -478,7 +427,7 @@ export class Timeline {
     if (chapter.id === 0) {
       const poetryLine = document.createElement('div');
       poetryLine.className = 'line chapter-poetry';
-      poetryLine.textContent = 'somewhere in the dark, something waits';
+      poetryLine.textContent = t().poetry;
       container.appendChild(poetryLine);
       tl.fromTo(poetryLine,
         { opacity: 0, filter: 'blur(12px)', y: 5 },

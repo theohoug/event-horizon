@@ -170,9 +170,19 @@ body {
   height: 280dvh;
 }
 
-.chapter[data-chapter="7"] {
+.chapter[data-chapter="5"] {
+  height: 320vh;
+  height: 320dvh;
+}
+
+.chapter[data-chapter="6"] {
   height: 300vh;
   height: 300dvh;
+}
+
+.chapter[data-chapter="7"] {
+  height: 350vh;
+  height: 350dvh;
 }
 
 /* ─── Ambient Light Leaks ─── */
@@ -490,12 +500,18 @@ body {
 
 #chapter-text {
   position: absolute;
-  width: 100%;
-  max-width: 1200px;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   padding: 3rem 4rem;
   pointer-events: none;
-  transition: text-align 0.8s ease;
+  max-width: 1200px;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
 }
 
 #chapter-text::before {
@@ -1707,6 +1723,45 @@ body {
   color: rgba(200, 215, 255, 0.3);
 }
 
+/* ─── Language Switch ─── */
+
+#lang-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 4.5rem;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid rgba(232, 232, 255, 0.15);
+  border-radius: 50%;
+  color: rgba(232, 232, 255, 0.5);
+  cursor: pointer;
+  z-index: 50;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  transition: border-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+#lang-btn.visible {
+  display: flex;
+}
+
+#lang-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(0, 245, 212, 0.15);
+}
+
+#lang-btn:active {
+  transform: scale(0.92);
+}
+
 /* ─── Mute Button ─── */
 
 #mute-btn {
@@ -2582,9 +2637,19 @@ body {
     height: 240dvh;
   }
 
-  .chapter[data-chapter="7"] {
+  .chapter[data-chapter="5"] {
     height: 280vh;
     height: 280dvh;
+  }
+
+  .chapter[data-chapter="6"] {
+    height: 260vh;
+    height: 260dvh;
+  }
+
+  .chapter[data-chapter="7"] {
+    height: 300vh;
+    height: 300dvh;
   }
 
   #chapter-text {
@@ -2627,6 +2692,14 @@ body {
     right: 1rem;
     width: 32px;
     height: 32px;
+  }
+
+  #lang-btn {
+    bottom: 1rem;
+    right: 3.8rem;
+    width: 32px;
+    height: 32px;
+    font-size: 0.45rem;
   }
 
   .credits-title {

@@ -15,6 +15,7 @@ import { Timeline } from '../narrative/Timeline';
 import { TextReveal } from '../narrative/TextReveal';
 import { AudioEngine } from '../audio/AudioEngine';
 import { Haptics } from '../ui/Haptics';
+import { t, getLang, setLang, onLangChange, type Lang } from '../i18n/translations';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -69,6 +70,9 @@ export class Experience {
     this.canvas = canvas;
     this.clock = new THREE.Clock();
 
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+
     this.state = {
       scroll: 0,
       scrollVelocity: 0,
@@ -93,7 +97,7 @@ export class Experience {
       const loaderSub = document.getElementById('loader-sub');
       const loaderText = document.getElementById('loader-text');
       if (loaderText) loaderText.textContent = 'SIGNAL LOST';
-      if (loaderSub) loaderSub.textContent = 'WebGL 2.0 required. Please update your browser or enable hardware acceleration.';
+      if (loaderSub) loaderSub.textContent = t().fallback.message;
       if (loader) loader.classList.remove('hidden');
       const fill = document.getElementById('loader-bar-fill');
       if (fill) fill.style.width = '0%';
@@ -300,31 +304,32 @@ export class Experience {
       if (loaderSub) loaderSub.textContent = label;
     };
 
-    setProgress(10, 'Initializing WebGL context...');
+    const steps = t().loader.steps;
+    setProgress(10, steps[0]);
     await this.frame();
 
-    setProgress(25, 'Compiling ray tracing shaders...');
+    setProgress(25, steps[1]);
     await this.frame();
     this.renderer.compile(this.postProcessing.bgScene, this.postProcessing.bgCamera);
     await this.frame();
 
-    setProgress(45, 'Building GPGPU particle system...');
+    setProgress(45, steps[2]);
     await this.frame();
     this.renderer.compile(this.postProcessing.particleScene, this.postProcessing.particleCamera);
     await this.frame();
 
-    setProgress(60, 'Warming up gravitational sim...');
+    setProgress(60, steps[3]);
     await this.frame();
     this.postProcessing.render();
     await this.frame();
 
-    setProgress(75, 'Calibrating accretion disk...');
+    setProgress(75, steps[4]);
     await this.frame();
 
-    setProgress(88, 'Synchronizing spacetime...');
+    setProgress(88, steps[5]);
     await new Promise<void>(r => setTimeout(r, 300));
 
-    setProgress(100, 'Event horizon locked');
+    setProgress(100, steps[6]);
     await new Promise<void>(r => setTimeout(r, 400));
   }
 
@@ -404,15 +409,15 @@ export class Experience {
           } catch {}
         } else {
           navigator.clipboard.writeText(url).then(() => {
-            shareBtn.textContent = 'Link copied';
+            shareBtn.textContent = t().share.copied;
             shareBtn.classList.add('copied');
             setTimeout(() => {
-              shareBtn.textContent = 'Share this journey';
+              shareBtn.textContent = t().share.share;
               shareBtn.classList.remove('copied');
             }, 3000);
           }).catch(() => {
             shareBtn.textContent = url;
-            setTimeout(() => { shareBtn.textContent = 'Share this journey'; }, 4000);
+            setTimeout(() => { shareBtn.textContent = t().share.share; }, 4000);
           });
         }
       });
@@ -440,6 +445,73 @@ export class Experience {
         else muteBtn.classList.remove('sound-on');
       });
     }
+
+    this.setupLangButton();
+  }
+
+  private setupLangButton() {
+    const langBtn = document.getElementById('lang-btn');
+    if (!langBtn) return;
+    langBtn.textContent = t().langSwitch;
+
+    this.addTrackedListener(langBtn, 'click', () => {
+      const newLang: Lang = getLang() === 'en' ? 'fr' : 'en';
+      setLang(newLang);
+      if (this.state.soundEnabled) this.audio.triggerUIHover();
+    });
+
+    onLangChange(() => {
+      langBtn.textContent = t().langSwitch;
+      this.applyTranslations();
+    });
+  }
+
+  private applyTranslations() {
+    const tr = t();
+    const hudDist = document.querySelector('.hud-distance .hud-label');
+    const hudTemp = document.querySelector('.hud-temp .hud-label');
+    const hudDil = document.querySelector('.hud-timedil .hud-label');
+    const hudElapsed = document.querySelector('.hud-elapsed .hud-label');
+    const hudTidal = document.querySelector('.hud-tidal .hud-label');
+    if (hudDist) hudDist.textContent = tr.hud.distance;
+    if (hudTemp) hudTemp.textContent = tr.hud.temp;
+    if (hudDil) hudDil.textContent = tr.hud.timeDilation;
+    if (hudElapsed) hudElapsed.textContent = tr.hud.elapsed;
+    if (hudTidal) hudTidal.textContent = tr.hud.tidalForce;
+
+    const soundText = document.getElementById('sound-prompt-text');
+    const soundYes = document.getElementById('sound-prompt-yes');
+    const soundNo = document.getElementById('sound-prompt-no');
+    if (soundText) soundText.textContent = tr.sound.label;
+    if (soundYes) soundYes.textContent = tr.sound.yes;
+    if (soundNo) soundNo.textContent = tr.sound.no;
+
+    const shareBtn = document.getElementById('share-btn');
+    const returnBtn = document.getElementById('return-btn');
+    if (shareBtn && !shareBtn.classList.contains('copied')) shareBtn.textContent = tr.share.share;
+    if (returnBtn) returnBtn.textContent = tr.share.return;
+
+    const creditsSub = document.querySelector('.credits-sub');
+    if (creditsSub) creditsSub.textContent = tr.credits.sub;
+
+    const creditsRoles = document.querySelectorAll('.credits-role');
+    const creditsNames = document.querySelectorAll('.credits-name');
+    tr.credits.roles.forEach((r, i) => {
+      if (creditsRoles[i]) creditsRoles[i].textContent = r.role;
+      if (creditsNames[i]) creditsNames[i].textContent = r.name;
+    });
+
+    const creditsFooter = document.querySelector('.credits-footer');
+    if (creditsFooter) creditsFooter.innerHTML = tr.credits.footer;
+
+    const rotateText = document.getElementById('rotate-text');
+    if (rotateText) rotateText.textContent = tr.rotate.text;
+
+    const scrollText = document.querySelector('#scroll-hint .scroll-text');
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (scrollText) scrollText.textContent = isMobile ? tr.scroll.mobile : tr.scroll.desktop;
+
+    document.documentElement.lang = getLang();
   }
 
   private playIntroCinematic() {
@@ -456,29 +528,11 @@ export class Experience {
     localStorage.setItem('eh_visits', String(this.visitCount + 1));
 
     const isMobileDevice = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    const tr = t();
     const hintEl = document.getElementById('scroll-hint');
-    if (hintEl && isMobileDevice) {
+    if (hintEl) {
       const hintText = hintEl.querySelector('.scroll-text');
-      if (hintText) hintText.textContent = 'Swipe to begin';
-    }
-
-    if (this.visitCount > 0) {
-      intro.style.display = 'none';
-      if (muteBtn) muteBtn.classList.add('visible');
-      if (dataHud) dataHud.classList.add('visible');
-      this.activateAmbientUI();
-      this.experienceStartTime = performance.now();
-      this.timeline.start(this.state.soundEnabled);
-      this.textReveal.start();
-      this.state.introProgress = 1;
-      this.state.introActive = false;
-      if (hintEl) {
-        setTimeout(() => hintEl.classList.add('visible'), 500);
-        const hideHint = () => { hintEl.classList.remove('visible'); window.removeEventListener('scroll', hideHint); };
-        window.addEventListener('scroll', hideHint, { once: true });
-        this.scrollHintEl = hintEl;
-      }
-      return;
+      if (hintText) hintText.textContent = isMobileDevice ? tr.scroll.mobile : tr.scroll.desktop;
     }
 
     this.state.introActive = true;
@@ -504,6 +558,8 @@ export class Experience {
       intro.classList.add('fade-out');
       intro.classList.remove('active');
       if (muteBtn) muteBtn.classList.add('visible');
+      const langBtn = document.getElementById('lang-btn');
+      if (langBtn) langBtn.classList.add('visible');
       if (dataHud) dataHud.classList.add('visible');
       this.activateAmbientUI();
       this.experienceStartTime = performance.now();
@@ -1000,22 +1056,13 @@ export class Experience {
 
       if (e.key.length === 1) {
         this.easterBuffer = (this.easterBuffer + e.key.toLowerCase()).slice(-10);
-        if (this.easterBuffer.endsWith('help')) {
-          this.showCosmicMessage('There is no help here. Only the void.');
-        } else if (this.easterBuffer.endsWith('light')) {
-          this.showCosmicMessage('Light cannot escape. Neither can you.');
-        } else if (this.easterBuffer.endsWith('time')) {
-          this.showCosmicMessage('Time is an illusion. The singularity is forever.');
-        } else if (this.easterBuffer.endsWith('void')) {
-          this.showCosmicMessage('You are already inside.');
-        } else if (this.easterBuffer.endsWith('escape')) {
-          this.showCosmicMessage('The event horizon was crossed long ago.');
-        } else if (this.easterBuffer.endsWith('hello')) {
-          this.showCosmicMessage('The universe does not answer.');
-        } else if (this.easterBuffer.endsWith('god')) {
-          this.showCosmicMessage('Even gods fall into black holes.');
-        } else if (this.easterBuffer.endsWith('love')) {
-          this.showCosmicMessage('Love is the only force that transcends dimensions.');
+        const cosmicKeys = ['help', 'light', 'time', 'void', 'escape', 'hello', 'god', 'love'];
+        for (const key of cosmicKeys) {
+          if (this.easterBuffer.endsWith(key)) {
+            const msg = t().cosmic[key];
+            if (msg) this.showCosmicMessage(msg);
+            break;
+          }
         }
       }
 
@@ -1070,13 +1117,7 @@ export class Experience {
     onResize();
 
     let tabLeftAt = 0;
-    const TAB_MESSAGES = [
-      'You cannot leave the void',
-      'Time continued without you',
-      'The black hole waited',
-      'Nothing escapes — not even your attention',
-      'Gravity does not pause',
-    ];
+    const getTabMessages = () => t().tab;
     this.addTrackedListener(document, 'visibilitychange', (() => {
       if (document.hidden) {
         tabLeftAt = performance.now();
@@ -1085,7 +1126,7 @@ export class Experience {
         this.postProcessing.triggerShockwave(0.5, 0.5, 0.6);
         const away = performance.now() - tabLeftAt;
         if (away > 5000 && this.state.scroll > 0.15 && this.state.scroll < 0.9) {
-          this.showCosmicMessage(TAB_MESSAGES[Math.floor(Math.random() * TAB_MESSAGES.length)]);
+          this.showCosmicMessage(getTabMessages()[Math.floor(Math.random() * getTabMessages().length)]);
         }
       }
     }) as EventListener);
@@ -1267,7 +1308,7 @@ export class Experience {
       this.chapterZoomPulse = 1.0;
       this.hudChapterPulse = 1.0;
       this.logChapter(currentChapter);
-      const chName = Experience.CHAPTER_NAMES[currentChapter];
+      const chName = this.getChapterNames()[currentChapter];
       document.title = currentChapter === 0
         ? 'Event Horizon \u2014 An Interactive Journey Into a Black Hole'
         : `${chName} \u2014 Event Horizon`;
@@ -1388,18 +1429,8 @@ export class Experience {
   private lastIndicatorChapter = -1;
   private chapterIndicatorTimer = 0;
 
-  private static CHAPTER_NAMES = ['YOU', 'THE PULL', 'THE WARP', 'THE PHOTON SPHERE', 'THE FALL', 'SPAGHETTIFICATION', 'TIME DILATION', 'SINGULARITY', 'WHAT REMAINS'];
-  private static INTERSTITIALS = [
-    '',
-    'ten billion solar masses',
-    'spacetime curves',
-    'light orbits here',
-    'no turning back',
-    'atom by atom',
-    'one heartbeat — an eternity',
-    'where physics breaks',
-    '',
-  ];
+  private getChapterNames() { return t().chapterNames; }
+  private getInterstitials() { return t().interstitials; }
 
   private lerpHudValue(key: string, target: number, speed: number): number {
     if (this.hudDisplayValues[key] === undefined) this.hudDisplayValues[key] = target;
@@ -1644,7 +1675,7 @@ export class Experience {
     if (chapterIndex !== this.lastIndicatorChapter && this.chapterIndicatorEl) {
       this.lastIndicatorChapter = chapterIndex;
       if (this.chapterIndicatorNum) this.chapterIndicatorNum.textContent = `${String(chapterIndex + 1).padStart(2, '0')}`;
-      if (this.chapterIndicatorTitle) this.chapterIndicatorTitle.textContent = Experience.CHAPTER_NAMES[chapterIndex] || '';
+      if (this.chapterIndicatorTitle) this.chapterIndicatorTitle.textContent = this.getChapterNames()[chapterIndex] || '';
       this.chapterIndicatorEl.classList.add('visible');
       this.flashTransitionBar();
       clearTimeout(this.chapterIndicatorTimer);
@@ -1652,7 +1683,7 @@ export class Experience {
         this.chapterIndicatorEl?.classList.remove('visible');
       }, 3000);
 
-      const chName = Experience.CHAPTER_NAMES[chapterIndex];
+      const chName = this.getChapterNames()[chapterIndex];
       if (chName) {
         document.title = `${chName} — Event Horizon`;
       }
@@ -1671,7 +1702,7 @@ export class Experience {
     if (this.interstitialEl) {
       const chapterFrac = (scroll * 9) % 1;
       const betweenChapters = chapterFrac > 0.85 || chapterFrac < 0.15;
-      const interstitialText = Experience.INTERSTITIALS[chapterIndex] || '';
+      const interstitialText = this.getInterstitials()[chapterIndex] || '';
       if (betweenChapters && interstitialText && scroll > 0.05 && scroll < 0.92) {
         this.interstitialEl.textContent = interstitialText;
         this.interstitialEl.classList.add('visible');
@@ -1824,26 +1855,8 @@ export class Experience {
     this.faviconLink.href = this.faviconCanvas.toDataURL('image/png');
   }
 
-  private static ESCAPE_MESSAGES = [
-    'You cannot escape',
-    'There is no going back',
-    'The pull is absolute',
-    'Resistance is meaningless',
-    'Gravity has already decided',
-    'Light itself cannot leave',
-    'Even time bends toward the center',
-    'The horizon was crossed long ago',
-  ];
-
-  private static IDLE_MESSAGES = [
-    'Keep scrolling to descend',
-    'The void awaits below',
-    'Continue your descent',
-    'Scroll deeper into the unknown',
-    'Gravity is patient',
-    'The singularity calls',
-    'There is more below',
-  ];
+  private getEscapeMessages() { return t().escape; }
+  private getIdleMessages() { return t().idle; }
 
   private checkEscapePrompt() {
     if (this.escapePromptShown) return;
@@ -1869,7 +1882,7 @@ export class Experience {
     if (!this.escapeMsg) this.escapeMsg = document.getElementById('escape-msg');
     if (!this.escapeMsg) return;
 
-    const msg = Experience.ESCAPE_MESSAGES[Math.floor(Math.random() * Experience.ESCAPE_MESSAGES.length)];
+    const msg = this.getEscapeMessages()[Math.floor(Math.random() * this.getEscapeMessages().length)];
     this.escapeMsg.textContent = msg;
     this.escapeMsg.classList.remove('fade-out');
     this.escapeMsg.classList.add('visible');
@@ -1892,7 +1905,7 @@ export class Experience {
       if (!this.idleHintEl) this.idleHintEl = document.getElementById('idle-hint');
       if (!this.idleHintEl) return;
 
-      const msg = Experience.IDLE_MESSAGES[Math.floor(Math.random() * Experience.IDLE_MESSAGES.length)];
+      const msg = this.getIdleMessages()[Math.floor(Math.random() * this.getIdleMessages().length)];
       this.idleHintEl.textContent = msg;
       this.idleHintEl.classList.remove('fade-out');
       this.idleHintEl.classList.add('visible');

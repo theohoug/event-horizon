@@ -394,18 +394,10 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
     float r = length(pos);
 
     if (r < SCHWARZSCHILD_RADIUS) {
-      float edgeFade = smoothstep(SCHWARZSCHILD_RADIUS * 0.5, SCHWARZSCHILD_RADIUS, r);
-      vec3 edgeGlow = vec3(0.15, 0.08, 0.03) * edgeFade * edgeFade * 0.8;
       float captureRedshift = smoothstep(SCHWARZSCHILD_RADIUS, SCHWARZSCHILD_RADIUS * 0.3, r);
-      color = accumulatedDiskColor * (1.0 - captureRedshift) + edgeGlow;
-      glow = edgeFade * 0.3;
+      color = accumulatedDiskColor * (1.0 - captureRedshift);
+      glow = 0.0;
       return;
-    }
-
-    if (r < SCHWARZSCHILD_RADIUS * 1.8 && r > SCHWARZSCHILD_RADIUS) {
-      float shadowEdge = smoothstep(SCHWARZSCHILD_RADIUS, SCHWARZSCHILD_RADIUS * 1.8, r);
-      float innerGlow = (1.0 - shadowEdge) * (1.0 - shadowEdge) * 0.15;
-      glow += innerGlow;
     }
 
     if (r > 60.0) {
@@ -468,8 +460,8 @@ void main() {
   vec2 mouseParallax = (uMouse - 0.5);
   float mouseLen = length(mouseParallax);
   vec3 camPos = vec3(
-    sin(scrollEffect * 0.4) * 0.3 + sin(uTime * 0.03) * 0.02 + mouseParallax.x * mix(0.6, 0.1, scrollEffect),
-    mix(7.0, 0.06, scrollEffect * (0.8 + 0.2 * scrollEffect)) + sin(uTime * 0.08) * 0.03 + mouseParallax.y * mix(0.35, 0.05, scrollEffect),
+    sin(scrollEffect * 0.4) * 0.1 + sin(uTime * 0.03) * 0.01 + mouseParallax.x * mix(0.4, 0.05, scrollEffect),
+    mix(7.0, 0.06, scrollEffect * (0.8 + 0.2 * scrollEffect)) + sin(uTime * 0.08) * 0.02 + mouseParallax.y * mix(0.25, 0.03, scrollEffect),
     mix(38.0, 2.5, scrollEffect)
   );
 
@@ -497,36 +489,36 @@ void main() {
   vec3 subtleCyan = vec3(0.0, 0.35, 0.4) * glow * 0.06 * scrollGlowDim;
   color += warmGlow + hotGlow + deepBlueGlow + subtleCyan;
 
-  float diskPlaneY = uv.y + 0.03 * (1.0 - scrollEffect);
-  float diskHaze = exp(-diskPlaneY * diskPlaneY * mix(15.0, 120.0, scrollEffect));
-  float diskRadial = smoothstep(0.7, 0.1, abs(uv.x));
-  float earlyHazeBoost = 1.0 + smoothstep(0.2, 0.0, scrollEffect) * 1.5;
-  float closeHazeDim = 1.0 - smoothstep(0.5, 0.85, scrollEffect) * 0.55;
-  float hazeIntensity = diskHaze * diskRadial * mix(0.18, 0.01, scrollEffect) * scrollGlowDim * earlyHazeBoost * closeHazeDim;
+  float diskPlaneY = uv.y + 0.01 * (1.0 - scrollEffect);
+  float diskHaze = exp(-diskPlaneY * diskPlaneY * mix(25.0, 150.0, scrollEffect));
+  float diskRadial = smoothstep(0.6, 0.1, abs(uv.x));
+  float earlyHazeBoost = 1.0 + smoothstep(0.2, 0.0, scrollEffect) * 1.0;
+  float closeHazeDim = 1.0 - smoothstep(0.5, 0.85, scrollEffect) * 0.65;
+  float hazeIntensity = diskHaze * diskRadial * mix(0.12, 0.005, scrollEffect) * scrollGlowDim * earlyHazeBoost * closeHazeDim;
   vec3 hazeColor = mix(vec3(0.45, 0.18, 0.04), vec3(0.1, 0.15, 0.35), smoothstep(-0.3, 0.3, uv.x));
   float hazePulse = 1.0 + sin(uTime * 0.6) * 0.06;
   color += hazeColor * hazeIntensity * hazePulse;
 
-  float diskGlowLine = exp(-diskPlaneY * diskPlaneY * mix(300.0, 800.0, scrollEffect));
-  float glowLineRadial = smoothstep(0.45, 0.05, abs(uv.x));
-  color += vec3(0.08, 0.12, 0.3) * diskGlowLine * glowLineRadial * mix(0.03, 0.005, scrollEffect);
+  float diskGlowLine = exp(-diskPlaneY * diskPlaneY * mix(600.0, 1200.0, scrollEffect));
+  float glowLineRadial = smoothstep(0.3, 0.05, abs(uv.x));
+  color += vec3(0.05, 0.08, 0.2) * diskGlowLine * glowLineRadial * mix(0.008, 0.001, scrollEffect);
 
   float lensDist = length(uv);
   float _lf = max(1.0 - lensDist * 2.0, 0.0); float _lf2 = _lf*_lf; float _lf4 = _lf2*_lf2; float lensFlare = _lf4 * _lf4 * glow * 0.04;
   float _lfe = max(1.0 - lensDist * 1.5, 0.0); float _lfe2 = _lfe*_lfe; float _lfe4 = _lfe2*_lfe2; float lensFlareEarly = _lfe4 * _lfe * glow * 0.02 * (1.0 - uScroll);
   color += vec3(0.3, 0.5, 0.8) * (lensFlare + lensFlareEarly);
 
-  float _am = max(1.0 - abs(uv.x) * 0.5, 0.0); float anamorphic = exp(-abs(uv.y) * 8.0) * _am * _am;
-  color += vec3(0.0, 0.2, 0.3) * anamorphic * glow * 0.03;
+  float _am = max(1.0 - abs(uv.x) * 0.5, 0.0); float anamorphic = exp(-abs(uv.y) * 12.0) * _am * _am;
+  color += vec3(0.0, 0.15, 0.25) * anamorphic * glow * 0.015;
 
-  float _da = max(1.0 - abs(uv.x) * 0.3, 0.0); float diskAnamorphic = exp(-abs(diskPlaneY) * 14.0) * _da * _da * sqrt(_da);
+  float _da = max(1.0 - abs(uv.x) * 0.3, 0.0); float diskAnamorphic = exp(-abs(diskPlaneY) * 20.0) * _da * _da * sqrt(_da);
   float anamorphicDim = 1.0 - smoothstep(0.5, 0.8, scrollEffect) * 0.7;
-  color += vec3(0.25, 0.10, 0.03) * diskAnamorphic * mix(0.06, 0.01, scrollEffect) * anamorphicDim;
+  color += vec3(0.20, 0.08, 0.02) * diskAnamorphic * mix(0.03, 0.005, scrollEffect) * anamorphicDim;
 
-  float _ll = max(1.0 - abs(uv.x) * 0.8, 0.0); float _ll2 = _ll*_ll; float lightLeak = _ll2 * _ll2 * exp(-abs(uv.y + diskPlaneY * 0.5) * 6.0);
-  float lightLeakPulse = sin(uTime * 0.4) * 0.15 + 0.85;
-  float lightLeakDim = 1.0 - smoothstep(0.5, 0.8, scrollEffect) * 0.6;
-  color += vec3(0.15, 0.06, 0.02) * lightLeak * mix(0.06, 0.01, scrollEffect) * lightLeakPulse * lightLeakDim;
+  float _ll = max(1.0 - abs(uv.x) * 0.8, 0.0); float _ll2 = _ll*_ll; float lightLeak = _ll2 * _ll2 * exp(-abs(uv.y + diskPlaneY * 0.5) * 8.0);
+  float lightLeakPulse = sin(uTime * 0.4) * 0.10 + 0.90;
+  float lightLeakDim = 1.0 - smoothstep(0.5, 0.8, scrollEffect) * 0.7;
+  color += vec3(0.10, 0.04, 0.015) * lightLeak * mix(0.03, 0.005, scrollEffect) * lightLeakPulse * lightLeakDim;
 
   float godRayAngle = atan(uv.y - diskPlaneY + 0.01, uv.x);
   float _gr = max(sin(godRayAngle * 8.0 + uTime * 0.3) * 0.5 + 0.5, 0.0); float _gr2 = _gr*_gr; float godRays = _gr2 * _gr2 * _gr2;

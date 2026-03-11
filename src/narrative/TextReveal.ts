@@ -171,15 +171,15 @@ export class TextReveal {
       const mx = (this.mouseX - 0.5) * 2;
       const my = (this.mouseY - 0.5) * 2;
       const mouseDepth = Math.min(scroll * 2, 1);
-      const parallaxOffset = Math.sin(scroll * Math.PI * 0.5) * 3;
-      const rotX = scroll * 3 + my * 2.5 * mouseDepth;
-      const rotY = mx * 3.0 * mouseDepth;
-      const titleZ = scroll * -8;
-      const subZ = scroll * -4;
-      const titleShiftX = mx * 6 * mouseDepth;
-      const titleShiftY = my * 4 * mouseDepth;
-      const subShiftX = mx * 3 * mouseDepth;
-      const subShiftY = my * 2 * mouseDepth;
+      const parallaxOffset = Math.sin(scroll * Math.PI * 0.5) * 2;
+      const rotX = scroll * 2 + my * 1.5 * mouseDepth;
+      const rotY = mx * 2.0 * mouseDepth;
+      const titleZ = scroll * -5;
+      const subZ = scroll * -2.5;
+      const titleShiftX = mx * 3 * mouseDepth;
+      const titleShiftY = my * 2 * mouseDepth;
+      const subShiftX = mx * 1.5 * mouseDepth;
+      const subShiftY = my * 1 * mouseDepth;
       this.cachedTitleLine.style.transform = `translateX(${titleShiftX}px) translateY(${-parallaxOffset + titleShiftY}px) translateZ(${titleZ}px) rotateX(${(rotX * 0.3).toFixed(2)}deg) rotateY(${(rotY * 0.4).toFixed(2)}deg)`;
       this.cachedSubtitleLine.style.transform = `translateX(${subShiftX}px) translateY(${parallaxOffset * 0.6 + subShiftY}px) translateZ(${subZ}px) rotateX(${(-rotX * 0.15).toFixed(2)}deg) rotateY(${(rotY * 0.2).toFixed(2)}deg)`;
     }

@@ -119,12 +119,7 @@ body::after {
 
 #experience {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  width: 100dvw;
-  height: 100dvh;
+  inset: 0;
   z-index: 1;
   pointer-events: none;
   touch-action: none;
@@ -454,11 +449,7 @@ body {
 
 #overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  inset: 0;
   z-index: 10;
   pointer-events: none;
   display: flex;
@@ -499,19 +490,20 @@ body {
 }
 
 #chapter-text {
-  position: absolute;
-  inset: 0;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, 1200px);
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 3rem 4rem;
+  padding: 3rem 2rem;
   pointer-events: none;
-  max-width: 1200px;
-  margin: 0 auto;
-  left: 0;
-  right: 0;
+  overflow: hidden;
 }
 
 #chapter-text::before {
@@ -1303,11 +1295,7 @@ body {
 
 #loader {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  inset: 0;
   background:
     radial-gradient(ellipse 50% 50% at 50% 45%, rgba(20, 15, 35, 0.5) 0%, transparent 70%),
     var(--void);
@@ -1540,11 +1528,7 @@ body {
 
 #sound-prompt {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  inset: 0;
   background: rgba(2, 2, 5, 0.98);
   z-index: 90;
   display: none;
@@ -1825,11 +1809,7 @@ body {
 
 #credits {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  inset: 0;
   z-index: 15;
   display: flex;
   align-items: center;
@@ -2409,11 +2389,7 @@ body {
 
 #intro-cinematic {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  inset: 0;
   z-index: 80;
   display: flex;
   align-items: center;

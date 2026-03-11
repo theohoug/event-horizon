@@ -422,9 +422,10 @@ export class Timeline {
     this.currentPattern = pattern;
 
     const offset = Timeline.TEXT_OFFSETS[chapter.id] || { x: 0, y: 0, align: 'center' };
+    const centerTransform = 'translateX(-50%)';
     const baseTransform = offset.x !== 0 || offset.y !== 0
-      ? `translate(${offset.x}vw, ${offset.y}vh)`
-      : '';
+      ? `${centerTransform} translate(${offset.x}vw, ${offset.y}vh)`
+      : centerTransform;
     container.dataset.baseTransform = baseTransform;
     container.style.transform = baseTransform;
     container.style.textAlign = offset.align;

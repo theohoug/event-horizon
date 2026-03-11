@@ -14,10 +14,10 @@ interface Translations {
   poetry: string;
   hud: { distance: string; temp: string; timeDilation: string; elapsed: string; tidalForce: string };
   loader: { title: string; sub: string; steps: string[] };
-  sound: { label: string; yes: string; no: string };
-  scroll: { desktop: string; mobile: string };
-  credits: { sub: string; roles: { role: string; name: string }[]; footer: string };
-  share: { share: string; return: string; copied: string };
+  sound: { label: string; yes: string; no: string; switchLang: string };
+  scroll: { desktop: string; mobile: string; descentDesktop: string; descentMobile: string };
+  credits: { sub: string; epigraph: string; roles: { role: string; name: string }[]; footer: string };
+  share: { share: string; return: string; copied: string; text: string };
   rotate: { text: string };
   fallback: { title: string; message: string };
   noscript: string;
@@ -26,6 +26,11 @@ interface Translations {
   cosmic: Record<string, string>;
   tab: string[];
   langSwitch: string;
+  signalLost: string;
+  doubleTap: string;
+  introSubtitle: string;
+  postCredits: string;
+  tryScrollBack: string;
 }
 
 const en: Translations = {
@@ -67,10 +72,11 @@ const en: Translations = {
       'Event horizon locked',
     ],
   },
-  sound: { label: 'Sound', yes: 'Enter with sound', no: 'Skip' },
-  scroll: { desktop: 'Scroll to begin', mobile: 'Swipe to begin' },
+  sound: { label: 'Sound', yes: 'Enter with sound', no: 'Skip', switchLang: 'changer de langue' },
+  scroll: { desktop: 'Scroll to begin', mobile: 'Swipe to begin', descentDesktop: 'Scroll to begin your descent', descentMobile: 'Swipe to begin your descent' },
   credits: {
     sub: 'An Interactive Journey Into a Black Hole',
+    epigraph: 'You crossed the boundary of spacetime.<br>Nothing returns — but everything remains.',
     roles: [
       { role: 'Design & Development', name: 'Cleanlystudio' },
       { role: 'Sound Design', name: 'Procedural Web Audio API' },
@@ -78,7 +84,7 @@ const en: Translations = {
     ],
     footer: 'A <a href="https://cleanlystudio.pro" target="_blank" rel="noopener">Cleanlystudio</a> experience',
   },
-  share: { share: 'Share this journey', return: 'Return to surface', copied: 'Link copied!' },
+  share: { share: 'Share this journey', return: 'Return to surface', copied: 'Link copied!', text: 'Experience the cosmic sublime. Scroll through 9 chapters into a black hole.' },
   rotate: { text: 'Best in landscape' },
   fallback: { title: 'Event Horizon', message: 'This experience requires WebGL 2.0 to render the black hole simulation. Please update your browser or enable hardware acceleration in your settings.' },
   noscript: 'This experience requires JavaScript to explore the cosmos.',
@@ -119,6 +125,11 @@ const en: Translations = {
     'Gravity does not pause',
   ],
   langSwitch: 'FR',
+  signalLost: 'SIGNAL LOST',
+  doubleTap: 'Double-tap for shockwave',
+  introSubtitle: 'An Interactive Journey Into a Black Hole',
+  postCredits: 'Some journeys end where they began. Press Home to return.',
+  tryScrollBack: 'Try scrolling back up...',
 };
 
 const fr: Translations = {
@@ -160,10 +171,11 @@ const fr: Translations = {
       'Horizon des événements verrouillé',
     ],
   },
-  sound: { label: 'Son', yes: 'Entrer avec le son', no: 'Passer' },
-  scroll: { desktop: 'Scrollez pour commencer', mobile: 'Glissez pour commencer' },
+  sound: { label: 'Son', yes: 'Entrer avec le son', no: 'Passer', switchLang: 'switch language' },
+  scroll: { desktop: 'Scrollez pour commencer', mobile: 'Glissez pour commencer', descentDesktop: 'Scrollez pour commencer la descente', descentMobile: 'Glissez pour commencer la descente' },
   credits: {
     sub: 'Un Voyage Interactif Dans un Trou Noir',
+    epigraph: 'Tu as franchi la frontière de l\'espace-temps.<br>Rien ne revient — mais tout demeure.',
     roles: [
       { role: 'Design & Développement', name: 'Cleanlystudio' },
       { role: 'Design Sonore', name: 'Procedural Web Audio API' },
@@ -171,7 +183,7 @@ const fr: Translations = {
     ],
     footer: 'Une expérience <a href="https://cleanlystudio.pro" target="_blank" rel="noopener">Cleanlystudio</a>',
   },
-  share: { share: 'Partager ce voyage', return: 'Retourner à la surface', copied: 'Lien copié !' },
+  share: { share: 'Partager ce voyage', return: 'Retourner à la surface', copied: 'Lien copié !', text: 'Vivez le sublime cosmique. Scrollez à travers 9 chapitres dans un trou noir.' },
   rotate: { text: 'Meilleur en paysage' },
   fallback: { title: 'Event Horizon', message: 'Cette expérience nécessite WebGL 2.0 pour afficher la simulation du trou noir. Veuillez mettre à jour votre navigateur ou activer l\'accélération matérielle.' },
   noscript: 'Cette expérience nécessite JavaScript pour explorer le cosmos.',
@@ -212,6 +224,11 @@ const fr: Translations = {
     'La gravité ne fait pas de pause',
   ],
   langSwitch: 'EN',
+  signalLost: 'SIGNAL PERDU',
+  doubleTap: 'Double-tap pour onde de choc',
+  introSubtitle: 'Un Voyage Interactif Dans un Trou Noir',
+  postCredits: 'Certains voyages finissent là où ils ont commencé. Appuyez sur Début pour revenir.',
+  tryScrollBack: 'Essayez de remonter...',
 };
 
 const translations: Record<Lang, Translations> = { en, fr };

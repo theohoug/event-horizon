@@ -120,6 +120,9 @@ export class Timeline {
     const dataHud = document.getElementById('data-hud');
     if (dataHud) dataHud.classList.add('hidden');
 
+    const overlay = document.getElementById('overlay');
+    if (overlay) overlay.classList.add('hidden');
+
     credits.classList.add('visible');
 
     if (this.creditsTl) this.creditsTl.kill();
@@ -190,6 +193,9 @@ export class Timeline {
     }
     const dataHud = document.getElementById('data-hud');
     if (dataHud) dataHud.classList.remove('hidden');
+
+    const overlay = document.getElementById('overlay');
+    if (overlay) overlay.classList.remove('hidden');
   }
 
   private showChapter(chapter: Chapter) {

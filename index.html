@@ -181,7 +181,7 @@
           <button id="sound-prompt-yes">Enter with sound</button>
           <button id="sound-prompt-no">Skip</button>
         </div>
-        <button id="sound-lang-toggle" aria-label="Switch language">EN / FR</button>
+        <button id="sound-lang-toggle" aria-label="Switch language" data-hint="changer de langue">EN / FR</button>
       </div>
     </div>
 
@@ -241,7 +241,10 @@
       </button>
     </div>
 
-    <button id="lang-btn" aria-label="Switch language">EN</button>
+    <div id="lang-switch" aria-label="Language selector">
+      <button class="lang-opt" data-lang="en" aria-label="English">EN</button>
+      <button class="lang-opt" data-lang="fr" aria-label="Français">FR</button>
+    </div>
 
     <button id="mute-btn" aria-label="Toggle sound">
       <svg id="mute-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">

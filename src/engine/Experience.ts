@@ -96,7 +96,7 @@ export class Experience {
       const loader = document.getElementById('loader');
       const loaderSub = document.getElementById('loader-sub');
       const loaderText = document.getElementById('loader-text');
-      if (loaderText) loaderText.textContent = 'SIGNAL LOST';
+      if (loaderText) loaderText.textContent = t().signalLost;
       if (loaderSub) loaderSub.textContent = t().fallback.message;
       if (loader) loader.classList.remove('hidden');
       const fill = document.getElementById('loader-bar-fill');
@@ -379,6 +379,7 @@ export class Experience {
       const updateSoundLangBtn = () => {
         const current = getLang();
         soundLangToggle.textContent = current === 'en' ? 'ENGLISH' : 'FRANÇAIS';
+        soundLangToggle.setAttribute('data-hint', t().sound.switchLang);
       };
       updateSoundLangBtn();
       this.addTrackedListener(soundLangToggle, 'click', () => {
@@ -412,9 +413,10 @@ export class Experience {
     if (shareBtn) {
       this.addTrackedListener(shareBtn, 'click', async () => {
         const url = window.location.href;
+        const tr = t();
         const shareData = {
-          title: 'Event Horizon — An Interactive Journey Into a Black Hole',
-          text: 'Experience the cosmic sublime. Scroll through 9 chapters into a black hole.',
+          title: `Event Horizon — ${tr.introSubtitle}`,
+          text: tr.share.text,
           url,
         };
         if (navigator.share && navigator.canShare?.(shareData)) {
@@ -464,18 +466,39 @@ export class Experience {
   }
 
   private setupLangButton() {
-    const langBtn = document.getElementById('lang-btn');
-    if (!langBtn) return;
-    langBtn.textContent = t().langSwitch;
+    const langSwitch = document.getElementById('lang-switch');
+    if (!langSwitch) return;
 
-    this.addTrackedListener(langBtn, 'click', () => {
+    const opts = langSwitch.querySelectorAll<HTMLButtonElement>('.lang-opt');
+    const updateActive = () => {
+      const current = getLang();
+      opts.forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.lang === current);
+      });
+    };
+    updateActive();
+
+    const switchLang = (lang: Lang) => {
+      if (lang !== getLang()) {
+        setLang(lang);
+        if (this.state.soundEnabled) this.audio.triggerUIHover();
+      }
+    };
+
+    opts.forEach(opt => {
+      this.addTrackedListener(opt, 'click', (e: Event) => {
+        e.stopPropagation();
+        switchLang(opt.dataset.lang as Lang);
+      });
+    });
+
+    this.addTrackedListener(langSwitch, 'click', () => {
       const newLang: Lang = getLang() === 'en' ? 'fr' : 'en';
-      setLang(newLang);
-      if (this.state.soundEnabled) this.audio.triggerUIHover();
+      switchLang(newLang);
     });
 
     onLangChange(() => {
-      langBtn.textContent = t().langSwitch;
+      updateActive();
       this.applyTranslations();
     });
   }
@@ -527,6 +550,18 @@ export class Experience {
 
     const loaderSub = document.getElementById('loader-sub');
     if (loaderSub) loaderSub.textContent = tr.loader.sub;
+
+    const introSubtitle = document.getElementById('intro-subtitle');
+    if (introSubtitle) introSubtitle.textContent = tr.introSubtitle;
+
+    const epigraph = document.querySelector('.credits-epigraph');
+    if (epigraph) epigraph.innerHTML = tr.credits.epigraph;
+
+    const soundLangToggle = document.getElementById('sound-lang-toggle');
+    if (soundLangToggle) {
+      soundLangToggle.textContent = getLang() === 'en' ? 'ENGLISH' : 'FRANÇAIS';
+      soundLangToggle.setAttribute('data-hint', tr.sound.switchLang);
+    }
 
     this.navDots.forEach((dot, i) => {
       const label = tr.chapterNames[i] || '';
@@ -590,8 +625,8 @@ export class Experience {
       intro.classList.add('fade-out');
       intro.classList.remove('active');
       if (muteBtn) muteBtn.classList.add('visible');
-      const langBtn = document.getElementById('lang-btn');
-      if (langBtn) langBtn.classList.add('visible');
+      const langSwitch = document.getElementById('lang-switch');
+      if (langSwitch) langSwitch.classList.add('visible');
       if (dataHud) dataHud.classList.add('visible');
       this.activateAmbientUI();
       this.experienceStartTime = performance.now();
@@ -827,7 +862,7 @@ export class Experience {
         touchHintShown = true;
         const hint = document.createElement('div');
         hint.style.cssText = 'position:fixed;bottom:6rem;left:50%;transform:translateX(-50%);z-index:50;font-family:var(--font-mono);font-size:0.55rem;color:rgba(0,245,212,0.4);letter-spacing:0.1em;pointer-events:none;opacity:0;transition:opacity 1s ease';
-        hint.textContent = 'Double-tap for shockwave';
+        hint.textContent = t().doubleTap;
         document.body.appendChild(hint);
         requestAnimationFrame(() => { hint.style.opacity = '1'; });
         setTimeout(() => { hint.style.opacity = '0'; }, 4000);
@@ -1344,7 +1379,7 @@ export class Experience {
       this.logChapter(currentChapter);
       const chName = this.getChapterNames()[currentChapter];
       document.title = currentChapter === 0
-        ? 'Event Horizon \u2014 An Interactive Journey Into a Black Hole'
+        ? `Event Horizon \u2014 ${t().introSubtitle}`
         : `${chName} \u2014 Event Horizon`;
     }
     if (this.chapterZoomPulse > 0.01) {
@@ -1644,7 +1679,7 @@ export class Experience {
       if (hintText && scroll < 0.02) {
         const isStopped = Math.abs(this.state.scrollVelocity) < 0.5;
         if (isStopped && this.scrollHintLastUpdate !== 0 && performance.now() - this.scrollHintLastUpdate > 5000) {
-          hintText.textContent = this.state.quality === 'medium' ? 'Swipe to begin your descent' : 'Scroll to begin your descent';
+          hintText.textContent = this.state.quality === 'medium' ? t().scroll.descentMobile : t().scroll.descentDesktop;
           this.scrollHintLastUpdate = performance.now();
         }
       }
@@ -1783,7 +1818,7 @@ export class Experience {
           this.postCreditsShown = true;
           const msg = document.createElement('div');
           msg.style.cssText = 'position:fixed;bottom:8%;left:50%;transform:translateX(-50%);z-index:16;font-family:var(--font-serif);font-style:italic;font-size:clamp(0.55rem,0.9vw,0.75rem);color:rgba(100,100,120,0.3);letter-spacing:0.08em;pointer-events:none;opacity:0;transition:opacity 4s ease;text-align:center;max-width:280px;line-height:1.8';
-          msg.textContent = 'Some journeys end where they began. Press Home to return.';
+          msg.textContent = t().postCredits;
           document.body.appendChild(msg);
           requestAnimationFrame(() => { msg.style.opacity = '1'; });
         }
@@ -1913,7 +1948,7 @@ export class Experience {
       this.escapePromptShown = true;
       if (!this.idleHintEl) this.idleHintEl = document.getElementById('idle-hint');
       if (!this.idleHintEl) return;
-      this.idleHintEl.textContent = 'Try scrolling back up...';
+      this.idleHintEl.textContent = t().tryScrollBack;
       this.idleHintEl.classList.remove('fade-out');
       this.idleHintEl.classList.add('visible');
       window.setTimeout(() => {

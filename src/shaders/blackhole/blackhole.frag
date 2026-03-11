@@ -309,7 +309,8 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   float scrollDim = 1.0 - sqrt(uScroll) * 0.3;
   float closeUpDim = 1.0 - smoothstep(0.5, 0.85, uScroll) * 0.3;
   float earlyBoost = 1.0 + smoothstep(0.4, 0.0, uScroll) * 0.4;
-  diskColor *= uIntensity * 0.7 * scrollDim * closeUpDim * earlyBoost;
+  float diskFade = 1.0 - smoothstep(0.35, 0.65, uScroll);
+  diskColor *= uIntensity * 0.7 * scrollDim * closeUpDim * earlyBoost * diskFade;
 
   float deepShift = smoothstep(0.65, 0.90, uScroll);
   diskColor = mix(diskColor, diskColor * vec3(1.1, 0.9, 0.75), deepShift * 0.25);
@@ -324,7 +325,7 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
     diskColor = mix(diskColor, vec3(dot(diskColor, vec3(0.2126, 0.7152, 0.0722))), (diskPeak - 1.2) * 0.15);
   }
 
-  return vec4(diskColor * density, density * scrollDim);
+  return vec4(diskColor * density, density * scrollDim * diskFade);
 }
 
 /* ─── Photon Ring ─── */
@@ -340,6 +341,7 @@ float photonRing(vec3 pos, float r) {
   float shimmer2 = sin(angle * 50.0 - uTime * 6.0) * 0.04;
 
   float earlyBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 1.5;
+  float ringFade = 1.0 - smoothstep(0.35, 0.65, uScroll);
 
   float heartbeatPhase = uScroll > 0.35 ? 1.0 : 0.0;
   float hbSpeed = 50.0 + max(uScroll - 0.35, 0.0) * 200.0;
@@ -347,7 +349,7 @@ float photonRing(vec3 pos, float r) {
   float pulse = sin(uTime * 1.5) * 0.08 + 1.0 + heartbeatPulse;
   float breathe = sin(uTime * 0.4) * 0.1 + 1.0;
 
-  return (ring1 + ring2 + ring3 + ringWide) * (1.0 + shimmer + shimmer2) * pulse * breathe * earlyBoost;
+  return (ring1 + ring2 + ring3 + ringWide) * (1.0 + shimmer + shimmer2) * pulse * breathe * earlyBoost * ringFade;
 }
 
 /* ─── Einstein Ring ─── */
@@ -361,11 +363,12 @@ vec3 einsteinRingColor(vec3 rd, vec3 camPos) {
 
   float chromaticSpread = 0.006;
   float earlyRingBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 2.0;
-  float ringR = g2((viewAngle - einsteinAngle * (1.0 + chromaticSpread)) * 80.0) * 0.30 * breathe * earlyRingBoost;
-  float ringG = g2((viewAngle - einsteinAngle) * 80.0) * 0.28 * breathe * earlyRingBoost;
-  float ringB = g2((viewAngle - einsteinAngle * (1.0 - chromaticSpread)) * 80.0) * 0.25 * breathe * earlyRingBoost;
+  float eRingFade = 1.0 - smoothstep(0.35, 0.65, uScroll);
+  float ringR = g2((viewAngle - einsteinAngle * (1.0 + chromaticSpread)) * 80.0) * 0.30 * breathe * earlyRingBoost * eRingFade;
+  float ringG = g2((viewAngle - einsteinAngle) * 80.0) * 0.28 * breathe * earlyRingBoost * eRingFade;
+  float ringB = g2((viewAngle - einsteinAngle * (1.0 - chromaticSpread)) * 80.0) * 0.25 * breathe * earlyRingBoost * eRingFade;
 
-  float glow = g2((viewAngle - einsteinAngle) * 25.0) * 0.18 * breathe2 * earlyRingBoost;
+  float glow = g2((viewAngle - einsteinAngle) * 25.0) * 0.18 * breathe2 * earlyRingBoost * eRingFade;
   float shimmer = sin(viewAngle * 200.0 + uTime * 3.0) * 0.02 + 1.0;
 
   vec3 ring = vec3(ringR, ringG, ringB) * shimmer + vec3(glow);

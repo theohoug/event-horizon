@@ -536,19 +536,83 @@ export class AudioEngine {
   triggerSingularity() {
     if (!this.ctx || !this.isPlaying) return;
     const now = this.ctx.currentTime;
-    const bufferSize = this.ctx.sampleRate * 4;
-    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-    const source = this.ctx.createBufferSource();
-    source.buffer = buffer;
-    const gain = this.ctx.createGain();
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.2, now + 2.5);
-    gain.gain.setValueAtTime(0, now + 2.8);
-    source.connect(gain).connect(this.sfxGain);
-    source.start(now);
-    source.stop(now + 3);
+
+    const subBoom = this.ctx.createOscillator();
+    subBoom.type = 'sine';
+    subBoom.frequency.setValueAtTime(60, now);
+    subBoom.frequency.exponentialRampToValueAtTime(20, now + 2.0);
+    const subGain = this.ctx.createGain();
+    subGain.gain.setValueAtTime(0.5, now);
+    subGain.gain.linearRampToValueAtTime(0.6, now + 0.1);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 3.0);
+    subBoom.connect(subGain).connect(this.sfxGain);
+    subBoom.start(now);
+    subBoom.stop(now + 3.2);
+
+    const impact = this.ctx.createOscillator();
+    impact.type = 'sawtooth';
+    impact.frequency.setValueAtTime(120, now);
+    impact.frequency.exponentialRampToValueAtTime(30, now + 0.8);
+    const impactGain = this.ctx.createGain();
+    impactGain.gain.setValueAtTime(0.35, now);
+    impactGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+    const impactFilter = this.ctx.createBiquadFilter();
+    impactFilter.type = 'lowpass';
+    impactFilter.frequency.setValueAtTime(800, now);
+    impactFilter.frequency.exponentialRampToValueAtTime(80, now + 1.5);
+    impact.connect(impactFilter).connect(impactGain).connect(this.sfxGain);
+    impact.start(now);
+    impact.stop(now + 1.6);
+
+    const noiseLen = this.ctx.sampleRate * 5;
+    const noiseBuf = this.ctx.createBuffer(2, noiseLen, this.ctx.sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = noiseBuf.getChannelData(ch);
+      for (let i = 0; i < noiseLen; i++) d[i] = Math.random() * 2 - 1;
+    }
+    const noiseSource = this.ctx.createBufferSource();
+    noiseSource.buffer = noiseBuf;
+    const noiseGain = this.ctx.createGain();
+    noiseGain.gain.setValueAtTime(0, now);
+    noiseGain.gain.linearRampToValueAtTime(0.25, now + 0.05);
+    noiseGain.gain.linearRampToValueAtTime(0.15, now + 0.5);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 4.0);
+    const noiseFilt = this.ctx.createBiquadFilter();
+    noiseFilt.type = 'bandpass';
+    noiseFilt.frequency.setValueAtTime(400, now);
+    noiseFilt.frequency.exponentialRampToValueAtTime(60, now + 3.0);
+    noiseFilt.Q.setValueAtTime(0.5, now);
+    noiseSource.connect(noiseFilt).connect(noiseGain).connect(this.sfxGain);
+    noiseSource.start(now);
+    noiseSource.stop(now + 4.5);
+
+    for (let i = 0; i < 3; i++) {
+      const shimmer = this.ctx.createOscillator();
+      shimmer.type = 'sine';
+      const freq = [2200, 3300, 4400][i];
+      shimmer.frequency.setValueAtTime(freq, now + 0.3);
+      shimmer.frequency.exponentialRampToValueAtTime(freq * 0.4, now + 4.0);
+      const sGain = this.ctx.createGain();
+      sGain.gain.setValueAtTime(0, now);
+      sGain.gain.linearRampToValueAtTime(0.02, now + 0.5);
+      sGain.gain.linearRampToValueAtTime(0.04, now + 1.5);
+      sGain.gain.exponentialRampToValueAtTime(0.001, now + 5.0);
+      shimmer.connect(sGain).connect(this.sfxGain);
+      shimmer.start(now + 0.3);
+      shimmer.stop(now + 5.2);
+    }
+
+    const rumble = this.ctx.createOscillator();
+    rumble.type = 'triangle';
+    rumble.frequency.setValueAtTime(35, now + 1.0);
+    rumble.frequency.linearRampToValueAtTime(25, now + 5.0);
+    const rumbleGain = this.ctx.createGain();
+    rumbleGain.gain.setValueAtTime(0, now);
+    rumbleGain.gain.linearRampToValueAtTime(0.15, now + 1.5);
+    rumbleGain.gain.exponentialRampToValueAtTime(0.001, now + 6.0);
+    rumble.connect(rumbleGain).connect(this.sfxGain);
+    rumble.start(now + 0.5);
+    rumble.stop(now + 6.5);
   }
 
   triggerUIHover() {

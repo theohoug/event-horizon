@@ -16,10 +16,10 @@ console.log(
   ' ║   Beyond the point of no return.     ║\n' +
   ' ║                                      ║\n' +
   ' ║   Crafted by Cleanlystudio           ║\n' +
-  ' ║   cleanlystudio.com                  ║\n' +
+  ' ║   cleanlystudio.pro                  ║\n' +
   ' ║                                      ║\n' +
   ' ╚══════════════════════════════════════╝',
-  'color: #00F5D4; font-family: monospace; font-size: 11px; line-height: 1.5'
+  'color: #FFB347; font-family: monospace; font-size: 11px; line-height: 1.5'
 );
 
 console.log(

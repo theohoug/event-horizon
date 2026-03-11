@@ -43,6 +43,7 @@ export class BlackHole {
         uDistortion: { value: 0 },
         uDiskSpeed: { value: 1.2 },
         uIntensity: { value: 1.2 },
+        uExplosion: { value: 0 },
       },
       depthTest: false,
       depthWrite: false,
@@ -68,12 +69,15 @@ export class BlackHole {
     );
   }
 
-  update(state: { time: number; scroll: number; mouseSmooth: THREE.Vector2 }) {
+  update(state: { time: number; scroll: number; mouseSmooth: THREE.Vector2; explosion?: number }) {
     this.material.uniforms.uTime.value = state.time;
     this.material.uniforms.uScroll.value = state.scroll;
     this.material.uniforms.uMouse.value.copy(state.mouseSmooth);
     this.material.uniforms.uDistortion.value = state.scroll;
     this.material.uniforms.uIntensity.value = 1.0 + state.scroll * 0.3;
+    if (state.explosion !== undefined) {
+      this.material.uniforms.uExplosion.value = state.explosion;
+    }
   }
 
   destroy() {

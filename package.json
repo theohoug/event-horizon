@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Event Horizon — An Interactive Journey Into a Black Hole",
   "type": "module",
-  "author": "Cleanlystudio <contact@cleanlystudio.com>",
-  "homepage": "https://cleanlystudio.com",
+  "author": "Cleanlystudio <contact@cleanlystudio.pro>",
+  "homepage": "https://cleanlystudio.pro",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

@@ -53,6 +53,17 @@ export class Timeline {
   private currentPattern: RevealPattern = 'char-rise';
   private creditsTl: gsap.core.Timeline | null = null;
 
+  refreshCurrentChapter(scroll: number) {
+    if (!this.started || this.creditsVisible) return;
+    const chapterIndex = Math.min(8, Math.floor(scroll * 9));
+    const chapters = getChapters();
+    const chapter = chapters[chapterIndex];
+    if (!chapter) return;
+    this.activeChapter = -1;
+    this.transitioning = false;
+    this.showChapter(chapter);
+  }
+
   start(withSound: boolean) {
     if (this.started) return;
     this.started = true;

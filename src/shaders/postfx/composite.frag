@@ -22,6 +22,7 @@ uniform vec4 uShockwaves[4];
 uniform float uHoldStrength;
 uniform vec2 uMouse;
 uniform float uMotionBlur;
+uniform float uExplosion;
 
 varying vec2 vUv;
 
@@ -190,7 +191,7 @@ void main() {
   vec3 bloom = texture2D(tBloom, vUv).rgb;
   vec3 bloomEarly = vec3(1.05, 0.97, 0.92);
   vec3 bloomMid = vec3(1.1, 0.88, 0.68);
-  vec3 bloomDeep = vec3(0.88, 0.85, 1.05);
+  vec3 bloomDeep = vec3(1.0, 0.88, 0.75);
   vec3 bloomTint = uScroll < 0.6
     ? mix(bloomEarly, bloomMid, uScroll / 0.6)
     : mix(bloomMid, bloomDeep, (uScroll - 0.6) / 0.4);
@@ -206,7 +207,7 @@ void main() {
   if (anamorphicScroll > 0.01) {
     float anamorphicStreak = exp(-abs(center.y) * 8.0);
     float anamorphicBright = dot(bloom, vec3(0.33)) * anamorphicStreak;
-    vec3 anamorphicColor = mix(vec3(0.75, 0.82, 1.0), vec3(1.0, 0.7, 0.4), smoothstep(0.3, 0.8, uScroll));
+    vec3 anamorphicColor = mix(vec3(1.0, 0.85, 0.65), vec3(1.0, 0.7, 0.4), smoothstep(0.3, 0.8, uScroll));
     color += anamorphicColor * anamorphicBright * 0.12 * anamorphicScroll;
     float streak2 = exp(-abs(center.y) * 16.0);
     vec3 streak2Color = mix(vec3(1.0, 0.95, 0.85), vec3(1.0, 0.6, 0.3), smoothstep(0.4, 0.9, uScroll));
@@ -217,7 +218,7 @@ void main() {
   if (halationPhase > 0.01) {
     float bloomLuma = dot(bloom, vec3(0.2126, 0.7152, 0.0722));
     float halation = smoothstep(0.15, 0.6, bloomLuma);
-    vec3 halationColor = mix(vec3(1.0, 0.88, 0.68), vec3(0.75, 0.65, 0.95), uScroll);
+    vec3 halationColor = mix(vec3(1.0, 0.88, 0.68), vec3(0.85, 0.65, 0.45), uScroll);
     color += halationColor * halation * 0.035 * halationPhase;
   }
 
@@ -246,8 +247,8 @@ void main() {
   color *= mix(vec3(1.0), vec3(1.08, 1.03, 0.90), midScrollWarm * 0.45);
 
   float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
-  vec3 earlyTint = vec3(0.99, 0.97, 1.03);
-  vec3 deepTint = vec3(0.94, 0.86, 1.04);
+  vec3 earlyTint = vec3(1.02, 0.99, 0.96);
+  vec3 deepTint = vec3(1.02, 0.92, 0.85);
   vec3 colorTint = mix(earlyTint, deepTint, uScroll);
   color = mix(color, color * colorTint, smoothstep(0.2, 0.8, luma) * 0.30);
 
@@ -255,19 +256,19 @@ void main() {
   color = (color - 0.5) * contrast + 0.5;
 
   float splitLuma = dot(color, vec3(0.2126, 0.7152, 0.0722));
-  vec3 shadowTint = vec3(0.02, 0.04, 0.06);
+  vec3 shadowTint = vec3(0.05, 0.03, 0.02);
   vec3 highlightTint = vec3(0.04, 0.02, 0.01);
   float shadowMask = 1.0 - smoothstep(0.0, 0.25, splitLuma);
   float highlightMask = smoothstep(0.6, 1.0, splitLuma);
   color += shadowTint * shadowMask * 0.3 * uScroll;
   color += highlightTint * highlightMask * 0.2 * uScroll;
 
-  float earlyCool = smoothstep(0.25, 0.0, uScroll) * 0.04;
-  color.r -= earlyCool * 0.5;
-  color.b += earlyCool;
+  float earlyWarm = smoothstep(0.25, 0.0, uScroll) * 0.04;
+  color.r += earlyWarm * 0.5;
+  color.b -= earlyWarm;
 
-  vec3 earlyAmbient = vec3(0.012, 0.012, 0.025);
-  vec3 deepAmbient = vec3(0.010, 0.006, 0.022);
+  vec3 earlyAmbient = vec3(0.02, 0.015, 0.01);
+  vec3 deepAmbient = vec3(0.018, 0.01, 0.006);
   vec3 ambientTint = mix(earlyAmbient, deepAmbient, uScroll);
   float ambientMask = (1.0 - dist * 0.6) * (1.0 + sin(uTime * 0.15 + dist * 3.0) * 0.15);
   color = max(color, ambientTint * ambientMask);
@@ -276,10 +277,10 @@ void main() {
   if (arrivalPulse > 0.01) {
     float pulseRing = g2((dist - 0.35 + sin(uTime * 0.3) * 0.05) * 8.0);
     float pulseRing2 = g2((dist - 0.55 + cos(uTime * 0.25) * 0.04) * 6.0);
-    color += vec3(0.03, 0.02, 0.08) * pulseRing * arrivalPulse * 0.8;
-    color += vec3(0.01, 0.04, 0.06) * pulseRing2 * arrivalPulse * 0.5;
+    color += vec3(0.08, 0.04, 0.02) * pulseRing * arrivalPulse * 0.8;
+    color += vec3(0.06, 0.035, 0.015) * pulseRing2 * arrivalPulse * 0.5;
     float arrivalGlow = exp(-dist * dist * 3.0) * arrivalPulse;
-    color += vec3(0.02, 0.015, 0.05) * arrivalGlow * 0.6;
+    color += vec3(0.05, 0.03, 0.015) * arrivalGlow * 0.6;
   }
 
   float earlyPhase = smoothstep(0.18, 0.0, uScroll);
@@ -289,10 +290,10 @@ void main() {
     float nebula2 = sin(nebAngle * 3.0 - uTime * 0.05 + 1.5) * 0.5 + 0.5;
     float nebula3 = sin(nebAngle * 5.0 + uTime * 0.12 + 3.0) * 0.5 + 0.5;
     float _nm = nebula1 * nebula2; float nebMask = _nm * sqrt(_nm) * smoothstep(0.08, 0.40, dist) * smoothstep(0.7, 0.45, dist);
-    color += vec3(0.025, 0.012, 0.06) * nebMask * earlyPhase * 0.8;
-    color += vec3(0.008, 0.03, 0.035) * nebula1 * smoothstep(0.25, 0.55, dist) * earlyPhase * 0.25;
+    color += vec3(0.06, 0.03, 0.012) * nebMask * earlyPhase * 0.8;
+    color += vec3(0.035, 0.02, 0.008) * nebula1 * smoothstep(0.25, 0.55, dist) * earlyPhase * 0.25;
     float nebWisp = nebula3*nebula3*nebula3 * smoothstep(0.15, 0.35, dist) * smoothstep(0.6, 0.45, dist);
-    color += vec3(0.04, 0.015, 0.05) * nebWisp * earlyPhase * 0.3;
+    color += vec3(0.05, 0.025, 0.01) * nebWisp * earlyPhase * 0.3;
   }
 
   float diskEnhance = smoothstep(0.12, 0.22, uScroll) * smoothstep(0.42, 0.30, uScroll);
@@ -315,13 +316,66 @@ void main() {
     color = mix(color, color * vec3(1.08, 0.95, 0.85), diskMask * diskEnhance * 0.3);
   }
 
+  float warpPhase = smoothstep(0.16, 0.22, uScroll) * smoothstep(0.32, 0.26, uScroll);
+  if (warpPhase > 0.01) {
+    float warpAngle = atan(center.y, center.x);
+    float warpStrength = warpPhase * 0.02;
+    float warpWave1 = sin(warpAngle * 6.0 + uTime * 0.5 + dist * 12.0) * 0.5 + 0.5;
+    float warpWave2 = sin(warpAngle * 4.0 - uTime * 0.3 + dist * 8.0) * 0.5 + 0.5;
+    vec2 warpDir = dist > 0.001 ? center / dist : vec2(0.0);
+    vec2 tangent = vec2(-warpDir.y, warpDir.x);
+    vec2 lensWarp = tangent * sin(dist * 20.0 - uTime * 1.5) * warpStrength * (1.0 - dist * 1.5);
+    vec3 warpedSample = texture2D(tDiffuse, distortedUv + lensWarp).rgb;
+    color = mix(color, warpedSample, warpPhase * 0.4);
+
+    float arcStreak1 = exp(-abs(sin(warpAngle * 3.0 + uTime * 0.4)) * 20.0) * smoothstep(0.15, 0.30, dist) * smoothstep(0.55, 0.35, dist);
+    float arcStreak2 = exp(-abs(sin(warpAngle * 5.0 - uTime * 0.6)) * 25.0) * smoothstep(0.10, 0.25, dist) * smoothstep(0.50, 0.30, dist);
+    color += vec3(1.0, 0.85, 0.6) * (arcStreak1 + arcStreak2 * 0.5) * warpPhase * 0.04;
+
+    float lensRipple = g2((dist - 0.25 + sin(uTime * 0.6) * 0.05) * 12.0);
+    color += vec3(0.8, 0.6, 0.3) * lensRipple * warpPhase * 0.03;
+
+    float distortGlow = exp(-dist * dist * 4.0) * warpPhase;
+    float distortPulse = sin(uTime * 1.2) * 0.15 + 0.85;
+    color += vec3(0.15, 0.08, 0.03) * distortGlow * distortPulse * 0.2;
+  }
+
+  float photonPhase = smoothstep(0.26, 0.32, uScroll) * smoothstep(0.42, 0.36, uScroll);
+  if (photonPhase > 0.01) {
+    float photonAngle = atan(center.y, center.x);
+
+    float orbitRadius = 0.18 + sin(uTime * 0.3) * 0.015;
+    float orbitRing = g2((dist - orbitRadius) * 25.0);
+    float orbitShimmer = sin(photonAngle * 12.0 + uTime * 3.0) * 0.3 + 0.7;
+    float orbitShimmer2 = sin(photonAngle * 20.0 - uTime * 5.0) * 0.15 + 0.85;
+    color += vec3(1.0, 0.8, 0.45) * orbitRing * orbitShimmer * orbitShimmer2 * photonPhase * 0.08;
+
+    for (int ph = 0; ph < 4; ph++) {
+      float phAngle = photonAngle + uTime * (2.0 + float(ph) * 0.8) + float(ph) * 1.571;
+      float phX = cos(phAngle) * orbitRadius;
+      float phY = sin(phAngle) * orbitRadius;
+      float phDist = length(center - vec2(phX, phY));
+      float photonDot = exp(-phDist * phDist * 800.0);
+      float photonTrail = exp(-phDist * phDist * 150.0) * 0.3;
+      vec3 phCol = mix(vec3(1.0, 0.9, 0.7), vec3(1.0, 0.7, 0.3), float(ph) / 4.0);
+      color += phCol * (photonDot + photonTrail) * photonPhase * 0.15;
+    }
+
+    float capturedLight = exp(-abs(dist - orbitRadius) * 15.0) * photonPhase;
+    float capturedPulse = sin(uTime * 2.5 + dist * 30.0) * 0.2 + 0.8;
+    color += vec3(0.9, 0.65, 0.3) * capturedLight * capturedPulse * 0.04;
+
+    float photonHalo = g2((dist - orbitRadius) * 8.0);
+    color += vec3(0.3, 0.18, 0.06) * photonHalo * photonPhase * sin(uTime * 0.5) * 0.1 * 0.5 + vec3(0.3, 0.18, 0.06) * photonHalo * photonPhase * 0.05;
+  }
+
   float cosmicBreath = smoothstep(0.05, 0.15, uScroll) * smoothstep(0.50, 0.35, uScroll);
   if (cosmicBreath > 0.01) {
     float breathWave = sin(uTime * 0.25) * 0.5 + 0.5;
     float breathWave2 = sin(uTime * 0.18 + 2.0) * 0.5 + 0.5;
     float breathMask = smoothstep(0.15, 0.40, dist) * smoothstep(0.65, 0.50, dist);
     float breathGlow = breathWave * breathMask * cosmicBreath;
-    color += vec3(0.01, 0.008, 0.025) * breathGlow * 0.5;
+    color += vec3(0.02, 0.012, 0.006) * breathGlow * 0.5;
     color *= 1.0 + breathWave2 * breathMask * cosmicBreath * 0.04;
   }
 
@@ -346,10 +400,10 @@ void main() {
     vec2 waveOffset = waveDir * wave * 0.012 * spaghettiPhase;
     vec3 warpedColor = texture2D(tDiffuse, distortedUv + waveOffset).rgb;
     color = mix(color, warpedColor, wave * spaghettiPhase * 0.6);
-    color += vec3(0.10, 0.06, 0.14) * wave * spaghettiPhase * 0.25;
+    color += vec3(0.14, 0.08, 0.03) * wave * spaghettiPhase * 0.25;
     float wave2Radius = mod(waveTime + 0.9, 1.8);
     float wave2 = g2((dist - wave2Radius * 0.5) * 18.0);
-    color += vec3(0.05, 0.03, 0.08) * wave2 * spaghettiPhase * 0.15;
+    color += vec3(0.08, 0.04, 0.02) * wave2 * spaghettiPhase * 0.15;
   }
 #endif
 
@@ -360,7 +414,7 @@ void main() {
     float ripple2 = sin(dist * 25.0 + rippleSpeed * 1.5) * 0.5 + 0.5;
     float _rp = ripple1 * ripple2; float rippleCombined = _rp * _rp * _rp;
     float rippleMask = exp(-dist * dist * 5.0);
-    color += vec3(0.03, 0.015, 0.06) * rippleCombined * rippleMask * timeDilPhase;
+    color += vec3(0.06, 0.03, 0.015) * rippleCombined * rippleMask * timeDilPhase;
 
 #ifndef QUALITY_MEDIUM
     float timeStretch = sin(uTime * 0.3) * 0.003 * timeDilPhase;
@@ -371,7 +425,7 @@ void main() {
 
     float clockRing = g2((dist - 0.25) * 20.0);
     float _ct = fract(uTime * 0.15); float clockTick = mix(1.0, _ct, 0.15) * 0.5;
-    color += vec3(0.04, 0.02, 0.08) * clockRing * clockTick * timeDilPhase;
+    color += vec3(0.08, 0.04, 0.02) * clockRing * clockTick * timeDilPhase;
   }
 
   float lastStarPhase = smoothstep(0.28, 0.35, uScroll) * smoothstep(0.55, 0.42, uScroll);
@@ -388,8 +442,8 @@ void main() {
     float dyingFlicker = dying > 0.1 ? (0.5 + sin(uTime * 15.0) * 0.5 * dying) : 1.0;
     vec3 starColor = vec3(0.95, 0.92, 1.0);
     color += starColor * starCore * 1.2 * starPulse * starFlicker * dyingFlicker;
-    color += vec3(0.7, 0.8, 1.0) * starGlow * 0.4 * starPulse * dyingFlicker;
-    color += vec3(0.4, 0.5, 0.8) * starHalo * 0.08 * starPulse;
+    color += vec3(1.0, 0.9, 0.75) * starGlow * 0.4 * starPulse * dyingFlicker;
+    color += vec3(0.8, 0.65, 0.45) * starHalo * 0.08 * starPulse;
   }
 
   float flareActive = smoothstep(0.25, 0.35, uScroll) * smoothstep(0.82, 0.72, uScroll);
@@ -409,11 +463,11 @@ void main() {
     float speedLine = _sl16 * _sl4;
     float speedFade = exp(-dist * dist * 3.0);
     float speedEdge = smoothstep(0.05, 0.15, dist);
-    color += vec3(0.04, 0.04, 0.10) * speedLine * speedFade * speedEdge * speedLinePhase * 0.35;
+    color += vec3(0.08, 0.04, 0.03) * speedLine * speedFade * speedEdge * speedLinePhase * 0.35;
 
     float _sk = abs(sin(angle * 80.0 - uTime * 3.5)); float _sk2 = _sk*_sk; float _sk4 = _sk2*_sk2; float _sk8 = _sk4*_sk4; float _sk16 = _sk8*_sk8;
     float streakLine = _sk16 * _sk8 * _sk4 * _sk2;
-    color += vec3(0.03, 0.02, 0.06) * streakLine * speedFade * speedEdge * speedLinePhase * 0.25;
+    color += vec3(0.06, 0.03, 0.02) * streakLine * speedFade * speedEdge * speedLinePhase * 0.25;
   }
 
 #ifndef QUALITY_MEDIUM
@@ -433,7 +487,7 @@ void main() {
     vec3 riftRevealed = vec3(1.0) - (riftColorUp + riftColorDown) * 0.5;
 
     color = mix(color, riftRevealed, riftMask * 0.7);
-    color += vec3(0.4, 0.35, 1.0) * riftLine * riftPhase * 0.35;
+    color += vec3(1.0, 0.6, 0.25) * riftLine * riftPhase * 0.35;
     color += vec3(1.0, 0.95, 0.9) * riftNoise * riftMask * 0.15;
 
     float riftGlitch = step(0.97, riftNoise) * riftPhase;
@@ -461,9 +515,9 @@ void main() {
     float sFlash = singularityEntry * singularityEntry * sqrt(singularityEntry);
     float sCenterBlast = exp(-dist * dist * 4.0);
     color = mix(color, vec3(1.0, 0.98, 0.95), sFlash * sCenterBlast * 0.18);
-    color += vec3(0.2, 0.2, 0.5) * sFlash * (1.0 - sCenterBlast) * 0.12;
+    color += vec3(0.5, 0.3, 0.15) * sFlash * (1.0 - sCenterBlast) * 0.12;
     float sRing = g2((dist - singularityEntry * 0.6) * 12.0);
-    color += vec3(0.35, 0.4, 1.0) * sRing * sFlash * 0.15;
+    color += vec3(1.0, 0.6, 0.2) * sRing * sFlash * 0.15;
   }
 
   float climaxHeat = smoothstep(0.65, 0.78, uScroll) * smoothstep(0.88, 0.82, uScroll);
@@ -471,11 +525,11 @@ void main() {
   color += vec3(0.06, 0.02, 0.0) * climaxHeat * heatCenter * 0.8;
   color += vec3(0.02, 0.01, 0.03) * climaxHeat * (1.0 - heatCenter) * 0.4;
 
-  float voidBlackout = g2((uScroll - 0.82) * 35.0);
+  float voidBlackout = g2((uScroll - 0.82) * 35.0) * (1.0 - smoothstep(0.0, 0.1, uExplosion));
   color *= 1.0 - voidBlackout * 0.35;
 
-  float deepVoid = smoothstep(0.75, 1.0, uScroll);
-  color = mix(color, color * vec3(0.72, 0.68, 0.88), deepVoid * 0.20);
+  float deepVoid = smoothstep(0.75, 1.0, uScroll) * (1.0 - smoothstep(0.0, 0.1, uExplosion));
+  color = mix(color, color * vec3(0.82, 0.72, 0.65), deepVoid * 0.20);
   color *= 1.0 - deepVoid * 0.12;
 
   float voidChapter = smoothstep(0.80, 0.84, uScroll) * smoothstep(0.92, 0.88, uScroll);
@@ -511,13 +565,13 @@ void main() {
     float lastLightGlow = exp(-lastLightDist * lastLightDist * 200.0);
     float lastLightPulse = 0.6 + sin(uTime * 0.8) * 0.4;
     color += vec3(0.9, 0.85, 1.0) * lastLight * voidChapter * 0.6 * lastLightPulse;
-    color += vec3(0.3, 0.25, 0.5) * lastLightGlow * voidChapter * 0.04 * lastLightPulse;
+    color += vec3(0.4, 0.25, 0.15) * lastLightGlow * voidChapter * 0.04 * lastLightPulse;
 
     float voidLuma = dot(color, vec3(0.2126, 0.7152, 0.0722));
     color = mix(color, vec3(voidLuma * 0.72, voidLuma * 0.78, voidLuma * 0.90), voidChapter * 0.60);
 
     float voidBottom = smoothstep(0.55, 0.35, vUv.y);
-    color = mix(color, color * vec3(0.55, 0.58, 0.72), voidBottom * voidChapter * 0.5);
+    color = mix(color, color * vec3(0.65, 0.55, 0.48), voidBottom * voidChapter * 0.5);
     color *= 1.0 - voidBottom * voidChapter * 0.25;
 
     float echoTime = uTime * 0.4;
@@ -531,7 +585,8 @@ void main() {
     color += vec3(0.03, 0.02, 0.06) * echoRing2 * voidChapter * 0.10;
   }
 
-  float ehRadius = uScroll * 0.08;
+  float ehExpSuppress = 1.0 - smoothstep(0.0, 0.1, uExplosion);
+  float ehRadius = uScroll * 0.08 * ehExpSuppress;
   float ehEdge = smoothstep(ehRadius, ehRadius - 0.015, dist);
   float ehRing = g2((dist - ehRadius) * 60.0);
   if (ehRadius > 0.005) {
@@ -591,10 +646,10 @@ void main() {
     color += nebulaColor * nebulaMask * nebulaPhase * 0.15;
   }
 
-  float abyssEdge = smoothstep(0.85, 1.0, uScroll);
+  float abyssEdge = smoothstep(0.85, 1.0, uScroll) * (1.0 - smoothstep(0.0, 0.1, uExplosion));
   color *= 1.0 - smoothstep(0.08, 0.45, dist) * abyssEdge * 0.5;
 
-  float singularity = smoothstep(0.85, 1.0, uScroll);
+  float singularity = smoothstep(0.85, 1.0, uScroll) * (1.0 - smoothstep(0.0, 0.15, uExplosion));
   float singLuma = dot(color, vec3(0.2126, 0.7152, 0.0722));
   color = mix(color, color * 1.5, singularity * 0.35);
   color = mix(vec3(singLuma), color, 1.0 + singularity * 0.6);
@@ -648,7 +703,7 @@ void main() {
     color *= 1.0 - singVig * inversionPeak * 0.5;
   }
 
-  float voidOverride = smoothstep(0.83, 0.87, uScroll) * smoothstep(0.93, 0.89, uScroll);
+  float voidOverride = smoothstep(0.83, 0.87, uScroll) * smoothstep(0.93, 0.89, uScroll) * (1.0 - smoothstep(0.0, 0.1, uExplosion));
   if (voidOverride > 0.01) {
     float voLuma = dot(color, vec3(0.2126, 0.7152, 0.0722));
     color = mix(color, vec3(voLuma * 0.65, voLuma * 0.70, voLuma * 0.82), voidOverride * 0.65);
@@ -687,7 +742,7 @@ void main() {
     color += vec3(0.08, 0.04, 0.01) * gateEdge * chapterFlash * 0.3;
 
     float anamFlash = exp(-abs(center.y) * 8.0) * chapterFlash;
-    vec3 anamColor = mix(vec3(0.7, 0.8, 1.0), vec3(0.9, 0.6, 0.3), uScroll);
+    vec3 anamColor = mix(vec3(1.0, 0.85, 0.65), vec3(0.9, 0.6, 0.3), uScroll);
     color += anamColor * anamFlash * 0.15;
   }
 
@@ -699,7 +754,7 @@ void main() {
     float holdLuma = dot(color, vec3(0.2126, 0.7152, 0.0722));
     color = mix(color, vec3(holdLuma), uHoldStrength * 0.3);
     float holdRing = g2((dist - 0.3 - uHoldStrength * 0.1) * 15.0);
-    color += vec3(0.0, 0.96, 0.83) * holdRing * uHoldStrength * 0.2;
+    color += vec3(1.0, 0.7, 0.3) * holdRing * uHoldStrength * 0.2;
   }
 
 #ifndef QUALITY_MEDIUM
@@ -764,22 +819,23 @@ void main() {
     color += vec3(0.04, 0.03, 0.08) * outerGlow * outerPulse * hawkingPhase * 0.10;
   }
 
-  float remainsPhase = smoothstep(0.89, 0.94, uScroll) * smoothstep(0.99, 0.96, uScroll);
+  float remainsPhase = smoothstep(0.89, 0.94, uScroll) * smoothstep(0.99, 0.96, uScroll) * (1.0 - smoothstep(0.0, 0.15, uExplosion));
   if (remainsPhase > 0.01) {
     float remainsLuma = dot(color, vec3(0.2126, 0.7152, 0.0722));
     color = mix(color, vec3(remainsLuma * 0.70, remainsLuma * 0.75, remainsLuma * 1.0), remainsPhase * 0.75);
     float remainsVig = smoothstep(0.10, 0.45, dist);
     color *= 1.0 - remainsVig * remainsPhase * 0.35;
     float remainsBottom = smoothstep(0.35, 0.55, vUv.y);
-    color = mix(color, color * vec3(0.45, 0.48, 0.70), (1.0 - remainsBottom) * remainsPhase * 0.6);
+    color = mix(color, color * vec3(0.6, 0.52, 0.45), (1.0 - remainsBottom) * remainsPhase * 0.6);
     float remainsMid = smoothstep(0.55, 0.40, vUv.y) * smoothstep(0.25, 0.35, vUv.y);
-    color = mix(color, color * vec3(0.55, 0.58, 0.82), remainsMid * remainsPhase * 0.45);
+    color = mix(color, color * vec3(0.7, 0.6, 0.52), remainsMid * remainsPhase * 0.45);
     float remainsTop = smoothstep(0.70, 0.85, vUv.y);
-    color = mix(color, color * vec3(0.7, 0.72, 0.9), remainsTop * remainsPhase * 0.25);
+    color = mix(color, color * vec3(0.82, 0.75, 0.68), remainsTop * remainsPhase * 0.25);
     color *= 1.0 - remainsPhase * 0.20;
   }
 
-  float whiteOutPhase = smoothstep(0.93, 1.0, uScroll);
+  float explosionActive = smoothstep(0.0, 0.15, uExplosion);
+  float whiteOutPhase = smoothstep(0.93, 1.0, uScroll) * (1.0 - explosionActive);
   if (whiteOutPhase > 0.001) {
     float whiteRadius = whiteOutPhase * 1.4;
     float whiteMask = smoothstep(whiteRadius, max(0.0, whiteRadius - 0.45), dist);
@@ -796,7 +852,7 @@ void main() {
   float speedFeedback = smoothstep(80.0, 500.0, absVel) * uScroll;
   if (speedFeedback > 0.01) {
     float edgeMask = smoothstep(0.35, 0.52, dist);
-    vec3 speedColor = mix(vec3(0.0, 0.4, 0.35), vec3(0.3, 0.1, 0.5), uScroll);
+    vec3 speedColor = mix(vec3(0.4, 0.2, 0.08), vec3(0.35, 0.15, 0.1), uScroll);
     color += speedColor * edgeMask * speedFeedback * 0.12;
     float _sf = abs(sin(dist * 60.0 - uTime * 4.0 * sign(uScrollVelocity))); float _sf2 = _sf*_sf; float _sf4 = _sf2*_sf2; float _sf8 = _sf4*_sf4; float speedLine = _sf8 * _sf8;
     color += speedColor * speedLine * edgeMask * speedFeedback * 0.06;
@@ -830,10 +886,10 @@ void main() {
         float starTwinkle = sin(uTime * (2.0 + starSeed * 5.0) + starSeed * 100.0) * 0.4 + 0.6;
         float starBright = sqrt(starSeed - threshold) * 180.0 * (1.0 - layerDepth * 0.3);
         float starTemp = fract(starSeed * 73.19);
-        vec3 starColor = starTemp > 0.8 ? vec3(1.0, 0.85, 0.6) : starTemp > 0.6 ? vec3(0.6, 0.7, 1.0) : vec3(0.85, 0.88, 1.0);
+        vec3 starColor = starTemp > 0.8 ? vec3(1.0, 0.85, 0.6) : starTemp > 0.6 ? vec3(1.0, 0.9, 0.75) : vec3(0.95, 0.9, 0.82);
 
-        float blueShift = uScroll * layerDepth * 0.4;
-        starColor = mix(starColor, vec3(0.5, 0.6, 1.0), blueShift);
+        float warmShift = uScroll * layerDepth * 0.4;
+        starColor = mix(starColor, vec3(1.0, 0.7, 0.4), warmShift);
 
         color += starColor * starBright * starTwinkle * starField * starShape * 0.06;
       }
@@ -889,6 +945,15 @@ void main() {
     float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
     float satBoost = exp(-mDist * mDist * 40.0) * 0.15 * mouseLensActive;
     color = mix(vec3(luma), color, 1.0 + satBoost);
+  }
+
+  float explosionWarm = smoothstep(0.86, 0.92, uScroll) * (1.0 - smoothstep(0.0, 0.15, uExplosion));
+  if (explosionWarm > 0.01) {
+    float warmLuma = dot(color, vec3(0.2126, 0.7152, 0.0722));
+    vec3 warmShift = vec3(warmLuma * 1.08, warmLuma * 0.98, warmLuma * 0.85);
+    color = mix(color, warmShift, explosionWarm * 0.5);
+    color.r += explosionWarm * 0.02;
+    color.b -= explosionWarm * 0.03;
   }
 
   color = max(color, 0.0);

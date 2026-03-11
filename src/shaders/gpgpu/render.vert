@@ -72,7 +72,7 @@ void main() {
   vDiskGlow = diskGlow;
 
   float temp = aRandom.z;
-  vec3 coldStar = vec3(0.65, 0.78, 1.0);
+  vec3 coldStar = vec3(0.9, 0.82, 0.72);
   vec3 warmStar = vec3(1.0, 0.88, 0.72);
   vec3 hotStar = vec3(1.0, 0.95, 0.88);
 
@@ -83,16 +83,16 @@ void main() {
   vColor = mix(vColor, innerHot, nearShift * 0.4);
 
   float speedShift = smoothstep(1.5, 5.0, speed);
-  vColor = mix(vColor, vec3(0.6, 0.7, 1.2), speedShift * 0.25);
+  vColor = mix(vColor, vec3(1.0, 0.8, 0.5), speedShift * 0.25);
 
   float deepScroll = smoothstep(0.5, 0.9, uScroll);
-  vec3 deepBlue = vec3(0.5, 0.6, 1.0);
-  vColor = mix(vColor, deepBlue, deepScroll * nearShift * 0.25);
+  vec3 deepWarm = vec3(0.8, 0.5, 0.3);
+  vColor = mix(vColor, deepWarm, deepScroll * nearShift * 0.25);
 
   float dopplerShift = sin(diskAngle + uTime * 0.3) * 0.5 + 0.5;
-  vec3 accretionBlue = vec3(0.6, 0.8, 1.4);
+  vec3 accretionCool = vec3(1.0, 0.85, 0.65);
   vec3 accretionRed = vec3(1.5, 0.65, 0.25);
-  vec3 accretionColor = mix(accretionBlue, accretionRed, dopplerShift);
+  vec3 accretionColor = mix(accretionCool, accretionRed, dopplerShift);
   vColor = mix(vColor, accretionColor, diskGlow * 0.75);
 
   float diskWarmth = diskGlow * smoothstep(6.0, 3.0, dist);
@@ -107,11 +107,11 @@ void main() {
   float cursorDist = length(screenPos - mouseNdc);
   vCursorProximity = smoothstep(0.22, 0.0, cursorDist);
 
-  vec3 tint1 = vec3(0.92, 0.95, 1.0);
+  vec3 tint1 = vec3(1.0, 0.95, 0.88);
   vec3 tint2 = vec3(1.0, 0.92, 0.78);
   vec3 tint3 = vec3(1.0, 0.78, 0.55);
-  vec3 tint4 = vec3(0.65, 0.75, 1.05);
-  vec3 tint5 = vec3(0.25, 0.25, 0.35);
+  vec3 tint4 = vec3(0.9, 0.7, 0.5);
+  vec3 tint5 = vec3(0.32, 0.25, 0.18);
   vec3 ab = mix(tint1, tint2, smoothstep(0.15, 0.35, uScroll));
   vec3 cd = mix(tint3, tint4, smoothstep(0.55, 0.75, uScroll));
   vScrollTint = mix(ab, mix(cd, tint5, smoothstep(0.75, 0.95, uScroll)), smoothstep(0.35, 0.55, uScroll));

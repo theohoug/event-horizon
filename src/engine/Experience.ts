@@ -137,7 +137,7 @@ export class Experience {
   }
 
   private readonly chapterConsoleMessages = [
-    ['%c◈ CHAPTER 0 — YOU %c\nYou stand at the edge. The universe watches.', 'color:#00f5d4;font-size:14px;font-weight:bold;text-shadow:0 0 10px #00f5d4', 'color:#888;font-size:11px;font-style:italic'],
+    ['%c◈ CHAPTER 0 — YOU %c\nYou stand at the edge. The universe watches.', 'color:#FFB347;font-size:14px;font-weight:bold;text-shadow:0 0 10px #FFB347', 'color:#888;font-size:11px;font-style:italic'],
     ['%c◈ CHAPTER 1 — THE PULL %c\nGravity notices you. There is no ignoring it.', 'color:#00d4aa;font-size:14px;font-weight:bold;text-shadow:0 0 10px #00d4aa', 'color:#888;font-size:11px;font-style:italic'],
     ['%c◈ CHAPTER 2 — THE WARP %c\nSpacetime bends. Light follows curves you cannot see.', 'color:#00b4ff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #00b4ff', 'color:#888;font-size:11px;font-style:italic'],
     ['%c◈ CHAPTER 3 — THE PHOTON SPHERE %c\nPhoton capture orbit detected. Light cannot escape this radius.', 'color:#0088ff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #0088ff', 'color:#888;font-size:11px;font-style:italic'],
@@ -374,6 +374,20 @@ export class Experience {
     if (yesBtn) this.addTrackedListener(yesBtn, 'click', () => dismiss(true));
     if (noBtn) this.addTrackedListener(noBtn, 'click', () => dismiss(false));
 
+    const soundLangToggle = document.getElementById('sound-lang-toggle');
+    if (soundLangToggle) {
+      const updateSoundLangBtn = () => {
+        const current = getLang();
+        soundLangToggle.textContent = current === 'en' ? 'ENGLISH' : 'FRANÇAIS';
+      };
+      updateSoundLangBtn();
+      this.addTrackedListener(soundLangToggle, 'click', () => {
+        const newLang: Lang = getLang() === 'en' ? 'fr' : 'en';
+        setLang(newLang);
+        updateSoundLangBtn();
+      });
+    }
+
     if (yesBtn) setTimeout(() => yesBtn.focus(), 100);
 
     const promptKeyHandler = (e: KeyboardEvent) => {
@@ -511,7 +525,25 @@ export class Experience {
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
     if (scrollText) scrollText.textContent = isMobile ? tr.scroll.mobile : tr.scroll.desktop;
 
+    const loaderSub = document.getElementById('loader-sub');
+    if (loaderSub) loaderSub.textContent = tr.loader.sub;
+
+    this.navDots.forEach((dot, i) => {
+      const label = tr.chapterNames[i] || '';
+      dot.setAttribute('data-label', label);
+      dot.setAttribute('aria-label', `Go to chapter: ${label}`);
+    });
+
+    if (this.chapterIndicatorTitle) {
+      const chapterIndex = Math.min(8, Math.floor(this.state.scroll * 9));
+      this.chapterIndicatorTitle.textContent = tr.chapterNames[chapterIndex] || '';
+    }
+
     document.documentElement.lang = getLang();
+
+    if (this.timeline) {
+      this.timeline.refreshCurrentChapter(this.state.scroll);
+    }
   }
 
   private playIntroCinematic() {
@@ -914,8 +946,8 @@ export class Experience {
         trail.className = 'cursor-trail';
         trail.style.width = '3px';
         trail.style.height = '3px';
-        trail.style.background = 'rgba(0, 245, 212, 0.4)';
-        trail.style.boxShadow = '0 0 6px rgba(0, 245, 212, 0.25), 0 0 12px rgba(0, 245, 212, 0.1)';
+        trail.style.background = 'rgba(255, 179, 71, 0.4)';
+        trail.style.boxShadow = '0 0 6px rgba(255, 179, 71, 0.25), 0 0 12px rgba(255, 179, 71, 0.1)';
         trail.style.opacity = '0';
         document.body.appendChild(trail);
         this.trailParticles.push(trail);
@@ -1255,9 +1287,9 @@ export class Experience {
         this.cursor.style.width = '6px';
         this.cursor.style.height = '6px';
         this.cursor.style.background = 'var(--cyan)';
-        this.cursor.style.boxShadow = '0 0 8px var(--cyan), 0 0 16px rgba(0, 245, 212, 0.3)';
+        this.cursor.style.boxShadow = '0 0 8px var(--cyan), 0 0 16px rgba(255, 179, 71, 0.3)';
         this.ringEl.style.transform = 'translate(-50%, -50%)';
-        this.ringEl.style.borderColor = 'rgba(0, 245, 212, 0.25)';
+        this.ringEl.style.borderColor = 'rgba(255, 179, 71, 0.25)';
         this.ringEl.style.borderRadius = '';
       } else if (!hideCursor) {
         const cursorSize = 5 + this.state.scroll * 6;
@@ -1295,7 +1327,7 @@ export class Experience {
 
         const glowSize = 6 + this.state.scroll * 12;
         const glowAlpha = 0.3 + this.state.scroll * 0.4;
-        this.cursor.style.boxShadow = `0 0 ${glowSize.toFixed(0)}px var(--cyan), 0 0 ${(glowSize * 2).toFixed(0)}px rgba(0, 245, 212, ${glowAlpha.toFixed(2)})`;
+        this.cursor.style.boxShadow = `0 0 ${glowSize.toFixed(0)}px var(--cyan), 0 0 ${(glowSize * 2).toFixed(0)}px rgba(255, 179, 71, ${glowAlpha.toFixed(2)})`;
       }
     }
 
@@ -1332,7 +1364,12 @@ export class Experience {
 
     this.updateGravityPull(dt);
 
-    this.blackHole.update(this.state);
+    if (this.explosionActive) {
+      const speed = this.explosionProgress < 1.0 ? 0.4 : 0.15;
+      this.explosionProgress = Math.min(this.explosionProgress + dt * speed, 2.0);
+      if (this.explosionProgress >= 2.0) this.explosionActive = false;
+    }
+    this.blackHole.update({ ...this.state, explosion: this.explosionProgress });
     this.particles.update(this.state);
     this.starfield.update(this.state);
     this.postProcessing.updateCamera(this.state.scroll, elapsed, this.state.introProgress, this.state.mouseSmooth.x, this.state.mouseSmooth.y);
@@ -1374,7 +1411,8 @@ export class Experience {
 
     this.state.chapterFlash = this.chapterFlash;
     this.state.holdStrength = this.holdStrength;
-    this.postProcessing.update(this.state);
+    (this.state as any).explosion = this.explosionProgress;
+    this.postProcessing.update(this.state as any);
     this.postProcessing.render();
   }
 
@@ -1405,6 +1443,9 @@ export class Experience {
   private progressHideTimer = 0;
   private pointOfNoReturnTriggered = false;
   private singularityTriggered = false;
+  private singularityFlashTriggered = false;
+  private explosionProgress = 0;
+  private explosionActive = false;
   private faviconCanvas: HTMLCanvasElement | null = null;
   private faviconCtx: CanvasRenderingContext2D | null = null;
   private faviconLink: HTMLLinkElement | null = null;
@@ -1661,7 +1702,7 @@ export class Experience {
       this.hudContainerEl.style.opacity = scroll > 0.85 ? `${Math.max(0, 1 - (scroll - 0.85) * 6)}` : '';
       if (this.hudChapterPulse > 0.3) {
         const pulseAlpha = (this.hudChapterPulse * 0.25).toFixed(2);
-        this.hudContainerEl.style.boxShadow = `inset 0 0 20px rgba(0, 245, 212, ${pulseAlpha}), 0 0 10px rgba(0, 245, 212, ${(this.hudChapterPulse * 0.1).toFixed(2)})`;
+        this.hudContainerEl.style.boxShadow = `inset 0 0 20px rgba(255, 179, 71, ${pulseAlpha}), 0 0 10px rgba(255, 179, 71, ${(this.hudChapterPulse * 0.1).toFixed(2)})`;
       } else {
         this.hudContainerEl.style.boxShadow = '';
       }
@@ -1718,6 +1759,15 @@ export class Experience {
       }
     }
 
+    if (!this.singularityFlashTriggered && scroll >= 0.90) {
+      this.singularityFlashTriggered = true;
+      this.triggerSingularityExplosion();
+    } else if (scroll <= 0.88) {
+      this.singularityFlashTriggered = false;
+      this.explosionProgress = 0;
+      this.explosionActive = false;
+    }
+
     if (this.creditsEl) {
       const shouldBeWhite = scroll > 0.88;
       if (shouldBeWhite && !this.whiteModeActive) {
@@ -1741,6 +1791,13 @@ export class Experience {
         this.postCreditsTimer = 0;
       }
     }
+  }
+
+  private triggerSingularityExplosion() {
+    this.explosionProgress = 0;
+    this.explosionActive = true;
+    this.chapterFlash = 1.5;
+    if (this.state.soundEnabled) this.audio.triggerSingularity();
   }
 
   private spawnTemporalEcho() {
@@ -1889,10 +1946,10 @@ export class Experience {
   private checkIdleHint() {
     if (!this.lastScrollActivity) return;
     const s = this.state.scroll;
-    if (s < 0.02 || s > 0.88 || this.idleHintShown) return;
+    if (s < 0.02 || s > 0.85 || this.idleHintShown) return;
 
     const elapsed = performance.now() - this.lastScrollActivity;
-    if (elapsed > 8000 && Math.abs(this.state.scrollVelocity) < 0.5) {
+    if (elapsed > 5000 && Math.abs(this.state.scrollVelocity) < 0.5) {
       if (!this.idleHintEl) this.idleHintEl = document.getElementById('idle-hint');
       if (!this.idleHintEl) return;
 

@@ -58,25 +58,25 @@ void main() {
 
   vec3 color = vColor * (core * 0.55 + glow * 0.2 + outerGlow * 0.075);
 
-  float _rc2 = core * core; color += vec3(0.85, 0.92, 1.0) * _rc2 * _rc2 * core * 0.15;
+  float _rc2 = core * core; color += vec3(1.0, 0.92, 0.8) * _rc2 * _rc2 * core * 0.15;
 
-  vec3 cyanShift = vec3(0.0, 0.96, 0.83) * absorption * 0.12;
-  vec3 violetShift = vec3(0.35, 0.08, 0.55) * spaghetti * 0.08;
-  color += cyanShift + violetShift;
+  vec3 warmShift = vec3(1.0, 0.6, 0.2) * absorption * 0.12;
+  vec3 violetShift = vec3(0.45, 0.15, 0.25) * spaghetti * 0.08;
+  color += warmShift + violetShift;
 
-  float blueshift = smoothstep(5.0, 1.5, vDistToCenter);
-  color = mix(color, color * vec3(0.65, 0.75, 1.35), blueshift * 0.45);
+  float redshift = smoothstep(5.0, 1.5, vDistToCenter);
+  color = mix(color, color * vec3(1.3, 0.85, 0.6), redshift * 0.45);
 
   float ignition = smoothstep(6.0, 2.5, vDistToCenter) * (1.0 - absorption);
-  color += vec3(0.4, 0.15, 0.8) * ignition * core * 0.18;
-  color += vec3(0.08, 0.25, 0.5) * ignition * glow * 0.07;
+  color += vec3(0.8, 0.4, 0.15) * ignition * core * 0.18;
+  color += vec3(0.5, 0.25, 0.08) * ignition * glow * 0.07;
 
   color *= vScrollTint;
 
   float deepDesaturate = smoothstep(0.82, 0.95, vScroll);
   if (deepDesaturate > 0.01) {
     float cLuma = dot(color, vec3(0.2126, 0.7152, 0.0722));
-    color = mix(color, vec3(cLuma * 0.85, cLuma * 0.88, cLuma * 1.05), deepDesaturate * 0.45);
+    color = mix(color, vec3(cLuma * 1.05, cLuma * 0.92, cLuma * 0.82), deepDesaturate * 0.45);
   }
 
   if (vDiskGlow > 0.05) {
@@ -93,7 +93,7 @@ void main() {
   if (vCursorProximity > 0.01) {
     float cursorGlow = vCursorProximity * vCursorProximity;
     alpha += cursorGlow * 0.5 * vBrightness;
-    color += vec3(0.0, 0.7, 0.55) * cursorGlow * 0.2;
+    color += vec3(0.8, 0.5, 0.2) * cursorGlow * 0.2;
     color *= 1.0 + cursorGlow * 0.6;
   }
 

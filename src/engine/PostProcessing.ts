@@ -121,6 +121,7 @@ export class PostProcessing {
         uHoldStrength: { value: 0 },
         uMouse: { value: new THREE.Vector2(0.5, 0.5) },
         uMotionBlur: { value: quality === 'medium' ? 0.0 : 1.0 },
+        uExplosion: { value: 0 },
       },
       depthTest: false,
       depthWrite: false,
@@ -138,12 +139,13 @@ export class PostProcessing {
     if (this.shockwaves.length > 4) this.shockwaves.shift();
   }
 
-  update(state: { time: number; deltaTime: number; scroll: number; scrollVelocity: number; chapterFlash?: number; introProgress?: number; holdStrength?: number; mouseSmooth?: { x: number; y: number } }) {
+  update(state: { time: number; deltaTime: number; scroll: number; scrollVelocity: number; chapterFlash?: number; introProgress?: number; holdStrength?: number; mouseSmooth?: { x: number; y: number }; explosion?: number }) {
     const intro = state.introProgress ?? 0;
     const introBloomBoost = intro > 0 && intro < 1 ? (1 - intro) * 0.3 : 0;
 
     const velBoost = Math.min(Math.abs(state.scrollVelocity) * 0.3, 1.5);
     const s = state.scroll;
+    const ex = state.explosion ?? 0;
 
     const climaxT = s > 0.65 ? (s - 0.65) / 0.35 : 0;
     const climaxBoost = climaxT * Math.sqrt(climaxT);
@@ -165,7 +167,8 @@ export class PostProcessing {
     const chapterFlashChroma = (state.chapterFlash ?? 0) * 6;
     const whiteOutT = s > 0.82 ? (s - 0.82) / 0.18 : 0;
     const whiteOutFade = whiteOutT * whiteOutT;
-    const chromatic = (0.25 + s * 1.8 + velBoost * 0.7 + climaxBoost * 1.2 + singularityPeak * 5.0 + hbChroma + chapterFlashChroma) * (1 - breathCalm) * Math.max(0, 1 - whiteOutFade * 1.1);
+    const exFade = ex > 0.5 ? Math.min((ex - 0.5) * 2, 1) : 0;
+    const chromatic = (0.25 + s * 1.8 + velBoost * 0.7 + climaxBoost * 1.2 + singularityPeak * 5.0 + hbChroma + chapterFlashChroma) * (1 - breathCalm) * Math.max(0, 1 - whiteOutFade * 1.1) * (1 - exFade * 0.7);
 
     this.compositeMaterial.uniforms.uTime.value = state.time;
     this.compositeMaterial.uniforms.uScroll.value = s;
@@ -174,12 +177,14 @@ export class PostProcessing {
 
     const vignetteBase = s < 0.5 ? 0.3 + s * 0.35 : 0.475 + (s - 0.5) * 0.85;
     this.compositeMaterial.uniforms.uVignetteIntensity.value = (vignetteBase + velBoost * 0.1 + hbPulse) * (1 - breathCalm * 0.3);
-    this.compositeMaterial.uniforms.uBloomMix.value = 0.30 + s * 0.30 + introBloomBoost + climaxBoost * 0.25;
-    this.bloomMaterial.uniforms.uThreshold.value = Math.max(0.38, 0.88 - s * 0.28 - introBloomBoost * 0.15 - climaxBoost * 0.15);
+    const aftermathDim = ex > 1.0 ? Math.min((ex - 1.0) * 2, 1) : 0;
+    this.compositeMaterial.uniforms.uBloomMix.value = (0.30 + s * 0.30 + introBloomBoost + climaxBoost * 0.25) * (1 - aftermathDim * 0.6);
+    this.bloomMaterial.uniforms.uThreshold.value = Math.max(0.38, 0.88 - s * 0.28 - introBloomBoost * 0.15 - climaxBoost * 0.15 + aftermathDim * 0.3);
     this.compositeMaterial.uniforms.uScrollVelocity.value = state.scrollVelocity;
     this.compositeMaterial.uniforms.uChapterFlash.value = state.chapterFlash ?? 0;
     this.compositeMaterial.uniforms.uHoldStrength.value = state.holdStrength ?? 0;
     this.compositeMaterial.uniforms.uMouse.value.set(state.mouseSmooth?.x ?? 0.5, state.mouseSmooth?.y ?? 0.5);
+    this.compositeMaterial.uniforms.uExplosion.value = state.explosion ?? 0;
 
     const dt = state.deltaTime ?? 0.016;
     for (let i = this.shockwaves.length - 1; i >= 0; i--) {

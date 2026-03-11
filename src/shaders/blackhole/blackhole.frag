@@ -201,12 +201,17 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   float diskY = pos.y;
   if (abs(diskY) > DISK_HEIGHT * 3.0) return vec4(0.0);
 
+  float collapse = smoothstep(0.38, 0.54, uScroll);
+  float collapseInner = DISK_INNER + collapse * 6.0;
+  float collapseOuter = DISK_OUTER - collapse * 8.0;
+  if (collapseInner >= collapseOuter) return vec4(0.0);
+
   float r = length(pos.xz);
-  if (r < DISK_INNER || r > DISK_OUTER) return vec4(0.0);
+  if (r < collapseInner || r > collapseOuter) return vec4(0.0);
 
   float angle = atan(pos.z, pos.x);
-  float diskMask = smoothstep(DISK_INNER - 0.2, DISK_INNER + 1.2, r) *
-                   smoothstep(DISK_OUTER + 0.5, DISK_OUTER - 4.0, r);
+  float diskMask = smoothstep(collapseInner - 0.2, collapseInner + 1.2, r) *
+                   smoothstep(collapseOuter + 0.5, collapseOuter - 4.0, r);
   float heightFade = exp(-abs(diskY) * abs(diskY) / (DISK_HEIGHT * DISK_HEIGHT * 2.0));
 
   float orbitalSpeed = 1.0 / (r * sqrt(r));
@@ -236,7 +241,7 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   density = clamp(density, 0.0, 1.0);
 
   float outerFadeBell = g2((uScroll - 0.62) * 5.0);
-  float outerTransparency = outerFadeBell * smoothstep(DISK_INNER + 2.0, DISK_OUTER - 1.0, r) * 0.25;
+  float outerTransparency = outerFadeBell * smoothstep(collapseInner + 2.0, collapseOuter - 1.0, r) * 0.25;
   density *= 1.0 - outerTransparency;
 
   float iscoWidth = mix(1.5, 2.5, smoothstep(0.0, 0.35, uScroll));
@@ -264,22 +269,22 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
 
   float _hs1 = max(sin(rotAngle * 2.0 + uTime * 0.15 + r * 0.5) * 0.5 + 0.5, 0.0); float _hs1_2 = _hs1*_hs1; float _hs1_4 = _hs1_2*_hs1_2; float hotSpot1 = _hs1_4 * _hs1_2;
   float _hs2 = max(sin(rotAngle * 5.0 - uTime * 0.2 + r * 1.2) * 0.5 + 0.5, 0.0); float _hs2_2 = _hs2*_hs2; float _hs2_4 = _hs2_2*_hs2_2; float hotSpot2 = _hs2_4 * _hs2_4;
-  float hotSpotMask = smoothstep(DISK_INNER + 0.5, DISK_INNER + 3.0, r) * smoothstep(DISK_OUTER - 2.0, DISK_INNER + 4.0, r);
+  float hotSpotMask = smoothstep(collapseInner + 0.5, collapseInner + 3.0, r) * smoothstep(collapseOuter - 2.0, collapseInner + 4.0, r);
   diskColor += vec3(1.0, 0.7, 0.2) * hotSpot1 * hotSpotMask * 0.12;
   diskColor += vec3(1.0, 0.45, 0.1) * hotSpot2 * hotSpotMask * 0.06;
 
-  float _oe = smoothstep(DISK_OUTER - 2.5, DISK_OUTER - 0.5, r); float outerEdge = _oe * _oe;
+  float _oe = smoothstep(collapseOuter - 2.5, collapseOuter - 0.5, r); float outerEdge = _oe * _oe;
   float edgeTurb = sin(rotAngle * 12.0 + r * 4.0 + uTime * 0.5) * 0.5 + 0.5;
   float outerEdgeIntensity = mix(0.10, 0.04, smoothstep(0.15, 0.40, uScroll));
   diskColor += vec3(0.10, 0.06, 0.03) * outerEdge * edgeTurb * outerEdgeIntensity;
 
-  float midDiskDim = smoothstep(DISK_INNER + 2.0, DISK_INNER + 5.0, r) * smoothstep(DISK_OUTER - 1.0, DISK_OUTER - 4.0, r);
+  float midDiskDim = smoothstep(collapseInner + 2.0, collapseInner + 5.0, r) * smoothstep(collapseOuter - 1.0, collapseOuter - 4.0, r);
   diskColor *= 1.0 - midDiskDim * 0.15;
 
   float flarePhase1 = sin(rotAngle * 1.0 + uTime * 0.4 + r * 0.3);
   float flarePhase2 = sin(rotAngle * 3.0 - uTime * 0.25 + r * 0.8);
   float _ft = max(flarePhase1 * flarePhase2, 0.0); float _ft2 = _ft*_ft; float _ft4 = _ft2*_ft2; float flareTrigger = _ft4 * _ft4;
-  float flareMask = smoothstep(DISK_INNER + 0.5, DISK_INNER + 2.5, r) * smoothstep(DISK_OUTER - 2.0, DISK_INNER + 4.0, r);
+  float flareMask = smoothstep(collapseInner + 0.5, collapseInner + 2.5, r) * smoothstep(collapseOuter - 2.0, collapseInner + 4.0, r);
   diskColor += vec3(1.0, 0.6, 0.15) * flareTrigger * flareMask * 0.15;
 
   float beta = sqrt(SCHWARZSCHILD_RADIUS / (2.0 * r));
@@ -302,14 +307,14 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
 
 
   float _er = max(sin(rotAngle * 1.0 + uTime * 0.08) * sin(uTime * 0.3 + r * 0.5), 0.0); float _er2 = _er*_er; float _er4 = _er2*_er2; float _er8 = _er4*_er4; float eruption = _er8 * _er8;
-  float eruptionMask = smoothstep(DISK_INNER, DISK_INNER + 1.5, r) * smoothstep(DISK_INNER + 4.0, DISK_INNER + 2.0, r);
+  float eruptionMask = smoothstep(collapseInner, collapseInner + 1.5, r) * smoothstep(collapseInner + 4.0, collapseInner + 2.0, r);
   diskColor += vec3(1.0, 0.75, 0.3) * eruption * eruptionMask * 0.25;
 
 
   float scrollDim = 1.0 - sqrt(uScroll) * 0.3;
   float closeUpDim = 1.0 - smoothstep(0.5, 0.85, uScroll) * 0.3;
   float earlyBoost = 1.0 + smoothstep(0.4, 0.0, uScroll) * 0.4;
-  float diskFade = 1.0 - smoothstep(0.35, 0.65, uScroll);
+  float diskFade = 1.0 - smoothstep(0.38, 0.54, uScroll);
   diskColor *= uIntensity * 0.7 * scrollDim * closeUpDim * earlyBoost * diskFade;
 
   float deepShift = smoothstep(0.65, 0.90, uScroll);
@@ -341,7 +346,7 @@ float photonRing(vec3 pos, float r) {
   float shimmer2 = sin(angle * 50.0 - uTime * 6.0) * 0.04;
 
   float earlyBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 1.5;
-  float ringFade = 1.0 - smoothstep(0.35, 0.65, uScroll);
+  float ringFade = 1.0 - smoothstep(0.40, 0.56, uScroll);
 
   float heartbeatPhase = uScroll > 0.35 ? 1.0 : 0.0;
   float hbSpeed = 50.0 + max(uScroll - 0.35, 0.0) * 200.0;
@@ -363,7 +368,7 @@ vec3 einsteinRingColor(vec3 rd, vec3 camPos) {
 
   float chromaticSpread = 0.006;
   float earlyRingBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 2.0;
-  float eRingFade = 1.0 - smoothstep(0.35, 0.65, uScroll);
+  float eRingFade = 1.0 - smoothstep(0.40, 0.56, uScroll);
   float ringR = g2((viewAngle - einsteinAngle * (1.0 + chromaticSpread)) * 80.0) * 0.30 * breathe * earlyRingBoost * eRingFade;
   float ringG = g2((viewAngle - einsteinAngle) * 80.0) * 0.28 * breathe * earlyRingBoost * eRingFade;
   float ringB = g2((viewAngle - einsteinAngle * (1.0 - chromaticSpread)) * 80.0) * 0.25 * breathe * earlyRingBoost * eRingFade;

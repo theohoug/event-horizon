@@ -870,7 +870,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 0 7rem 0 2.5rem;
+  padding: 0 4.5rem 0 2.5rem;
   z-index: 12;
   opacity: 0;
   transition: opacity 1.5s ease;
@@ -1761,8 +1761,8 @@ body {
 
 #lang-switch {
   position: fixed;
-  bottom: 1.5rem;
-  right: 4.2rem;
+  bottom: 4rem;
+  right: 1.5rem;
   z-index: 50;
   display: flex;
   align-items: center;
@@ -1906,6 +1906,7 @@ body {
   pointer-events: none;
   opacity: 0;
   transition: opacity 2s cubic-bezier(0.4, 0, 0, 1);
+  background: radial-gradient(ellipse at center, rgba(8, 5, 15, 0.92) 0%, rgba(3, 2, 8, 0.97) 60%, rgba(0, 0, 0, 0.99) 100%);
 }
 
 #credits::after {
@@ -1954,7 +1955,7 @@ body {
   font-style: italic;
   line-height: 2;
   letter-spacing: 0.04em;
-  color: rgba(255, 220, 180, 0.35);
+  color: rgba(255, 220, 180, 0.65);
   margin-bottom: 2rem;
   max-width: 400px;
   margin-left: auto;
@@ -1968,13 +1969,13 @@ body {
   letter-spacing: 0.3em;
   color: var(--starlight);
   margin-bottom: 0.6rem;
-  text-shadow: 0 0 30px rgba(255, 220, 180, 0.15), 0 0 60px rgba(255, 220, 180, 0.06);
+  text-shadow: 0 0 40px rgba(255, 220, 180, 0.25), 0 0 80px rgba(255, 220, 180, 0.10);
   animation: credits-title-glow 6s ease-in-out infinite;
 }
 
 @keyframes credits-title-glow {
-  0%, 100% { text-shadow: 0 0 25px rgba(255, 220, 180, 0.12), 0 0 50px rgba(255, 220, 180, 0.05); }
-  50% { text-shadow: 0 0 35px rgba(255, 220, 180, 0.2), 0 0 70px rgba(255, 220, 180, 0.08); }
+  0%, 100% { text-shadow: 0 0 35px rgba(255, 220, 180, 0.20), 0 0 60px rgba(255, 220, 180, 0.08); }
+  50% { text-shadow: 0 0 50px rgba(255, 220, 180, 0.35), 0 0 90px rgba(255, 220, 180, 0.12); }
 }
 
 .credits-sub {
@@ -1983,7 +1984,7 @@ body {
   font-weight: 300;
   font-style: italic;
   letter-spacing: 0.06em;
-  color: rgba(255, 220, 180, 0.4);
+  color: rgba(255, 220, 180, 0.7);
   margin-bottom: 2.5rem;
 }
 
@@ -2001,8 +2002,8 @@ body {
   transform: translateX(-50%);
   width: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 179, 71, 0.25), rgba(255, 220, 180, 0.35), rgba(255, 179, 71, 0.25), transparent);
-  box-shadow: 0 0 12px rgba(255, 179, 71, 0.12), 0 0 25px rgba(255, 179, 71, 0.05);
+  background: linear-gradient(90deg, transparent, rgba(255, 179, 71, 0.4), rgba(255, 220, 180, 0.55), rgba(255, 179, 71, 0.4), transparent);
+  box-shadow: 0 0 15px rgba(255, 179, 71, 0.2), 0 0 30px rgba(255, 179, 71, 0.08);
   animation: credits-line-grow 2.5s ease-out forwards;
   animation-delay: inherit;
 }
@@ -2016,15 +2017,15 @@ body {
   font-size: 0.65rem;
   font-weight: 300;
   letter-spacing: 0.15em;
-  color: rgba(255, 240, 224, 0.3);
+  color: rgba(255, 240, 224, 0.55);
   text-transform: uppercase;
   margin-bottom: 0.3rem;
   animation: credits-role-pulse 4s ease-in-out infinite;
 }
 
 @keyframes credits-role-pulse {
-  0%, 100% { opacity: 0.3; letter-spacing: 0.15em; }
-  50% { opacity: 0.5; letter-spacing: 0.18em; }
+  0%, 100% { opacity: 0.55; letter-spacing: 0.15em; }
+  50% { opacity: 0.75; letter-spacing: 0.18em; }
 }
 
 .credits-name {
@@ -2033,7 +2034,7 @@ body {
   font-size: clamp(0.85rem, 1.5vw, 1.2rem);
   letter-spacing: 0.06em;
   color: var(--starlight);
-  text-shadow: 0 0 10px rgba(255, 240, 224, 0.15);
+  text-shadow: 0 0 15px rgba(255, 240, 224, 0.25), 0 0 40px rgba(255, 220, 180, 0.08);
   animation: credits-shimmer 3s ease-in-out infinite;
   background: linear-gradient(90deg, var(--starlight) 0%, rgba(255, 179, 71, 0.7) 50%, var(--starlight) 100%);
   background-size: 200% 100%;
@@ -2052,7 +2053,7 @@ body {
   font-size: 0.6rem;
   font-weight: 300;
   letter-spacing: 0.1em;
-  color: rgba(255, 240, 224, 0.25);
+  color: rgba(255, 240, 224, 0.5);
   margin-top: 3rem;
 }
 
@@ -2789,8 +2790,8 @@ body {
   }
 
   #lang-switch {
-    bottom: 1rem;
-    right: 3.5rem;
+    bottom: 3.5rem;
+    right: 1rem;
   }
 
   .lang-opt {

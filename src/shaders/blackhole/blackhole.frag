@@ -459,20 +459,21 @@ void main() {
 
   vec2 mouseParallax = (uMouse - 0.5);
   float mouseLen = length(mouseParallax);
+  float closeFade = 1.0 - scrollEffect * scrollEffect;
   vec3 camPos = vec3(
-    sin(scrollEffect * 0.4) * 0.1 + sin(uTime * 0.03) * 0.01 + mouseParallax.x * mix(0.4, 0.05, scrollEffect),
-    mix(7.0, 0.06, scrollEffect * (0.8 + 0.2 * scrollEffect)) + sin(uTime * 0.08) * 0.02 + mouseParallax.y * mix(0.25, 0.03, scrollEffect),
+    sin(scrollEffect * 0.4) * 0.1 * closeFade + sin(uTime * 0.03) * 0.01 * closeFade + mouseParallax.x * mix(0.4, 0.0, scrollEffect),
+    mix(7.0, 0.06, scrollEffect * (0.8 + 0.2 * scrollEffect)) + sin(uTime * 0.08) * 0.02 * closeFade + mouseParallax.y * mix(0.25, 0.0, scrollEffect),
     mix(38.0, 2.5, scrollEffect)
   );
 
-  vec3 target = vec3(mouseParallax.x * mix(0.1, 0.02, scrollEffect), mouseParallax.y * mix(0.06, 0.01, scrollEffect), 0.0);
+  vec3 target = vec3(mouseParallax.x * mix(0.1, 0.0, scrollEffect), mouseParallax.y * mix(0.06, 0.0, scrollEffect), 0.0);
   vec3 forward = normalize(target - camPos);
   vec3 right = normalize(cross(forward, vec3(0.0, 1.0, 0.0)));
   vec3 up = cross(right, forward);
 
   vec3 rd = normalize(forward * fov + right * uv.x + up * uv.y);
 
-  float tilt = mix(0.45, 0.02, scrollEffect) + mouseParallax.y * mix(0.02, 0.005, scrollEffect);
+  float tilt = mix(0.45, 0.02, scrollEffect) + mouseParallax.y * mix(0.02, 0.0, scrollEffect);
   rd = rotateX(tilt) * rd;
 
   vec3 color;

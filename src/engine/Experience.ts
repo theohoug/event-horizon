@@ -746,8 +746,8 @@ gl_FragColor=vec4(col,1.0);}`;
       const updateCompanionLang = () => {
         const lang = getLang();
         companionTextEl.textContent = lang === 'fr'
-          ? 'Votre téléphone devient une console de mission — télémétrie temps réel et astrophysique synchronisées à votre descente dans le trou noir.'
-          : 'Your phone becomes a mission console — real-time telemetry and astrophysics synced to your descent into the black hole.';
+          ? 'Votre t\u00E9l\u00E9phone devient une console de mission. T\u00E9l\u00E9m\u00E9trie temps r\u00E9el et astrophysique synchronis\u00E9es \u00E0 votre descente dans le trou noir.'
+          : 'Your phone becomes a mission console. Real-time telemetry and astrophysics synced to your descent into the black hole.';
         const titleEl = document.getElementById('sound-companion-title');
         if (titleEl) titleEl.textContent = lang === 'fr' ? 'Second écran' : 'Second screen';
       };

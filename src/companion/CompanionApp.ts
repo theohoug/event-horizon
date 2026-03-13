@@ -43,7 +43,7 @@ const LABELS = {
     waitingTitle: 'MISSION CONSOLE',
     waitingSub: 'Linked to room',
     waitingHint: 'Waiting for the desktop to begin the descent',
-    waitingDesc: 'When the experience starts on desktop, this screen will transform into a live scientific companion — real-time telemetry, chapter-by-chapter astrophysics documentation, and mission data synced to the journey.',
+    waitingDesc: 'When the experience starts on desktop, this screen will transform into a live scientific companion. Real-time telemetry, chapter-by-chapter astrophysics documentation, and mission data synced to the journey.',
     waitingReady: 'SIGNAL LOCKED',
     whatYouSee: 'WHAT YOU\u2019RE SEEING',
     funFact: 'DID YOU KNOW?',
@@ -60,6 +60,10 @@ const LABELS = {
     archiveTitle: 'JOURNEY COMPLETE',
     archiveSub: 'Browse all chapters and their scientific documentation',
     archiveBtn: 'View chapter',
+    backToChapters: 'ALL CHAPTERS',
+    sourcesTitle: 'SOURCES & REFERENCES',
+    sourcesSub: 'Scientific data and research behind this experience',
+    sourcesBtn: 'SOURCES',
     footer: 'Crafted by',
   },
   fr: {
@@ -70,7 +74,7 @@ const LABELS = {
     waitingTitle: 'CONSOLE DE MISSION',
     waitingSub: 'Li\u00E9 \u00E0 la salle',
     waitingHint: 'En attente du d\u00E9but de la descente sur le bureau',
-    waitingDesc: 'Quand l\u2019exp\u00E9rience d\u00E9marre sur le bureau, cet \u00E9cran se transforme en compagnon scientifique — t\u00E9l\u00E9m\u00E9trie en direct, documentation astrophysique chapitre par chapitre, donn\u00E9es de mission synchronis\u00E9es.',
+    waitingDesc: 'Quand l\u2019exp\u00E9rience d\u00E9marre sur le bureau, cet \u00E9cran se transforme en compagnon scientifique. T\u00E9l\u00E9m\u00E9trie en direct, documentation astrophysique chapitre par chapitre, donn\u00E9es de mission synchronis\u00E9es.',
     waitingReady: 'SIGNAL VERROUILL\u00C9',
     whatYouSee: 'CE QUE VOUS VOYEZ',
     funFact: 'LE SAVIEZ-VOUS ?',
@@ -87,6 +91,10 @@ const LABELS = {
     archiveTitle: 'VOYAGE TERMIN\u00C9',
     archiveSub: 'Parcourez tous les chapitres et leur documentation scientifique',
     archiveBtn: 'Voir le chapitre',
+    backToChapters: 'TOUS LES CHAPITRES',
+    sourcesTitle: 'SOURCES & R\u00C9F\u00C9RENCES',
+    sourcesSub: 'Donn\u00E9es scientifiques et recherches derri\u00E8re cette exp\u00E9rience',
+    sourcesBtn: 'SOURCES',
     footer: 'Con\u00E7u par',
   },
 };
@@ -112,6 +120,7 @@ export async function init(roomId: string) {
   let currentChapter = -1;
   let connected = false;
   let archiveShown = false;
+  let viewingArchiveChapter = false;
   const receivedChapters = new Map<number, ChapterData>();
 
   const dot = document.getElementById('comp-dot')!;
@@ -216,6 +225,10 @@ export async function init(roomId: string) {
           </button>
         `).join('')}
       </div>
+      <button class="comp-sources-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        ${labels.sourcesBtn}
+      </button>
     `;
 
     archiveEl.querySelectorAll('.comp-archive-card').forEach(card => {
@@ -225,9 +238,10 @@ export async function init(roomId: string) {
         document.documentElement.style.setProperty('--comp-accent', color);
         archiveEl!.classList.add('hidden');
         main.classList.remove('hidden');
+        viewingArchiveChapter = true;
 
         const ch = receivedChapters.get(idx) || { index: idx, title: chapterNames[idx], subtitle: '', interstitial: '' };
-        renderChapter(ch, scienceData[idx], labels, color);
+        renderChapter(ch, scienceData[idx], labels, color, true, showArchive);
         bg.style.background = `radial-gradient(ellipse at center, ${color}12 0%, transparent 70%)`;
         root.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -235,10 +249,44 @@ export async function init(roomId: string) {
       });
     });
 
+    const sourcesBtn = archiveEl.querySelector('.comp-sources-btn');
+    if (sourcesBtn) {
+      sourcesBtn.addEventListener('click', () => showSources());
+    }
+
     root.scrollTo({ top: 0, behavior: 'smooth' });
     statusText.textContent = labels.archiveTitle;
     dot.classList.remove('live');
     dot.classList.add('connected');
+  }
+
+  function showSources() {
+    let sourcesEl = document.getElementById('comp-sources');
+    if (!sourcesEl) {
+      sourcesEl = document.createElement('div');
+      sourcesEl.id = 'comp-sources';
+      const content = document.getElementById('comp-content')!;
+      const footer = document.getElementById('comp-footer')!;
+      content.insertBefore(sourcesEl, footer);
+    }
+
+    const archiveEl = document.getElementById('comp-archive');
+    if (archiveEl) archiveEl.classList.add('hidden');
+    main.classList.add('hidden');
+    sourcesEl.classList.remove('hidden');
+
+    sourcesEl.innerHTML = buildSourcesHTML(labels, () => {
+      sourcesEl!.classList.add('hidden');
+      showArchive();
+    });
+
+    sourcesEl.querySelector('.comp-sources-back')?.addEventListener('click', () => {
+      sourcesEl!.classList.add('hidden');
+      showArchive();
+    });
+
+    root.scrollTo({ top: 0, behavior: 'smooth' });
+    statusText.textContent = labels.sourcesBtn;
   }
 
   await hub.join(roomId);
@@ -323,7 +371,7 @@ function buildHTML(roomId: string, l: typeof LABELS['en']): string {
   `;
 }
 
-function renderChapter(ch: ChapterData, science: ChapterScience | undefined, l: typeof LABELS['en'], _color: string) {
+function renderChapter(ch: ChapterData, science: ChapterScience | undefined, l: typeof LABELS['en'], _color: string, showBackBtn = false, onBack?: () => void) {
   const numEl = document.getElementById('comp-chapter-num')!;
   const titleEl = document.getElementById('comp-chapter-title')!;
   const subEl = document.getElementById('comp-chapter-sub')!;
@@ -344,6 +392,22 @@ function renderChapter(ch: ChapterData, science: ChapterScience | undefined, l: 
   titleEl.textContent = ch.title;
   subEl.textContent = ch.subtitle.replace(/\\n/g, '\n');
   interEl.textContent = ch.interstitial || '';
+
+  const existingBackBtn = document.getElementById('comp-back-btn');
+  if (existingBackBtn) existingBackBtn.remove();
+
+  if (showBackBtn && onBack) {
+    const backBtn = document.createElement('button');
+    backBtn.id = 'comp-back-btn';
+    backBtn.className = 'comp-back-btn';
+    backBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg> ${l.backToChapters}`;
+    backBtn.addEventListener('click', () => {
+      backBtn.remove();
+      onBack();
+    });
+    const header = document.querySelector('.comp-chapter-header');
+    if (header) header.insertBefore(backBtn, header.firstChild);
+  }
 
   if (science) {
     scienceEl.innerHTML = buildScienceHTML(science, l);
@@ -404,6 +468,75 @@ function updateHUD(s: StateData) {
   if (dilEl) dilEl.textContent = s.timeDilation > 999 ? '\u221E' : s.timeDilation.toFixed(2);
   if (tidalEl) tidalEl.textContent = s.tidalForce.toFixed(1);
   if (progBar) progBar.style.width = `${Math.min(100, s.scroll * 100)}%`;
+}
+
+function buildSourcesHTML(l: typeof LABELS['en'], _onBack: () => void): string {
+  const isEn = l.sourcesTitle === 'SOURCES & REFERENCES';
+
+  const sources = [
+    {
+      category: isEn ? 'BLACK HOLE PHYSICS' : 'PHYSIQUE DES TROUS NOIRS',
+      items: [
+        { title: 'Schwarzschild, K. (1916)', desc: isEn ? '"On the Gravitational Field of a Mass Point." Sitzungsberichte der Preussischen Akademie der Wissenschaften.' : '"Sur le champ gravitationnel d\'un point de masse." Sitzungsberichte der Preussischen Akademie der Wissenschaften.' },
+        { title: 'Penrose, R. (1965)', desc: isEn ? '"Gravitational Collapse and Space-Time Singularities." Physical Review Letters, 14(3).' : '"Effondrement gravitationnel et singularit\u00E9s de l\'espace-temps." Physical Review Letters, 14(3).' },
+        { title: 'Hawking, S. (1974)', desc: isEn ? '"Black Hole Explosions?" Nature, 248, 30\u201331.' : '"Explosions de trous noirs ?" Nature, 248, 30\u201331.' },
+        { title: 'Bardeen, J. M. (1973)', desc: isEn ? '"Timelike and Null Geodesics in the Kerr Metric." Les Houches proceedings. Black hole shadow calculations.' : '"G\u00E9od\u00E9siques temporelles et nulles dans la m\u00E9trique de Kerr." Calculs de l\'ombre des trous noirs.' },
+      ],
+    },
+    {
+      category: isEn ? 'OBSERVATIONAL DATA' : 'DONN\u00C9ES OBSERVATIONNELLES',
+      items: [
+        { title: 'Event Horizon Telescope (2019)', desc: isEn ? 'First image of M87*. Astrophysical Journal Letters, 875(1). Shadow: 42 \u00B1 3 \u03BCas.' : 'Premi\u00E8re image de M87*. Astrophysical Journal Letters, 875(1). Ombre : 42 \u00B1 3 \u03BCas.' },
+        { title: 'Event Horizon Telescope (2022)', desc: isEn ? 'Image of Sgr A*. 4.3 million solar masses. Astrophysical Journal Letters, 930(2).' : 'Image de Sgr A*. 4,3 millions de masses solaires. Astrophysical Journal Letters, 930(2).' },
+        { title: 'LIGO/Virgo/KAGRA (2015\u20132025)', desc: isEn ? '~300 gravitational wave detections. GW150914: 36+29 M\u2609 merger.' : '~300 d\u00E9tections d\'ondes gravitationnelles. GW150914 : fusion 36+29 M\u2609.' },
+        { title: 'GPS Time Correction', desc: isEn ? '38 \u03BCs/day gravitational time dilation correction. Ashby, N. (2003), Living Reviews in Relativity.' : 'Correction de 38 \u03BCs/jour. Ashby, N. (2003), Living Reviews in Relativity.' },
+      ],
+    },
+    {
+      category: isEn ? 'KEY PARAMETERS USED' : 'PARAM\u00C8TRES CL\u00C9S UTILIS\u00C9S',
+      items: [
+        { title: isEn ? 'Black hole mass' : 'Masse du trou noir', desc: '10\u00B9\u2070 M\u2609 (Schwarzschild, non-rotating)' },
+        { title: isEn ? 'Event horizon' : 'Horizon des \u00E9v\u00E9nements', desc: 'Rs = 29.5 \u00D7 10\u2079 km (197 AU)' },
+        { title: isEn ? 'Photon sphere' : 'Sph\u00E8re de photons', desc: '1.5 Rs = 44.25 \u00D7 10\u2079 km' },
+        { title: isEn ? 'ISCO' : 'ISCO', desc: '3.0 Rs (v = 0.408c, \u03B3 = 1.091)' },
+        { title: isEn ? 'Shadow radius' : 'Rayon d\'ombre', desc: '2.598 Rs (= 3\u221A3/2 \u00D7 Rs)' },
+        { title: isEn ? 'Hawking temperature' : 'Temp\u00E9rature de Hawking', desc: '6.17 \u00D7 10\u207B\u00B9\u2078 K' },
+        { title: isEn ? 'Evaporation time' : 'Temps d\'\u00E9vaporation', desc: '~10\u2079\u2077 years' },
+        { title: isEn ? 'Time to singularity' : 'Temps jusqu\'\u00E0 la singularit\u00E9', desc: isEn ? '15.5 hours (proper time)' : '15,5 heures (temps propre)' },
+      ],
+    },
+    {
+      category: isEn ? 'RENDERING TECHNIQUES' : 'TECHNIQUES DE RENDU',
+      items: [
+        { title: isEn ? 'Raymarching (GLSL)' : 'Raymarching (GLSL)', desc: isEn ? 'Real-time GPU raymarching through curved spacetime. Schwarzschild geodesic integration.' : 'Raymarching GPU temps r\u00E9el dans l\'espace-temps courbe. Int\u00E9gration g\u00E9od\u00E9sique de Schwarzschild.' },
+        { title: isEn ? 'Accretion disk model' : 'Mod\u00E8le de disque d\'accr\u00E9tion', desc: isEn ? 'Novikov-Thorne thin disk. Temperature profile T(r) \u221D r\u207B\u00B3/\u2074. Doppler beaming + gravitational redshift.' : 'Disque mince Novikov-Thorne. Profil T(r) \u221D r\u207B\u00B3/\u2074. Beaming Doppler + redshift gravitationnel.' },
+        { title: isEn ? 'Gravitational lensing' : 'Lentille gravitationnelle', desc: isEn ? 'Exact Schwarzschild deflection angle. Higher-order photon rings (n=1, n=2).' : 'Angle de d\u00E9flexion exact de Schwarzschild. Anneaux de photons d\'ordre sup\u00E9rieur (n=1, n=2).' },
+        { title: isEn ? 'Procedural audio' : 'Audio proc\u00E9dural', desc: isEn ? 'Web Audio API. Binaural frequencies, granular synthesis, real-time parameter modulation.' : 'Web Audio API. Fr\u00E9quences binaurales, synth\u00E8se granulaire, modulation temps r\u00E9el.' },
+      ],
+    },
+  ];
+
+  return `
+    <button class="comp-sources-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      ${l.backToChapters}
+    </button>
+    <div class="comp-sources-header">
+      <div class="comp-sources-title">${l.sourcesTitle}</div>
+      <div class="comp-sources-sub">${l.sourcesSub}</div>
+    </div>
+    ${sources.map(cat => `
+      <div class="comp-source-category">
+        <div class="comp-source-cat-title">${cat.category}</div>
+        ${cat.items.map(item => `
+          <div class="comp-source-item">
+            <div class="comp-source-name">${item.title}</div>
+            <div class="comp-source-desc">${item.desc}</div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('')}
+  `;
 }
 
 function updateLabels(l: typeof LABELS['en']) {

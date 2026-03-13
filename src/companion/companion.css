@@ -657,6 +657,160 @@
   color: rgba(255, 240, 224, 0.5);
 }
 
+/* ─── Back Button ─── */
+
+.comp-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: 1px solid rgba(255, 240, 224, 0.1);
+  border-radius: 100px;
+  padding: 0.4rem 0.8rem;
+  color: rgba(255, 240, 224, 0.4);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.45rem;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  margin-bottom: 0.8rem;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.comp-back-btn:active {
+  background: rgba(255, 240, 224, 0.04);
+  border-color: var(--comp-accent);
+  color: var(--comp-accent);
+}
+
+/* ─── Sources Button ─── */
+
+.comp-sources-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  margin-top: 1rem;
+  background: rgba(255, 240, 224, 0.02);
+  border: 1px dashed rgba(255, 240, 224, 0.08);
+  border-radius: 10px;
+  color: rgba(255, 240, 224, 0.3);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+.comp-sources-btn:active {
+  background: rgba(255, 240, 224, 0.04);
+  border-color: var(--comp-accent);
+  color: var(--comp-accent);
+}
+
+/* ─── Sources Page ─── */
+
+#comp-sources {
+  flex: 1;
+  padding: 1rem 0 2rem;
+  transition: opacity 0.5s ease;
+}
+
+#comp-sources.hidden {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.comp-sources-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: 1px solid rgba(255, 240, 224, 0.1);
+  border-radius: 100px;
+  padding: 0.4rem 0.8rem;
+  color: rgba(255, 240, 224, 0.4);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.45rem;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.comp-sources-back:active {
+  background: rgba(255, 240, 224, 0.04);
+  border-color: var(--comp-accent);
+  color: var(--comp-accent);
+}
+
+.comp-sources-header {
+  text-align: center;
+  margin-bottom: 1.8rem;
+}
+
+.comp-sources-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.25em;
+  color: rgba(255, 240, 224, 0.6);
+  margin-bottom: 0.5rem;
+}
+
+.comp-sources-sub {
+  font-size: 0.6rem;
+  color: rgba(255, 240, 224, 0.25);
+  line-height: 1.6;
+}
+
+.comp-source-category {
+  margin-bottom: 1.5rem;
+}
+
+.comp-source-cat-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.42rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  color: var(--comp-accent);
+  opacity: 0.6;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--comp-faint);
+}
+
+.comp-source-item {
+  padding: 0.5rem 0.6rem;
+  margin-bottom: 0.3rem;
+  border-radius: 6px;
+  background: rgba(255, 240, 224, 0.015);
+}
+
+.comp-source-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: rgba(255, 240, 224, 0.55);
+  margin-bottom: 0.15rem;
+}
+
+.comp-source-desc {
+  font-size: 0.58rem;
+  line-height: 1.6;
+  color: rgba(255, 240, 224, 0.3);
+}
+
 /* ─── Scrollbar ─── */
 
 #companion-root::-webkit-scrollbar {

@@ -280,7 +280,14 @@
 
     <button id="lang-btn" aria-label="Switch language"><span class="lang-opt" data-lang="en">EN</span><span class="lang-sep">·</span><span class="lang-opt" data-lang="fr">FR</span></button>
 
-
+    <button id="fs-btn" aria-label="Toggle fullscreen">
+      <svg id="fs-icon-enter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3H5a2 2 0 00-2 2v3" /><path d="M21 8V5a2 2 0 00-2-2h-3" /><path d="M3 16v3a2 2 0 002 2h3" /><path d="M16 21h3a2 2 0 002-2v-3" />
+      </svg>
+      <svg id="fs-icon-exit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <path d="M8 3v3a2 2 0 01-2 2H3" /><path d="M21 8h-3a2 2 0 01-2-2V3" /><path d="M3 16h3a2 2 0 012 2v3" /><path d="M16 21v-3a2 2 0 012-2h3" />
+      </svg>
+    </button>
 
     <div id="trap-overlay" aria-hidden="true">
       <div id="trap-vortex" aria-hidden="true"></div>

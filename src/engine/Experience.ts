@@ -826,8 +826,34 @@ gl_FragColor=vec4(col,1.0);}`;
       });
     }
 
+    this.setupFullscreenButton();
     this.setupLangButton();
     this.applyTranslations();
+  }
+
+  private setupFullscreenButton() {
+    const fsBtn = document.getElementById('fs-btn');
+    if (!fsBtn) return;
+
+    const iconEnter = document.getElementById('fs-icon-enter');
+    const iconExit = document.getElementById('fs-icon-exit');
+
+    const updateIcon = () => {
+      const isFs = !!document.fullscreenElement;
+      if (iconEnter) iconEnter.style.display = isFs ? 'none' : 'block';
+      if (iconExit) iconExit.style.display = isFs ? 'block' : 'none';
+    };
+
+    this.addTrackedListener(fsBtn, 'click', () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+      if (this.state.soundEnabled) this.audio.triggerUIHover();
+    });
+
+    document.addEventListener('fullscreenchange', updateIcon);
   }
 
   private updateShareCount() {
@@ -1031,6 +1057,8 @@ gl_FragColor=vec4(col,1.0);}`;
     if (muteBtn) setTimeout(() => muteBtn.classList.add('visible'), 600);
     const langBtn = document.getElementById('lang-btn');
     if (langBtn) setTimeout(() => langBtn.classList.add('visible'), 800);
+    const fsBtn = document.getElementById('fs-btn');
+    if (fsBtn) setTimeout(() => fsBtn.classList.add('visible'), 1000);
 
     const onIntroComplete = () => {
       intro.classList.add('fade-out');

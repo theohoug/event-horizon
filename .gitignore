@@ -5,4 +5,8 @@ dist/
 *.jpg
 *.mp4
 
+# Allow static assets needed for SEO/social
+!static/og-image.png
+!static/apple-touch-icon.png
+
 .vercel

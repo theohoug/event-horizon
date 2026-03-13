@@ -129,16 +129,16 @@ export class Experience {
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
     const safeFallback: PerfConfig = {
-      dpr: isMobile ? 1.0 : 1.5,
-      maxSteps: isMobile ? 36 : 60,
+      dpr: isMobile ? 0.8 : 1.5,
+      maxSteps: isMobile ? 24 : 60,
       qualityMedium: isMobile,
-      gpgpuTexSize: isMobile ? 64 : 128,
-      starfieldCount: isMobile ? 1500 : 6000,
+      gpgpuTexSize: isMobile ? 48 : 128,
+      starfieldCount: isMobile ? 800 : 6000,
       bloomPasses: isMobile ? 1 : 3,
-      bloomScale: isMobile ? 0.15 : 0.35,
-      motionBlur: !isMobile,
+      bloomScale: isMobile ? 0.12 : 0.35,
+      motionBlur: false,
       antialias: false,
-      gpuScore: isMobile ? 20 : 50,
+      gpuScore: isMobile ? 10 : 50,
       quality: isMobile ? 'medium' : 'high',
     };
 
@@ -157,7 +157,7 @@ export class Experience {
 
     const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v2') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v3') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
 
@@ -240,27 +240,30 @@ gl_FragColor=vec4(col,1.0);}`;
     if (costPerPxStep <= 0) costPerPxStep = repMs192 / (px192 * benchSteps);
     const overhead = Math.max(0, repMs96 - costPerPxStep * px96 * benchSteps);
 
-    if (isMobile) costPerPxStep *= 1.6;
+    if (isMobile) costPerPxStep *= 2.5;
 
-    const thermalFactor = isMobile ? 0.75 : 0.95;
-    const bhBudget = (isMobile ? 5.5 : 8.0) * thermalFactor;
+    const thermalFactor = isMobile ? 0.65 : 0.95;
+    const bhBudget = (isMobile ? 4.5 : 8.0) * thermalFactor;
 
-    const maxDpr = isMobile ? Math.min(nativeDpr, 1.5) : Math.min(nativeDpr, 2.0);
-    const minDpr = isMobile ? 0.75 : 1.0;
+    const maxDpr = isMobile ? Math.min(nativeDpr, 1.0) : Math.min(nativeDpr, 2.0);
+    const minDpr = isMobile ? 0.7 : 1.0;
     let bestDpr = minDpr;
-    let bestSteps = 36;
+    let bestSteps = isMobile ? 24 : 36;
+    const maxMobileSteps = 48;
 
     for (let tryDpr = maxDpr; tryDpr >= minDpr - 0.01; tryDpr -= 0.05) {
       const dprR = Math.round(tryDpr * 20) / 20;
       const affordable = (bhBudget - overhead) / Math.max(costPerPxStep * screenPx * dprR * dprR, 1e-12);
-      if (affordable >= 36) {
+      const minSteps = isMobile ? 24 : 36;
+      if (affordable >= minSteps) {
         bestDpr = dprR;
-        bestSteps = Math.min(160, Math.max(36, Math.round(affordable)));
+        const capSteps = isMobile ? maxMobileSteps : 160;
+        bestSteps = Math.min(capSteps, Math.max(minSteps, Math.round(affordable)));
         break;
       }
     }
 
-    const qualityMedium = bestSteps < 60;
+    const qualityMedium = isMobile || bestSteps < 60;
 
     const fullCost = costPerPxStep * screenPx * maxDpr * maxDpr * 160 + overhead;
     let gpuScore = Math.min(100, Math.max(0, (bhBudget / Math.max(fullCost, 0.01)) * 100));
@@ -269,17 +272,17 @@ gl_FragColor=vec4(col,1.0);}`;
     const lerp = (a: number, b: number, v: number) => a + (b - a) * Math.max(0, Math.min(1, v));
     const t01 = gpuScore / 100;
 
-    const gpgpuSizes = [64, 80, 96, 128, 160, 192, 224, 256];
+    const gpgpuSizes = isMobile ? [32, 48, 64, 80, 96] : [64, 80, 96, 128, 160, 192, 224, 256];
     const gpgpuTexSize = gpgpuSizes[Math.min(gpgpuSizes.length - 1, Math.floor(t01 * gpgpuSizes.length))];
-    const starfieldCount = Math.round(lerp(1500, 12000, t01));
-    const bloomPasses = gpuScore > 75 ? 4 : gpuScore > 50 ? 3 : gpuScore > 25 ? 2 : 1;
-    const bloomScale = Math.round(lerp(0.15, 0.5, t01) * 100) / 100;
-    const motionBlur = gpuScore > 30;
+    const starfieldCount = isMobile ? Math.round(lerp(500, 3000, t01)) : Math.round(lerp(1500, 12000, t01));
+    const bloomPasses = isMobile ? (gpuScore > 40 ? 2 : 1) : (gpuScore > 75 ? 4 : gpuScore > 50 ? 3 : gpuScore > 25 ? 2 : 1);
+    const bloomScale = isMobile ? Math.round(lerp(0.1, 0.25, t01) * 100) / 100 : Math.round(lerp(0.15, 0.5, t01) * 100) / 100;
+    const motionBlur = !isMobile && gpuScore > 30;
     const antialias = !isMobile && gpuScore > 65;
     const quality: 'ultra' | 'high' | 'medium' = gpuScore >= 65 ? 'ultra' : gpuScore >= 35 ? 'high' : 'medium';
 
     const config: PerfConfig = { dpr: bestDpr, maxSteps: bestSteps, qualityMedium, gpgpuTexSize, starfieldCount, bloomPasses, bloomScale, motionBlur, antialias, gpuScore: Math.round(gpuScore), quality };
-    try { localStorage.setItem('eh_perf_v2', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v3', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {

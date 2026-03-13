@@ -546,7 +546,8 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
 void main() {
   vec2 uv = (gl_FragCoord.xy - 0.5 * uResolution.xy) / uResolution.y;
   float aspect = uResolution.x / uResolution.y;
-  uv.y += max(0.0, 1.0 - aspect) * 0.18;
+  float portraitBlend = smoothstep(1.0, 0.55, aspect);
+  uv.y += portraitBlend * 0.4;
 
   float scrollEffect = uScroll;
   float approach = smootherstep(0.0, 1.0, scrollEffect);
@@ -555,9 +556,11 @@ void main() {
   vec2 mouseParallax = (uMouse - 0.5);
   float mouseLen = length(mouseParallax);
   float closeFade = 1.0 - scrollEffect * scrollEffect;
+  float camYBase = mix(7.0, 0.06, scrollEffect * (0.8 + 0.2 * scrollEffect));
+  camYBase = mix(camYBase, camYBase * 0.45, portraitBlend * (1.0 - scrollEffect));
   vec3 camPos = vec3(
     sin(scrollEffect * 0.4) * 0.1 * closeFade + sin(uTime * 0.03) * 0.01 * closeFade + mouseParallax.x * mix(0.4, 0.0, scrollEffect),
-    mix(7.0, 0.06, scrollEffect * (0.8 + 0.2 * scrollEffect)) + sin(uTime * 0.08) * 0.02 * closeFade + mouseParallax.y * mix(0.25, 0.0, scrollEffect),
+    camYBase + sin(uTime * 0.08) * 0.02 * closeFade + mouseParallax.y * mix(0.25, 0.0, scrollEffect),
     mix(38.0, 2.5, scrollEffect)
   );
 
@@ -569,6 +572,7 @@ void main() {
   vec3 rd = normalize(forward * fov + right * uv.x + up * uv.y);
 
   float tilt = mix(0.45, 0.02, scrollEffect) + mouseParallax.y * mix(0.02, 0.0, scrollEffect);
+  tilt *= mix(1.0, 0.5, portraitBlend * (1.0 - scrollEffect));
   rd = rotateX(tilt) * rd;
 
   vec3 color;

@@ -750,6 +750,8 @@ gl_FragColor=vec4(col,1.0);}`;
           : 'Your phone becomes a mission console. Real-time telemetry and astrophysics synced to your descent into the black hole.';
         const titleEl = document.getElementById('sound-companion-title');
         if (titleEl) titleEl.textContent = lang === 'fr' ? 'Second écran' : 'Second screen';
+        const headlineEl = document.getElementById('sound-companion-headline');
+        if (headlineEl) headlineEl.textContent = lang === 'fr' ? 'Améliorez votre immersion' : 'Enhance your immersion';
       };
       updateCompanionLang();
       onLangChange(updateCompanionLang);

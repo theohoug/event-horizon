@@ -746,10 +746,10 @@ gl_FragColor=vec4(col,1.0);}`;
       const updateCompanionLang = () => {
         const lang = getLang();
         companionTextEl.textContent = lang === 'fr'
-          ? 'Scannez avec votre t\u00E9l\u00E9phone pour la documentation scientifique en direct'
-          : 'Scan with your phone for live scientific documentation';
-        const labelEl = document.getElementById('sound-companion-label');
-        if (labelEl) labelEl.textContent = lang === 'fr' ? 'COMPAGNON' : 'COMPANION';
+          ? 'Votre téléphone devient une console de mission — télémétrie temps réel et astrophysique synchronisées à votre descente dans le trou noir.'
+          : 'Your phone becomes a mission console — real-time telemetry and astrophysics synced to your descent into the black hole.';
+        const titleEl = document.getElementById('sound-companion-title');
+        if (titleEl) titleEl.textContent = lang === 'fr' ? 'Second écran' : 'Second screen';
       };
       updateCompanionLang();
       onLangChange(updateCompanionLang);

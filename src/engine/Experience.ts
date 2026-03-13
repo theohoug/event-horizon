@@ -1788,15 +1788,17 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     const currentChapter = Math.min(8, Math.floor(this.state.scroll * 9));
-    if (currentChapter !== this.lastChapterIndex && this.lastChapterIndex >= 0) {
-      this.chapterFlash = 1.0;
-      this.postProcessing.triggerShockwave(0.5, 0.5, 1.2);
-      if (this.state.soundEnabled) {
-        this.audio.triggerChapterTransition();
-        this.audio.triggerTextRevealShimmer();
+    if (currentChapter !== this.lastChapterIndex) {
+      if (this.lastChapterIndex >= 0) {
+        this.chapterFlash = 1.0;
+        this.postProcessing.triggerShockwave(0.5, 0.5, 1.2);
+        if (this.state.soundEnabled) {
+          this.audio.triggerChapterTransition();
+          this.audio.triggerTextRevealShimmer();
+        }
+        this.chapterZoomPulse = 1.0;
+        this.hudChapterPulse = 1.0;
       }
-      this.chapterZoomPulse = 1.0;
-      this.hudChapterPulse = 1.0;
       this.logChapter(currentChapter);
       const chName = this.getChapterNames()[currentChapter];
       document.title = currentChapter === 0

@@ -1160,17 +1160,17 @@ body {
 
 #scroll-hint .scroll-text {
   font-family: var(--font-mono);
-  font-size: 0.55rem;
+  font-size: 0.65rem;
   font-weight: 300;
-  letter-spacing: 0.3em;
-  color: rgba(255, 179, 71, 0.5);
+  letter-spacing: 0.25em;
+  color: rgba(255, 179, 71, 0.7);
   text-transform: uppercase;
   animation: scroll-text-breathe 3s ease-in-out infinite;
 }
 
 @keyframes scroll-text-breathe {
-  0%, 100% { opacity: 0.4; letter-spacing: 0.3em; }
-  50% { opacity: 0.8; letter-spacing: 0.35em; }
+  0%, 100% { opacity: 0.5; letter-spacing: 0.25em; }
+  50% { opacity: 1; letter-spacing: 0.3em; }
 }
 
 #scroll-hint .arrow {

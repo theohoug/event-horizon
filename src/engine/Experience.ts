@@ -1042,9 +1042,7 @@ gl_FragColor=vec4(col,1.0);}`;
       this.timeline.start(this.state.soundEnabled);
       this.textReveal.start();
       if (hintEl) {
-        setTimeout(() => hintEl.classList.add('visible'), 1500);
-        const hideHint = () => { hintEl.classList.remove('visible'); window.removeEventListener('scroll', hideHint); };
-        window.addEventListener('scroll', hideHint, { once: true });
+        setTimeout(() => hintEl.classList.add('visible'), 800);
         this.scrollHintEl = hintEl;
       }
       gsap.to(this.state, {
@@ -2232,17 +2230,19 @@ gl_FragColor=vec4(col,1.0);}`;
     this.updateFavicon(scroll);
 
     if (this.scrollHintEl) {
-      if (scroll > 0.02 && scroll < 0.85) {
+      if (scroll > 0.05) {
         this.scrollHintEl.classList.remove('visible');
         this.scrollHintEl.style.opacity = '0';
-      } else if (scroll >= 0.85) {
-        this.scrollHintEl.style.opacity = '0';
+      } else if (scroll <= 0.05 && scroll > 0) {
+        const fadeOpacity = Math.max(0, 1 - scroll * 20);
+        this.scrollHintEl.style.opacity = `${fadeOpacity}`;
       }
       const hintText = this.scrollHintEl.querySelector('.scroll-text');
-      if (hintText && scroll < 0.02) {
+      if (hintText && scroll < 0.01) {
+        const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
         const isStopped = Math.abs(this.state.scrollVelocity) < 0.5;
-        if (isStopped && this.scrollHintLastUpdate !== 0 && performance.now() - this.scrollHintLastUpdate > 5000) {
-          hintText.textContent = this.state.quality === 'medium' ? t().scroll.descentMobile : t().scroll.descentDesktop;
+        if (isStopped && this.scrollHintLastUpdate !== 0 && performance.now() - this.scrollHintLastUpdate > 6000) {
+          hintText.textContent = isMobile ? t().scroll.descentMobile : t().scroll.descentDesktop;
           this.scrollHintLastUpdate = performance.now();
         }
       }

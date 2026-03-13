@@ -1693,6 +1693,24 @@ gl_FragColor=vec4(col,1.0);}`;
 
     this.fpsFrames++;
     const now = performance.now();
+
+    // Emergency downgrade: if a single frame took too long, immediately reduce quality
+    // This prevents the scroll from freezing on weaker GPUs during heavy shader sections
+    if (dt > 0.5 && this.downgradeCount < 8) {
+      const currentPr = this.renderer.getPixelRatio();
+      const emergencyStep = dt > 1.5 ? 0.75 : 0.5;
+      const minPr = /Android|iPhone|iPad/i.test(navigator.userAgent) ? 0.5 : 0.75;
+      const newPr = Math.max(minPr, currentPr - emergencyStep);
+      if (newPr < currentPr) {
+        this.renderer.setPixelRatio(newPr);
+        this.postProcessing.resize();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.downgradeCount++;
+        this.fpsStableCount = 0;
+        this.lowFpsCount = 0;
+      }
+    }
+
     if (now - this.fpsLastTime > 800) {
       this.fpsValue = Math.round(this.fpsFrames * (1000 / (now - this.fpsLastTime)));
       this.fpsFrames = 0;

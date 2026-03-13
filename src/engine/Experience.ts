@@ -112,8 +112,7 @@ export class Experience {
   }
 
   private detectQuality(): 'ultra' | 'high' | 'medium' {
-    const ua = navigator.userAgent;
-    const isMobile = /Android|iPhone|iPad/i.test(ua);
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
     const tempCanvas = document.createElement('canvas');
     const gl = tempCanvas.getContext('webgl2') || tempCanvas.getContext('webgl');
@@ -121,46 +120,95 @@ export class Experience {
 
     let gpuRenderer = '';
     const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-    if (debugInfo) {
-      gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL).toLowerCase();
-    }
-
-    const maxTexSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-    const maxRenderbuf = gl.getParameter(gl.MAX_RENDERBUFFER_SIZE);
-    const maxVaryings = gl.getParameter(gl.MAX_VARYING_VECTORS);
-    const maxFragUniforms = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
-
-    const ext = gl.getExtension('WEBGL_lose_context');
-    if (ext) ext.loseContext();
-
+    if (debugInfo) gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL).toLowerCase();
+    const maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+    const maxFrag = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
     const cores = navigator.hardwareConcurrency || 2;
     const ram = (navigator as any).deviceMemory || 4;
-    const dpr = window.devicePixelRatio || 1;
-    const screenPx = Math.max(screen.width, screen.height) * dpr;
 
-    let gpuScore = 0;
-    gpuScore += maxTexSize >= 16384 ? 3 : maxTexSize >= 8192 ? 2 : maxTexSize >= 4096 ? 1 : 0;
-    gpuScore += maxRenderbuf >= 16384 ? 2 : maxRenderbuf >= 8192 ? 1 : 0;
-    gpuScore += maxFragUniforms >= 1024 ? 2 : maxFragUniforms >= 512 ? 1 : 0;
-    gpuScore += maxVaryings >= 30 ? 1 : 0;
-    gpuScore += cores >= 8 ? 2 : cores >= 6 ? 1 : 0;
-    gpuScore += ram >= 8 ? 2 : ram >= 4 ? 1 : 0;
-
-    if (gpuRenderer.includes('rtx') || gpuRenderer.includes('rx 7') || gpuRenderer.includes('apple m')) gpuScore += 4;
-    else if (gpuRenderer.includes('gtx') || gpuRenderer.includes('rx 6') || gpuRenderer.includes('intel arc')) gpuScore += 2;
-    else if (gpuRenderer.includes('adreno 7') || gpuRenderer.includes('mali-g7')) gpuScore += 2;
-    else if (gpuRenderer.includes('adreno 6') || gpuRenderer.includes('mali-g6') || gpuRenderer.includes('apple gpu')) gpuScore += 1;
+    const lose = gl.getExtension('WEBGL_lose_context');
+    if (lose) lose.loseContext();
 
     if (isMobile) {
-      gpuScore -= 2;
-      if (screenPx > 3000) gpuScore -= 1;
-
-      if (gpuScore >= 8) return 'high';
+      if (maxTex >= 16384 && maxFrag >= 1024 && cores >= 6) return 'high';
+      if (gpuRenderer.includes('apple gpu') && cores >= 6) return 'high';
+      if (gpuRenderer.includes('adreno 7') || gpuRenderer.includes('mali-g7')) return 'high';
       return 'medium';
     }
 
-    if (gpuScore >= 12) return 'ultra';
-    if (gpuScore >= 6) return 'high';
+    if (gpuRenderer.includes('apple m') || gpuRenderer.includes('rtx') || gpuRenderer.includes('rx 7')) return 'ultra';
+    if (maxTex >= 16384 && maxFrag >= 1024 && cores >= 8 && ram >= 8) return 'ultra';
+    if (cores >= 4 && maxTex >= 8192) return 'high';
+    return 'medium';
+  }
+
+  private benchmarkGpu(renderer: THREE.WebGLRenderer): 'ultra' | 'high' | 'medium' {
+    const gl = renderer.getContext();
+    const size = 128;
+    const rt = new THREE.WebGLRenderTarget(size, size, {
+      format: THREE.RGBAFormat,
+      type: THREE.HalfFloatType,
+    });
+
+    const benchScene = new THREE.Scene();
+    const benchCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const benchMat = new THREE.ShaderMaterial({
+      vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position,1.0); }`,
+      fragmentShader: `
+        precision highp float;
+        varying vec2 vUv;
+        float h(vec2 p){ vec3 p3=fract(vec3(p.xyx)*0.1031); p3+=dot(p3,p3.yzx+33.33); return fract((p3.x+p3.y)*p3.z); }
+        void main(){
+          vec3 c=vec3(0.0);
+          vec2 uv=vUv*2.0-1.0;
+          for(int i=0;i<40;i++){
+            float fi=float(i)*0.025;
+            vec2 p=uv+vec2(sin(fi*3.14),cos(fi*2.71))*fi;
+            float d=length(p);
+            c+=vec3(exp(-d*d*4.0))*h(p*float(i+1));
+            c+=vec3(0.01)*exp(-d*10.0);
+          }
+          gl_FragColor=vec4(c,1.0);
+        }
+      `,
+      depthTest: false,
+    });
+    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), benchMat);
+    benchScene.add(quad);
+
+    gl.finish();
+
+    const warmup = 3;
+    for (let i = 0; i < warmup; i++) {
+      renderer.setRenderTarget(rt);
+      renderer.render(benchScene, benchCam);
+    }
+    gl.finish();
+
+    const runs = 6;
+    const t0 = performance.now();
+    for (let i = 0; i < runs; i++) {
+      renderer.setRenderTarget(rt);
+      renderer.render(benchScene, benchCam);
+    }
+    gl.finish();
+    const elapsed = performance.now() - t0;
+    const avgMs = elapsed / runs;
+
+    renderer.setRenderTarget(null);
+    rt.dispose();
+    benchMat.dispose();
+    quad.geometry.dispose();
+
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      if (avgMs < 2) return 'high';
+      return 'medium';
+    }
+
+    if (avgMs < 1) return 'ultra';
+    if (avgMs < 3) return 'high';
     return 'medium';
   }
 
@@ -255,6 +303,29 @@ export class Experience {
 
   private async init() {
     const isMobileDevice = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      antialias: false,
+      alpha: false,
+      powerPreference: 'high-performance',
+      stencil: false,
+      depth: true,
+      preserveDrawingBuffer: true,
+    });
+    this.renderer.setPixelRatio(1);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setClearColor(0x050505, 1);
+    this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+    this.renderer.toneMapping = THREE.NoToneMapping;
+
+    const benchResult = this.benchmarkGpu(this.renderer);
+    const qualities: ('ultra' | 'high' | 'medium')[] = ['medium', 'high', 'ultra'];
+    const heuristic = this.state.quality;
+    const hIdx = qualities.indexOf(heuristic);
+    const bIdx = qualities.indexOf(benchResult);
+    this.state.quality = qualities[Math.min(hIdx, bIdx)];
+
     const qualityPresets = {
       ultra: { pixelRatio: Math.min(window.devicePixelRatio, 2), antialias: true },
       high: { pixelRatio: Math.min(window.devicePixelRatio, isMobileDevice ? 1.5 : 1.5), antialias: !isMobileDevice },
@@ -262,20 +333,8 @@ export class Experience {
     };
     const preset = qualityPresets[this.state.quality];
 
-    this.renderer = new THREE.WebGLRenderer({
-      canvas: this.canvas,
-      antialias: preset.antialias,
-      alpha: false,
-      powerPreference: 'high-performance',
-      stencil: false,
-      depth: true,
-      preserveDrawingBuffer: true,
-    });
     this.renderer.setPixelRatio(preset.pixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setClearColor(0x050505, 1);
-    this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
-    this.renderer.toneMapping = THREE.NoToneMapping;
 
     this.postProcessing = new PostProcessing(this.renderer, this.state.quality, isMobileDevice);
 

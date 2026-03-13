@@ -3302,14 +3302,17 @@ html.hardcore-mode .corner-ornament {
   }
 
   #chapter-text {
-    padding: 2rem 1.5rem;
+    padding: 2rem 1.2rem;
     padding-top: calc(2rem + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
   }
 
   #chapter-text .line {
-    font-size: clamp(1.05rem, 5.5vw, 1.6rem);
-    letter-spacing: 0.06em;
+    font-size: clamp(1rem, 5vw, 1.5rem);
+    letter-spacing: 0.05em;
     line-height: 1.65;
+    max-width: 100%;
+    overflow-wrap: break-word;
   }
 
   #chapter-text .line.data {
@@ -3321,30 +3324,11 @@ html.hardcore-mode .corner-ornament {
   }
 
   #data-hud {
-    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-    padding: 0 1rem 0 1rem;
-    gap: 0.3rem;
-  }
-
-  .hud-label {
-    font-size: 0.42rem;
-    letter-spacing: 0.1em;
-  }
-
-  .hud-value {
-    font-size: 0.55rem;
-  }
-
-  .hud-tidal {
-    display: none;
-  }
-
-  .hud-elapsed {
     display: none;
   }
 
   #mute-btn {
-    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    bottom: calc(1.8rem + env(safe-area-inset-bottom, 0px));
     right: calc(1rem + env(safe-area-inset-right, 0px));
     width: 44px;
     height: 44px;
@@ -3354,8 +3338,9 @@ html.hardcore-mode .corner-ornament {
   }
 
   #lang-btn {
-    bottom: calc(3.8rem + env(safe-area-inset-bottom, 0px));
-    right: calc(1rem + env(safe-area-inset-right, 0px));
+    bottom: calc(1.8rem + env(safe-area-inset-bottom, 0px));
+    left: calc(1rem + env(safe-area-inset-left, 0px));
+    right: auto;
     font-size: 0.55rem;
     padding: 0.5rem 0.7rem;
     min-width: 44px;
@@ -3462,8 +3447,8 @@ html.hardcore-mode .corner-ornament {
   }
 
   #chapter-text .line.chapter-opening {
-    font-size: clamp(2.5rem, 14vw, 5rem);
-    letter-spacing: 0.2em;
+    font-size: clamp(2rem, 10vw, 4rem);
+    letter-spacing: 0.12em;
   }
 
   #chapter-text .line.chapter-opening-sub {
@@ -3478,13 +3463,13 @@ html.hardcore-mode .corner-ornament {
   }
 
   #chapter-text .line.chapter-wide {
-    font-size: clamp(0.85rem, 4vw, 1.4rem);
-    letter-spacing: 0.12em;
+    font-size: clamp(0.8rem, 3.8vw, 1.3rem);
+    letter-spacing: 0.1em;
   }
 
   #chapter-text .line.chapter-impact {
-    font-size: clamp(1.8rem, 9vw, 3.5rem);
-    letter-spacing: 0.18em;
+    font-size: clamp(1.5rem, 8vw, 3rem);
+    letter-spacing: 0.12em;
   }
 
   #chapter-text .line.chapter-void {
@@ -3686,25 +3671,28 @@ html.hardcore-mode .corner-ornament {
   }
 
   #chapter-text {
-    padding: 2rem 1.2rem;
+    padding: 2rem 1rem;
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
   }
 
   #chapter-text .line {
-    font-size: clamp(0.95rem, 5.2vw, 1.4rem);
-    letter-spacing: 0.04em;
+    font-size: clamp(0.9rem, 4.8vw, 1.3rem);
+    letter-spacing: 0.03em;
     line-height: 1.7;
+    max-width: 100%;
+    overflow-wrap: break-word;
   }
 
   #chapter-text .line.data {
-    font-size: clamp(0.58rem, 2.6vw, 0.72rem);
+    font-size: clamp(0.55rem, 2.5vw, 0.7rem);
     line-height: 1.8;
     max-width: 92vw;
     padding: 0.4em 0.6em;
   }
 
   #chapter-text .line.chapter-opening {
-    font-size: clamp(1.8rem, 15vw, 3.5rem);
-    letter-spacing: 0.15em;
+    font-size: clamp(1.5rem, 9vw, 2.8rem);
+    letter-spacing: 0.1em;
   }
 
   #chapter-text .line.chapter-opening-sub {
@@ -3713,23 +3701,23 @@ html.hardcore-mode .corner-ornament {
   }
 
   #chapter-text .line.chapter-impact {
-    font-size: clamp(1.5rem, 8vw, 3rem);
-    letter-spacing: 0.15em;
+    font-size: clamp(1.2rem, 7vw, 2.5rem);
+    letter-spacing: 0.1em;
   }
 
   #chapter-text .line.chapter-wide {
-    font-size: clamp(0.75rem, 3.5vw, 1.2rem);
-    letter-spacing: 0.1em;
+    font-size: clamp(0.7rem, 3.2vw, 1.1rem);
+    letter-spacing: 0.08em;
   }
 
   #chapter-text .line.chapter-final {
-    font-size: clamp(1.3rem, 6vw, 2.5rem);
-    letter-spacing: 0.1em;
+    font-size: clamp(1.1rem, 5.5vw, 2.2rem);
+    letter-spacing: 0.08em;
   }
 
   #chapter-text .line.chapter-vertical {
-    font-size: clamp(0.9rem, 3vw, 1.5rem);
-    letter-spacing: 0.3em;
+    font-size: clamp(0.8rem, 2.8vw, 1.3rem);
+    letter-spacing: 0.25em;
   }
 
   #loader-text {
@@ -3752,22 +3740,7 @@ html.hardcore-mode .corner-ornament {
     gap: 0.2rem;
   }
 
-  .hud-label {
-    font-size: 0.38rem;
-    letter-spacing: 0.08em;
-  }
-
-  .hud-value {
-    font-size: 0.48rem;
-  }
-
-  .hud-distance .hud-value {
-    font-size: 0.55rem;
-  }
-
-  .hud-tidal,
-  .hud-elapsed,
-  .hud-timedil {
+  #data-hud {
     display: none;
   }
 
@@ -3910,17 +3883,17 @@ html.hardcore-mode .corner-ornament {
   }
 }
 
-/* ─── Mobile Navigation Arrows ─── */
+/* ─── Mobile Navigation ─── */
 
 #mobile-nav {
   display: none;
   position: fixed;
-  bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
-  left: calc(1rem + env(safe-area-inset-left, 0px));
+  bottom: calc(1.8rem + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 40;
-  flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
+  justify-content: center;
   opacity: 0;
   transition: opacity 0.8s ease;
   pointer-events: none;
@@ -3931,17 +3904,16 @@ html.hardcore-mode .corner-ornament {
   pointer-events: auto;
 }
 
-#mobile-nav-up,
 #mobile-nav-down {
   --nc: var(--nav-color, 0, 245, 212);
-  width: 48px;
-  height: 48px;
-  border: 1px solid rgba(var(--nc), 0.18);
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(var(--nc), 0.2);
   border-radius: 50%;
-  background: rgba(5, 5, 15, 0.5);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  color: rgba(var(--nc), 0.6);
+  background: rgba(5, 5, 15, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: rgba(var(--nc), 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3949,58 +3921,38 @@ html.hardcore-mode .corner-ornament {
   -webkit-tap-highlight-color: transparent;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow:
-    0 0 15px rgba(var(--nc), 0.06),
-    inset 0 0 8px rgba(var(--nc), 0.03);
+    0 0 20px rgba(var(--nc), 0.08),
+    inset 0 0 10px rgba(var(--nc), 0.04);
   animation: mobile-nav-breathe 4s ease-in-out infinite;
 }
 
-#mobile-nav-up:active,
 #mobile-nav-down:active {
-  transform: scale(0.88);
+  transform: scale(0.85);
   border-color: rgba(var(--nc), 0.5);
   color: rgba(var(--nc), 0.95);
   box-shadow:
-    0 0 24px rgba(var(--nc), 0.25),
-    0 0 48px rgba(var(--nc), 0.1),
+    0 0 30px rgba(var(--nc), 0.25),
+    0 0 60px rgba(var(--nc), 0.1),
     inset 0 0 14px rgba(var(--nc), 0.1);
 }
 
-#mobile-nav-up.disabled,
-#mobile-nav-down.disabled {
-  opacity: 0.15;
-  pointer-events: none;
-}
-
-#mobile-nav-up svg,
 #mobile-nav-down svg {
-  width: 18px;
-  height: 18px;
-}
-
-#mobile-nav-chapter {
-  font-family: var(--font-mono);
-  font-size: 0.48rem;
-  color: rgba(var(--nav-color, 0, 245, 212), 0.3);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  min-width: 2rem;
-  text-align: center;
-  transition: color 0.5s ease;
+  width: 20px;
+  height: 20px;
 }
 
 @keyframes mobile-nav-breathe {
   0%, 100% {
     box-shadow:
-      0 0 15px rgba(var(--nc, 0, 245, 212), 0.06),
-      inset 0 0 8px rgba(var(--nc, 0, 245, 212), 0.03);
-    border-color: rgba(var(--nc, 0, 245, 212), 0.18);
+      0 0 20px rgba(var(--nc, 0, 245, 212), 0.08),
+      inset 0 0 10px rgba(var(--nc, 0, 245, 212), 0.04);
+    border-color: rgba(var(--nc, 0, 245, 212), 0.2);
   }
   50% {
     box-shadow:
-      0 0 22px rgba(var(--nc, 0, 245, 212), 0.12),
-      inset 0 0 10px rgba(var(--nc, 0, 245, 212), 0.05);
-    border-color: rgba(var(--nc, 0, 245, 212), 0.28);
+      0 0 28px rgba(var(--nc, 0, 245, 212), 0.14),
+      inset 0 0 12px rgba(var(--nc, 0, 245, 212), 0.06);
+    border-color: rgba(var(--nc, 0, 245, 212), 0.32);
   }
 }
 
@@ -4091,10 +4043,30 @@ html.hardcore-mode .corner-ornament {
 /* ─── Touch Devices ─── */
 
 @media (hover: none) and (pointer: coarse) {
+  #chapter-indicator {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(5, 5, 15, 0.6);
+  }
+
+  #mobile-nav-down {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(5, 5, 15, 0.7);
+  }
+
+  .corner-ornament {
+    display: none !important;
+  }
+
   #custom-cursor,
   #custom-cursor-ring,
   .cursor-trail {
     display: none !important;
+  }
+
+  #chapter-nav {
+    display: none;
   }
 
   body {

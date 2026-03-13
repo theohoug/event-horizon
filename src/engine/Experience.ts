@@ -1410,33 +1410,22 @@ export class Experience {
 
 
   private mobileNavEl: HTMLElement | null = null;
-  private mobileNavChapterEl: HTMLElement | null = null;
 
   private setupMobileNav() {
     if (!window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
 
     this.mobileNavEl = document.getElementById('mobile-nav');
-    this.mobileNavChapterEl = document.getElementById('mobile-nav-chapter');
-    const upBtn = document.getElementById('mobile-nav-up');
     const downBtn = document.getElementById('mobile-nav-down');
-    if (!this.mobileNavEl || !upBtn || !downBtn) return;
+    if (!this.mobileNavEl || !downBtn) return;
 
-    const navigateChapter = (direction: 1 | -1) => {
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const currentChapter = Math.min(8, Math.floor(this.state.scroll * 9));
-      const targetChapter = Math.max(0, Math.min(8, currentChapter + direction));
-      const targetScroll = (targetChapter + 0.5) / 9;
-      window.scrollTo({ top: maxScroll * targetScroll, behavior: 'smooth' });
-
+    const miniScroll = () => {
+      const scrollAmount = window.innerHeight * 0.6;
+      window.scrollBy({ top: scrollAmount, behavior: 'smooth' });
       if (this.state.soundEnabled) this.audio.triggerUIHover();
     };
 
-    this.addTrackedListener(upBtn, 'click', () => navigateChapter(-1));
-    this.addTrackedListener(downBtn, 'click', () => navigateChapter(1));
+    this.addTrackedListener(downBtn, 'click', () => miniScroll());
   }
-
-  private mobileNavFrame = 0;
-  private mobileNavLastChapter = -1;
 
   private updateMobileNav() {
     if (!this.mobileNavEl) return;
@@ -1445,22 +1434,6 @@ export class Experience {
     this.mobileNavEl.classList.toggle('visible', isVisible);
 
     if (!isVisible) return;
-
-    const currentChapter = Math.min(8, Math.floor(this.state.scroll * 9));
-    if (currentChapter === this.mobileNavLastChapter) {
-      this.mobileNavFrame++;
-      if (this.mobileNavFrame % 6 !== 0) return;
-    }
-    this.mobileNavLastChapter = currentChapter;
-
-    const upBtn = document.getElementById('mobile-nav-up');
-    const downBtn = document.getElementById('mobile-nav-down');
-    if (upBtn) upBtn.classList.toggle('disabled', currentChapter <= 0);
-    if (downBtn) downBtn.classList.toggle('disabled', currentChapter >= 8);
-
-    if (this.mobileNavChapterEl) {
-      this.mobileNavChapterEl.textContent = `${currentChapter + 1}/9`;
-    }
 
     const s = this.state.scroll;
     const r = Math.round(s < 0.4 ? 0 : Math.min(255, (s - 0.4) * 425));

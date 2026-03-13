@@ -5,14 +5,18 @@
  * @version 1.0.0
  */
 
-import { t, onLangChange } from '../i18n/translations';
+import { t, getLang, onLangChange } from '../i18n/translations';
 
 export class QROverlay {
   private el: HTMLDivElement;
   private visible = false;
   private labelEl: HTMLSpanElement | null = null;
+  private roomId: string;
+  private baseUrl: string;
 
   constructor(roomId: string, baseUrl: string) {
+    this.roomId = roomId;
+    this.baseUrl = baseUrl;
     this.el = document.createElement('div');
     this.el.id = 'qr-overlay';
     this.el.innerHTML = `
@@ -25,9 +29,15 @@ export class QROverlay {
 
     onLangChange(() => {
       if (this.labelEl) this.labelEl.textContent = t().companion.label;
+      // Regenerate QR with updated language so newly scanned codes get the right lang
+      this.generateQR(this.buildUrl());
     });
 
-    this.generateQR(`${baseUrl}?companion=${roomId}`);
+    this.generateQR(this.buildUrl());
+  }
+
+  private buildUrl(): string {
+    return `${this.baseUrl}?companion=${this.roomId}&lang=${getLang()}`;
   }
 
   private async generateQR(url: string) {

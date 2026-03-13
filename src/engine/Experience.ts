@@ -437,7 +437,7 @@ gl_FragColor=vec4(col,1.0);}`;
       this.broadcaster.connect();
       const baseUrl = window.location.origin + window.location.pathname;
       this.qrOverlay = new QROverlay(roomId, baseUrl);
-      this.generateSoundPromptQR(`${baseUrl}?companion=${roomId}`);
+      this.generateSoundPromptQR(`${baseUrl}?companion=${roomId}&lang=${getLang()}`);
     }
 
     await this.preload();
@@ -1034,12 +1034,17 @@ gl_FragColor=vec4(col,1.0);}`;
     intro.classList.add('active');
 
     if (this.broadcaster) {
-      this.broadcaster.sendMeta({
+      const metaPayload = () => ({
         lang: getLang(),
         isAltered: this.isAlteredMode,
         isHardcore: this.isHardcoreMode,
         totalChapters: 9,
       });
+      this.broadcaster.sendMeta(metaPayload());
+      // Re-send meta every 3s while on intro so late-connecting companions get the language
+      this.introMetaInterval = window.setInterval(() => {
+        if (this.broadcaster) this.broadcaster.sendMeta(metaPayload());
+      }, 3000);
     }
 
     const titleText = this.isAlteredMode ? t().alteredTitle : 'EVENT HORIZON';
@@ -1065,6 +1070,7 @@ gl_FragColor=vec4(col,1.0);}`;
     if (fsBtn) setTimeout(() => fsBtn.classList.add('visible'), 1000);
 
     const onIntroComplete = () => {
+      if (this.introMetaInterval) { clearInterval(this.introMetaInterval); this.introMetaInterval = 0; }
       intro.classList.add('fade-out');
       intro.classList.remove('active');
       setTimeout(() => { intro.style.visibility = 'hidden'; }, 2500);
@@ -2067,6 +2073,7 @@ gl_FragColor=vec4(col,1.0);}`;
   private cursorObserver: MutationObserver | null = null;
   private escapeMsg: HTMLElement | null = null;
   private escapeMsgTimer = 0;
+  private introMetaInterval = 0;
   private lastScrollActivity = 0;
   private idleHintEl: HTMLElement | null = null;
   private idleHintShown = false;

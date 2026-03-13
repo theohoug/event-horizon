@@ -109,7 +109,9 @@ export async function init(roomId: string) {
   const loader = document.getElementById('loader');
   if (loader) loader.style.display = 'none';
 
-  let lang: Lang = (localStorage.getItem('eh_lang') as Lang) || 'en';
+  // Priority: URL param (from QR code) > localStorage > default 'en'
+  const urlLang = new URL(window.location.href).searchParams.get('lang');
+  let lang: Lang = (urlLang === 'en' || urlLang === 'fr') ? urlLang : (localStorage.getItem('eh_lang') as Lang) || 'en';
   let scienceData = getScienceData(lang);
   let labels = LABELS[lang];
 

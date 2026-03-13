@@ -1228,9 +1228,18 @@ gl_FragColor=vec4(col,1.0);}`;
 
   private setupLenis() {
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
+    // Compute wheelMultiplier based on total scroll height.
+    // Precision trackpads send tiny deltas (3-5px) which feel frozen on a 30,000+ px page.
+    // We scale the multiplier so that scroll always feels responsive regardless of total height.
+    const scrollLimit = document.documentElement.scrollHeight - window.innerHeight;
+    const idealLimit = 18000; // ~2000vh on a 900px viewport = feels snappy
+    const wheelMult = Math.max(1.0, Math.min(3.0, scrollLimit / idealLimit));
+
     this.lenis = new Lenis({
       duration: isMobile ? 1.4 : 1.8,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      wheelMultiplier: isMobile ? 1.0 : wheelMult,
       touchMultiplier: isMobile ? 1.8 : 1.0,
       infinite: false,
     });

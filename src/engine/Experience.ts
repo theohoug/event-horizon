@@ -128,23 +128,25 @@ export class Experience {
   private profileGpu(renderer: THREE.WebGLRenderer): PerfConfig {
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
-    const safeFallback: PerfConfig = {
-      dpr: isMobile ? 0.8 : 1.5,
-      maxSteps: isMobile ? 24 : 60,
-      qualityMedium: isMobile,
-      gpgpuTexSize: isMobile ? 48 : 128,
-      starfieldCount: isMobile ? 800 : 6000,
-      bloomPasses: isMobile ? 1 : 3,
-      bloomScale: isMobile ? 0.12 : 0.35,
-      motionBlur: false,
-      antialias: false,
-      gpuScore: isMobile ? 10 : 50,
-      quality: isMobile ? 'medium' : 'high',
-    };
+    if (isMobile) {
+      return {
+        dpr: 1.0,
+        maxSteps: 36,
+        qualityMedium: true,
+        gpgpuTexSize: 48,
+        starfieldCount: 1000,
+        bloomPasses: 1,
+        bloomScale: 0.15,
+        motionBlur: false,
+        antialias: false,
+        gpuScore: 25,
+        quality: 'medium',
+      };
+    }
 
     try {
     const gl = renderer.getContext();
-    const nativeDpr = Math.min(window.devicePixelRatio, isMobile ? 3 : 2);
+    const nativeDpr = Math.min(window.devicePixelRatio, 2);
     const screenW = window.innerWidth;
     const screenH = window.innerHeight;
     const screenPx = screenW * screenH;
@@ -157,7 +159,7 @@ export class Experience {
 
     const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v3') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v4') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
 
@@ -169,11 +171,7 @@ export class Experience {
     else if (gpuRenderer.includes('apple m1')) heuristicBonus = 8;
     else if (gpuRenderer.includes('rx 7') || gpuRenderer.includes('rx 9')) heuristicBonus = 12;
     else if (gpuRenderer.includes('rx 6')) heuristicBonus = 8;
-    else if (gpuRenderer.includes('adreno 7')) heuristicBonus = 4;
-    else if (gpuRenderer.includes('mali-g7') || gpuRenderer.includes('mali-g9')) heuristicBonus = 4;
-    else if (gpuRenderer.includes('apple gpu') && cores >= 6) heuristicBonus = 6;
     else if (gpuRenderer.includes('intel') && !gpuRenderer.includes('arc')) heuristicBonus = -12;
-    else if (gpuRenderer.includes('adreno 5') || gpuRenderer.includes('mali-g5') || gpuRenderer.includes('mali-t')) heuristicBonus = -10;
     if (cores >= 8 && ram >= 16) heuristicBonus += 5;
     else if (cores <= 2 || ram <= 2) heuristicBonus -= 8;
 
@@ -240,30 +238,25 @@ gl_FragColor=vec4(col,1.0);}`;
     if (costPerPxStep <= 0) costPerPxStep = repMs192 / (px192 * benchSteps);
     const overhead = Math.max(0, repMs96 - costPerPxStep * px96 * benchSteps);
 
-    if (isMobile) costPerPxStep *= 2.5;
+    const thermalFactor = 0.95;
+    const bhBudget = 8.0 * thermalFactor;
 
-    const thermalFactor = isMobile ? 0.65 : 0.95;
-    const bhBudget = (isMobile ? 4.5 : 8.0) * thermalFactor;
-
-    const maxDpr = isMobile ? Math.min(nativeDpr, 1.0) : Math.min(nativeDpr, 2.0);
-    const minDpr = isMobile ? 0.7 : 1.0;
+    const maxDpr = Math.min(nativeDpr, 2.0);
+    const minDpr = 1.0;
     let bestDpr = minDpr;
-    let bestSteps = isMobile ? 24 : 36;
-    const maxMobileSteps = 48;
+    let bestSteps = 36;
 
     for (let tryDpr = maxDpr; tryDpr >= minDpr - 0.01; tryDpr -= 0.05) {
       const dprR = Math.round(tryDpr * 20) / 20;
       const affordable = (bhBudget - overhead) / Math.max(costPerPxStep * screenPx * dprR * dprR, 1e-12);
-      const minSteps = isMobile ? 24 : 36;
-      if (affordable >= minSteps) {
+      if (affordable >= 36) {
         bestDpr = dprR;
-        const capSteps = isMobile ? maxMobileSteps : 160;
-        bestSteps = Math.min(capSteps, Math.max(minSteps, Math.round(affordable)));
+        bestSteps = Math.min(160, Math.max(36, Math.round(affordable)));
         break;
       }
     }
 
-    const qualityMedium = isMobile || bestSteps < 60;
+    const qualityMedium = bestSteps < 60;
 
     const fullCost = costPerPxStep * screenPx * maxDpr * maxDpr * 160 + overhead;
     let gpuScore = Math.min(100, Math.max(0, (bhBudget / Math.max(fullCost, 0.01)) * 100));
@@ -272,21 +265,21 @@ gl_FragColor=vec4(col,1.0);}`;
     const lerp = (a: number, b: number, v: number) => a + (b - a) * Math.max(0, Math.min(1, v));
     const t01 = gpuScore / 100;
 
-    const gpgpuSizes = isMobile ? [32, 48, 64, 80, 96] : [64, 80, 96, 128, 160, 192, 224, 256];
+    const gpgpuSizes = [64, 80, 96, 128, 160, 192, 224, 256];
     const gpgpuTexSize = gpgpuSizes[Math.min(gpgpuSizes.length - 1, Math.floor(t01 * gpgpuSizes.length))];
-    const starfieldCount = isMobile ? Math.round(lerp(500, 3000, t01)) : Math.round(lerp(1500, 12000, t01));
-    const bloomPasses = isMobile ? (gpuScore > 40 ? 2 : 1) : (gpuScore > 75 ? 4 : gpuScore > 50 ? 3 : gpuScore > 25 ? 2 : 1);
-    const bloomScale = isMobile ? Math.round(lerp(0.1, 0.25, t01) * 100) / 100 : Math.round(lerp(0.15, 0.5, t01) * 100) / 100;
-    const motionBlur = !isMobile && gpuScore > 30;
-    const antialias = !isMobile && gpuScore > 65;
+    const starfieldCount = Math.round(lerp(1500, 12000, t01));
+    const bloomPasses = gpuScore > 75 ? 4 : gpuScore > 50 ? 3 : gpuScore > 25 ? 2 : 1;
+    const bloomScale = Math.round(lerp(0.15, 0.5, t01) * 100) / 100;
+    const motionBlur = gpuScore > 30;
+    const antialias = gpuScore > 65;
     const quality: 'ultra' | 'high' | 'medium' = gpuScore >= 65 ? 'ultra' : gpuScore >= 35 ? 'high' : 'medium';
 
     const config: PerfConfig = { dpr: bestDpr, maxSteps: bestSteps, qualityMedium, gpgpuTexSize, starfieldCount, bloomPasses, bloomScale, motionBlur, antialias, gpuScore: Math.round(gpuScore), quality };
-    try { localStorage.setItem('eh_perf_v3', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v4', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
-      return safeFallback;
+      return { dpr: 1.5, maxSteps: 60, qualityMedium: false, gpgpuTexSize: 128, starfieldCount: 6000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: false, gpuScore: 50, quality: 'high' };
     }
   }
 
@@ -1614,19 +1607,20 @@ gl_FragColor=vec4(col,1.0);}`;
       this.fpsFrames = 0;
       this.fpsLastTime = now;
 
+      const isMobileDevice = /Android|iPhone|iPad/i.test(navigator.userAgent);
       if (this.fpsValue < 25) {
-        this.lowFpsCount += 2;
+        this.lowFpsCount += isMobileDevice ? 3 : 2;
       } else if (this.fpsValue < 40) {
-        this.lowFpsCount++;
+        this.lowFpsCount += isMobileDevice ? 2 : 1;
       } else if (this.fpsValue >= 50) {
         this.lowFpsCount = Math.max(0, this.lowFpsCount - 1);
         this.fpsStableCount++;
       }
 
-      if (this.lowFpsCount >= 2 && this.downgradeCount < 6) {
+      if (this.lowFpsCount >= (isMobileDevice ? 1 : 2) && this.downgradeCount < 8) {
         const currentPr = this.renderer.getPixelRatio();
         const step = this.fpsValue < 20 ? 0.5 : 0.25;
-        const minPr = /Android|iPhone|iPad/i.test(navigator.userAgent) ? 0.75 : 1.0;
+        const minPr = isMobileDevice ? 0.5 : 1.0;
         const newPr = Math.max(minPr, currentPr - step);
         if (newPr < currentPr) {
           this.renderer.setPixelRatio(newPr);

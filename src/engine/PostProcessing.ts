@@ -45,9 +45,9 @@ export class PostProcessing {
     this.bgCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
     this.particleScene = new THREE.Scene();
-    const vv0 = window.visualViewport;
-    const initW = vv0 ? Math.round(vv0.width) : window.innerWidth;
-    const initH = vv0 ? Math.round(vv0.height) : window.innerHeight;
+    const rendererSize = renderer.getSize(new THREE.Vector2());
+    const initW = rendererSize.x;
+    const initH = rendererSize.y;
 
     this.particleCamera = new THREE.PerspectiveCamera(
       45,
@@ -348,9 +348,10 @@ export class PostProcessing {
   }
 
   resize() {
-    const vv = window.visualViewport;
-    const w = vv ? Math.round(vv.width) : window.innerWidth;
-    const h = vv ? Math.round(vv.height) : window.innerHeight;
+    // Read the actual renderer canvas size (already clamped by Experience.ts)
+    const size = this.renderer.getSize(new THREE.Vector2());
+    const w = size.x;
+    const h = size.y;
     const pr = this.renderer.getPixelRatio();
     const bloomScale = this.bloomScaleValue;
 

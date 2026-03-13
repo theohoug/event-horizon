@@ -25,6 +25,23 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Cap canvas resolution to prevent absurd pixel counts from browser zoom / unusual display configs.
+// 4096×2160 ≈ 8.8M pixels is generous enough for any real display; beyond that we scale down.
+const MAX_CANVAS_PIXELS = 4096 * 2160;
+
+function clampedViewportSize(): { w: number; h: number } {
+  const vv = window.visualViewport;
+  let w = vv ? Math.round(vv.width) : document.documentElement.clientWidth || window.innerWidth;
+  let h = vv ? Math.round(vv.height) : document.documentElement.clientHeight || window.innerHeight;
+  const pixels = w * h;
+  if (pixels > MAX_CANVAS_PIXELS) {
+    const scale = Math.sqrt(MAX_CANVAS_PIXELS / pixels);
+    w = Math.round(w * scale);
+    h = Math.round(h * scale);
+  }
+  return { w, h };
+}
+
 interface PerfConfig {
   dpr: number;
   maxSteps: number;
@@ -395,7 +412,8 @@ gl_FragColor=vec4(col,1.0);}`;
       preserveDrawingBuffer: !isMobileDevice,
     });
     this.renderer.setPixelRatio(1);
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    const initSize = clampedViewportSize();
+    this.renderer.setSize(initSize.w, initSize.h);
     this.renderer.setClearColor(0x050505, 1);
     this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     this.renderer.toneMapping = THREE.NoToneMapping;
@@ -404,7 +422,7 @@ gl_FragColor=vec4(col,1.0);}`;
     this.state.quality = this.perfConfig.quality;
 
     this.renderer.setPixelRatio(this.perfConfig.dpr);
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setSize(initSize.w, initSize.h);
 
     this.postProcessing = new PostProcessing(this.renderer, this.perfConfig.bloomPasses, this.perfConfig.bloomScale, this.perfConfig.qualityMedium, this.perfConfig.motionBlur);
 
@@ -1649,15 +1667,8 @@ gl_FragColor=vec4(col,1.0);}`;
   }
 
   private setupResize() {
-    const getViewportSize = () => {
-      const vv = window.visualViewport;
-      const w = vv ? Math.round(vv.width) : document.documentElement.clientWidth || window.innerWidth;
-      const h = vv ? Math.round(vv.height) : document.documentElement.clientHeight || window.innerHeight;
-      return { w, h };
-    };
-
     const onResize = () => {
-      const { w, h } = getViewportSize();
+      const { w, h } = clampedViewportSize();
       this.renderer.setSize(w, h);
       this.postProcessing.resize();
     };
@@ -1772,7 +1783,7 @@ gl_FragColor=vec4(col,1.0);}`;
         if (newPr < currentPr) {
           this.renderer.setPixelRatio(newPr);
           this.postProcessing.resize();
-          this.renderer.setSize(window.innerWidth, window.innerHeight);
+          { const _v = clampedViewportSize(); this.renderer.setSize(_v.w, _v.h); };
           this.downgradeCount++;
           this.fpsStableCount = 0;
           this.lowFpsCount = 0;
@@ -1805,7 +1816,7 @@ gl_FragColor=vec4(col,1.0);}`;
         if (newPr < currentPr) {
           this.renderer.setPixelRatio(newPr);
           this.postProcessing.resize();
-          this.renderer.setSize(window.innerWidth, window.innerHeight);
+          { const _v = clampedViewportSize(); this.renderer.setSize(_v.w, _v.h); };
         }
         this.lowFpsCount = 0;
         this.downgradeCount++;
@@ -1819,7 +1830,7 @@ gl_FragColor=vec4(col,1.0);}`;
           const newPr = Math.min(targetPr, Math.round((currentPr + 0.05) * 20) / 20);
           this.renderer.setPixelRatio(newPr);
           this.postProcessing.resize();
-          this.renderer.setSize(window.innerWidth, window.innerHeight);
+          { const _v = clampedViewportSize(); this.renderer.setSize(_v.w, _v.h); };
           this.downgradeCount--;
         }
         this.fpsStableCount = 0;

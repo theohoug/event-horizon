@@ -1743,27 +1743,37 @@ gl_FragColor=vec4(col,1.0);}`;
     this.fpsFrames++;
     const now = performance.now();
 
-    // Emergency downgrade: if consecutive frames are very slow, reduce quality
-    // This prevents scroll from freezing on weaker GPUs during heavy shader sections
-    // Requires 3 consecutive slow frames to avoid false positives (tab switch, GC, etc.)
-    if (dt > 0.4) {
+    // Emergency: if frames are stalling, skip GPU render to unblock the main thread.
+    // This is the ONLY way to guarantee scroll doesn't freeze — if we skip render(),
+    // the browser can immediately process queued scroll/wheel events.
+    if (dt > 0.3) {
       this.emergencySlowFrames = (this.emergencySlowFrames || 0) + 1;
     } else {
-      this.emergencySlowFrames = 0;
+      if (this.emergencySlowFrames > 0) this.emergencySlowFrames = Math.max(0, this.emergencySlowFrames - 1);
     }
-    if (this.emergencySlowFrames >= 4 && this.downgradeCount < 5) {
-      const currentPr = this.renderer.getPixelRatio();
-      const minPr = /Android|iPhone|iPad/i.test(navigator.userAgent) ? 0.5 : 1.0;
-      const newPr = Math.max(minPr, currentPr - 0.15);
-      if (newPr < currentPr) {
-        this.renderer.setPixelRatio(newPr);
-        this.postProcessing.resize();
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.downgradeCount++;
-        this.fpsStableCount = 0;
-        this.lowFpsCount = 0;
+
+    // After 2 consecutive slow frames: skip rendering for this frame entirely
+    // The screen freezes for 1 frame but scroll keeps working — much better than being stuck
+    if (this.emergencySlowFrames >= 2) {
+      // Still update scroll-related state so the experience stays responsive
+      this.updateGravityPull(Math.min(dt, 0.033));
+      ScrollTrigger.update();
+      // Downgrade quality to prevent it from happening again
+      if (this.downgradeCount < 5) {
+        const currentPr = this.renderer.getPixelRatio();
+        const minPr = /Android|iPhone|iPad/i.test(navigator.userAgent) ? 0.5 : 1.0;
+        const newPr = Math.max(minPr, currentPr - 0.15);
+        if (newPr < currentPr) {
+          this.renderer.setPixelRatio(newPr);
+          this.postProcessing.resize();
+          this.renderer.setSize(window.innerWidth, window.innerHeight);
+          this.downgradeCount++;
+          this.fpsStableCount = 0;
+          this.lowFpsCount = 0;
+        }
       }
-      this.emergencySlowFrames = 0;
+      this.emergencySlowFrames = Math.max(0, this.emergencySlowFrames - 1);
+      return; // ← SKIP the entire render pipeline, freeing the GPU/main thread
     }
 
     if (now - this.fpsLastTime > 800) {

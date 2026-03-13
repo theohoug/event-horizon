@@ -44,25 +44,36 @@ void main() {
     alpha += (trail * streakAlpha + trailFade * 0.03) * vBrightness;
   }
 
-  float spaghetti = smoothstep(3.5, 0.6, vDistToCenter);
+  float spaghetti = smoothstep(4.0, 0.5, vDistToCenter);
   if (spaghetti > 0.01) {
+    float spagIntense = spaghetti * spaghetti;
+
     vec2 spaghettiStretch = center;
-    spaghettiStretch.x *= 1.0 + spaghetti * 5.0;
-    spaghettiStretch.y *= max(0.3, 1.0 - spaghetti * 0.4);
+    spaghettiStretch.x *= 1.0 + spagIntense * 12.0;
+    spaghettiStretch.y *= max(0.15, 1.0 - spagIntense * 0.7);
     float sDist = length(spaghettiStretch);
-    float sCore = exp(-sDist * sDist * 6.0);
-    float sTrail = exp(-sDist * sDist * 2.0);
-    core = mix(core, sCore, spaghetti * 0.8);
-    alpha += sTrail * spaghetti * vBrightness * 0.05;
+    float sCore = exp(-sDist * sDist * 4.0);
+    float sTrail = exp(-sDist * sDist * 1.2);
+    float sFilament = exp(-sDist * sDist * 0.5) * 0.3;
+
+    core = mix(core, sCore, spaghetti * 0.9);
+    alpha += (sTrail * 0.08 + sFilament * 0.04) * spaghetti * vBrightness;
+
+    float tearProgress = smoothstep(2.0, 0.8, vDistToCenter);
+    float tearFlicker = sin(vDistToCenter * 20.0 + vSpeed * 8.0) * 0.5 + 0.5;
+    alpha += tearProgress * tearFlicker * 0.06 * vBrightness;
   }
 
   vec3 color = vColor * (core * 0.55 + glow * 0.2 + outerGlow * 0.075);
 
   float _rc2 = core * core; color += vec3(1.0, 0.92, 0.8) * _rc2 * _rc2 * core * 0.15;
 
-  vec3 warmShift = vec3(1.0, 0.6, 0.2) * absorption * 0.12;
-  vec3 violetShift = vec3(0.45, 0.15, 0.25) * spaghetti * 0.08;
-  color += warmShift + violetShift;
+  vec3 warmShift = vec3(1.0, 0.6, 0.2) * absorption * 0.15;
+  float spagHeat = spaghetti * smoothstep(3.0, 1.0, vDistToCenter);
+  vec3 violetShift = vec3(0.5, 0.15, 0.35) * spaghetti * 0.12;
+  vec3 plasmaShift = vec3(1.0, 0.4, 0.1) * spagHeat * 0.15;
+  vec3 blueShift = vec3(0.2, 0.3, 0.8) * spaghetti * spaghetti * 0.06;
+  color += warmShift + violetShift + plasmaShift + blueShift;
 
   float redshift = smoothstep(5.0, 1.5, vDistToCenter);
   color = mix(color, color * vec3(1.3, 0.85, 0.6), redshift * 0.45);

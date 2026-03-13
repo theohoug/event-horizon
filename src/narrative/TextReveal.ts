@@ -165,10 +165,13 @@ export class TextReveal {
     if (this.cachedSpaghettiTitle) {
       const chapterScroll = (scroll - 0.44) / 0.11;
       const stretchProgress = Math.max(0, Math.min(1, chapterScroll));
-      const letterSpacing = 0.25 + stretchProgress * 0.6;
-      const scaleX = 1 + stretchProgress * 0.15;
+      const eased = stretchProgress * stretchProgress * (3 - 2 * stretchProgress);
+      const letterSpacing = 0.25 + eased * 1.2;
+      const scaleX = 1 + eased * 0.3;
+      const scaleY = Math.max(0.7, 1 - eased * 0.3);
+      const skew = Math.sin(performance.now() * 0.003 + scroll * 10) * eased * 2;
       this.cachedSpaghettiTitle.style.letterSpacing = `${letterSpacing.toFixed(2)}em`;
-      this.cachedSpaghettiTitle.style.transform = `scaleX(${scaleX.toFixed(3)})`;
+      this.cachedSpaghettiTitle.style.transform = `scaleX(${scaleX.toFixed(3)}) scaleY(${scaleY.toFixed(3)}) skewX(${skew.toFixed(1)}deg)`;
     }
     if (!this.cachedTitleLine) this.cachedTitleLine = container.querySelector<HTMLElement>('.line:not(.data):not(.emotional)');
     if (!this.cachedSubtitleLine) this.cachedSubtitleLine = container.querySelector<HTMLElement>('.line.data, .line.emotional');

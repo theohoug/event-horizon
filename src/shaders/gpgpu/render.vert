@@ -63,11 +63,13 @@ void main() {
   float lifeFade = smoothstep(0.0, 0.15, life);
 
   float diskSizeBoost = 1.0 + diskGlow * 0.5;
-  gl_PointSize = sizeBase * sizeAttenuation * uPixelRatio * distFade * scrollFade * speedScale * earlyBoost * lifeFade * diskSizeBoost;
-  gl_PointSize = clamp(gl_PointSize, 0.5, 18.0);
+  float spaghettiBoost = 1.0 + smoothstep(4.0, 1.0, dist) * smoothstep(0.45, 0.70, uScroll) * 1.5;
+  gl_PointSize = sizeBase * sizeAttenuation * uPixelRatio * distFade * scrollFade * speedScale * earlyBoost * lifeFade * diskSizeBoost * spaghettiBoost;
+  gl_PointSize = clamp(gl_PointSize, 0.5, 24.0);
 
   float nearGlow = smoothstep(6.0, 1.5, dist) * uScroll;
-  vBrightness = (0.25 + aRandom.y * 0.55) * distFade * scrollFade * life * earlyBoost + nearGlow * 0.25;
+  float spagBright = smoothstep(4.0, 1.0, dist) * smoothstep(0.45, 0.65, uScroll) * 0.4;
+  vBrightness = (0.25 + aRandom.y * 0.55) * distFade * scrollFade * life * earlyBoost + nearGlow * 0.25 + spagBright;
   vBrightness += diskGlow * 0.35;
   vDiskGlow = diskGlow;
 

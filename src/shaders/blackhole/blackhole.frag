@@ -411,25 +411,33 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
 /* ─── Photon Ring ─── */
 
 float photonRing(vec3 pos, float r) {
-  float ring1 = g2((r - PHOTON_SPHERE) * 12.0);
-  float ring2 = g2((r - PHOTON_SPHERE * 1.02) * 18.0) * 0.7;
-  float ring3 = g2((r - PHOTON_SPHERE * 0.98) * 22.0) * 0.35;
-  float ringWide = g2((r - PHOTON_SPHERE) * 5.0) * 0.2;
+  float ring1 = g2((r - PHOTON_SPHERE) * 14.0);
+  float ring2 = g2((r - PHOTON_SPHERE * 1.02) * 20.0) * 0.8;
+  float ring3 = g2((r - PHOTON_SPHERE * 0.98) * 24.0) * 0.45;
+  float ringWide = g2((r - PHOTON_SPHERE) * 4.0) * 0.3;
+
+  float subRing1 = g2((r - PHOTON_SPHERE * 1.06) * 35.0) * 0.2;
+  float subRing2 = g2((r - PHOTON_SPHERE * 0.94) * 40.0) * 0.15;
 
   float angle = atan(pos.z, pos.x);
-  float shimmer = sin(angle * 30.0 + uTime * 4.0) * 0.10;
-  float shimmer2 = sin(angle * 50.0 - uTime * 6.0) * 0.04;
+  float shimmer = sin(angle * 30.0 + uTime * 4.0) * 0.12;
+  float shimmer2 = sin(angle * 50.0 - uTime * 6.0) * 0.06;
+  float shimmer3 = sin(angle * 80.0 + uTime * 8.0) * 0.03;
+  float caustic = abs(sin(angle * 12.0 + r * 8.0 + uTime * 2.0)) * 0.08;
 
+  float photonPhase = smoothstep(0.25, 0.40, uScroll) * (1.0 - smoothstep(0.50, 0.60, uScroll));
   float earlyBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 1.5;
   float ringFade = 1.0 - smoothstep(0.40, 0.56, uScroll);
+  float chapterBoost = 1.0 + photonPhase * 2.5;
 
   float heartbeatPhase = uScroll > 0.35 ? 1.0 : 0.0;
   float hbSpeed = 50.0 + max(uScroll - 0.35, 0.0) * 200.0;
-  float _hbp = sin(uTime * hbSpeed / 60.0 * 3.14159) * 0.5 + 0.5; float _hbp2 = _hbp*_hbp; float _hbp4 = _hbp2*_hbp2; float heartbeatPulse = heartbeatPhase * (_hbp4 * _hbp4 * 0.2);
-  float pulse = sin(uTime * 1.5) * 0.08 + 1.0 + heartbeatPulse;
-  float breathe = sin(uTime * 0.4) * 0.1 + 1.0;
+  float _hbp = sin(uTime * hbSpeed / 60.0 * 3.14159) * 0.5 + 0.5; float _hbp2 = _hbp*_hbp; float _hbp4 = _hbp2*_hbp2; float heartbeatPulse = heartbeatPhase * (_hbp4 * _hbp4 * 0.25);
+  float pulse = sin(uTime * 1.5) * 0.10 + 1.0 + heartbeatPulse;
+  float breathe = sin(uTime * 0.4) * 0.12 + 1.0;
 
-  return (ring1 + ring2 + ring3 + ringWide) * (1.0 + shimmer + shimmer2) * pulse * breathe * earlyBoost * ringFade;
+  float base = ring1 + ring2 + ring3 + ringWide + subRing1 + subRing2;
+  return base * (1.0 + shimmer + shimmer2 + shimmer3 + caustic) * pulse * breathe * earlyBoost * ringFade * chapterBoost;
 }
 
 /* ─── Einstein Ring ─── */
@@ -441,17 +449,20 @@ vec3 einsteinRingColor(vec3 rd, vec3 camPos) {
   float breathe = sin(uTime * 0.6) * 0.1 + 1.0;
   float breathe2 = sin(uTime * 1.1) * 0.04 + 1.0;
 
-  float chromaticSpread = 0.006;
+  float chromaticSpread = 0.009;
   float earlyRingBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 2.0;
+  float photonBoost = 1.0 + smoothstep(0.25, 0.38, uScroll) * (1.0 - smoothstep(0.48, 0.58, uScroll)) * 1.5;
   float eRingFade = 1.0 - smoothstep(0.40, 0.56, uScroll);
-  float ringR = g2((viewAngle - einsteinAngle * (1.0 + chromaticSpread)) * 80.0) * 0.30 * breathe * earlyRingBoost * eRingFade;
-  float ringG = g2((viewAngle - einsteinAngle) * 80.0) * 0.28 * breathe * earlyRingBoost * eRingFade;
-  float ringB = g2((viewAngle - einsteinAngle * (1.0 - chromaticSpread)) * 80.0) * 0.25 * breathe * earlyRingBoost * eRingFade;
+  float boost = earlyRingBoost * eRingFade * photonBoost;
+  float ringR = g2((viewAngle - einsteinAngle * (1.0 + chromaticSpread)) * 80.0) * 0.35 * breathe * boost;
+  float ringG = g2((viewAngle - einsteinAngle) * 80.0) * 0.32 * breathe * boost;
+  float ringB = g2((viewAngle - einsteinAngle * (1.0 - chromaticSpread)) * 80.0) * 0.30 * breathe * boost;
 
-  float glow = g2((viewAngle - einsteinAngle) * 25.0) * 0.18 * breathe2 * earlyRingBoost * eRingFade;
-  float shimmer = sin(viewAngle * 200.0 + uTime * 3.0) * 0.02 + 1.0;
+  float glow = g2((viewAngle - einsteinAngle) * 25.0) * 0.22 * breathe2 * boost;
+  float shimmer = sin(viewAngle * 200.0 + uTime * 3.0) * 0.03 + 1.0;
+  float shimmer2 = sin(viewAngle * 120.0 - uTime * 4.0) * 0.02 + 1.0;
 
-  vec3 ring = vec3(ringR, ringG, ringB) * shimmer + vec3(glow);
+  vec3 ring = vec3(ringR, ringG, ringB) * shimmer * shimmer2 + vec3(glow);
   return ring;
 }
 
@@ -501,12 +512,21 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
       return;
     }
 
-    if (r < 3.5) {
+    if (r < 3.8) {
       float photon = photonRing(pos, r);
-      float photonBright = photon * 0.09 * (1.0 - dimBell * 0.25);
-      glow = min(glow + photonBright, 2.5);
-      vec3 photonColor = mix(vec3(1.0, 0.75, 0.4), vec3(1.0, 0.85, 0.6), smoothstep(1.4, 1.7, r));
-      accumulatedDiskColor += photonColor * photonBright * 0.4 * (1.0 - accumulatedDisk);
+      float photonBright = photon * 0.14 * (1.0 - dimBell * 0.25);
+      glow = min(glow + photonBright, 3.0);
+
+      float rNorm = smoothstep(1.3, 1.8, r);
+      vec3 photonInner = vec3(0.9, 0.55, 1.0);
+      vec3 photonMid = vec3(1.0, 0.75, 0.4);
+      vec3 photonOuter = vec3(0.6, 0.8, 1.0);
+      vec3 photonColor = mix(photonInner, mix(photonMid, photonOuter, rNorm), rNorm);
+
+      float prismatic = sin(atan(pos.z, pos.x) * 6.0 + uTime * 1.5) * 0.5 + 0.5;
+      photonColor = mix(photonColor, vec3(1.0, 0.85, 0.6), prismatic * 0.3);
+
+      accumulatedDiskColor += photonColor * photonBright * 0.6 * (1.0 - accumulatedDisk);
     }
 
     float currentY = pos.y;
@@ -621,6 +641,21 @@ void main() {
   float lightLeakPulse = sin(uTime * 0.4) * 0.10 + 0.90;
   float lightLeakDim = 1.0 - smoothstep(0.5, 0.8, scrollEffect) * 0.7;
   color += vec3(0.10, 0.04, 0.015) * lightLeak * mix(0.03, 0.005, scrollEffect) * lightLeakPulse * lightLeakDim;
+
+  float photonChapter = smoothstep(0.25, 0.38, scrollEffect) * (1.0 - smoothstep(0.48, 0.58, scrollEffect));
+  if (photonChapter > 0.01) {
+    float pDist = length(uv);
+    float pRing = g2((pDist - 0.22) * 18.0) * 0.6 + g2((pDist - 0.22) * 8.0) * 0.25;
+    float pAngle = atan(uv.y, uv.x);
+    float pShimmer = sin(pAngle * 16.0 + uTime * 3.0) * 0.15 + 1.0;
+    float pCaustic = abs(sin(pAngle * 8.0 - uTime * 2.0 + pDist * 30.0)) * 0.12;
+    float pPulse = sin(uTime * 1.2) * 0.08 + 1.0;
+    vec3 pColor = mix(vec3(0.7, 0.5, 1.0), vec3(1.0, 0.8, 0.5), sin(pAngle * 3.0 + uTime) * 0.5 + 0.5);
+    color += pColor * pRing * (pShimmer + pCaustic) * pPulse * photonChapter * 0.35;
+
+    float pHalo = exp(-pDist * pDist * 4.0) * 0.04 * photonChapter;
+    color += vec3(0.6, 0.4, 0.9) * pHalo;
+  }
 
   float godRayAngle = atan(uv.y - diskPlaneY + 0.01, uv.x);
   float _gr = max(sin(godRayAngle * 8.0 + uTime * 0.3) * 0.5 + 0.5, 0.0); float _gr2 = _gr*_gr; float godRays = _gr2 * _gr2 * _gr2;

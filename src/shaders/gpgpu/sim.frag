@@ -113,14 +113,24 @@ void main() {
     vel += mouseEffect * dt;
     vel += mouseVortex * dt;
 
+    float spagPhase = smoothstep(0.45, 0.65, uScroll);
+    if (spagPhase > 0.01 && dist < 5.0) {
+      float tidalStrength = spagPhase * smoothstep(5.0, 1.5, dist);
+      vec3 radial = dist > 0.01 ? normalize(pos) : vec3(0.0);
+      float radialVel = dot(vel, radial);
+      vel += radial * radialVel * tidalStrength * 2.0 * dt;
+      vec3 tangentialVel = vel - radial * radialVel;
+      vel -= tangentialVel * tidalStrength * 0.8 * dt;
+    }
+
     float jetPhase = smoothstep(0.4, 0.7, uScroll);
     if (dist < 2.5 && jetPhase > 0.01) {
       float jetChance = smoothstep(2.5, 0.8, dist);
       float jetSeed = hash(vUv.x * 127.1 + vUv.y * 311.7 + floor(uTime * 3.0));
-      if (jetSeed > 0.92) {
-        float jetDir = jetSeed > 0.96 ? 1.0 : -1.0;
-        vel.y += jetDir * jetChance * jetPhase * 8.0;
-        vel.xz *= 0.3;
+      if (jetSeed > 0.90) {
+        float jetDir = jetSeed > 0.95 ? 1.0 : -1.0;
+        vel.y += jetDir * jetChance * jetPhase * 10.0;
+        vel.xz *= 0.25;
       }
     }
 

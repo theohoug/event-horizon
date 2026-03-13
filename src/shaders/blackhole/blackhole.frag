@@ -545,6 +545,8 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
 
 void main() {
   vec2 uv = (gl_FragCoord.xy - 0.5 * uResolution.xy) / uResolution.y;
+  float aspect = uResolution.x / uResolution.y;
+  uv.y += max(0.0, 1.0 - aspect) * 0.18;
 
   float scrollEffect = uScroll;
   float approach = smootherstep(0.0, 1.0, scrollEffect);

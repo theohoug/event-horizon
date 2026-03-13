@@ -126,8 +126,24 @@ export class Experience {
   }
 
   private profileGpu(renderer: THREE.WebGLRenderer): PerfConfig {
-    const gl = renderer.getContext();
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
+    const safeFallback: PerfConfig = {
+      dpr: isMobile ? 1.0 : 1.5,
+      maxSteps: isMobile ? 36 : 60,
+      qualityMedium: isMobile,
+      gpgpuTexSize: isMobile ? 64 : 128,
+      starfieldCount: isMobile ? 1500 : 6000,
+      bloomPasses: isMobile ? 1 : 3,
+      bloomScale: isMobile ? 0.15 : 0.35,
+      motionBlur: !isMobile,
+      antialias: false,
+      gpuScore: isMobile ? 20 : 50,
+      quality: isMobile ? 'medium' : 'high',
+    };
+
+    try {
+    const gl = renderer.getContext();
     const nativeDpr = Math.min(window.devicePixelRatio, isMobile ? 3 : 2);
     const screenW = window.innerWidth;
     const screenH = window.innerHeight;
@@ -224,10 +240,12 @@ gl_FragColor=vec4(col,1.0);}`;
     if (costPerPxStep <= 0) costPerPxStep = repMs192 / (px192 * benchSteps);
     const overhead = Math.max(0, repMs96 - costPerPxStep * px96 * benchSteps);
 
-    const thermalFactor = isMobile ? 0.82 : 0.95;
-    const bhBudget = 8.0 * thermalFactor;
+    if (isMobile) costPerPxStep *= 1.6;
 
-    const maxDpr = Math.min(nativeDpr, 2.0);
+    const thermalFactor = isMobile ? 0.75 : 0.95;
+    const bhBudget = (isMobile ? 5.5 : 8.0) * thermalFactor;
+
+    const maxDpr = isMobile ? Math.min(nativeDpr, 1.5) : Math.min(nativeDpr, 2.0);
     const minDpr = isMobile ? 0.75 : 1.0;
     let bestDpr = minDpr;
     let bestSteps = 36;
@@ -263,6 +281,10 @@ gl_FragColor=vec4(col,1.0);}`;
     const config: PerfConfig = { dpr: bestDpr, maxSteps: bestSteps, qualityMedium, gpgpuTexSize, starfieldCount, bloomPasses, bloomScale, motionBlur, antialias, gpuScore: Math.round(gpuScore), quality };
     try { localStorage.setItem('eh_perf_v2', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
+
+    } catch {
+      return safeFallback;
+    }
   }
 
   private readonly chapterConsoleMessages = [
@@ -939,13 +961,14 @@ gl_FragColor=vec4(col,1.0);}`;
       letterSpans.push(span);
     });
 
+    if (muteBtn) setTimeout(() => muteBtn.classList.add('visible'), 600);
+    const langBtn = document.getElementById('lang-btn');
+    if (langBtn) setTimeout(() => langBtn.classList.add('visible'), 800);
+
     const onIntroComplete = () => {
       intro.classList.add('fade-out');
       intro.classList.remove('active');
       setTimeout(() => { intro.style.visibility = 'hidden'; }, 2500);
-      if (muteBtn) muteBtn.classList.add('visible');
-      const langBtn = document.getElementById('lang-btn');
-      if (langBtn) langBtn.classList.add('visible');
       if (dataHud) dataHud.classList.add('visible');
       this.activateAmbientUI();
       this.experienceStartTime = performance.now();
@@ -1554,7 +1577,7 @@ gl_FragColor=vec4(col,1.0);}`;
   private updateMobileNav() {
     if (!this.mobileNavEl) return;
 
-    const isVisible = this.state.scroll > 0.01 && this.state.scroll < 0.95 && !this.state.introActive;
+    const isVisible = this.state.scroll < 0.95 && !this.state.introActive;
     this.mobileNavEl.classList.toggle('visible', isVisible);
 
     if (!isVisible) return;

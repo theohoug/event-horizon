@@ -1,0 +1,12 @@
+CONTAINER: opacity=1 display=flex vis=visible zIndex=12 pos=fixed transform=matrix(1, 0, 0, 1, -600, 0) pointerEvents=none overflow=hidden rect={"x":360,"y":0,"width":1200,"height":1080,"top":0,"right":1560,"bottom":1080,"left":360}
+LINES count: 3
+  LINE[0] class="line chapter-poetry" text="somewhere in the dark, something waits" opacity=0.0775 display=block vis=visible color=rgba(200, 220, 255, 0.35) webkitFill=rgba(200, 220, 255, 0.35) bgClip=border-box bg=rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box filter=blur(9.3443px) w=234.516px h=27.3594px rect={"x":842.734375,"y":326.7371520996094,"width":234.515625,"height":27.359375,"top":326.7371520996094,"right":1077.25,"bottom":354.0965270996094,"left":842.734375}
+  LINE[1] class="line chapter-opening" text="YOU" opacity=0 display=block vis=visible color=rgba(232, 232, 255, 0.9) webkitFill=rgba(0, 0, 0, 0) bgClip=text bg=rgba(0, 0, 0, 0) linear-gradient(rgb(255, 240, 224) 0%, rgba(200, 220, 255, 0.85 filter=drop-shadow(rgba(200, 220, 255, 0.12) 0px 0px 40.0617px) drop-shadow(rgba(200, 220, 255, 0.05) 0px 0px 80.1234px) w=548.047px h=304px rect={"x":521.5546875,"y":291.00311279296875,"width":876.875,"height":486.4000244140625,"top":291.00311279296875,"right":1398.4296875,"bottom":777.4031372070312,"left":521.5546875}
+    first .char: text="Y" opacity=1 display=inline-block vis=visible color=rgba(232, 232, 255, 0.9)
+  LINE[2] class="line data chapter-opening-sub" text="13.8 billion years after the beginning.
+" opacity=0 display=block vis=visible color=rgba(200, 220, 255, 0.65) webkitFill=rgba(200, 220, 255, 0.65) bgClip=border-box bg=rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box filter=blur(12px) w=579.609px h=42.1406px rect={"x":670.1875,"y":715,"width":579.609375,"height":42.140625,"top":715,"right":1249.796875,"bottom":757.140625,"left":670.1875}
+    first .char: text="1" opacity=0 display=inline-block vis=visible color=rgba(200, 220, 255, 0.65)
+
+ELEMENTS WITH BACKGROUND (potential overlays):
+  HTML#.lenis z=auto bg=rgb(5, 5, 5) opacity=1 rect={x:0,y:0,w:1920,h:30132}
+  BODY#. z=auto bg=rgb(5, 5, 5) opacity=1 rect={x:0,y:0,w:1920,h:30132}

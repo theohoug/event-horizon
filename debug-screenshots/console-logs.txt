@@ -1,0 +1,79 @@
+[debug] [vite] connecting...
+[debug] [vite] connected.
+[log] %c ╔══════════════════════════════════════╗
+ ║                                      ║
+ ║   E V E N T   H O R I Z O N         ║
+ ║                                      ║
+ ║   Beyond the point of no return.     ║
+ ║                                      ║
+ ║   Crafted by Cleanlystudio           ║
+ ║   cleanlystudio.pro                  ║
+ ║                                      ║
+ ╚══════════════════════════════════════╝ color: #FFB347; font-family: monospace; font-size: 11px; line-height: 1.5
+[log] %c💡 Try typing "help", "void", "light", "time", "escape", "love" or "god" while experiencing the journey. color: #592187; font-family: monospace; font-size: 10px; font-style: italic
+[log] %c⌨️  Keyboard: Arrow keys navigate chapters • Escape toggles sound • Home/End jump • Press ? for controls color: rgba(232, 232, 255, 0.5); font-family: monospace; font-size: 10px
+--- SCROLL 0% ---
+container opacity=1 children=4
+  LINE[0] "line chapter-poetry" "somewhere in the dark, somethi" op=0 h=27.3594px display=block fill=rgba(200, 220, 255, 0.35) color=rgba(200, 220, 255, 0.35)
+  LINE[1] "line chapter-opening" "YOU" op=1 h=304px display=block fill=rgba(0, 0, 0, 0) color=rgba(232, 232, 255, 0.9)
+  LINE[2] "line data chapter-opening-sub" "13.8 billion years after the b" op=1 h=42.1406px display=block fill=rgba(200, 220, 255, 0.65) color=rgba(200, 220, 255, 0.65)
+
+--- SCROLL 5% ---
+container opacity=1 children=4
+  LINE[0] "line chapter-poetry" "somewhere in the dark, somethi" op=0 h=27.3594px display=block fill=rgba(200, 220, 255, 0.35) color=rgba(200, 220, 255, 0.35)
+  LINE[1] "line chapter-opening" "YOU" op=1 h=304px display=block fill=rgba(0, 0, 0, 0) color=rgba(233, 229, 251, 0.9)
+  LINE[2] "line data chapter-opening-sub" "13.8 billion years after the b" op=1 h=42.1406px display=block fill=rgba(200, 220, 255, 0.65) color=rgba(200, 220, 255, 0.65)
+
+[log] %c◈ CHAPTER 1 — THE PULL %c
+Gravity notices you. There is no ignoring it. color:#00d4aa;font-size:14px;font-weight:bold;text-shadow:0 0 10px #00d4aa color:#888;font-size:11px;font-style:italic
+--- SCROLL 12% ---
+container opacity=1 children=3
+  LINE[0] "line" "THE PULL" op=1 h=97.2656px display=block fill=rgba(235, 226, 245, 0.9) color=rgba(235, 226, 245, 0.9)
+  LINE[1] "line data" "Ten billion solar masses.
+Sile" op=1 h=66.9219px display=block fill=rgba(235, 226, 245, 0.9) color=rgba(235, 226, 245, 0.9)
+
+[log] %c◈ CHAPTER 2 — THE WARP %c
+Spacetime bends. Light follows curves you cannot see. color:#00b4ff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #00b4ff color:#888;font-size:11px;font-style:italic
+--- SCROLL 25% ---
+container opacity=1 children=3
+  LINE[0] "line" "THE WARP" op=1 h=97.2656px display=block fill=rgba(238, 220, 235, 0.9) color=rgba(238, 220, 235, 0.9)
+  LINE[1] "line data" "Light bends. Stars stretch int" op=1 h=66.9219px display=block fill=rgba(238, 220, 235, 0.9) color=rgba(238, 220, 235, 0.9)
+
+[log] %c◈ CHAPTER 3 — THE PHOTON SPHERE %c
+Photon capture orbit detected. Light cannot escape this radius. color:#0088ff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #0088ff color:#888;font-size:11px;font-style:italic
+--- SCROLL 35% ---
+container opacity=1 children=3
+  LINE[0] "line" "THE PHOTON SPHERE" op=1 h=97.2656px display=block fill=rgba(240, 214, 227, 0.9) color=rgba(240, 214, 227, 0.9)
+  LINE[1] "line data" "At 1.5 Schwarzschild radii, li" op=0.9998 h=66.9219px display=block fill=rgba(240, 214, 227, 0.9) color=rgba(240, 214, 227, 0.9)
+
+[log] %c◈ CHAPTER 4 — THE FALL %c
+You crossed the boundary. The fall is eternal. color:#6644ff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #6644ff color:#888;font-size:11px;font-style:italic
+--- SCROLL 50% ---
+container opacity=1 children=3
+  LINE[0] "line chapter-wide" "SPAGHETTIFICATION" op=1 h=72.9531px display=block fill=rgba(0, 0, 0, 0) color=rgba(244, 207, 214, 0.9)
+  LINE[1] "line data" "Tidal forces pull you apart.
+A" op=0.9979 h=66.9219px display=block fill=rgba(244, 207, 214, 0.9) color=rgba(244, 207, 214, 0.9)
+
+[log] %c◈ CHAPTER 5 — SPAGHETTIFICATION %c
+Tidal forces stretch every atom. You become geometry. color:#ff4488;font-size:14px;font-weight:bold;text-shadow:0 0 10px #ff4488 color:#888;font-size:11px;font-style:italic
+--- SCROLL 65% ---
+container opacity=1 children=3
+  LINE[0] "line chapter-vertical" "TIME DILATION" op=1 h=91.1875px display=block fill=rgba(247, 199, 202, 0.9) color=rgba(247, 199, 202, 0.9)
+  LINE[1] "line data" "One heartbeat here.
+Outside, c" op=1 h=66.9219px display=block fill=rgba(247, 199, 202, 0.9) color=rgba(247, 199, 202, 0.9)
+
+[log] %c◈ CHAPTER 7 — SINGULARITY %c
+Infinite density. Zero volume. Physics surrenders. color:#ff2222;font-size:14px;font-weight:bold;text-shadow:0 0 10px #ff2222 color:#888;font-size:11px;font-style:italic
+--- SCROLL 80% ---
+container opacity=1 children=3
+  LINE[0] "line chapter-impact" "SINGULARITY" op=0.9934 h=167.188px display=block fill=rgba(0, 0, 0, 0) color=rgba(251, 191, 190, 0.9)
+  LINE[1] "line data" "Where physics breaks.
+Where sp" op=0.9652 h=66.9219px display=block fill=rgba(251, 191, 190, 0.9) color=rgba(251, 191, 190, 0.9)
+
+[log] %c◈ CHAPTER 8 — WHAT REMAINS %c
+Information persists. You were here. color:#ffffff;font-size:14px;font-weight:bold;text-shadow:0 0 10px #fff color:#aaa;font-size:11px;font-style:italic
+--- SCROLL 92% ---
+container opacity=1 children=3
+  LINE[0] "line chapter-final" "WHAT REMAINS" op=0.848 h=152px display=block fill=rgba(0, 0, 0, 0) color=rgba(253, 185, 181, 0.9)
+  LINE[1] "line data chapter-final-sub" "You have one life.
+One brief f" op=0.9918 h=49.5781px display=block fill=rgba(255, 255, 255, 0.737) color=rgba(255, 255, 255, 0.737)

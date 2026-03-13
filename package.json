@@ -13,6 +13,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.99.1",
     "gsap": "^3.12.7",
+    "jsqr": "^1.4.0",
     "lenis": "^1.2.3",
     "qrcode-generator": "^2.0.4",
     "three": "^0.172.0"

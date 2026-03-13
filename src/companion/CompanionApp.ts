@@ -39,10 +39,12 @@ const LABELS = {
     companion: 'COMPANION',
     connecting: 'CONNECTING...',
     live: 'LIVE',
-    waiting: 'WAITING',
-    waitingTitle: 'COMPANION MODE',
-    waitingSub: 'Connected to room',
-    waitingHint: 'Start scrolling on the desktop to begin',
+    waiting: 'CONNECTED',
+    waitingTitle: 'MISSION CONSOLE',
+    waitingSub: 'Linked to room',
+    waitingHint: 'Waiting for the desktop to begin the descent',
+    waitingDesc: 'When the experience starts on desktop, this screen will transform into a live scientific companion — real-time telemetry, chapter-by-chapter astrophysics documentation, and mission data synced to the journey.',
+    waitingReady: 'SIGNAL LOCKED',
     whatYouSee: 'WHAT YOU\u2019RE SEEING',
     funFact: 'DID YOU KNOW?',
     distance: 'DISTANCE',
@@ -61,10 +63,12 @@ const LABELS = {
     companion: 'COMPAGNON',
     connecting: 'CONNEXION...',
     live: 'EN DIRECT',
-    waiting: 'EN ATTENTE',
-    waitingTitle: 'MODE COMPAGNON',
-    waitingSub: 'Connect\u00E9 \u00E0 la salle',
-    waitingHint: 'Commencez \u00E0 scroller sur le bureau pour d\u00E9marrer',
+    waiting: 'CONNECT\u00C9',
+    waitingTitle: 'CONSOLE DE MISSION',
+    waitingSub: 'Li\u00E9 \u00E0 la salle',
+    waitingHint: 'En attente du d\u00E9but de la descente sur le bureau',
+    waitingDesc: 'Quand l\u2019exp\u00E9rience d\u00E9marre sur le bureau, cet \u00E9cran se transforme en compagnon scientifique — t\u00E9l\u00E9m\u00E9trie en direct, documentation astrophysique chapitre par chapitre, donn\u00E9es de mission synchronis\u00E9es.',
+    waitingReady: 'SIGNAL VERROUILL\u00C9',
     whatYouSee: 'CE QUE VOUS VOYEZ',
     funFact: 'LE SAVIEZ-VOUS ?',
     distance: 'DISTANCE',
@@ -178,10 +182,21 @@ function buildHTML(roomId: string, l: typeof LABELS['en']): string {
       </header>
 
       <div id="comp-waiting">
-        <div class="comp-waiting-icon">\u25CE</div>
+        <div class="comp-waiting-signal">
+          <div class="comp-signal-ring comp-ring-1"></div>
+          <div class="comp-signal-ring comp-ring-2"></div>
+          <div class="comp-signal-ring comp-ring-3"></div>
+          <div class="comp-signal-core"></div>
+        </div>
+        <div class="comp-waiting-badge">${l.waitingReady}</div>
         <div class="comp-waiting-title">${l.waitingTitle}</div>
-        <div class="comp-waiting-sub">${l.waitingSub} <strong>${roomId}</strong></div>
-        <div class="comp-waiting-hint">${l.waitingHint}</div>
+        <div class="comp-waiting-room">
+          <span class="comp-waiting-room-label">${l.waitingSub}</span>
+          <span class="comp-waiting-room-code">${roomId}</span>
+        </div>
+        <div class="comp-waiting-desc">${l.waitingDesc}</div>
+        <div class="comp-waiting-line"></div>
+        <div class="comp-waiting-hint">${l.waitingHint}<span class="comp-waiting-dots"></span></div>
       </div>
 
       <main id="comp-main" class="hidden">

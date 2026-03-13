@@ -28,7 +28,6 @@ const content = {
     scannerTitle: 'Scan QR Code',
     scannerHint: 'Point your camera at the QR code on the desktop screen',
     scannerDenied: 'Camera access denied. Use your native camera app to scan the QR code.',
-    scannerUnsupported: 'QR scanning not available on this browser. Use your native camera app instead.',
   },
   fr: {
     subtitle: 'Un Voyage Interactif Dans un Trou Noir',
@@ -48,7 +47,6 @@ const content = {
     scannerTitle: 'Scanner le QR Code',
     scannerHint: 'Dirigez votre cam\u00E9ra vers le QR code sur l\u2019\u00E9cran du PC',
     scannerDenied: 'Acc\u00E8s cam\u00E9ra refus\u00E9. Utilisez votre app cam\u00E9ra native pour scanner le QR code.',
-    scannerUnsupported: 'Scan QR non disponible sur ce navigateur. Utilisez votre app cam\u00E9ra native.',
   },
 };
 
@@ -209,13 +207,14 @@ function openScanner() {
     const BarcodeDetectorClass = (window as unknown as Record<string, unknown>).BarcodeDetector as
       (new (opts: { formats: string[] }) => { detect(source: HTMLVideoElement): Promise<Array<{ rawValue: string }>> }) | undefined;
 
-    if (!BarcodeDetectorClass) {
-      hintEl.textContent = t.scannerUnsupported;
-      return;
+    if (BarcodeDetectorClass) {
+      startNativeDetection(new BarcodeDetectorClass({ formats: ['qr_code'] }));
+    } else {
+      startJsQRDetection();
     }
+  }
 
-    const detector = new BarcodeDetectorClass({ formats: ['qr_code'] });
-
+  function startNativeDetection(detector: { detect(source: HTMLVideoElement): Promise<Array<{ rawValue: string }>> }) {
     function detect() {
       if (destroyed) return;
       if (video.readyState >= 2) {
@@ -233,6 +232,33 @@ function openScanner() {
       rafId = requestAnimationFrame(detect);
     }
     detect();
+  }
+
+  function startJsQRDetection() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+
+    import('jsqr').then(({ default: jsQR }) => {
+      function detect() {
+        if (destroyed) return;
+        if (video.readyState >= 2) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const result = jsQR(imageData.data, imageData.width, imageData.height);
+          if (result && result.data && result.data.includes('companion=')) {
+            cleanup();
+            window.location.href = result.data;
+            return;
+          }
+        }
+        rafId = requestAnimationFrame(detect);
+      }
+      detect();
+    }).catch(() => {
+      hintEl.textContent = t.scannerDenied;
+    });
   }
 
   function cleanup() {

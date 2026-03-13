@@ -29,8 +29,8 @@ export class BlackHole {
       uniforms: {
         uTime: { value: 0 },
         uResolution: { value: new THREE.Vector2(
-          window.innerWidth * pixelRatio,
-          window.innerHeight * pixelRatio
+          (window.visualViewport?.width ?? window.innerWidth) * pixelRatio,
+          (window.visualViewport?.height ?? window.innerHeight) * pixelRatio
         ) },
         uMouse: { value: new THREE.Vector2(0.5, 0.5) },
         uScroll: { value: 0 },
@@ -55,13 +55,17 @@ export class BlackHole {
 
     this.resizeHandler = () => this.onResize();
     window.addEventListener('resize', this.resizeHandler);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', this.resizeHandler);
     this.onResize();
   }
 
   private onResize() {
+    const vv = window.visualViewport;
+    const w = vv ? Math.round(vv.width) : window.innerWidth;
+    const h = vv ? Math.round(vv.height) : window.innerHeight;
     this.material.uniforms.uResolution.value.set(
-      window.innerWidth * this.pixelRatio,
-      window.innerHeight * this.pixelRatio
+      w * this.pixelRatio,
+      h * this.pixelRatio
     );
   }
 
@@ -91,6 +95,7 @@ export class BlackHole {
 
   destroy() {
     window.removeEventListener('resize', this.resizeHandler);
+    if (window.visualViewport) window.visualViewport.removeEventListener('resize', this.resizeHandler);
     this.mesh.geometry.dispose();
     this.material.dispose();
   }

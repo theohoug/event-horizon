@@ -746,12 +746,12 @@ gl_FragColor=vec4(col,1.0);}`;
       const updateCompanionLang = () => {
         const lang = getLang();
         companionTextEl.textContent = lang === 'fr'
-          ? 'Votre t\u00E9l\u00E9phone devient une console de mission. T\u00E9l\u00E9m\u00E9trie temps r\u00E9el et astrophysique synchronis\u00E9es \u00E0 votre descente dans le trou noir.'
+          ? 'Scannez le QR code avec votre t\u00E9l\u00E9phone. D\u00E9marrez le voyage sur le navigateur et votre mobile se synchronisera automatiquement avec votre descente.'
           : 'Your phone becomes a mission console. Real-time telemetry and astrophysics synced to your descent into the black hole.';
         const titleEl = document.getElementById('sound-companion-title');
-        if (titleEl) titleEl.textContent = lang === 'fr' ? 'Second écran' : 'Second screen';
+        if (titleEl) titleEl.textContent = lang === 'fr' ? 'Second \u00E9cran' : 'Second screen';
         const headlineEl = document.getElementById('sound-companion-headline');
-        if (headlineEl) headlineEl.textContent = lang === 'fr' ? 'Améliorez votre immersion' : 'Enhance your immersion';
+        if (headlineEl) headlineEl.textContent = lang === 'fr' ? 'Am\u00E9liorez votre immersion' : 'Enhance your immersion';
       };
       updateCompanionLang();
       onLangChange(updateCompanionLang);
@@ -1058,7 +1058,11 @@ gl_FragColor=vec4(col,1.0);}`;
         introProgress: 1,
         duration: 2,
         ease: 'power2.out',
-        onComplete: () => { this.state.introActive = false; intro.style.visibility = 'hidden'; },
+        onComplete: () => {
+          this.state.introActive = false;
+          intro.style.visibility = 'hidden';
+          ScrollTrigger.refresh();
+        },
       });
     };
 
@@ -1136,7 +1140,7 @@ gl_FragColor=vec4(col,1.0);}`;
       tl.fromTo(subtitle, {
         opacity: 0, y: 20, filter: 'blur(8px)',
       }, {
-        opacity: 0.7, y: 0, filter: 'blur(0px)', duration: 0.6, ease: 'power2.out',
+        opacity: 0.7, y: 0, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out',
       }, 0.7);
     }
 
@@ -1155,14 +1159,14 @@ gl_FragColor=vec4(col,1.0);}`;
         rotation: (Math.random() - 0.5) * 40,
         duration: 0.4,
         ease: 'power2.in',
-      }, 1.4 + i * 0.015);
+      }, 2.8 + i * 0.015);
     });
 
     if (subtitle) {
-      tl.to(subtitle, { opacity: 0, filter: 'blur(6px)', duration: 0.4, ease: 'power2.in' }, 1.4);
+      tl.to(subtitle, { opacity: 0, filter: 'blur(6px)', duration: 0.5, ease: 'power2.in' }, 2.8);
     }
     if (introLine) {
-      tl.to(introLine, { width: '0px', opacity: 0, duration: 0.3, ease: 'power2.in' }, 1.4);
+      tl.to(introLine, { width: '0px', opacity: 0, duration: 0.3, ease: 'power2.in' }, 2.8);
     }
 
     tl.to(titleContainer, { opacity: 0, scale: 0.85, duration: 0.5, ease: 'power2.in' }, 1.7);
@@ -2665,6 +2669,10 @@ gl_FragColor=vec4(col,1.0);}`;
         this.explosionProgress = 0;
         this.postCreditsShown = false;
         this.postCreditsTimer = 0;
+        this.gravityVelocity = 0;
+        this.gravityMaxReached = 0;
+        this.pointOfNoReturnTriggered = false;
+        this.singularityTriggered = false;
 
         this.visitCount++;
 
@@ -2686,6 +2694,8 @@ gl_FragColor=vec4(col,1.0);}`;
 
         this.timeline.resetCredits();
         this.timeline.refreshCurrentChapter(0);
+
+        ScrollTrigger.refresh();
 
         if (this.overlayEl) this.overlayEl.style.opacity = '1';
         const dataHud = document.getElementById('data-hud');

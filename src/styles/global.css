@@ -3337,7 +3337,7 @@ html.hardcore-mode .corner-ornament {
 #intro-subtitle {
   font-family: var(--font-mono);
   font-weight: 300;
-  font-size: clamp(0.55rem, 1.2vw, 0.85rem);
+  font-size: clamp(0.75rem, 1.8vw, 1.15rem);
   letter-spacing: 0.2em;
   color: var(--cyan);
   opacity: 0;
@@ -3788,7 +3788,7 @@ html.hardcore-mode .corner-ornament {
   }
 
   #intro-subtitle {
-    font-size: clamp(0.45rem, 2.5vw, 0.65rem);
+    font-size: clamp(0.6rem, 3vw, 0.85rem);
     margin-top: 1rem;
   }
 
@@ -4113,7 +4113,7 @@ html.hardcore-mode .corner-ornament {
   }
 
   #intro-subtitle {
-    font-size: clamp(0.4rem, 2.2vw, 0.55rem);
+    font-size: clamp(0.55rem, 2.5vw, 0.75rem);
     margin-top: 0.8rem;
   }
 

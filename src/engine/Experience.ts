@@ -163,7 +163,7 @@ export class Experience {
 
     const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v4') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v5') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
 
@@ -243,7 +243,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const overhead = Math.max(0, repMs96 - costPerPxStep * px96 * benchSteps);
 
     const thermalFactor = 0.95;
-    const bhBudget = 8.0 * thermalFactor;
+    const bhBudget = 11.0 * thermalFactor;
 
     const maxDpr = Math.min(nativeDpr, 2.0);
     const minDpr = 1.0;
@@ -260,7 +260,7 @@ gl_FragColor=vec4(col,1.0);}`;
       }
     }
 
-    const qualityMedium = bestSteps < 60;
+    const qualityMedium = bestSteps < 40;
 
     const fullCost = costPerPxStep * screenPx * maxDpr * maxDpr * 160 + overhead;
     let gpuScore = Math.min(100, Math.max(0, (bhBudget / Math.max(fullCost, 0.01)) * 100));
@@ -274,12 +274,12 @@ gl_FragColor=vec4(col,1.0);}`;
     const starfieldCount = Math.round(lerp(1500, 12000, t01));
     const bloomPasses = gpuScore > 75 ? 4 : gpuScore > 50 ? 3 : gpuScore > 25 ? 2 : 1;
     const bloomScale = Math.round(lerp(0.15, 0.5, t01) * 100) / 100;
-    const motionBlur = gpuScore > 30;
-    const antialias = gpuScore > 65;
-    const quality: 'ultra' | 'high' | 'medium' = gpuScore >= 65 ? 'ultra' : gpuScore >= 35 ? 'high' : 'medium';
+    const motionBlur = gpuScore > 15;
+    const antialias = gpuScore > 40;
+    const quality: 'ultra' | 'high' | 'medium' = gpuScore >= 50 ? 'ultra' : gpuScore >= 20 ? 'high' : 'medium';
 
     const config: PerfConfig = { dpr: bestDpr, maxSteps: bestSteps, qualityMedium, gpgpuTexSize, starfieldCount, bloomPasses, bloomScale, motionBlur, antialias, gpuScore: Math.round(gpuScore), quality };
-    try { localStorage.setItem('eh_perf_v4', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v5', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {

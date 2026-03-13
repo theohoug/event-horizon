@@ -2773,36 +2773,61 @@ gl_FragColor=vec4(col,1.0);}`;
 
     ctx.clearRect(0, 0, 32, 32);
 
-    const ehR = 3 + s * 5;
+    const chapterColors = [
+      [255, 179, 71], [0, 212, 170], [0, 180, 255], [0, 136, 255],
+      [102, 68, 255], [255, 68, 136], [255, 102, 68], [255, 34, 34], [255, 255, 255],
+    ];
+    const chIdx = Math.min(8, Math.floor(s * 9));
+    const [cR, cG, cB] = chapterColors[chIdx];
 
-    const grad = ctx.createRadialGradient(16, 16, ehR, 16, 16, 15);
-    const ringR = Math.round(s < 0.4 ? 0 : Math.min(255, (s - 0.4) * 425));
-    const ringG = Math.round(s < 0.4 ? 245 : Math.max(40, 245 - (s - 0.4) * 340));
-    const ringB = Math.round(s < 0.4 ? 212 : Math.max(20, 212 - (s - 0.4) * 320));
-    grad.addColorStop(0, '#050505');
-    grad.addColorStop(0.5, `rgba(${ringR}, ${ringG}, ${ringB}, 0.8)`);
-    grad.addColorStop(0.7, `rgba(89, 33, 135, 0.4)`);
-    grad.addColorStop(1, 'transparent');
-
+    const bgR = 7;
     ctx.beginPath();
-    ctx.arc(16, 16, 15, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
+    ctx.moveTo(bgR, 0);
+    ctx.lineTo(32 - bgR, 0);
+    ctx.quadraticCurveTo(32, 0, 32, bgR);
+    ctx.lineTo(32, 32 - bgR);
+    ctx.quadraticCurveTo(32, 32, 32 - bgR, 32);
+    ctx.lineTo(bgR, 32);
+    ctx.quadraticCurveTo(0, 32, 0, 32 - bgR);
+    ctx.lineTo(0, bgR);
+    ctx.quadraticCurveTo(0, 0, bgR, 0);
+    ctx.closePath();
+    ctx.fillStyle = '#0a0a0f';
+    ctx.fill();
+
+    const outerGrad = ctx.createRadialGradient(16, 16, 4, 16, 16, 14);
+    outerGrad.addColorStop(0, 'transparent');
+    outerGrad.addColorStop(0.6, 'transparent');
+    outerGrad.addColorStop(0.75, `rgba(${cR}, ${cG}, ${cB}, 0.15)`);
+    outerGrad.addColorStop(1, 'transparent');
+    ctx.beginPath();
+    ctx.arc(16, 16, 14, 0, Math.PI * 2);
+    ctx.fillStyle = outerGrad;
     ctx.fill();
 
     ctx.beginPath();
-    ctx.arc(16, 16, ehR, 0, Math.PI * 2);
-    ctx.fillStyle = '#050505';
-    ctx.fill();
-
-    ctx.save();
-    ctx.translate(16, 16);
-    ctx.rotate(-0.26);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, 11, 3, 0, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(${ringR}, ${ringG}, ${ringB}, 0.6)`;
-    ctx.lineWidth = 0.5;
+    ctx.arc(16, 16, 11, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(${cR}, ${cG}, ${cB}, 0.85)`;
+    ctx.lineWidth = 2.5;
     ctx.stroke();
-    ctx.restore();
+
+    ctx.beginPath();
+    ctx.arc(16, 16, 8, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(${cR}, ${cG}, ${cB}, 0.2)`;
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+
+    const coreR = 4.5 + s * 1.5;
+    ctx.beginPath();
+    ctx.arc(16, 16, coreR, 0, Math.PI * 2);
+    ctx.fillStyle = '#0a0a0f';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(16, 16, coreR, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(${cR}, ${cG}, ${cB}, 0.5)`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
     this.faviconLink.href = this.faviconCanvas.toDataURL('image/png');
   }

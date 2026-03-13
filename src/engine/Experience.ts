@@ -58,7 +58,7 @@ export class Experience {
   private renderer!: THREE.WebGLRenderer;
   private postProcessing!: PostProcessing;
   private blackHole!: BlackHole;
-  private particles!: GPGPUParticles;
+  private particles: GPGPUParticles | null = null;
   private starfield!: Starfield;
   private timeline!: Timeline;
   private textReveal!: TextReveal;
@@ -131,15 +131,15 @@ export class Experience {
     if (isMobile) {
       return {
         dpr: 1.0,
-        maxSteps: 36,
+        maxSteps: 24,
         qualityMedium: true,
-        gpgpuTexSize: 48,
-        starfieldCount: 1000,
+        gpgpuTexSize: 32,
+        starfieldCount: 800,
         bloomPasses: 1,
-        bloomScale: 0.15,
+        bloomScale: 0.12,
         motionBlur: false,
         antialias: false,
-        gpuScore: 25,
+        gpuScore: 20,
         quality: 'medium',
       };
     }
@@ -384,7 +384,7 @@ gl_FragColor=vec4(col,1.0);}`;
       powerPreference: 'high-performance',
       stencil: false,
       depth: true,
-      preserveDrawingBuffer: true,
+      preserveDrawingBuffer: !isMobileDevice,
     });
     this.renderer.setPixelRatio(1);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -401,8 +401,13 @@ gl_FragColor=vec4(col,1.0);}`;
     this.postProcessing = new PostProcessing(this.renderer, this.perfConfig.bloomPasses, this.perfConfig.bloomScale, this.perfConfig.qualityMedium, this.perfConfig.motionBlur);
 
     this.blackHole = new BlackHole(this.postProcessing.bgScene, this.perfConfig.maxSteps, this.perfConfig.qualityMedium, this.perfConfig.dpr);
-    this.particles = new GPGPUParticles(this.renderer, this.postProcessing.particleScene, this.perfConfig.gpgpuTexSize, this.perfConfig.dpr);
+    if (!isMobileDevice) {
+      this.particles = new GPGPUParticles(this.renderer, this.postProcessing.particleScene, this.perfConfig.gpgpuTexSize, this.perfConfig.dpr);
+    }
     this.starfield = new Starfield(this.postProcessing.particleScene, this.perfConfig.starfieldCount);
+
+    this.renderer.compile(this.postProcessing.bgScene, this.postProcessing.bgCamera);
+    this.renderer.compile(this.postProcessing.particleScene, this.postProcessing.particleCamera);
 
     this.timeline = new Timeline();
     this.textReveal = new TextReveal();
@@ -1755,7 +1760,7 @@ gl_FragColor=vec4(col,1.0);}`;
       if (this.explosionProgress >= 2.0) this.explosionActive = false;
     }
     this.blackHole.update({ ...this.state, explosion: this.explosionProgress, isAltered: this.isAlteredMode, isHardcore: this.isHardcoreMode });
-    this.particles.update(this.state);
+    if (this.particles) this.particles.update(this.state);
     this.starfield.update(this.state);
     this.postProcessing.updateCamera(this.state.scroll, elapsed, this.state.introProgress, this.state.mouseSmooth.x, this.state.mouseSmooth.y);
 
@@ -2773,7 +2778,7 @@ gl_FragColor=vec4(col,1.0);}`;
     this.lenis.destroy();
     this.audio.destroy();
     this.blackHole.destroy();
-    this.particles.destroy();
+    if (this.particles) this.particles.destroy();
     this.starfield.destroy();
 
     disposeScene(this.postProcessing.bgScene);

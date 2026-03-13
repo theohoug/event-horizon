@@ -1680,6 +1680,7 @@ gl_FragColor=vec4(col,1.0);}`;
   private lowFpsCount = 0;
   private downgradeCount = 0;
   private fpsStableCount = 0;
+  private emergencySlowFrames = 0;
 
   private animate(timestamp?: number) {
     this.rafId = requestAnimationFrame((t) => this.animate(t));
@@ -1692,13 +1693,18 @@ gl_FragColor=vec4(col,1.0);}`;
     this.fpsFrames++;
     const now = performance.now();
 
-    // Emergency downgrade: if a single frame took too long, immediately reduce quality
-    // This prevents the scroll from freezing on weaker GPUs during heavy shader sections
-    if (dt > 0.5 && this.downgradeCount < 8) {
+    // Emergency downgrade: if consecutive frames are very slow, reduce quality
+    // This prevents scroll from freezing on weaker GPUs during heavy shader sections
+    // Requires 3 consecutive slow frames to avoid false positives (tab switch, GC, etc.)
+    if (dt > 0.4) {
+      this.emergencySlowFrames = (this.emergencySlowFrames || 0) + 1;
+    } else {
+      this.emergencySlowFrames = 0;
+    }
+    if (this.emergencySlowFrames >= 3 && this.downgradeCount < 8) {
       const currentPr = this.renderer.getPixelRatio();
-      const emergencyStep = dt > 1.5 ? 0.75 : 0.5;
       const minPr = /Android|iPhone|iPad/i.test(navigator.userAgent) ? 0.5 : 0.75;
-      const newPr = Math.max(minPr, currentPr - emergencyStep);
+      const newPr = Math.max(minPr, currentPr - 0.25);
       if (newPr < currentPr) {
         this.renderer.setPixelRatio(newPr);
         this.postProcessing.resize();
@@ -1707,6 +1713,7 @@ gl_FragColor=vec4(col,1.0);}`;
         this.fpsStableCount = 0;
         this.lowFpsCount = 0;
       }
+      this.emergencySlowFrames = 0;
     }
 
     if (now - this.fpsLastTime > 800) {

@@ -175,18 +175,18 @@ body {
 }
 
 .chapter[data-chapter="5"] {
-  height: 370vh;
-  height: 370dvh;
+  height: 300vh;
+  height: 300dvh;
 }
 
 .chapter[data-chapter="6"] {
-  height: 310vh;
-  height: 310dvh;
+  height: 260vh;
+  height: 260dvh;
 }
 
 .chapter[data-chapter="7"] {
-  height: 380vh;
-  height: 380dvh;
+  height: 320vh;
+  height: 320dvh;
 }
 
 /* ─── Ambient Light Leaks ─── */
@@ -3545,18 +3545,18 @@ html.hardcore-mode .corner-ornament {
   }
 
   .chapter[data-chapter="5"] {
-    height: 300vh;
-    height: 300dvh;
+    height: 240vh;
+    height: 240dvh;
   }
 
   .chapter[data-chapter="6"] {
-    height: 250vh;
-    height: 250dvh;
+    height: 210vh;
+    height: 210dvh;
   }
 
   .chapter[data-chapter="7"] {
-    height: 310vh;
-    height: 310dvh;
+    height: 260vh;
+    height: 260dvh;
   }
 
   #chapter-text {

@@ -163,7 +163,7 @@ export class Experience {
 
     const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v5') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v6') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
 
@@ -269,7 +269,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const lerp = (a: number, b: number, v: number) => a + (b - a) * Math.max(0, Math.min(1, v));
     const t01 = gpuScore / 100;
 
-    const gpgpuSizes = [64, 80, 96, 128, 160, 192, 224, 256];
+    const gpgpuSizes = [128, 128, 128, 160, 192, 224, 256, 256];
     const gpgpuTexSize = gpgpuSizes[Math.min(gpgpuSizes.length - 1, Math.floor(t01 * gpgpuSizes.length))];
     const starfieldCount = Math.round(lerp(1500, 12000, t01));
     const bloomPasses = gpuScore > 75 ? 4 : gpuScore > 50 ? 3 : gpuScore > 25 ? 2 : 1;
@@ -279,7 +279,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const quality: 'ultra' | 'high' | 'medium' = gpuScore >= 50 ? 'ultra' : gpuScore >= 20 ? 'high' : 'medium';
 
     const config: PerfConfig = { dpr: bestDpr, maxSteps: bestSteps, qualityMedium, gpgpuTexSize, starfieldCount, bloomPasses, bloomScale, motionBlur, antialias, gpuScore: Math.round(gpuScore), quality };
-    try { localStorage.setItem('eh_perf_v5', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v6', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {

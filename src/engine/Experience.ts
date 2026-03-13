@@ -1500,6 +1500,12 @@ gl_FragColor=vec4(col,1.0);}`;
   private updateGravityPull(dt: number) {
     const scroll = this.state.scroll;
 
+    // Skip gravity when frame is stalling (GPU overload) — prevents scroll from appearing frozen
+    if (dt > 0.25) {
+      this.gravityVelocity *= 0.5;
+      return;
+    }
+
     if (this.state.introActive || scroll > 0.93) {
       this.gravityVelocity *= 0.85;
       return;

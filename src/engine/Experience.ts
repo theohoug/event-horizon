@@ -17,6 +17,8 @@ import { AudioEngine } from '../audio/AudioEngine';
 import { Haptics } from '../ui/Haptics';
 import { t, getLang, setLang, onLangChange, type Lang } from '../i18n/translations';
 import { ALTERED, HARDCORE } from './AlteredMode';
+import { DesktopBroadcaster, generateRoomId } from '../sync/DesktopBroadcaster';
+import { QROverlay } from '../sync/QROverlay';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -60,6 +62,8 @@ export class Experience {
   private blackHole!: BlackHole;
   private particles: GPGPUParticles | null = null;
   private starfield!: Starfield;
+  private broadcaster: DesktopBroadcaster | null = null;
+  private qrOverlay: QROverlay | null = null;
   private timeline!: Timeline;
   private textReveal!: TextReveal;
   private audio!: AudioEngine;
@@ -422,6 +426,14 @@ gl_FragColor=vec4(col,1.0);}`;
     this.setupResize();
     this.setupClickShockwave();
     this.setupMobileNav();
+
+    if (!isMobileDevice) {
+      const roomId = generateRoomId();
+      this.broadcaster = new DesktopBroadcaster(roomId);
+      this.broadcaster.connect();
+      const baseUrl = window.location.origin + window.location.pathname;
+      this.qrOverlay = new QROverlay(roomId, baseUrl);
+    }
 
     await this.preload();
 
@@ -1736,6 +1748,16 @@ gl_FragColor=vec4(col,1.0);}`;
       document.title = currentChapter === 0
         ? `Event Horizon \u2014 ${t().introSubtitle}`
         : `${chName} \u2014 Event Horizon`;
+      if (this.broadcaster) {
+        const chapters = this.isHardcoreMode ? t().hardcoreChapters : this.isAlteredMode ? t().alteredChapters : t().chapters;
+        const interstitials = this.getInterstitials();
+        this.broadcaster.sendChapter({
+          index: currentChapter,
+          title: chapters[currentChapter]?.title || chName,
+          subtitle: chapters[currentChapter]?.subtitle || '',
+          interstitial: interstitials[currentChapter] || '',
+        });
+      }
     }
     if (this.chapterZoomPulse > 0.01) {
       this.chapterZoomPulse *= 0.93;
@@ -2097,6 +2119,17 @@ gl_FragColor=vec4(col,1.0);}`;
         this.hudElements.tidal.style.color = '';
         this.hudElements.tidal.style.textShadow = '';
       }
+    }
+
+    if (this.broadcaster) {
+      const rsVal = Math.max(38 - scroll * 35.5, 1.0);
+      const hawkT = rsVal > 1.5 ? 6.17e-8 / rsVal : 6.17e-8 / 1.5;
+      const dilVal = 1 / Math.sqrt(Math.max(0.001, 1 - 1 / Math.max(rsVal, 1.01)));
+      const tidVal = (1.0 / (rsVal * rsVal * rsVal)) * 1e4;
+      this.broadcaster.sendState({ scroll, distance: rsVal, temp: hawkT * 1e12, timeDilation: dilVal, tidalForce: tidVal, fps: this.fpsValue });
+    }
+    if (this.qrOverlay) {
+      this.qrOverlay.update(scroll, this.state.introActive);
     }
 
     this.echoTimer += 0.016;
@@ -2780,6 +2813,8 @@ gl_FragColor=vec4(col,1.0);}`;
     this.blackHole.destroy();
     if (this.particles) this.particles.destroy();
     this.starfield.destroy();
+    if (this.broadcaster) this.broadcaster.destroy();
+    if (this.qrOverlay) this.qrOverlay.destroy();
 
     disposeScene(this.postProcessing.bgScene);
     disposeScene(this.postProcessing.particleScene);

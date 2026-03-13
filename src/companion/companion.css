@@ -1,0 +1,383 @@
+/**
+ * Cleanlystudio — Companion Experience
+ * @author Théo Houguet
+ */
+
+:root {
+  --comp-accent: #FFB347;
+}
+
+#companion-root {
+  position: fixed;
+  inset: 0;
+  background: #050505;
+  color: rgba(232, 232, 255, 0.9);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  z-index: 99999;
+}
+
+#comp-bg {
+  position: fixed;
+  inset: 0;
+  opacity: 0.6;
+  transition: background 2s ease;
+  pointer-events: none;
+}
+
+#comp-grain {
+  position: fixed;
+  inset: 0;
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px;
+}
+
+#comp-content {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top, 1rem) 1.5rem env(safe-area-inset-bottom, 1rem);
+}
+
+/* ─── Header ─── */
+
+#comp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 0 1rem;
+  border-bottom: 1px solid rgba(255, 240, 224, 0.06);
+}
+
+#comp-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  color: rgba(255, 240, 224, 0.5);
+}
+
+#comp-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 240, 224, 0.35);
+}
+
+#comp-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 240, 224, 0.2);
+  transition: background 0.5s ease;
+}
+
+#comp-dot.connected {
+  background: rgba(255, 179, 71, 0.5);
+}
+
+#comp-dot.live {
+  background: #00f5d4;
+  box-shadow: 0 0 8px rgba(0, 245, 212, 0.4);
+  animation: comp-pulse 2s ease-in-out infinite;
+}
+
+@keyframes comp-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ─── Waiting State ─── */
+
+#comp-waiting {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.8rem;
+  transition: opacity 0.8s ease;
+}
+
+#comp-waiting.hidden {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+#comp-waiting-icon {
+  font-size: 3rem;
+  color: var(--comp-accent);
+  opacity: 0.3;
+  animation: comp-rotate 8s linear infinite;
+}
+
+@keyframes comp-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+#comp-waiting-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  letter-spacing: 0.3em;
+  color: rgba(255, 240, 224, 0.6);
+}
+
+#comp-waiting-sub {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  color: rgba(255, 240, 224, 0.3);
+}
+
+#comp-waiting-sub strong {
+  color: var(--comp-accent);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+
+#comp-waiting-hint {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.6rem;
+  color: rgba(255, 240, 224, 0.15);
+  letter-spacing: 0.08em;
+  margin-top: 1.5rem;
+  animation: comp-fade-hint 3s ease-in-out infinite;
+}
+
+@keyframes comp-fade-hint {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.4; }
+}
+
+/* ─── Main Content ─── */
+
+#comp-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  padding: 2rem 0;
+  transition: opacity 0.8s ease;
+}
+
+#comp-main.hidden {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+#comp-chapter-num {
+  font-family: 'Cinzel', serif;
+  font-size: 4rem;
+  font-weight: 300;
+  color: var(--comp-accent);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+#comp-chapter-num.reveal {
+  opacity: 0.15;
+  transform: translateY(0);
+}
+
+#comp-chapter-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.4rem, 6vw, 2.2rem);
+  letter-spacing: 0.15em;
+  color: var(--comp-accent);
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.8s ease 0.1s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+}
+
+#comp-chapter-title.reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#comp-chapter-sub {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: rgba(255, 240, 224, 0.45);
+  white-space: pre-line;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1s ease 0.3s, transform 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+  max-width: 320px;
+  margin-bottom: 1.5rem;
+}
+
+#comp-chapter-sub.reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#comp-interstitial {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--comp-accent);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  margin-bottom: 2rem;
+}
+
+#comp-interstitial.reveal {
+  opacity: 0.5;
+}
+
+/* ─── HUD ─── */
+
+#comp-hud {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
+.comp-hud-item {
+  border: 1px solid rgba(255, 240, 224, 0.06);
+  border-radius: 8px;
+  padding: 0.8rem;
+  background: rgba(255, 240, 224, 0.02);
+}
+
+.comp-hud-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.45rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 240, 224, 0.25);
+  margin-bottom: 0.3rem;
+}
+
+.comp-hud-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  color: var(--comp-accent);
+  font-variant-numeric: tabular-nums;
+  transition: color 1s ease;
+  line-height: 1.2;
+}
+
+.comp-hud-unit {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.4rem;
+  letter-spacing: 0.1em;
+  color: rgba(255, 240, 224, 0.15);
+  margin-top: 0.2rem;
+}
+
+/* ─── Progress ─── */
+
+#comp-progress-wrap {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 240, 224, 0.06);
+}
+
+#comp-progress-bar {
+  height: 2px;
+  background: var(--comp-accent);
+  width: 0%;
+  transition: width 0.3s ease;
+  border-radius: 1px;
+  box-shadow: 0 0 10px var(--comp-accent);
+}
+
+#comp-progress-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.4rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 240, 224, 0.15);
+  margin-top: 0.5rem;
+}
+
+/* ─── Footer ─── */
+
+#comp-footer {
+  padding: 1rem 0;
+  border-top: 1px solid rgba(255, 240, 224, 0.04);
+  margin-top: 1rem;
+}
+
+#comp-footer-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.5rem;
+  color: rgba(255, 240, 224, 0.15);
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+#comp-footer-text a {
+  color: rgba(255, 240, 224, 0.3);
+  text-decoration: none;
+}
+
+/* ─── QR Overlay (desktop) ─── */
+
+#qr-overlay {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+#qr-overlay.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+#qr-canvas {
+  width: 72px;
+  height: 72px;
+  padding: 6px;
+  background: rgba(5, 5, 15, 0.6);
+  border: 1px solid rgba(255, 240, 224, 0.1);
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+#qr-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.4rem;
+  letter-spacing: 0.2em;
+  color: rgba(255, 240, 224, 0.25);
+}
+
+#qr-room {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  color: rgba(255, 179, 71, 0.4);
+  font-variant-numeric: tabular-nums;
+}

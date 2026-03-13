@@ -23,6 +23,7 @@ export default defineConfig({
           three: ['three'],
           gsap: ['gsap'],
           lenis: ['lenis'],
+          supabase: ['@supabase/supabase-js'],
         },
       },
     },

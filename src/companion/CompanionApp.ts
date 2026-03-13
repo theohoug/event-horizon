@@ -173,13 +173,9 @@ export async function init(roomId: string) {
   hub.on('state', (data) => {
     const s = data as unknown as StateData;
 
-    if (!connected) {
-      markConnected();
-      waiting.classList.add('hidden');
-      main.classList.remove('hidden');
-    }
+    if (!connected) markConnected();
 
-    updateHUD(s);
+    if (currentChapter >= 0) updateHUD(s);
 
     if (s.scroll >= 0.97 && !archiveShown && receivedChapters.size > 0) {
       archiveShown = true;

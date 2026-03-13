@@ -744,14 +744,12 @@ gl_FragColor=vec4(col,1.0);}`;
     const companionTextEl = document.getElementById('sound-companion-text');
     if (companionTextEl) {
       const updateCompanionLang = () => {
-        const lang = getLang();
-        companionTextEl.textContent = lang === 'fr'
-          ? 'Scannez le QR code avec votre t\u00E9l\u00E9phone. D\u00E9marrez le voyage sur le navigateur et votre mobile se synchronisera automatiquement avec votre descente.'
-          : 'Your phone becomes a mission console. Real-time telemetry and astrophysics synced to your descent into the black hole.';
+        const tr = t();
+        companionTextEl.textContent = tr.companion.text;
         const titleEl = document.getElementById('sound-companion-title');
-        if (titleEl) titleEl.textContent = lang === 'fr' ? 'Second \u00E9cran' : 'Second screen';
+        if (titleEl) titleEl.textContent = tr.companion.title;
         const headlineEl = document.getElementById('sound-companion-headline');
-        if (headlineEl) headlineEl.textContent = lang === 'fr' ? 'Am\u00E9liorez votre immersion' : 'Enhance your immersion';
+        if (headlineEl) headlineEl.textContent = tr.companion.headline;
       };
       updateCompanionLang();
       onLangChange(updateCompanionLang);
@@ -1014,7 +1012,7 @@ gl_FragColor=vec4(col,1.0);}`;
       });
     }
 
-    const titleText = this.isAlteredMode ? 'EVENT HORIZON (AGAIN)' : 'EVENT HORIZON';
+    const titleText = this.isAlteredMode ? t().alteredTitle : 'EVENT HORIZON';
     if (subtitle) subtitle.textContent = this.isHardcoreMode ? t().hardcoreIntroSubtitle : this.isAlteredMode ? t().alteredIntroSubtitle : t().introSubtitle;
     title.innerHTML = '';
     title.style.opacity = '1';

@@ -5,19 +5,27 @@
  * @version 1.0.0
  */
 
+import { t, onLangChange } from '../i18n/translations';
+
 export class QROverlay {
   private el: HTMLDivElement;
   private visible = false;
+  private labelEl: HTMLSpanElement | null = null;
 
   constructor(roomId: string, baseUrl: string) {
     this.el = document.createElement('div');
     this.el.id = 'qr-overlay';
     this.el.innerHTML = `
       <div id="qr-canvas"></div>
-      <span id="qr-label">COMPANION</span>
+      <span id="qr-label">${t().companion.label}</span>
       <span id="qr-room">${roomId}</span>
     `;
     document.body.appendChild(this.el);
+    this.labelEl = this.el.querySelector('#qr-label');
+
+    onLangChange(() => {
+      if (this.labelEl) this.labelEl.textContent = t().companion.label;
+    });
 
     this.generateQR(`${baseUrl}?companion=${roomId}`);
   }

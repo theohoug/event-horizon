@@ -51,6 +51,9 @@ interface Translations {
   loop4: { line1: string; line2: string; line3: string; countdown: string };
   accessWarning: string;
   shareAnomaly: string;
+  companion: { label: string; headline: string; title: string; text: string };
+  alteredTitle: string;
+  scrollBegin: string;
 }
 
 const en: Translations = {
@@ -235,6 +238,14 @@ const en: Translations = {
   },
   accessWarning: 'This experience contains flashing lights and psychological themes.',
   shareAnomaly: 'Spread the anomaly.',
+  companion: {
+    label: 'COMPANION',
+    headline: 'Enhance your immersion',
+    title: 'Second screen',
+    text: 'Your phone becomes a mission console. Real-time telemetry and astrophysics synced to your descent into the black hole.',
+  },
+  alteredTitle: 'EVENT HORIZON (AGAIN)',
+  scrollBegin: 'Scroll to begin',
 };
 
 const fr: Translations = {
@@ -419,6 +430,14 @@ const fr: Translations = {
   },
   accessWarning: 'Cette expérience contient des flashs lumineux et des thèmes psychologiques.',
   shareAnomaly: 'Répands l\'anomalie.',
+  companion: {
+    label: 'COMPAGNON',
+    headline: 'Améliorez votre immersion',
+    title: 'Second écran',
+    text: 'Scannez le QR code avec votre téléphone. Démarrez le voyage sur le navigateur et votre mobile se synchronisera automatiquement avec votre descente.',
+  },
+  alteredTitle: 'EVENT HORIZON (ENCORE)',
+  scrollBegin: 'Scrollez pour commencer',
 };
 
 const translations: Record<Lang, Translations> = { en, fr };

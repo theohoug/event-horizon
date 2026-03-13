@@ -29,7 +29,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="manifest" href="/manifest.json" />
   <meta name="robots" content="index, follow" />
-  <title>Event Horizon — An Interactive Journey Into a Black Hole</title>
+  <title>Event Horizon</title>
   <style>
     #loader{position:fixed;inset:0;z-index:10000;background:#050505;display:flex;align-items:center;justify-content:center;transition:opacity .6s}
     #loader-inner{text-align:center;color:rgba(232,232,255,.9);font-family:system-ui,-apple-system,sans-serif}
@@ -182,6 +182,15 @@
 
     <div id="sound-prompt" role="dialog" aria-label="Sound preference" aria-modal="true">
       <div id="sound-prompt-inner">
+        <div id="sound-logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="52" height="52">
+            <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,179,71,0.06)" stroke-width="0.5"/>
+            <ellipse cx="32" cy="32" rx="24" ry="7" fill="none" stroke="rgba(255,179,71,0.5)" stroke-width="1.2" transform="rotate(-12 32 32)"/>
+            <ellipse cx="32" cy="32" rx="20" ry="5" fill="none" stroke="rgba(255,179,71,0.2)" stroke-width="0.5" transform="rotate(-12 32 32)"/>
+            <circle cx="32" cy="32" r="10" fill="#050505"/>
+            <circle cx="32" cy="32" r="10.5" fill="none" stroke="rgba(255,179,71,0.4)" stroke-width="0.5"/>
+          </svg>
+        </div>
         <div id="sound-wave" aria-hidden="true">
           <span class="wave-bar"></span>
           <span class="wave-bar"></span>

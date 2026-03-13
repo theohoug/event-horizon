@@ -1585,14 +1585,23 @@ gl_FragColor=vec4(col,1.0);}`;
   }
 
   private setupResize() {
+    const getViewportSize = () => {
+      const vv = window.visualViewport;
+      const w = vv ? Math.round(vv.width) : document.documentElement.clientWidth || window.innerWidth;
+      const h = vv ? Math.round(vv.height) : document.documentElement.clientHeight || window.innerHeight;
+      return { w, h };
+    };
+
     const onResize = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
+      const { w, h } = getViewportSize();
       this.renderer.setSize(w, h);
       this.postProcessing.resize();
     };
 
     this.addTrackedListener(window, 'resize', onResize as EventListener);
+    if (window.visualViewport) {
+      this.addTrackedListener(window.visualViewport, 'resize', onResize as EventListener);
+    }
     onResize();
 
     let tabLeftAt = 0;
@@ -1803,8 +1812,8 @@ gl_FragColor=vec4(col,1.0);}`;
       this.logChapter(currentChapter);
       const chName = this.getChapterNames()[currentChapter];
       document.title = currentChapter === 0
-        ? `Event Horizon \u2014 ${t().introSubtitle}`
-        : `${chName} \u2014 Event Horizon`;
+        ? `Event Horizon \u00B7 ${t().introSubtitle}`
+        : `${chName} \u00B7 Event Horizon`;
       if (this.broadcaster) {
         const chapters = this.isHardcoreMode ? t().hardcoreChapters : this.isAlteredMode ? t().alteredChapters : t().chapters;
         const interstitials = this.getInterstitials();
@@ -2317,7 +2326,7 @@ gl_FragColor=vec4(col,1.0);}`;
 
       const chName = this.getChapterNames()[chapterIndex];
       if (chName) {
-        document.title = `${chName} — Event Horizon`;
+        document.title = `${chName} \u00B7 Event Horizon`;
       }
 
       if (this.themeColorMeta) {

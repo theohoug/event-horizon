@@ -1044,6 +1044,16 @@ gl_FragColor=vec4(col,1.0);}`;
       this.timeline.start(this.state.soundEnabled);
       this.textReveal.start();
       this.showScrollOverlay();
+      if (this.broadcaster) {
+        const chapters = this.isHardcoreMode ? t().hardcoreChapters : this.isAlteredMode ? t().alteredChapters : t().chapters;
+        const interstitials = this.getInterstitials();
+        this.broadcaster.sendChapter({
+          index: 0,
+          title: chapters[0]?.title || this.getChapterNames()[0],
+          subtitle: chapters[0]?.subtitle || '',
+          interstitial: interstitials[0] || '',
+        });
+      }
       gsap.to(this.state, {
         introProgress: 1,
         duration: 2,

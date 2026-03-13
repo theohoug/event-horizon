@@ -57,6 +57,9 @@ const LABELS = {
     tidUnit: 'relative',
     progress: 'DESCENT PROGRESS',
     liveData: 'LIVE TELEMETRY',
+    archiveTitle: 'JOURNEY COMPLETE',
+    archiveSub: 'Browse all chapters and their scientific documentation',
+    archiveBtn: 'View chapter',
     footer: 'Crafted by',
   },
   fr: {
@@ -81,6 +84,9 @@ const LABELS = {
     tidUnit: 'relative',
     progress: 'PROGRESSION DE LA DESCENTE',
     liveData: 'T\u00C9L\u00C9M\u00C9TRIE EN DIRECT',
+    archiveTitle: 'VOYAGE TERMIN\u00C9',
+    archiveSub: 'Parcourez tous les chapitres et leur documentation scientifique',
+    archiveBtn: 'Voir le chapitre',
     footer: 'Con\u00E7u par',
   },
 };
@@ -105,6 +111,8 @@ export async function init(roomId: string) {
   const hub = new BroadcastHub();
   let currentChapter = -1;
   let connected = false;
+  let archiveShown = false;
+  const receivedChapters = new Map<number, ChapterData>();
 
   const dot = document.getElementById('comp-dot')!;
   const statusText = document.getElementById('comp-status-text')!;
@@ -119,14 +127,23 @@ export async function init(roomId: string) {
       scienceData = getScienceData(lang);
       labels = LABELS[lang];
       updateLabels(labels);
+      if (archiveShown) showArchive();
     }
     markConnected();
   });
 
   hub.on('chapter', (data) => {
     const ch = data as unknown as ChapterData;
-    if (ch.index === currentChapter) return;
+    receivedChapters.set(ch.index, ch);
+    if (ch.index === currentChapter && !archiveShown) return;
     currentChapter = ch.index;
+
+    if (archiveShown) {
+      archiveShown = false;
+      const archiveEl = document.getElementById('comp-archive');
+      if (archiveEl) archiveEl.classList.add('hidden');
+      main.classList.remove('hidden');
+    }
 
     if (!connected) markConnected();
 
@@ -154,6 +171,11 @@ export async function init(roomId: string) {
     }
 
     updateHUD(s);
+
+    if (s.scroll >= 0.97 && !archiveShown && receivedChapters.size > 0) {
+      archiveShown = true;
+      showArchive();
+    }
   });
 
   function markConnected() {
@@ -161,6 +183,62 @@ export async function init(roomId: string) {
     connected = true;
     dot.classList.add('live');
     statusText.textContent = labels.live;
+  }
+
+  function showArchive() {
+    let archiveEl = document.getElementById('comp-archive');
+    if (!archiveEl) {
+      archiveEl = document.createElement('div');
+      archiveEl.id = 'comp-archive';
+      const content = document.getElementById('comp-content')!;
+      const footer = document.getElementById('comp-footer')!;
+      content.insertBefore(archiveEl, footer);
+    }
+
+    main.classList.add('hidden');
+    archiveEl.classList.remove('hidden');
+
+    const chapterNames = scienceData.map((s, i) => {
+      const ch = receivedChapters.get(i);
+      return ch ? ch.title : s.whatYouSee.substring(0, 30);
+    });
+
+    archiveEl.innerHTML = `
+      <div class="comp-archive-header">
+        <div class="comp-archive-title">${labels.archiveTitle}</div>
+        <div class="comp-archive-sub">${labels.archiveSub}</div>
+      </div>
+      <div class="comp-archive-grid">
+        ${scienceData.map((_, i) => `
+          <button class="comp-archive-card" data-chapter="${i}" style="--card-color: ${CHAPTER_COLORS[i]}">
+            <span class="comp-archive-num">${String(i).padStart(2, '0')}</span>
+            <span class="comp-archive-name">${chapterNames[i]}</span>
+          </button>
+        `).join('')}
+      </div>
+    `;
+
+    archiveEl.querySelectorAll('.comp-archive-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const idx = parseInt((card as HTMLElement).dataset.chapter || '0', 10);
+        const color = CHAPTER_COLORS[idx] || '#ffffff';
+        document.documentElement.style.setProperty('--comp-accent', color);
+        archiveEl!.classList.add('hidden');
+        main.classList.remove('hidden');
+
+        const ch = receivedChapters.get(idx) || { index: idx, title: chapterNames[idx], subtitle: '', interstitial: '' };
+        renderChapter(ch, scienceData[idx], labels, color);
+        bg.style.background = `radial-gradient(ellipse at center, ${color}12 0%, transparent 70%)`;
+        root.scrollTo({ top: 0, behavior: 'smooth' });
+
+        statusText.textContent = labels.archiveBtn;
+      });
+    });
+
+    root.scrollTo({ top: 0, behavior: 'smooth' });
+    statusText.textContent = labels.archiveTitle;
+    dot.classList.remove('live');
+    dot.classList.add('connected');
   }
 
   await hub.join(roomId);

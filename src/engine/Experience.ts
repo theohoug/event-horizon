@@ -1787,7 +1787,8 @@ gl_FragColor=vec4(col,1.0);}`;
       }
     }
 
-    const currentChapter = Math.min(8, Math.floor(this.state.scroll * 9));
+    const timelineChapter = this.timeline.activeChapter;
+    const currentChapter = timelineChapter >= 0 ? timelineChapter : Math.min(8, Math.floor(this.state.scroll * 9));
     if (currentChapter !== this.lastChapterIndex) {
       if (this.lastChapterIndex >= 0) {
         this.chapterFlash = 1.0;
@@ -2266,7 +2267,8 @@ gl_FragColor=vec4(col,1.0);}`;
       }
     }
 
-    const chapterIndex = Math.min(8, Math.floor(scroll * 9));
+    const timelineActive = this.timeline.activeChapter;
+    const chapterIndex = timelineActive >= 0 ? timelineActive : Math.min(8, Math.floor(scroll * 9));
     if (this.navEl) {
       if (scroll > 0.02 && scroll < 0.96) {
         this.navEl.classList.add('visible');

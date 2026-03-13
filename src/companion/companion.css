@@ -580,6 +580,83 @@
   opacity: 0.4;
 }
 
+/* ─── Archive ─── */
+
+#comp-archive {
+  flex: 1;
+  padding: 2rem 0;
+  transition: opacity 0.5s ease;
+}
+
+#comp-archive.hidden {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.comp-archive-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.comp-archive-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  letter-spacing: 0.25em;
+  color: rgba(255, 240, 224, 0.6);
+  margin-bottom: 0.5rem;
+}
+
+.comp-archive-sub {
+  font-size: 0.62rem;
+  color: rgba(255, 240, 224, 0.25);
+  line-height: 1.6;
+}
+
+.comp-archive-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.comp-archive-card {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: rgba(255, 240, 224, 0.015);
+  border: 1px solid var(--comp-faint);
+  border-radius: 10px;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  text-align: left;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.25s ease;
+}
+
+.comp-archive-card:active {
+  transform: scale(0.98);
+  border-color: var(--card-color);
+  background: rgba(255, 240, 224, 0.03);
+}
+
+.comp-archive-num {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  color: var(--card-color);
+  opacity: 0.4;
+  min-width: 22px;
+}
+
+.comp-archive-name {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 240, 224, 0.5);
+}
+
 /* ─── Scrollbar ─── */
 
 #companion-root::-webkit-scrollbar {

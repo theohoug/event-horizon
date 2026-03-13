@@ -1,0 +1,333 @@
+/**
+ * Cleanlystudio — Mobile Landing
+ * @author Theo Houguet
+ */
+
+:root {
+  --ml-accent: #FFB347;
+  --ml-text: rgba(232, 232, 255, 0.9);
+  --ml-dim: rgba(255, 240, 224, 0.35);
+  --ml-faint: rgba(255, 240, 224, 0.12);
+}
+
+#mobile-landing {
+  position: fixed;
+  inset: 0;
+  background: #050505;
+  color: var(--ml-text);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  z-index: 99999;
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+
+#ml-grain {
+  position: fixed;
+  inset: 0;
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px;
+}
+
+#ml-content {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: env(safe-area-inset-top, 2rem) 1.5rem env(safe-area-inset-bottom, 2rem);
+}
+
+/* ─── Hero ─── */
+
+.ml-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 0 2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: ml-fade-in 1s ease 0.3s forwards;
+}
+
+@keyframes ml-fade-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ml-icon {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--ml-faint);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  color: var(--ml-accent);
+  font-size: 1.2rem;
+  animation: ml-pulse-ring 3s ease-in-out infinite;
+}
+
+@keyframes ml-pulse-ring {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 179, 71, 0.15); }
+  50% { box-shadow: 0 0 0 12px rgba(255, 179, 71, 0); }
+}
+
+.ml-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.6rem, 7vw, 2.4rem);
+  letter-spacing: 0.25em;
+  color: var(--ml-accent);
+  margin-bottom: 0.6rem;
+  line-height: 1.2;
+}
+
+.ml-subtitle {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: var(--ml-dim);
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
+.ml-line {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ml-accent), transparent);
+  opacity: 0.4;
+}
+
+/* ─── Description ─── */
+
+.ml-description {
+  text-align: center;
+  padding: 2rem 0;
+  max-width: 340px;
+  opacity: 0;
+  transform: translateY(15px);
+  animation: ml-fade-in 1s ease 0.6s forwards;
+}
+
+.ml-description p {
+  font-size: 0.85rem;
+  line-height: 1.8;
+  color: rgba(255, 240, 224, 0.5);
+  margin-bottom: 1.2rem;
+}
+
+.ml-description p:last-child {
+  margin-bottom: 0;
+}
+
+.ml-highlight {
+  color: var(--ml-accent);
+  font-weight: 500;
+}
+
+/* ─── Desktop Badge ─── */
+
+.ml-desktop-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1.2rem;
+  border: 1px solid var(--ml-faint);
+  border-radius: 100px;
+  margin: 1rem 0 2rem;
+  opacity: 0;
+  animation: ml-fade-in 0.8s ease 0.9s forwards;
+}
+
+.ml-desktop-badge svg {
+  width: 16px;
+  height: 16px;
+  color: var(--ml-dim);
+}
+
+.ml-desktop-badge span {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--ml-dim);
+  text-transform: uppercase;
+}
+
+/* ─── Companion Section ─── */
+
+.ml-companion {
+  width: 100%;
+  max-width: 340px;
+  border: 1px solid var(--ml-faint);
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: rgba(255, 240, 224, 0.02);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(15px);
+  animation: ml-fade-in 1s ease 1.1s forwards;
+}
+
+.ml-companion-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.8rem;
+  opacity: 0.6;
+}
+
+.ml-companion-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  color: var(--ml-accent);
+  margin-bottom: 0.6rem;
+}
+
+.ml-companion-text {
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: rgba(255, 240, 224, 0.4);
+  margin-bottom: 1rem;
+}
+
+.ml-companion-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  text-align: left;
+}
+
+.ml-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.ml-step-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 179, 71, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.55rem;
+  color: var(--ml-accent);
+  margin-top: 0.1rem;
+}
+
+.ml-step-text {
+  font-size: 0.7rem;
+  color: rgba(255, 240, 224, 0.45);
+  line-height: 1.5;
+}
+
+/* ─── Language Toggle ─── */
+
+.ml-lang {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  opacity: 0;
+  animation: ml-fade-in 0.8s ease 1.4s forwards;
+}
+
+.ml-lang-btn {
+  background: none;
+  border: 1px solid var(--ml-faint);
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--ml-dim);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+.ml-lang-btn:focus-visible {
+  outline: 1px solid var(--ml-accent);
+  outline-offset: 2px;
+}
+
+.ml-lang-btn.active {
+  border-color: rgba(255, 179, 71, 0.4);
+  color: var(--ml-accent);
+  background: rgba(255, 179, 71, 0.08);
+}
+
+/* ─── Footer ─── */
+
+.ml-footer {
+  margin-top: auto;
+  padding-top: 2rem;
+  opacity: 0;
+  animation: ml-fade-in 0.8s ease 1.6s forwards;
+}
+
+.ml-footer-text {
+  font-size: 0.5rem;
+  color: rgba(255, 240, 224, 0.15);
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.ml-footer-text a {
+  color: rgba(255, 240, 224, 0.3);
+  text-decoration: none;
+}
+
+/* ─── Chapters Preview ─── */
+
+.ml-chapters {
+  width: 100%;
+  max-width: 340px;
+  margin-top: 2rem;
+  opacity: 0;
+  transform: translateY(15px);
+  animation: ml-fade-in 1s ease 1.3s forwards;
+}
+
+.ml-chapters-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  color: var(--ml-dim);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.ml-chapter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.ml-chapter-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 240, 224, 0.04);
+}
+
+.ml-chapter-num {
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  color: rgba(255, 179, 71, 0.25);
+  width: 20px;
+  text-align: center;
+}
+
+.ml-chapter-name {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: rgba(255, 240, 224, 0.35);
+}

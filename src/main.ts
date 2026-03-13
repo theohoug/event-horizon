@@ -9,11 +9,14 @@ import './styles/fonts.css';
 import './styles/global.css';
 
 const companionRoom = new URL(window.location.href).searchParams.get('companion');
+const isMobileDevice = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 if (companionRoom) {
   import('./companion/CompanionApp').then(m => m.init(companionRoom));
+} else if (isMobileDevice) {
+  import('./mobile/MobileLanding').then(m => m.init());
 } else {
-  const cycle = parseInt(localStorage.getItem('eh_visits') || '0', 10);
+  const cycle = 0;
 
   if (import.meta.env.DEV) {
     console.log(

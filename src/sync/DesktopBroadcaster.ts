@@ -11,7 +11,7 @@ export class DesktopBroadcaster {
   private hub: BroadcastHub;
   private lastSend = 0;
   private roomId: string;
-  private throttleMs = 200;
+  private throttleMs = 50;
 
   constructor(roomId: string) {
     this.roomId = roomId;

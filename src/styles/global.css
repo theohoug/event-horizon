@@ -1650,8 +1650,68 @@ body {
   outline: none;
 }
 
+#sound-companion {
+  margin-top: 1.5rem;
+  opacity: 0;
+  animation: prompt-content-rise 1.5s ease 1.5s forwards;
+  max-width: 320px;
+  width: 100%;
+}
+
+#sound-companion-line {
+  width: 30px;
+  height: 1px;
+  background: rgba(255, 240, 224, 0.1);
+  margin: 0 auto 1rem;
+}
+
+#sound-companion-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid rgba(255, 240, 224, 0.06);
+  border-radius: 8px;
+  background: rgba(255, 240, 224, 0.015);
+}
+
+#sound-companion-qr {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#sound-companion-qr svg {
+  width: 100%;
+  height: 100%;
+}
+
+#sound-companion-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+#sound-companion-label {
+  font-family: var(--font-body);
+  font-size: 0.45rem;
+  letter-spacing: 0.2em;
+  color: #FFB347;
+  opacity: 0.6;
+}
+
+#sound-companion-text {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  color: rgba(255, 240, 224, 0.35);
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+
 #sound-warning {
-  margin-top: 2.5rem;
+  margin-top: 1.5rem;
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 0.85rem;

@@ -108,7 +108,7 @@ export class Experience {
       holdStrength: 0,
     };
 
-    this.visitCount = parseInt(localStorage.getItem('eh_visits') || '0', 10);
+    this.visitCount = 0;
     if (this.visitCount >= 2) {
       this.isHardcoreMode = true;
       this.isAlteredMode = true;
@@ -433,6 +433,7 @@ gl_FragColor=vec4(col,1.0);}`;
       this.broadcaster.connect();
       const baseUrl = window.location.origin + window.location.pathname;
       this.qrOverlay = new QROverlay(roomId, baseUrl);
+      this.generateSoundPromptQR(`${baseUrl}?companion=${roomId}`);
     }
 
     await this.preload();
@@ -519,7 +520,6 @@ gl_FragColor=vec4(col,1.0);}`;
           const wasActive = sessionStorage.getItem('eh_session_active');
           if (wasActive && this.visitCount >= 1) {
             this.visitCount++;
-            localStorage.setItem('eh_visits', String(this.visitCount));
             if (this.visitCount >= 2) { this.isHardcoreMode = true; }
             this.isAlteredMode = true;
             this.syncAlteredMode();
@@ -741,6 +741,20 @@ gl_FragColor=vec4(col,1.0);}`;
     };
     this.addTrackedListener(window, 'keydown', promptKeyHandler as EventListener);
 
+    const companionTextEl = document.getElementById('sound-companion-text');
+    if (companionTextEl) {
+      const updateCompanionLang = () => {
+        const lang = getLang();
+        companionTextEl.textContent = lang === 'fr'
+          ? 'Scannez avec votre t\u00E9l\u00E9phone pour la documentation scientifique en direct'
+          : 'Scan with your phone for live scientific documentation';
+        const labelEl = document.getElementById('sound-companion-label');
+        if (labelEl) labelEl.textContent = lang === 'fr' ? 'COMPAGNON' : 'COMPANION';
+      };
+      updateCompanionLang();
+      onLangChange(updateCompanionLang);
+    }
+
     const shareBtn = document.getElementById('share-btn');
     [yesBtn, noBtn, shareBtn].forEach((btn) => {
       if (btn) this.addTrackedListener(btn, 'mouseenter', () => {
@@ -935,6 +949,29 @@ gl_FragColor=vec4(col,1.0);}`;
     }
   }
 
+  private async generateSoundPromptQR(url: string) {
+    const container = document.getElementById('sound-companion-qr');
+    if (!container) return;
+    try {
+      const qrGen = (await import('qrcode-generator')).default;
+      const qr = qrGen(0, 'M');
+      qr.addData(url);
+      qr.make();
+      container.innerHTML = qr.createSvgTag({ scalable: true, margin: 0 });
+      const svg = container.querySelector('svg');
+      if (svg) {
+        svg.style.width = '100%';
+        svg.style.height = '100%';
+        svg.querySelectorAll('rect[fill="#000000"]').forEach(r => {
+          (r as SVGElement).setAttribute('fill', 'rgba(255, 240, 224, 0.75)');
+        });
+        svg.querySelectorAll('rect[fill="#ffffff"]').forEach(r => {
+          (r as SVGElement).setAttribute('fill', 'transparent');
+        });
+      }
+    } catch (_) {}
+  }
+
   private playIntroCinematic() {
     const intro = document.getElementById('intro-cinematic');
     const titleContainer = document.getElementById('intro-title-container');
@@ -957,6 +994,15 @@ gl_FragColor=vec4(col,1.0);}`;
     this.state.introActive = true;
     this.state.introProgress = 0;
     intro.classList.add('active');
+
+    if (this.broadcaster) {
+      this.broadcaster.sendMeta({
+        lang: getLang(),
+        isAltered: this.isAlteredMode,
+        isHardcore: this.isHardcoreMode,
+        totalChapters: 9,
+      });
+    }
 
     const titleText = this.isAlteredMode ? 'EVENT HORIZON (AGAIN)' : 'EVENT HORIZON';
     if (subtitle) subtitle.textContent = this.isHardcoreMode ? t().hardcoreIntroSubtitle : this.isAlteredMode ? t().alteredIntroSubtitle : t().introSubtitle;
@@ -2600,7 +2646,6 @@ gl_FragColor=vec4(col,1.0);}`;
         this.postCreditsTimer = 0;
 
         this.visitCount++;
-        localStorage.setItem('eh_visits', String(this.visitCount));
 
         if (this.visitCount >= 3) {
           this.showLoop4Terminal();

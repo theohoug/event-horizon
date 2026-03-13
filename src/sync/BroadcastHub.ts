@@ -19,7 +19,7 @@ export class BroadcastHub {
   private async getClient() {
     const { createClient } = await import('@supabase/supabase-js');
     return createClient(SUPABASE_URL, SUPABASE_KEY, {
-      realtime: { params: { eventsPerSecond: 10 } },
+      realtime: { params: { eventsPerSecond: 20 } },
     });
   }
 

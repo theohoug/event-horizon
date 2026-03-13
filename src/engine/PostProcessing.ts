@@ -10,11 +10,9 @@ import bloomFrag from '../shaders/postfx/bloom.frag';
 import compositeFrag from '../shaders/postfx/composite.frag';
 import fullscreenVert from '../shaders/postfx/fullscreen.vert';
 
-type Quality = 'ultra' | 'high' | 'medium';
-
 export class PostProcessing {
   private renderer: THREE.WebGLRenderer;
-  private quality: Quality;
+  private qualityMedium: boolean;
 
   bgScene: THREE.Scene;
   bgCamera: THREE.OrthographicCamera;
@@ -33,16 +31,15 @@ export class PostProcessing {
   private compositeMaterial: THREE.ShaderMaterial;
 
   private bloomPasses: number;
+  private bloomScaleValue: number;
   private shockwaves: { x: number; y: number; radius: number; strength: number; speed: number }[] = [];
 
-  private isMobile: boolean;
-
-  constructor(renderer: THREE.WebGLRenderer, quality: Quality, isMobile = false) {
+  constructor(renderer: THREE.WebGLRenderer, bloomPasses: number, bloomScale: number, qualityMedium: boolean, motionBlur: boolean) {
     this.renderer = renderer;
-    this.quality = quality;
-    this.isMobile = isMobile;
+    this.qualityMedium = qualityMedium;
 
-    this.bloomPasses = quality === 'ultra' ? 4 : quality === 'high' ? (isMobile ? 2 : 3) : 1;
+    this.bloomPasses = bloomPasses;
+    this.bloomScaleValue = bloomScale;
 
     this.bgScene = new THREE.Scene();
     this.bgCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -71,9 +68,8 @@ export class PostProcessing {
     const sw = Math.floor(w * pr);
     const sh = Math.floor(h * pr);
     this.sceneTarget = new THREE.WebGLRenderTarget(sw, sh, rtParams);
-    const bloomScale = quality === 'ultra' ? 0.5 : quality === 'high' ? (isMobile ? 0.25 : 0.35) : 0.25;
-    const bw = Math.max(1, Math.floor(sw * bloomScale));
-    const bh = Math.max(1, Math.floor(sh * bloomScale));
+    const bw = Math.max(1, Math.floor(sw * this.bloomScaleValue));
+    const bh = Math.max(1, Math.floor(sh * this.bloomScaleValue));
     this.bloomTargetA = new THREE.WebGLRenderTarget(bw, bh, rtParams);
     this.bloomTargetB = new THREE.WebGLRenderTarget(bw, bh, rtParams);
 
@@ -99,8 +95,7 @@ export class PostProcessing {
       depthWrite: false,
     });
 
-    const useMediumShader = quality === 'medium' || (quality === 'high' && isMobile);
-    const compositePrefix = useMediumShader ? '#define QUALITY_MEDIUM 1\n' : '';
+    const compositePrefix = qualityMedium ? '#define QUALITY_MEDIUM 1\n' : '';
     this.compositeMaterial = new THREE.ShaderMaterial({
       vertexShader: fullscreenVert,
       fragmentShader: compositePrefix + compositeFrag,
@@ -124,7 +119,7 @@ export class PostProcessing {
         ] },
         uHoldStrength: { value: 0 },
         uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-        uMotionBlur: { value: quality === 'medium' ? 0.0 : 1.0 },
+        uMotionBlur: { value: motionBlur ? 1.0 : 0.0 },
         uExplosion: { value: 0 },
         uColorShift: { value: new THREE.Vector3(0, 0, 0) },
         uInvert: { value: 0 },
@@ -208,7 +203,7 @@ export class PostProcessing {
       this.compositeMaterial.uniforms.uCrtCurvature.value = 0.03 * s;
       this.compositeMaterial.uniforms.uRgbSplit.value = 3.0 + Math.sin(state.time * 2.0) * 1.0;
       this.compositeMaterial.uniforms.uScreenTilt.value = Math.sin(state.time * 0.4 * Math.PI * 2) * 1.5 * (Math.PI / 180) * s;
-      this.compositeMaterial.uniforms.uGlitchBlock.value = (this.quality !== 'medium' && Math.random() < 0.06) ? 0.8 + Math.random() * 0.2 : 0;
+      this.compositeMaterial.uniforms.uGlitchBlock.value = (!this.qualityMedium && Math.random() < 0.06) ? 0.8 + Math.random() * 0.2 : 0;
 
       if (Math.random() < 0.10) {
         this.compositeMaterial.uniforms.uChapterFlash.value += 0.3 + Math.random() * 0.5;
@@ -352,7 +347,7 @@ export class PostProcessing {
     const w = window.innerWidth;
     const h = window.innerHeight;
     const pr = this.renderer.getPixelRatio();
-    const bloomScale = this.quality === 'ultra' ? 0.5 : this.quality === 'high' ? 0.35 : 0.25;
+    const bloomScale = this.bloomScaleValue;
 
     const sw = Math.floor(w * pr);
     const sh = Math.floor(h * pr);

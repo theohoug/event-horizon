@@ -23,6 +23,20 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+interface PerfConfig {
+  dpr: number;
+  maxSteps: number;
+  qualityMedium: boolean;
+  gpgpuTexSize: number;
+  starfieldCount: number;
+  bloomPasses: number;
+  bloomScale: number;
+  motionBlur: boolean;
+  antialias: boolean;
+  gpuScore: number;
+  quality: 'ultra' | 'high' | 'medium';
+}
+
 interface ExperienceState {
   scroll: number;
   scrollVelocity: number;
@@ -83,7 +97,7 @@ export class Experience {
       mouseSmooth: new THREE.Vector2(0.5, 0.5),
       isReady: false,
       soundEnabled: false,
-      quality: this.detectQuality(),
+      quality: 'high',
       introProgress: 0,
       introActive: false,
       chapterFlash: 0,
@@ -111,105 +125,144 @@ export class Experience {
     });
   }
 
-  private detectQuality(): 'ultra' | 'high' | 'medium' {
+  private profileGpu(renderer: THREE.WebGLRenderer): PerfConfig {
+    const gl = renderer.getContext();
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-
-    const tempCanvas = document.createElement('canvas');
-    const gl = tempCanvas.getContext('webgl2') || tempCanvas.getContext('webgl');
-    if (!gl) return 'medium';
+    const nativeDpr = Math.min(window.devicePixelRatio, isMobile ? 3 : 2);
+    const screenW = window.innerWidth;
+    const screenH = window.innerHeight;
+    const screenPx = screenW * screenH;
 
     let gpuRenderer = '';
     const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
     if (debugInfo) gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL).toLowerCase();
-    const maxTex = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-    const maxFrag = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
     const cores = navigator.hardwareConcurrency || 2;
     const ram = (navigator as any).deviceMemory || 4;
 
-    const lose = gl.getExtension('WEBGL_lose_context');
-    if (lose) lose.loseContext();
+    const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
+    try {
+      const data = JSON.parse(localStorage.getItem('eh_perf_v2') || '{}');
+      if (data.fp === fingerprint) return data.cfg as PerfConfig;
+    } catch {}
 
-    if (isMobile) {
-      if (maxTex >= 16384 && maxFrag >= 1024 && cores >= 6) return 'high';
-      if (gpuRenderer.includes('apple gpu') && cores >= 6) return 'high';
-      if (gpuRenderer.includes('adreno 7') || gpuRenderer.includes('mali-g7')) return 'high';
-      return 'medium';
-    }
-
-    if (gpuRenderer.includes('apple m') || gpuRenderer.includes('rtx') || gpuRenderer.includes('rx 7')) return 'ultra';
-    if (maxTex >= 16384 && maxFrag >= 1024 && cores >= 8 && ram >= 8) return 'ultra';
-    if (cores >= 4 && maxTex >= 8192) return 'high';
-    return 'medium';
-  }
-
-  private benchmarkGpu(renderer: THREE.WebGLRenderer): 'ultra' | 'high' | 'medium' {
-    const gl = renderer.getContext();
-    const size = 128;
-    const rt = new THREE.WebGLRenderTarget(size, size, {
-      format: THREE.RGBAFormat,
-      type: THREE.HalfFloatType,
-    });
+    let heuristicBonus = 0;
+    if (gpuRenderer.includes('rtx 40') || gpuRenderer.includes('rtx 50')) heuristicBonus = 18;
+    else if (gpuRenderer.includes('rtx 30')) heuristicBonus = 14;
+    else if (gpuRenderer.includes('rtx 20')) heuristicBonus = 8;
+    else if (gpuRenderer.includes('apple m2') || gpuRenderer.includes('apple m3') || gpuRenderer.includes('apple m4')) heuristicBonus = 14;
+    else if (gpuRenderer.includes('apple m1')) heuristicBonus = 8;
+    else if (gpuRenderer.includes('rx 7') || gpuRenderer.includes('rx 9')) heuristicBonus = 12;
+    else if (gpuRenderer.includes('rx 6')) heuristicBonus = 8;
+    else if (gpuRenderer.includes('adreno 7')) heuristicBonus = 4;
+    else if (gpuRenderer.includes('mali-g7') || gpuRenderer.includes('mali-g9')) heuristicBonus = 4;
+    else if (gpuRenderer.includes('apple gpu') && cores >= 6) heuristicBonus = 6;
+    else if (gpuRenderer.includes('intel') && !gpuRenderer.includes('arc')) heuristicBonus = -12;
+    else if (gpuRenderer.includes('adreno 5') || gpuRenderer.includes('mali-g5') || gpuRenderer.includes('mali-t')) heuristicBonus = -10;
+    if (cores >= 8 && ram >= 16) heuristicBonus += 5;
+    else if (cores <= 2 || ram <= 2) heuristicBonus -= 8;
 
     const benchScene = new THREE.Scene();
     const benchCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const benchMat = new THREE.ShaderMaterial({
-      vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position,1.0); }`,
-      fragmentShader: `
-        precision highp float;
-        varying vec2 vUv;
-        float h(vec2 p){ vec3 p3=fract(vec3(p.xyx)*0.1031); p3+=dot(p3,p3.yzx+33.33); return fract((p3.x+p3.y)*p3.z); }
-        void main(){
-          vec3 c=vec3(0.0);
-          vec2 uv=vUv*2.0-1.0;
-          for(int i=0;i<40;i++){
-            float fi=float(i)*0.025;
-            vec2 p=uv+vec2(sin(fi*3.14),cos(fi*2.71))*fi;
-            float d=length(p);
-            c+=vec3(exp(-d*d*4.0))*h(p*float(i+1));
-            c+=vec3(0.01)*exp(-d*10.0);
-          }
-          gl_FragColor=vec4(c,1.0);
-        }
-      `,
-      depthTest: false,
-    });
-    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), benchMat);
+    const geo = new THREE.PlaneGeometry(2, 2);
+    const quad = new THREE.Mesh(geo);
     benchScene.add(quad);
 
-    gl.finish();
+    const fboOpts = { format: THREE.RGBAFormat as THREE.PixelFormat, type: THREE.HalfFloatType as THREE.TextureDataType };
+    const benchVert = `void main(){gl_Position=vec4(position,1.0);}`;
 
-    const warmup = 3;
-    for (let i = 0; i < warmup; i++) {
-      renderer.setRenderTarget(rt);
-      renderer.render(benchScene, benchCam);
-    }
-    gl.finish();
+    const repFrag = (res: number) => `precision highp float;
+float bh(vec3 p){p=fract(p*0.3183099+0.1);p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}
+float bn(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
+return mix(mix(mix(bh(i),bh(i+vec3(1,0,0)),f.x),mix(bh(i+vec3(0,1,0)),bh(i+vec3(1,1,0)),f.x),f.y),
+mix(mix(bh(i+vec3(0,0,1)),bh(i+vec3(1,0,1)),f.x),mix(bh(i+vec3(0,1,1)),bh(i+vec3(1,1,1)),f.x),f.y),f.z);}
+void main(){
+vec2 uv=gl_FragCoord.xy/${res}.0*2.0-1.0;
+vec3 pos=vec3(0,3,-20),vel=normalize(vec3(uv,2.0)),col=vec3(0.0);
+for(int i=0;i<40;i++){
+float r=length(pos);
+if(r<1.0){col+=vec3(0.8,0.2,0.05)*exp(-r*2.0);break;}
+if(r>40.0){col+=vec3(bh(vel*100.0))*0.02;break;}
+col+=vec3(0.4,0.6,1.0)*exp(-(r-1.5)*(r-1.5)*20.0)*0.05;
+if(abs(pos.y)<0.25){float dr=length(pos.xz);
+if(dr>2.5&&dr<12.0){float t=1.0/dr,tb=bn(pos*3.0);
+col+=vec3(t*1.8,t*0.7,t*0.25)*(0.4+tb*0.6)*smoothstep(12.0,8.0,dr);}}
+vec3 cp=cross(pos,vel);float h2=dot(cp,cp);float r5=r*r*r*r*r;
+vec3 a=-1.5*h2*pos/max(r5,1e-8);
+float adt=0.3*clamp((r-1.0)*0.4,0.03,1.5);
+vel=normalize(vel+a*adt);pos+=vel*adt;}
+gl_FragColor=vec4(col,1.0);}`;
 
-    const runs = 6;
-    const t0 = performance.now();
-    for (let i = 0; i < runs; i++) {
-      renderer.setRenderTarget(rt);
-      renderer.render(benchScene, benchCam);
-    }
+    const rt96 = new THREE.WebGLRenderTarget(96, 96, fboOpts);
+    const mat96 = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(96), depthTest: false });
+    const rt192 = new THREE.WebGLRenderTarget(192, 192, fboOpts);
+    const mat192 = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(192), depthTest: false });
+
+    const runTest = (mat: THREE.ShaderMaterial, rt: THREE.WebGLRenderTarget, warmup: number, runs: number): number => {
+      quad.material = mat;
+      for (let w = 0; w < warmup; w++) { renderer.setRenderTarget(rt); renderer.render(benchScene, benchCam); }
+      gl.finish();
+      const t0 = performance.now();
+      for (let r = 0; r < runs; r++) { renderer.setRenderTarget(rt); renderer.render(benchScene, benchCam); }
+      gl.finish();
+      return (performance.now() - t0) / runs;
+    };
+
     gl.finish();
-    const elapsed = performance.now() - t0;
-    const avgMs = elapsed / runs;
+    const repMs96 = runTest(mat96, rt96, 2, 4);
+    const repMs192 = runTest(mat192, rt192, 1, 4);
 
     renderer.setRenderTarget(null);
-    rt.dispose();
-    benchMat.dispose();
-    quad.geometry.dispose();
+    [rt96, rt192].forEach(r => r.dispose());
+    [mat96, mat192].forEach(m => m.dispose());
+    geo.dispose();
 
-    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    const px96 = 96 * 96;
+    const px192 = 192 * 192;
+    const benchSteps = 40;
 
-    if (isMobile) {
-      if (avgMs < 2) return 'high';
-      return 'medium';
+    let costPerPxStep = (repMs192 - repMs96) / ((px192 - px96) * benchSteps);
+    if (costPerPxStep <= 0) costPerPxStep = repMs192 / (px192 * benchSteps);
+    const overhead = Math.max(0, repMs96 - costPerPxStep * px96 * benchSteps);
+
+    const thermalFactor = isMobile ? 0.82 : 0.95;
+    const bhBudget = 8.0 * thermalFactor;
+
+    const maxDpr = Math.min(nativeDpr, 2.0);
+    const minDpr = isMobile ? 0.75 : 1.0;
+    let bestDpr = minDpr;
+    let bestSteps = 36;
+
+    for (let tryDpr = maxDpr; tryDpr >= minDpr - 0.01; tryDpr -= 0.05) {
+      const dprR = Math.round(tryDpr * 20) / 20;
+      const affordable = (bhBudget - overhead) / Math.max(costPerPxStep * screenPx * dprR * dprR, 1e-12);
+      if (affordable >= 36) {
+        bestDpr = dprR;
+        bestSteps = Math.min(160, Math.max(36, Math.round(affordable)));
+        break;
+      }
     }
 
-    if (avgMs < 1) return 'ultra';
-    if (avgMs < 3) return 'high';
-    return 'medium';
+    const qualityMedium = bestSteps < 60;
+
+    const fullCost = costPerPxStep * screenPx * maxDpr * maxDpr * 160 + overhead;
+    let gpuScore = Math.min(100, Math.max(0, (bhBudget / Math.max(fullCost, 0.01)) * 100));
+    gpuScore = Math.max(0, Math.min(100, gpuScore + heuristicBonus * 0.5));
+
+    const lerp = (a: number, b: number, v: number) => a + (b - a) * Math.max(0, Math.min(1, v));
+    const t01 = gpuScore / 100;
+
+    const gpgpuSizes = [64, 80, 96, 128, 160, 192, 224, 256];
+    const gpgpuTexSize = gpgpuSizes[Math.min(gpgpuSizes.length - 1, Math.floor(t01 * gpgpuSizes.length))];
+    const starfieldCount = Math.round(lerp(1500, 12000, t01));
+    const bloomPasses = gpuScore > 75 ? 4 : gpuScore > 50 ? 3 : gpuScore > 25 ? 2 : 1;
+    const bloomScale = Math.round(lerp(0.15, 0.5, t01) * 100) / 100;
+    const motionBlur = gpuScore > 30;
+    const antialias = !isMobile && gpuScore > 65;
+    const quality: 'ultra' | 'high' | 'medium' = gpuScore >= 65 ? 'ultra' : gpuScore >= 35 ? 'high' : 'medium';
+
+    const config: PerfConfig = { dpr: bestDpr, maxSteps: bestSteps, qualityMedium, gpgpuTexSize, starfieldCount, bloomPasses, bloomScale, motionBlur, antialias, gpuScore: Math.round(gpuScore), quality };
+    try { localStorage.setItem('eh_perf_v2', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    return config;
   }
 
   private readonly chapterConsoleMessages = [
@@ -301,6 +354,8 @@ export class Experience {
     }
   }
 
+  private perfConfig!: PerfConfig;
+
   private async init() {
     const isMobileDevice = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
@@ -319,28 +374,17 @@ export class Experience {
     this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     this.renderer.toneMapping = THREE.NoToneMapping;
 
-    const benchResult = this.benchmarkGpu(this.renderer);
-    const qualities: ('ultra' | 'high' | 'medium')[] = ['medium', 'high', 'ultra'];
-    const heuristic = this.state.quality;
-    const hIdx = qualities.indexOf(heuristic);
-    const bIdx = qualities.indexOf(benchResult);
-    this.state.quality = qualities[Math.min(hIdx, bIdx)];
+    this.perfConfig = this.profileGpu(this.renderer);
+    this.state.quality = this.perfConfig.quality;
 
-    const qualityPresets = {
-      ultra: { pixelRatio: Math.min(window.devicePixelRatio, 2), antialias: true },
-      high: { pixelRatio: Math.min(window.devicePixelRatio, isMobileDevice ? 1.5 : 1.5), antialias: !isMobileDevice },
-      medium: { pixelRatio: Math.min(window.devicePixelRatio, isMobileDevice ? 1.0 : 1.25), antialias: false },
-    };
-    const preset = qualityPresets[this.state.quality];
-
-    this.renderer.setPixelRatio(preset.pixelRatio);
+    this.renderer.setPixelRatio(this.perfConfig.dpr);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    this.postProcessing = new PostProcessing(this.renderer, this.state.quality, isMobileDevice);
+    this.postProcessing = new PostProcessing(this.renderer, this.perfConfig.bloomPasses, this.perfConfig.bloomScale, this.perfConfig.qualityMedium, this.perfConfig.motionBlur);
 
-    this.blackHole = new BlackHole(this.postProcessing.bgScene, this.state.quality, preset.pixelRatio, isMobileDevice);
-    this.particles = new GPGPUParticles(this.renderer, this.postProcessing.particleScene, this.state.quality, preset.pixelRatio, isMobileDevice);
-    this.starfield = new Starfield(this.postProcessing.particleScene, this.state.quality, isMobileDevice);
+    this.blackHole = new BlackHole(this.postProcessing.bgScene, this.perfConfig.maxSteps, this.perfConfig.qualityMedium, this.perfConfig.dpr);
+    this.particles = new GPGPUParticles(this.renderer, this.postProcessing.particleScene, this.perfConfig.gpgpuTexSize, this.perfConfig.dpr);
+    this.starfield = new Starfield(this.postProcessing.particleScene, this.perfConfig.starfieldCount);
 
     this.timeline = new Timeline();
     this.textReveal = new TextReveal();
@@ -1565,6 +1609,19 @@ export class Experience {
         }
         this.lowFpsCount = 0;
         this.downgradeCount++;
+        this.fpsStableCount = 0;
+      }
+
+      if (this.fpsStableCount >= 10 && this.downgradeCount > 0) {
+        const currentPr = this.renderer.getPixelRatio();
+        const targetPr = this.perfConfig.dpr;
+        if (currentPr < targetPr) {
+          const newPr = Math.min(targetPr, Math.round((currentPr + 0.05) * 20) / 20);
+          this.renderer.setPixelRatio(newPr);
+          this.postProcessing.resize();
+          this.renderer.setSize(window.innerWidth, window.innerHeight);
+          this.downgradeCount--;
+        }
         this.fpsStableCount = 0;
       }
     }

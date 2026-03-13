@@ -12,14 +12,6 @@ import simFrag from '../shaders/gpgpu/sim.frag';
 import renderVert from '../shaders/gpgpu/render.vert';
 import renderFrag from '../shaders/gpgpu/render.frag';
 
-type Quality = 'ultra' | 'high' | 'medium';
-
-const TEXTURE_SIZES: Record<Quality, number> = {
-  ultra: 256,
-  high: 192,
-  medium: 80,
-};
-
 export class GPGPUParticles {
   private renderer: THREE.WebGLRenderer;
   private textureSize: number;
@@ -38,10 +30,9 @@ export class GPGPUParticles {
   private renderMaterial!: THREE.ShaderMaterial;
   private renderGeometry!: THREE.BufferGeometry;
 
-  constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, quality: Quality, pixelRatio: number, isMobile = false) {
+  constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, textureSize: number, pixelRatio: number) {
     this.renderer = renderer;
-    const mobileOverrides: Record<Quality, number> = { ultra: 192, high: 96, medium: 80 };
-    this.textureSize = isMobile ? mobileOverrides[quality] : TEXTURE_SIZES[quality];
+    this.textureSize = textureSize;
 
     const fboOpts: THREE.RenderTargetOptions = {
       minFilter: THREE.NearestFilter,

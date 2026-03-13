@@ -9,14 +9,6 @@ import * as THREE from 'three';
 import particlesVert from '../shaders/particles/particles.vert';
 import particlesFrag from '../shaders/particles/particles.frag';
 
-type Quality = 'ultra' | 'high' | 'medium';
-
-const PARTICLE_COUNT = {
-  ultra: 12000,
-  high: 8000,
-  medium: 2000,
-};
-
 export class Starfield {
   private points: THREE.Points;
   private material: THREE.ShaderMaterial;
@@ -24,9 +16,7 @@ export class Starfield {
   private accumulatedFlow = 0;
   private lastScroll = 0;
 
-  constructor(scene: THREE.Scene, quality: Quality, isMobile = false) {
-    const mobileOverrides = { ultra: 6000, high: 3000, medium: 2000 };
-    const count = isMobile ? mobileOverrides[quality] : PARTICLE_COUNT[quality];
+  constructor(scene: THREE.Scene, count: number) {
 
     this.geometry = new THREE.BufferGeometry();
 

@@ -9,27 +9,18 @@ import * as THREE from 'three';
 import blackholeVert from '../shaders/blackhole/blackhole.vert';
 import blackholeFrag from '../shaders/blackhole/blackhole.frag';
 
-type Quality = 'ultra' | 'high' | 'medium';
-
 export class BlackHole {
   private mesh: THREE.Mesh;
   private material: THREE.ShaderMaterial;
   private resizeHandler: () => void;
   private pixelRatio: number;
 
-  constructor(scene: THREE.Scene, quality: Quality, pixelRatio: number, isMobile = false) {
+  constructor(scene: THREE.Scene, maxSteps: number, qualityMedium: boolean, pixelRatio: number) {
     this.pixelRatio = pixelRatio;
 
     const defines: Record<string, string> = {};
-    if (quality === 'medium') {
-      defines['MAX_STEPS'] = '36';
-      defines['QUALITY_MEDIUM'] = '1';
-    } else if (quality === 'high' && isMobile) {
-      defines['MAX_STEPS'] = '48';
-      defines['QUALITY_MEDIUM'] = '1';
-    } else if (quality === 'high') {
-      defines['MAX_STEPS'] = '80';
-    }
+    defines['MAX_STEPS'] = String(maxSteps);
+    if (qualityMedium) defines['QUALITY_MEDIUM'] = '1';
 
     this.material = new THREE.ShaderMaterial({
       vertexShader: blackholeVert,

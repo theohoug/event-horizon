@@ -1041,10 +1041,7 @@ gl_FragColor=vec4(col,1.0);}`;
       this.experienceStartTime = performance.now();
       this.timeline.start(this.state.soundEnabled);
       this.textReveal.start();
-      if (hintEl) {
-        setTimeout(() => hintEl.classList.add('visible'), 800);
-        this.scrollHintEl = hintEl;
-      }
+      this.showScrollOverlay();
       gsap.to(this.state, {
         introProgress: 1,
         duration: 2,
@@ -1943,6 +1940,7 @@ gl_FragColor=vec4(col,1.0);}`;
   private hudChapterPulse = 0;
   private scrollHintEl: HTMLElement | null = null;
   private scrollHintLastUpdate = 0;
+  private scrollOverlayEl: HTMLElement | null = null;
 
   private progressHideTimer = 0;
   private pointOfNoReturnTriggered = false;
@@ -2229,24 +2227,14 @@ gl_FragColor=vec4(col,1.0);}`;
 
     this.updateFavicon(scroll);
 
-    if (this.scrollHintEl) {
-      if (scroll > 0.05) {
-        this.scrollHintEl.classList.remove('visible');
-        this.scrollHintEl.style.opacity = '0';
-      } else if (scroll <= 0.05 && scroll > 0) {
-        const fadeOpacity = Math.max(0, 1 - scroll * 20);
-        this.scrollHintEl.style.opacity = `${fadeOpacity}`;
-      }
-      const hintText = this.scrollHintEl.querySelector('.scroll-text');
-      if (hintText && scroll < 0.01) {
-        const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-        const isStopped = Math.abs(this.state.scrollVelocity) < 0.5;
-        if (isStopped && this.scrollHintLastUpdate !== 0 && performance.now() - this.scrollHintLastUpdate > 6000) {
-          hintText.textContent = isMobile ? t().scroll.descentMobile : t().scroll.descentDesktop;
-          this.scrollHintLastUpdate = performance.now();
-        }
-      }
+    if (this.scrollOverlayEl && scroll > 0.005) {
+      this.scrollOverlayEl.classList.remove('visible');
+      this.scrollOverlayEl.classList.add('fade-out');
+      const el = this.scrollOverlayEl;
+      this.scrollOverlayEl = null;
+      setTimeout(() => el.remove(), 700);
     }
+
 
     if (this.overlayEl) {
       const depthGlow = scroll < 0.5 ? 1 : Math.max(0, 1 - (scroll - 0.5) * 4);
@@ -2692,12 +2680,7 @@ gl_FragColor=vec4(col,1.0);}`;
         if (dataHud) dataHud.classList.add('visible');
         if (this.navEl) this.navEl.classList.add('visible');
 
-        const hintEl = document.getElementById('scroll-hint');
-        if (hintEl) {
-          setTimeout(() => hintEl.classList.add('visible'), 1000);
-          const hideHint = () => { hintEl.classList.remove('visible'); window.removeEventListener('scroll', hideHint); };
-          window.addEventListener('scroll', hideHint, { once: true });
-        }
+        setTimeout(() => this.showScrollOverlay(), 1000);
       }
     };
 
@@ -2830,6 +2813,27 @@ gl_FragColor=vec4(col,1.0);}`;
     ctx.stroke();
 
     this.faviconLink.href = this.faviconCanvas.toDataURL('image/png');
+  }
+
+  private showScrollOverlay() {
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    const tr = t();
+    const text = isMobile ? tr.scroll.mobile : tr.scroll.desktop;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'scroll-overlay';
+    overlay.innerHTML = `
+      <div class="scroll-overlay-content">
+        <div class="scroll-overlay-mouse"><div class="scroll-overlay-wheel"></div></div>
+        <div class="scroll-overlay-text">${text}</div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    this.scrollOverlayEl = overlay;
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => overlay.classList.add('visible'));
+    });
   }
 
   private getEscapeMessages() { return t().escape; }

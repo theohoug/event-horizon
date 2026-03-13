@@ -38,9 +38,10 @@ export class GPGPUParticles {
   private renderMaterial!: THREE.ShaderMaterial;
   private renderGeometry!: THREE.BufferGeometry;
 
-  constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, quality: Quality, pixelRatio: number) {
+  constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene, quality: Quality, pixelRatio: number, isMobile = false) {
     this.renderer = renderer;
-    this.textureSize = TEXTURE_SIZES[quality];
+    const mobileOverrides: Record<Quality, number> = { ultra: 192, high: 96, medium: 80 };
+    this.textureSize = isMobile ? mobileOverrides[quality] : TEXTURE_SIZES[quality];
 
     const fboOpts: THREE.RenderTargetOptions = {
       minFilter: THREE.NearestFilter,

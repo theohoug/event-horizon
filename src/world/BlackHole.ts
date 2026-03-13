@@ -17,12 +17,15 @@ export class BlackHole {
   private resizeHandler: () => void;
   private pixelRatio: number;
 
-  constructor(scene: THREE.Scene, quality: Quality, pixelRatio: number) {
+  constructor(scene: THREE.Scene, quality: Quality, pixelRatio: number, isMobile = false) {
     this.pixelRatio = pixelRatio;
 
     const defines: Record<string, string> = {};
     if (quality === 'medium') {
       defines['MAX_STEPS'] = '36';
+      defines['QUALITY_MEDIUM'] = '1';
+    } else if (quality === 'high' && isMobile) {
+      defines['MAX_STEPS'] = '48';
       defines['QUALITY_MEDIUM'] = '1';
     } else if (quality === 'high') {
       defines['MAX_STEPS'] = '80';

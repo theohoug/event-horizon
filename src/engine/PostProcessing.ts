@@ -35,11 +35,14 @@ export class PostProcessing {
   private bloomPasses: number;
   private shockwaves: { x: number; y: number; radius: number; strength: number; speed: number }[] = [];
 
-  constructor(renderer: THREE.WebGLRenderer, quality: Quality) {
+  private isMobile: boolean;
+
+  constructor(renderer: THREE.WebGLRenderer, quality: Quality, isMobile = false) {
     this.renderer = renderer;
     this.quality = quality;
+    this.isMobile = isMobile;
 
-    this.bloomPasses = quality === 'ultra' ? 4 : quality === 'high' ? 3 : 1;
+    this.bloomPasses = quality === 'ultra' ? 4 : quality === 'high' ? (isMobile ? 2 : 3) : 1;
 
     this.bgScene = new THREE.Scene();
     this.bgCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -68,7 +71,7 @@ export class PostProcessing {
     const sw = Math.floor(w * pr);
     const sh = Math.floor(h * pr);
     this.sceneTarget = new THREE.WebGLRenderTarget(sw, sh, rtParams);
-    const bloomScale = quality === 'ultra' ? 0.5 : quality === 'high' ? 0.35 : 0.25;
+    const bloomScale = quality === 'ultra' ? 0.5 : quality === 'high' ? (isMobile ? 0.25 : 0.35) : 0.25;
     const bw = Math.max(1, Math.floor(sw * bloomScale));
     const bh = Math.max(1, Math.floor(sh * bloomScale));
     this.bloomTargetA = new THREE.WebGLRenderTarget(bw, bh, rtParams);
@@ -96,7 +99,8 @@ export class PostProcessing {
       depthWrite: false,
     });
 
-    const compositePrefix = quality === 'medium' ? '#define QUALITY_MEDIUM 1\n' : '';
+    const useMediumShader = quality === 'medium' || (quality === 'high' && isMobile);
+    const compositePrefix = useMediumShader ? '#define QUALITY_MEDIUM 1\n' : '';
     this.compositeMaterial = new THREE.ShaderMaterial({
       vertexShader: fullscreenVert,
       fragmentShader: compositePrefix + compositeFrag,

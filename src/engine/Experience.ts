@@ -112,11 +112,10 @@ export class Experience {
   }
 
   private detectQuality(): 'ultra' | 'high' | 'medium' {
-    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-    const isFirefox = /Firefox\//i.test(navigator.userAgent);
-    const isWebKit = /AppleWebKit/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-
-    if (isWebKit || isFirefox) return 'medium';
+    const ua = navigator.userAgent;
+    const isMobile = /Android|iPhone|iPad/i.test(ua);
+    const isFirefox = /Firefox\//i.test(ua);
+    const isWebKit = /AppleWebKit/.test(ua) && !/Chrome/.test(ua);
 
     const tempCanvas = document.createElement('canvas');
     const gl = tempCanvas.getContext('webgl2') || tempCanvas.getContext('webgl');
@@ -131,10 +130,21 @@ export class Experience {
     if (ext) ext.loseContext();
 
     if (isMobile) {
-      if (gpuRenderer.includes('apple gpu') || gpuRenderer.includes('apple a1') || gpuRenderer.includes('apple m')) return 'high';
-      if (gpuRenderer.includes('adreno 7') || gpuRenderer.includes('adreno 6') || gpuRenderer.includes('mali-g7')) return 'high';
-      if (window.devicePixelRatio >= 3) return 'high';
+      const isAppleGpu = gpuRenderer.includes('apple gpu') || gpuRenderer.includes('apple a1') || gpuRenderer.includes('apple m');
+      const isHighEndAndroid = gpuRenderer.includes('adreno 7') || gpuRenderer.includes('adreno 6') || gpuRenderer.includes('mali-g7');
+      const hasHighDpr = window.devicePixelRatio >= 3;
+      const hasLargeScreen = Math.max(screen.width, screen.height) >= 820;
+      const hasEnoughRam = (navigator as any).deviceMemory >= 6;
+
+      if ((isAppleGpu || isHighEndAndroid) && (hasHighDpr || hasLargeScreen || hasEnoughRam)) return 'high';
+      if (hasHighDpr && hasLargeScreen) return 'high';
       return 'medium';
+    }
+
+    if (isFirefox) return 'high';
+    if (isWebKit) {
+      if (gpuRenderer.includes('apple m')) return 'ultra';
+      return 'high';
     }
 
     if (gpuRenderer.includes('apple m') || gpuRenderer.includes('rtx') || gpuRenderer.includes('rx 7')) return 'ultra';
@@ -234,11 +244,10 @@ export class Experience {
 
   private async init() {
     const isMobileDevice = /Android|iPhone|iPad/i.test(navigator.userAgent);
-    const isWebKit = /AppleWebKit/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
     const qualityPresets = {
       ultra: { pixelRatio: Math.min(window.devicePixelRatio, 2), antialias: true },
       high: { pixelRatio: Math.min(window.devicePixelRatio, isMobileDevice ? 1.5 : 1.5), antialias: !isMobileDevice },
-      medium: { pixelRatio: Math.min(window.devicePixelRatio, isMobileDevice && isWebKit ? 1.0 : 1.25), antialias: false },
+      medium: { pixelRatio: Math.min(window.devicePixelRatio, isMobileDevice ? 1.0 : 1.25), antialias: false },
     };
     const preset = qualityPresets[this.state.quality];
 
@@ -257,11 +266,11 @@ export class Experience {
     this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     this.renderer.toneMapping = THREE.NoToneMapping;
 
-    this.postProcessing = new PostProcessing(this.renderer, this.state.quality);
+    this.postProcessing = new PostProcessing(this.renderer, this.state.quality, isMobileDevice);
 
-    this.blackHole = new BlackHole(this.postProcessing.bgScene, this.state.quality, preset.pixelRatio);
-    this.particles = new GPGPUParticles(this.renderer, this.postProcessing.particleScene, this.state.quality, preset.pixelRatio);
-    this.starfield = new Starfield(this.postProcessing.particleScene, this.state.quality);
+    this.blackHole = new BlackHole(this.postProcessing.bgScene, this.state.quality, preset.pixelRatio, isMobileDevice);
+    this.particles = new GPGPUParticles(this.renderer, this.postProcessing.particleScene, this.state.quality, preset.pixelRatio, isMobileDevice);
+    this.starfield = new Starfield(this.postProcessing.particleScene, this.state.quality, isMobileDevice);
 
     this.timeline = new Timeline();
     this.textReveal = new TextReveal();

@@ -24,8 +24,9 @@ export class Starfield {
   private accumulatedFlow = 0;
   private lastScroll = 0;
 
-  constructor(scene: THREE.Scene, quality: Quality) {
-    const count = PARTICLE_COUNT[quality];
+  constructor(scene: THREE.Scene, quality: Quality, isMobile = false) {
+    const mobileOverrides = { ultra: 6000, high: 3000, medium: 2000 };
+    const count = isMobile ? mobileOverrides[quality] : PARTICLE_COUNT[quality];
 
     this.geometry = new THREE.BufferGeometry();
 

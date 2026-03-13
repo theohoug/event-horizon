@@ -163,9 +163,11 @@ export class Experience {
 
     const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v6') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v7') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
+    // Clear old cache versions
+    try { localStorage.removeItem('eh_perf_v6'); } catch {}
 
     let heuristicBonus = 0;
     if (gpuRenderer.includes('rtx 40') || gpuRenderer.includes('rtx 50')) heuristicBonus = 18;
@@ -242,8 +244,8 @@ gl_FragColor=vec4(col,1.0);}`;
     if (costPerPxStep <= 0) costPerPxStep = repMs192 / (px192 * benchSteps);
     const overhead = Math.max(0, repMs96 - costPerPxStep * px96 * benchSteps);
 
-    const thermalFactor = 0.95;
-    const bhBudget = 11.0 * thermalFactor;
+    const thermalFactor = 0.97;
+    const bhBudget = 13.0 * thermalFactor;
 
     const maxDpr = Math.min(nativeDpr, 2.0);
     const minDpr = 1.0;
@@ -279,7 +281,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const quality: 'ultra' | 'high' | 'medium' = gpuScore >= 50 ? 'ultra' : gpuScore >= 20 ? 'high' : 'medium';
 
     const config: PerfConfig = { dpr: bestDpr, maxSteps: bestSteps, qualityMedium, gpgpuTexSize, starfieldCount, bloomPasses, bloomScale, motionBlur, antialias, gpuScore: Math.round(gpuScore), quality };
-    try { localStorage.setItem('eh_perf_v6', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v7', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
@@ -1735,10 +1737,10 @@ gl_FragColor=vec4(col,1.0);}`;
     } else {
       this.emergencySlowFrames = 0;
     }
-    if (this.emergencySlowFrames >= 3 && this.downgradeCount < 8) {
+    if (this.emergencySlowFrames >= 4 && this.downgradeCount < 5) {
       const currentPr = this.renderer.getPixelRatio();
-      const minPr = /Android|iPhone|iPad/i.test(navigator.userAgent) ? 0.5 : 0.75;
-      const newPr = Math.max(minPr, currentPr - 0.25);
+      const minPr = /Android|iPhone|iPad/i.test(navigator.userAgent) ? 0.5 : 1.0;
+      const newPr = Math.max(minPr, currentPr - 0.15);
       if (newPr < currentPr) {
         this.renderer.setPixelRatio(newPr);
         this.postProcessing.resize();
@@ -1765,9 +1767,9 @@ gl_FragColor=vec4(col,1.0);}`;
         this.fpsStableCount++;
       }
 
-      if (this.lowFpsCount >= (isMobileDevice ? 1 : 2) && this.downgradeCount < 8) {
+      if (this.lowFpsCount >= (isMobileDevice ? 2 : 4) && this.downgradeCount < 5) {
         const currentPr = this.renderer.getPixelRatio();
-        const step = this.fpsValue < 20 ? 0.5 : 0.25;
+        const step = this.fpsValue < 20 ? 0.25 : 0.15;
         const minPr = isMobileDevice ? 0.5 : 1.0;
         const newPr = Math.max(minPr, currentPr - step);
         if (newPr < currentPr) {
@@ -2261,7 +2263,7 @@ gl_FragColor=vec4(col,1.0);}`;
       const hawkT = rsVal > 1.5 ? 6.17e-8 / rsVal : 6.17e-8 / 1.5;
       const dilVal = 1 / Math.sqrt(Math.max(0.001, 1 - 1 / Math.max(rsVal, 1.01)));
       const tidVal = (1.0 / (rsVal * rsVal * rsVal)) * 1e4;
-      this.broadcaster.sendState({ scroll, distance: rsVal, temp: hawkT * 1e12, timeDilation: dilVal, tidalForce: tidVal, fps: this.fpsValue });
+      this.broadcaster.sendState({ scroll, distance: rsVal, temp: hawkT * 1e12, timeDilation: dilVal, tidalForce: tidVal, fps: this.fpsValue, lang: getLang(), chapter: this.lastChapterIndex });
     }
     if (this.qrOverlay) {
       this.qrOverlay.update(scroll, this.state.introActive);

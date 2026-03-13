@@ -23,6 +23,8 @@ interface StateData {
   timeDilation: number;
   tidalForce: number;
   fps: number;
+  lang?: string;
+  chapter?: number;
 }
 
 interface MetaData {
@@ -174,6 +176,37 @@ export async function init(roomId: string) {
     const s = data as unknown as StateData;
 
     if (!connected) markConnected();
+
+    // Sync language from desktop on every state update
+    if (s.lang && (s.lang === 'en' || s.lang === 'fr') && s.lang !== lang) {
+      lang = s.lang as Lang;
+      scienceData = getScienceData(lang);
+      labels = LABELS[lang];
+      updateLabels(labels);
+      if (archiveShown) showArchive();
+      // Re-render current chapter in new language
+      if (currentChapter >= 0 && !archiveShown) {
+        const ch = receivedChapters.get(currentChapter);
+        if (ch) {
+          const color = CHAPTER_COLORS[currentChapter] || '#ffffff';
+          renderChapter(ch, scienceData[currentChapter], labels, color);
+        }
+      }
+    }
+
+    // Sync chapter from desktop — catch missed chapter events
+    if (typeof s.chapter === 'number' && s.chapter >= 0 && s.chapter !== currentChapter && !archiveShown) {
+      const ch = receivedChapters.get(s.chapter);
+      if (ch) {
+        currentChapter = s.chapter;
+        waiting.classList.add('hidden');
+        main.classList.remove('hidden');
+        const color = CHAPTER_COLORS[s.chapter] || '#ffffff';
+        document.documentElement.style.setProperty('--comp-accent', color);
+        renderChapter(ch, scienceData[s.chapter], labels, color);
+        bg.style.background = `radial-gradient(ellipse at center, ${color}12 0%, transparent 70%)`;
+      }
+    }
 
     if (currentChapter >= 0) updateHUD(s);
 

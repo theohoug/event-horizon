@@ -29,6 +29,8 @@ export class DesktopBroadcaster {
     timeDilation: number;
     tidalForce: number;
     fps: number;
+    lang: string;
+    chapter: number;
   }) {
     const now = performance.now();
     if (now - this.lastSend < this.throttleMs) return;

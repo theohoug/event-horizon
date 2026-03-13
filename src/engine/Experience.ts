@@ -69,6 +69,8 @@ export class Experience {
   private audio!: AudioEngine;
   private haptics!: Haptics;
   private lenis!: Lenis;
+  private lenisBackupInterval: number = 0;
+  private lastRafTime: number = 0;
   private clock: THREE.Clock;
   private state: ExperienceState;
   private rafId: number = 0;
@@ -1209,6 +1211,17 @@ gl_FragColor=vec4(col,1.0);}`;
       infinite: false,
     });
 
+    // Backup scroll ticker: ensures Lenis processes scroll events even when
+    // the GPU is stalling the RAF loop (heavy shader sections).
+    // Runs every 100ms independently of rendering.
+    this.lenisBackupInterval = window.setInterval(() => {
+      const timeSinceRaf = performance.now() - this.lastRafTime;
+      // Only kick in when RAF is stalling (>200ms since last frame)
+      if (timeSinceRaf > 200) {
+        this.lenis.raf(performance.now());
+      }
+    }, 100);
+
     const progressFill = document.getElementById('progress-fill');
     const progressBar = document.getElementById('progress-bar');
     const progressTicks = progressBar ? Array.from(progressBar.querySelectorAll('.progress-tick')) : [];
@@ -1721,6 +1734,7 @@ gl_FragColor=vec4(col,1.0);}`;
   private animate(timestamp?: number) {
     this.rafId = requestAnimationFrame((t) => this.animate(t));
 
+    this.lastRafTime = performance.now();
     this.lenis.raf(timestamp ?? performance.now());
 
     const dt = this.clock.getDelta();
@@ -2983,6 +2997,7 @@ gl_FragColor=vec4(col,1.0);}`;
   destroy() {
     cancelAnimationFrame(this.rafId);
     cancelAnimationFrame(this.cursorRafId);
+    clearInterval(this.lenisBackupInterval);
 
     this.lenis.destroy();
     this.audio.destroy();

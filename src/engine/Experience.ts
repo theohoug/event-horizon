@@ -114,43 +114,54 @@ export class Experience {
   private detectQuality(): 'ultra' | 'high' | 'medium' {
     const ua = navigator.userAgent;
     const isMobile = /Android|iPhone|iPad/i.test(ua);
-    const isFirefox = /Firefox\//i.test(ua);
-    const isWebKit = /AppleWebKit/.test(ua) && !/Chrome/.test(ua);
 
     const tempCanvas = document.createElement('canvas');
     const gl = tempCanvas.getContext('webgl2') || tempCanvas.getContext('webgl');
     if (!gl) return 'medium';
 
-    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
     let gpuRenderer = '';
+    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
     if (debugInfo) {
       gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL).toLowerCase();
     }
+
+    const maxTexSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+    const maxRenderbuf = gl.getParameter(gl.MAX_RENDERBUFFER_SIZE);
+    const maxVaryings = gl.getParameter(gl.MAX_VARYING_VECTORS);
+    const maxFragUniforms = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
+
     const ext = gl.getExtension('WEBGL_lose_context');
     if (ext) ext.loseContext();
 
-    if (isMobile) {
-      const isAppleGpu = gpuRenderer.includes('apple gpu') || gpuRenderer.includes('apple a1') || gpuRenderer.includes('apple m');
-      const isHighEndAndroid = gpuRenderer.includes('adreno 7') || gpuRenderer.includes('adreno 6') || gpuRenderer.includes('mali-g7');
-      const hasHighDpr = window.devicePixelRatio >= 3;
-      const hasLargeScreen = Math.max(screen.width, screen.height) >= 820;
-      const hasEnoughRam = (navigator as any).deviceMemory >= 6;
+    const cores = navigator.hardwareConcurrency || 2;
+    const ram = (navigator as any).deviceMemory || 4;
+    const dpr = window.devicePixelRatio || 1;
+    const screenPx = Math.max(screen.width, screen.height) * dpr;
 
-      if ((isAppleGpu || isHighEndAndroid) && (hasHighDpr || hasLargeScreen || hasEnoughRam)) return 'high';
-      if (hasHighDpr && hasLargeScreen) return 'high';
+    let gpuScore = 0;
+    gpuScore += maxTexSize >= 16384 ? 3 : maxTexSize >= 8192 ? 2 : maxTexSize >= 4096 ? 1 : 0;
+    gpuScore += maxRenderbuf >= 16384 ? 2 : maxRenderbuf >= 8192 ? 1 : 0;
+    gpuScore += maxFragUniforms >= 1024 ? 2 : maxFragUniforms >= 512 ? 1 : 0;
+    gpuScore += maxVaryings >= 30 ? 1 : 0;
+    gpuScore += cores >= 8 ? 2 : cores >= 6 ? 1 : 0;
+    gpuScore += ram >= 8 ? 2 : ram >= 4 ? 1 : 0;
+
+    if (gpuRenderer.includes('rtx') || gpuRenderer.includes('rx 7') || gpuRenderer.includes('apple m')) gpuScore += 4;
+    else if (gpuRenderer.includes('gtx') || gpuRenderer.includes('rx 6') || gpuRenderer.includes('intel arc')) gpuScore += 2;
+    else if (gpuRenderer.includes('adreno 7') || gpuRenderer.includes('mali-g7')) gpuScore += 2;
+    else if (gpuRenderer.includes('adreno 6') || gpuRenderer.includes('mali-g6') || gpuRenderer.includes('apple gpu')) gpuScore += 1;
+
+    if (isMobile) {
+      gpuScore -= 2;
+      if (screenPx > 3000) gpuScore -= 1;
+
+      if (gpuScore >= 8) return 'high';
       return 'medium';
     }
 
-    if (isFirefox) return 'high';
-    if (isWebKit) {
-      if (gpuRenderer.includes('apple m')) return 'ultra';
-      return 'high';
-    }
-
-    if (gpuRenderer.includes('apple m') || gpuRenderer.includes('rtx') || gpuRenderer.includes('rx 7')) return 'ultra';
-    if (gpuRenderer.includes('gtx') || gpuRenderer.includes('rx 6') || gpuRenderer.includes('intel arc')) return 'high';
-
-    return 'high';
+    if (gpuScore >= 12) return 'ultra';
+    if (gpuScore >= 6) return 'high';
+    return 'medium';
   }
 
   private readonly chapterConsoleMessages = [
@@ -1456,6 +1467,8 @@ export class Experience {
   private fpsLastTime = 0;
   private fpsValue = 60;
   private lowFpsCount = 0;
+  private downgradeCount = 0;
+  private fpsStableCount = 0;
 
   private animate(timestamp?: number) {
     this.rafId = requestAnimationFrame((t) => this.animate(t));
@@ -1467,21 +1480,33 @@ export class Experience {
 
     this.fpsFrames++;
     const now = performance.now();
-    if (now - this.fpsLastTime > 1000) {
-      this.fpsValue = this.fpsFrames;
+    if (now - this.fpsLastTime > 800) {
+      this.fpsValue = Math.round(this.fpsFrames * (1000 / (now - this.fpsLastTime)));
       this.fpsFrames = 0;
       this.fpsLastTime = now;
-      if (this.fpsValue < 40 && this.state.quality !== 'medium') {
-        this.lowFpsCount = (this.lowFpsCount ?? 0) + 1;
-        if (this.lowFpsCount >= 2) {
-          const newPr = Math.max(1, this.renderer.getPixelRatio() - 0.25);
+
+      if (this.fpsValue < 25) {
+        this.lowFpsCount += 2;
+      } else if (this.fpsValue < 40) {
+        this.lowFpsCount++;
+      } else if (this.fpsValue >= 50) {
+        this.lowFpsCount = Math.max(0, this.lowFpsCount - 1);
+        this.fpsStableCount++;
+      }
+
+      if (this.lowFpsCount >= 2 && this.downgradeCount < 6) {
+        const currentPr = this.renderer.getPixelRatio();
+        const step = this.fpsValue < 20 ? 0.5 : 0.25;
+        const minPr = /Android|iPhone|iPad/i.test(navigator.userAgent) ? 0.75 : 1.0;
+        const newPr = Math.max(minPr, currentPr - step);
+        if (newPr < currentPr) {
           this.renderer.setPixelRatio(newPr);
           this.postProcessing.resize();
           this.renderer.setSize(window.innerWidth, window.innerHeight);
-          this.lowFpsCount = 0;
         }
-      } else if (this.fpsValue >= 55) {
         this.lowFpsCount = 0;
+        this.downgradeCount++;
+        this.fpsStableCount = 0;
       }
     }
 

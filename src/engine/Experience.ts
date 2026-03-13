@@ -1255,6 +1255,38 @@ gl_FragColor=vec4(col,1.0);}`;
       }
     }, 100);
 
+    // Scroll assist: track raw wheel deltas to detect when Lenis falls behind.
+    // Precision trackpads can send hundreds of tiny events per second; Lenis may
+    // only process one per animation frame, losing most of the accumulated delta.
+    let rawWheelAccum = 0;
+    let lastAssistCheck = performance.now();
+    let lastAssistScroll = 0;
+    window.addEventListener('wheel', (e) => { rawWheelAccum += e.deltaY; }, { passive: true });
+
+    // Every 500ms, check if Lenis moved proportionally to the raw wheel input.
+    // If not, force-scroll to catch up — this makes scroll work on ANY device.
+    const assistInterval = window.setInterval(() => {
+      const now = performance.now();
+      const elapsed = now - lastAssistCheck;
+      if (elapsed < 400) return;
+
+      const scrollMoved = this.lenis.scroll - lastAssistScroll;
+      const expectedMove = rawWheelAccum * wheelMult;
+
+      // If user sent significant wheel input but Lenis barely moved, push it
+      if (Math.abs(expectedMove) > 50 && Math.abs(scrollMoved) < Math.abs(expectedMove) * 0.3) {
+        const deficit = expectedMove - scrollMoved;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const target = Math.max(0, Math.min(maxScroll, this.lenis.scroll + deficit * 0.5));
+        this.lenis.scrollTo(target, { immediate: true });
+      }
+
+      rawWheelAccum = 0;
+      lastAssistScroll = this.lenis.scroll;
+      lastAssistCheck = now;
+    }, 500);
+    this.addTrackedListener(window, 'beforeunload', (() => clearInterval(assistInterval)) as EventListener);
+
     const progressFill = document.getElementById('progress-fill');
     const progressBar = document.getElementById('progress-bar');
     const progressTicks = progressBar ? Array.from(progressBar.querySelectorAll('.progress-tick')) : [];

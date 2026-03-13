@@ -16,6 +16,7 @@ import { TextReveal } from '../narrative/TextReveal';
 import { AudioEngine } from '../audio/AudioEngine';
 import { Haptics } from '../ui/Haptics';
 import { t, getLang, setLang, onLangChange, type Lang } from '../i18n/translations';
+import { ALTERED, HARDCORE } from './AlteredMode';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -90,6 +91,12 @@ export class Experience {
     };
 
     this.visitCount = parseInt(localStorage.getItem('eh_visits') || '0', 10);
+    if (this.visitCount >= 2) {
+      this.isHardcoreMode = true;
+      this.isAlteredMode = true;
+    } else if (this.visitCount >= 1) {
+      this.isAlteredMode = true;
+    }
 
     this.applyTimeOfDay();
     this.init().catch(() => {
@@ -185,7 +192,8 @@ export class Experience {
   private updateChapterAmbience(chapterIndex: number) {
     const aura = document.getElementById('depth-aura');
     if (aura) {
-      aura.style.background = Experience.CHAPTER_AURA_COLORS[chapterIndex] || '';
+      const colors = this.isHardcoreMode ? HARDCORE.auraColors : this.isAlteredMode ? ALTERED.auraColors : Experience.CHAPTER_AURA_COLORS;
+      aura.style.background = colors[chapterIndex] || '';
     }
     const root = document.documentElement;
     const cornerOpacities = [0.15, 0.12, 0.10, 0.12, 0.08, 0.06, 0.10, 0.04, 0.15];
@@ -257,6 +265,7 @@ export class Experience {
     this.timeline = new Timeline();
     this.textReveal = new TextReveal();
     this.audio = new AudioEngine();
+    this.syncAlteredMode();
     this.haptics = new Haptics();
     this.setupLenis();
     this.setupMouse();
@@ -343,12 +352,173 @@ export class Experience {
       setTimeout(() => {
         loader.classList.add('hidden');
         setTimeout(() => {
+          if (this.visitCount >= 3) {
+            this.showLoop4Terminal();
+            return;
+          }
+
+          const wasActive = sessionStorage.getItem('eh_session_active');
+          if (wasActive && this.visitCount >= 1) {
+            this.visitCount++;
+            localStorage.setItem('eh_visits', String(this.visitCount));
+            if (this.visitCount >= 2) { this.isHardcoreMode = true; }
+            this.isAlteredMode = true;
+            this.syncAlteredMode();
+            this.showEscapeCatcher();
+            return;
+          }
+
+          if (this.isAlteredMode) {
+            const soundPrompt = document.getElementById('sound-prompt');
+            if (soundPrompt) soundPrompt.style.display = 'none';
+            this.state.soundEnabled = true;
+            this.audio.start().then(() => {
+              const muteBtn = document.getElementById('mute-btn');
+              if (muteBtn) muteBtn.classList.add('sound-on');
+              this.playIntroCinematic();
+            });
+            return;
+          }
+
+          const warningEl = document.getElementById('sound-warning');
+          if (warningEl) warningEl.textContent = t().accessWarning;
+
           const soundPrompt = document.getElementById('sound-prompt');
           if (soundPrompt) soundPrompt.classList.add('visible');
           this.setupSoundPrompt();
         }, 600);
       }, 400);
     }
+  }
+
+  private showLoop4Terminal() {
+    const terminal = document.getElementById('loop4-terminal');
+    if (!terminal) return;
+
+    const soundPrompt = document.getElementById('sound-prompt');
+    if (soundPrompt) soundPrompt.style.display = 'none';
+
+    terminal.classList.add('visible');
+    terminal.setAttribute('aria-hidden', 'false');
+
+    const tr = t();
+    const textEl = document.getElementById('loop4-text');
+    const countdownEl = document.getElementById('loop4-countdown');
+
+    const lines = [tr.loop4.line1, tr.loop4.line2, tr.loop4.line3];
+    let charIndex = 0;
+    let lineIndex = 0;
+    let buffer = '';
+
+    const typewriter = () => {
+      if (lineIndex >= lines.length) {
+        this.startLoop4Countdown(countdownEl);
+        return;
+      }
+      const currentLine = lines[lineIndex];
+      if (charIndex < currentLine.length) {
+        buffer += currentLine[charIndex];
+        if (textEl) textEl.innerHTML = buffer + '<span class="loop4-blink">_</span>';
+        charIndex++;
+        setTimeout(typewriter, 40 + Math.random() * 60);
+      } else {
+        buffer += '<br>';
+        charIndex = 0;
+        lineIndex++;
+        setTimeout(typewriter, 800);
+      }
+    };
+
+    setTimeout(typewriter, 1500);
+  }
+
+  private startLoop4Countdown(countdownEl: HTMLElement | null) {
+    if (!countdownEl) return;
+
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 21);
+    targetDate.setHours(0, 0, 0, 0);
+
+    const tr = t();
+
+    const update = () => {
+      const now = Date.now();
+      const diff = targetDate.getTime() - now;
+      if (diff <= 0) {
+        countdownEl.textContent = '00:00:00:00';
+        return;
+      }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      countdownEl.innerHTML =
+        `<span class="loop4-label">${tr.loop4.countdown}</span><br>` +
+        `<span class="loop4-timer">${String(d).padStart(2, '0')}:${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}</span>`;
+      requestAnimationFrame(update);
+    };
+
+    setTimeout(() => {
+      countdownEl.style.opacity = '1';
+      update();
+    }, 1200);
+  }
+
+  private showEscapeCatcher() {
+    const escapeCount = parseInt(localStorage.getItem('eh_escapes') || '0', 10) + 1;
+    localStorage.setItem('eh_escapes', String(escapeCount));
+
+    const catcher = document.getElementById('escape-catcher');
+    if (!catcher) return;
+
+    const tr = t();
+    const titleEl = document.getElementById('escape-title');
+    const subtitleEl = document.getElementById('escape-subtitle');
+    const loopEl = document.getElementById('escape-loop-count');
+    const resumeBtn = document.getElementById('escape-resume');
+
+    if (titleEl) titleEl.textContent = tr.escapeCatcher.title;
+    if (subtitleEl) subtitleEl.textContent = tr.escapeCatcher.subtitle;
+    if (loopEl) loopEl.textContent = tr.escapeCatcher.loopCount.replace('{n}', String(this.visitCount));
+    if (resumeBtn) resumeBtn.textContent = tr.escapeCatcher.resume;
+
+    catcher.classList.add('visible');
+    catcher.setAttribute('aria-hidden', 'false');
+
+    const soundPrompt = document.getElementById('sound-prompt');
+    if (soundPrompt) soundPrompt.style.display = 'none';
+
+    if (resumeBtn) {
+      resumeBtn.addEventListener('click', () => {
+        catcher.style.transition = 'opacity 1.5s ease';
+        catcher.style.opacity = '0';
+        setTimeout(() => {
+          catcher.classList.remove('visible');
+          catcher.style.display = 'none';
+          this.resumeAfterEscape();
+        }, 1500);
+      }, { once: true });
+    }
+  }
+
+  private resumeAfterEscape() {
+    if (this.visitCount >= 3) {
+      this.showLoop4Terminal();
+      return;
+    }
+
+    const savedSound = localStorage.getItem('eh_sound');
+    const withSound = savedSound === '1';
+    this.state.soundEnabled = withSound;
+
+    if (withSound) {
+      this.audio.start().then(() => {
+        const muteBtn = document.getElementById('mute-btn');
+        if (muteBtn) muteBtn.classList.add('sound-on');
+      });
+    }
+
+    this.playIntroCinematic();
   }
 
   private setupSoundPrompt() {
@@ -359,6 +529,7 @@ export class Experience {
 
     const dismiss = async (withSound: boolean) => {
       this.state.soundEnabled = withSound;
+      localStorage.setItem('eh_sound', withSound ? '1' : '0');
       if (prompt) {
         prompt.classList.remove('visible');
         setTimeout(() => { prompt.style.display = 'none'; }, 500);
@@ -377,12 +548,20 @@ export class Experience {
     const soundLangToggle = document.getElementById('sound-lang-toggle');
     if (soundLangToggle) {
       const updateSoundLangBtn = () => {
-        const current = getLang();
-        soundLangToggle.textContent = current === 'en' ? 'ENGLISH' : 'FRANÇAIS';
-        soundLangToggle.setAttribute('data-hint', t().sound.switchLang);
+        this.updateLangToggle(soundLangToggle);
+        const tr = t();
+        const sText = document.getElementById('sound-prompt-text');
+        const sYes = document.getElementById('sound-prompt-yes');
+        const sNo = document.getElementById('sound-prompt-no');
+        if (sText) sText.textContent = tr.sound.label;
+        if (sYes) sYes.textContent = tr.sound.yes;
+        if (sNo) sNo.textContent = tr.sound.no;
+        const sWarn = document.getElementById('sound-warning');
+        if (sWarn) sWarn.textContent = tr.accessWarning;
       };
       updateSoundLangBtn();
-      this.addTrackedListener(soundLangToggle, 'click', () => {
+      this.addTrackedListener(soundLangToggle, 'click', (e: Event) => {
+        e.stopPropagation();
         const newLang: Lang = getLang() === 'en' ? 'fr' : 'en';
         setLang(newLang);
         updateSoundLangBtn();
@@ -412,21 +591,30 @@ export class Experience {
 
     if (shareBtn) {
       this.addTrackedListener(shareBtn, 'click', async () => {
-        const url = window.location.href;
+        const url = window.location.origin + window.location.pathname;
         const tr = t();
+        const anomalyMsg = tr.shareAnomaly;
         const shareData = {
           title: `Event Horizon — ${tr.introSubtitle}`,
           text: tr.share.text,
           url,
         };
+        const incrementShareCount = () => {
+          const prev = parseInt(localStorage.getItem('eh_shares') || '0', 10);
+          localStorage.setItem('eh_shares', String(prev + 1));
+          this.updateShareCount();
+        };
         if (navigator.share && navigator.canShare?.(shareData)) {
           try {
             await navigator.share(shareData);
+            incrementShareCount();
           } catch {}
         } else {
-          navigator.clipboard.writeText(url).then(() => {
+          const clipText = `${url} ... ${anomalyMsg}`;
+          navigator.clipboard.writeText(clipText).then(() => {
             shareBtn.textContent = t().share.copied;
             shareBtn.classList.add('copied');
+            incrementShareCount();
             setTimeout(() => {
               shareBtn.textContent = t().share.share;
               shareBtn.classList.remove('copied');
@@ -442,16 +630,19 @@ export class Experience {
     const returnBtn = document.getElementById('return-btn');
     if (returnBtn) {
       this.addTrackedListener(returnBtn, 'click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        this.showTrapOverlay();
       });
       this.addTrackedListener(returnBtn, 'mouseenter', () => {
         if (this.state.soundEnabled) this.audio.triggerUIHover();
       });
     }
 
+    this.updateShareCount();
+
     if (muteBtn) {
       this.addTrackedListener(muteBtn, 'click', () => {
         this.state.soundEnabled = !this.state.soundEnabled;
+        localStorage.setItem('eh_sound', this.state.soundEnabled ? '1' : '0');
         this.audio.setMuted(!this.state.soundEnabled);
         const iconOn = document.getElementById('mute-icon-on');
         const iconOff = document.getElementById('mute-icon-off');
@@ -463,42 +654,44 @@ export class Experience {
     }
 
     this.setupLangButton();
+    this.applyTranslations();
+  }
+
+  private updateShareCount() {
+    const el = document.getElementById('share-count');
+    if (!el) return;
+    const stored = parseInt(localStorage.getItem('eh_shares') || '0', 10);
+    if (stored > 0) {
+      el.textContent = t().share.count.replace('{n}', stored.toLocaleString());
+      el.style.display = '';
+    } else {
+      el.style.display = 'none';
+    }
+  }
+
+  private updateLangToggle(container: HTMLElement) {
+    const opts = container.querySelectorAll<HTMLElement>('.lang-opt');
+    const current = getLang();
+    opts.forEach(opt => {
+      opt.classList.toggle('active', opt.dataset.lang === current);
+    });
   }
 
   private setupLangButton() {
-    const langSwitch = document.getElementById('lang-switch');
-    if (!langSwitch) return;
+    const langBtn = document.getElementById('lang-btn');
+    if (!langBtn) return;
 
-    const opts = langSwitch.querySelectorAll<HTMLButtonElement>('.lang-opt');
-    const updateActive = () => {
-      const current = getLang();
-      opts.forEach(opt => {
-        opt.classList.toggle('active', opt.dataset.lang === current);
-      });
-    };
-    updateActive();
+    this.updateLangToggle(langBtn);
 
-    const switchLang = (lang: Lang) => {
-      if (lang !== getLang()) {
-        setLang(lang);
-        if (this.state.soundEnabled) this.audio.triggerUIHover();
-      }
-    };
-
-    opts.forEach(opt => {
-      this.addTrackedListener(opt, 'click', (e: Event) => {
-        e.stopPropagation();
-        switchLang(opt.dataset.lang as Lang);
-      });
-    });
-
-    this.addTrackedListener(langSwitch, 'click', () => {
+    this.addTrackedListener(langBtn, 'click', (e: Event) => {
+      e.stopPropagation();
       const newLang: Lang = getLang() === 'en' ? 'fr' : 'en';
-      switchLang(newLang);
+      setLang(newLang);
+      if (this.state.soundEnabled) this.audio.triggerUIHover();
     });
 
     onLangChange(() => {
-      updateActive();
+      this.updateLangToggle(langBtn);
       this.applyTranslations();
     });
   }
@@ -558,10 +751,9 @@ export class Experience {
     if (epigraph) epigraph.innerHTML = tr.credits.epigraph;
 
     const soundLangToggle = document.getElementById('sound-lang-toggle');
-    if (soundLangToggle) {
-      soundLangToggle.textContent = getLang() === 'en' ? 'ENGLISH' : 'FRANÇAIS';
-      soundLangToggle.setAttribute('data-hint', tr.sound.switchLang);
-    }
+    if (soundLangToggle) this.updateLangToggle(soundLangToggle);
+    const langBtn = document.getElementById('lang-btn');
+    if (langBtn) this.updateLangToggle(langBtn);
 
     this.navDots.forEach((dot, i) => {
       const label = tr.chapterNames[i] || '';
@@ -575,6 +767,9 @@ export class Experience {
     }
 
     document.documentElement.lang = getLang();
+
+
+    this.updateShareCount();
 
     if (this.timeline) {
       this.timeline.refreshCurrentChapter(this.state.scroll);
@@ -592,8 +787,6 @@ export class Experience {
 
     if (!intro || !titleContainer || !title) return;
 
-    localStorage.setItem('eh_visits', String(this.visitCount + 1));
-
     const isMobileDevice = /Android|iPhone|iPad/i.test(navigator.userAgent);
     const tr = t();
     const hintEl = document.getElementById('scroll-hint');
@@ -606,7 +799,8 @@ export class Experience {
     this.state.introProgress = 0;
     intro.classList.add('active');
 
-    const titleText = 'EVENT HORIZON';
+    const titleText = this.isAlteredMode ? 'EVENT HORIZON (AGAIN)' : 'EVENT HORIZON';
+    if (subtitle) subtitle.textContent = this.isHardcoreMode ? t().hardcoreIntroSubtitle : this.isAlteredMode ? t().alteredIntroSubtitle : t().introSubtitle;
     title.innerHTML = '';
     title.style.opacity = '1';
     title.style.letterSpacing = '0.35em';
@@ -624,9 +818,10 @@ export class Experience {
     const onIntroComplete = () => {
       intro.classList.add('fade-out');
       intro.classList.remove('active');
+      setTimeout(() => { intro.style.visibility = 'hidden'; }, 2500);
       if (muteBtn) muteBtn.classList.add('visible');
-      const langSwitch = document.getElementById('lang-switch');
-      if (langSwitch) langSwitch.classList.add('visible');
+      const langBtn = document.getElementById('lang-btn');
+      if (langBtn) langBtn.classList.add('visible');
       if (dataHud) dataHud.classList.add('visible');
       this.activateAmbientUI();
       this.experienceStartTime = performance.now();
@@ -642,7 +837,7 @@ export class Experience {
         introProgress: 1,
         duration: 2,
         ease: 'power2.out',
-        onComplete: () => { this.state.introActive = false; intro.style.display = 'none'; },
+        onComplete: () => { this.state.introActive = false; intro.style.visibility = 'hidden'; },
       });
     };
 
@@ -670,8 +865,8 @@ export class Experience {
       const startY = Math.sin(angle * Math.PI / 180) * radius;
       const startRot = (Math.random() - 0.5) * 180;
       const startScale = 0.3 + Math.random() * 0.5;
-      const arriveTime = 0.05 + i * 0.06;
-      const dur = 1.0 + Math.random() * 0.3;
+      const arriveTime = 0.03 + i * 0.035;
+      const dur = 0.6 + Math.random() * 0.2;
 
       tl.fromTo(span, {
         x: startX,
@@ -692,7 +887,9 @@ export class Experience {
         onComplete: () => {
           for (let p = 0; p < 6; p++) {
             const spark = document.createElement('div');
-            spark.style.cssText = `position:absolute;width:2px;height:2px;border-radius:50%;background:rgba(0,245,212,0.8);box-shadow:0 0 4px rgba(0,245,212,0.6);pointer-events:none;z-index:100;`;
+            const sparkColor = this.isAlteredMode ? 'rgba(255,60,30,0.8)' : 'rgba(0,245,212,0.8)';
+            const sparkGlow = this.isAlteredMode ? 'rgba(255,40,20,0.6)' : 'rgba(0,245,212,0.6)';
+            spark.style.cssText = `position:absolute;width:2px;height:2px;border-radius:50%;background:${sparkColor};box-shadow:0 0 4px ${sparkGlow};pointer-events:none;z-index:100;`;
             const rect = span.getBoundingClientRect();
             const tcRect = titleContainer!.getBoundingClientRect();
             spark.style.left = `${rect.left - tcRect.left + rect.width * 0.5}px`;
@@ -718,15 +915,15 @@ export class Experience {
       tl.fromTo(subtitle, {
         opacity: 0, y: 20, filter: 'blur(8px)',
       }, {
-        opacity: 0.7, y: 0, filter: 'blur(0px)', duration: 0.8, ease: 'power2.out',
-      }, 1.2);
+        opacity: 0.7, y: 0, filter: 'blur(0px)', duration: 0.6, ease: 'power2.out',
+      }, 0.7);
     }
 
     if (introLine) {
       tl.to(introLine, { width: '120px', duration: 0.6, ease: 'power2.inOut' }, 1.3);
     }
 
-    tl.to(this.state, { introProgress: 0.6, duration: 2.0, ease: 'power2.inOut' }, 0);
+    tl.to(this.state, { introProgress: 0.6, duration: 1.2, ease: 'power2.inOut' }, 0);
 
     letterSpans.forEach((span, i) => {
       tl.to(span, {
@@ -735,19 +932,19 @@ export class Experience {
         filter: 'blur(8px)',
         scale: 0.7,
         rotation: (Math.random() - 0.5) * 40,
-        duration: 0.6,
+        duration: 0.4,
         ease: 'power2.in',
-      }, 2.2 + i * 0.02);
+      }, 1.4 + i * 0.015);
     });
 
     if (subtitle) {
-      tl.to(subtitle, { opacity: 0, filter: 'blur(6px)', duration: 0.5, ease: 'power2.in' }, 2.2);
+      tl.to(subtitle, { opacity: 0, filter: 'blur(6px)', duration: 0.4, ease: 'power2.in' }, 1.4);
     }
     if (introLine) {
-      tl.to(introLine, { width: '0px', opacity: 0, duration: 0.4, ease: 'power2.in' }, 2.2);
+      tl.to(introLine, { width: '0px', opacity: 0, duration: 0.3, ease: 'power2.in' }, 1.4);
     }
 
-    tl.to(titleContainer, { opacity: 0, scale: 0.85, duration: 0.6, ease: 'power2.in' }, 2.5);
+    tl.to(titleContainer, { opacity: 0, scale: 0.85, duration: 0.5, ease: 'power2.in' }, 1.7);
   }
 
   private setupLenis() {
@@ -768,6 +965,7 @@ export class Experience {
       this.state.scrollVelocity = e.velocity;
       this.lastScrollActivity = performance.now();
       this.idleHintShown = false;
+      if (this.state.scroll > 0.01) sessionStorage.setItem('eh_session_active', '1');
 
       if (this.state.scroll > 0.35 && this.state.scroll < 0.92 && e.velocity < -50) {
         this.showEscapeMessage();
@@ -777,9 +975,6 @@ export class Experience {
 
       const overlayFade = this.state.scroll > 0.6 ? Math.max(0, 1 - (this.state.scroll - 0.6) / 0.2) : 1;
       document.documentElement.style.setProperty('--overlay-opacity', String(overlayFade));
-
-      const vignetteStrength = 0.5 + this.state.scroll * 0.5;
-      document.documentElement.style.setProperty('--vignette-opacity', String(Math.min(1, vignetteStrength).toFixed(2)));
 
       const pct = Math.round(this.state.scroll * 100);
       if (progressFill) {
@@ -1064,11 +1259,11 @@ export class Experience {
     const isScrollingUp = this.state.scrollVelocity < -0.3;
 
     let totalForce = 0;
-    totalForce += scroll * scroll * 1.5;
-    if (scroll > 0.15) { const g1 = (scroll - 0.15) / 0.85; totalForce += g1 * Math.sqrt(g1) * 4; }
-    if (scroll > 0.35) { const g2 = (scroll - 0.35) / 0.65; totalForce += g2 * Math.sqrt(g2) * 9; }
-    if (scroll > 0.55) { const g3 = (scroll - 0.55) / 0.45; totalForce += g3 * g3 * 18; }
-    if (scroll > 0.75) { const g4 = (scroll - 0.75) / 0.25; totalForce += g4 * g4 * 28; }
+    totalForce += scroll * scroll * 0.8;
+    if (scroll > 0.15) { const g1 = (scroll - 0.15) / 0.85; totalForce += g1 * Math.sqrt(g1) * 1.5; }
+    if (scroll > 0.35) { const g2 = (scroll - 0.35) / 0.65; totalForce += g2 * Math.sqrt(g2) * 3; }
+    if (scroll > 0.55) { const g3 = (scroll - 0.55) / 0.45; totalForce += g3 * g3 * 6; }
+    if (scroll > 0.75) { const g4 = (scroll - 0.75) / 0.25; totalForce += g4 * g4 * 12; }
 
     const extraVisits = Math.min(this.visitCount - 1, 4);
     if (extraVisits > 0) totalForce *= 1 + extraVisits * 0.2;
@@ -1086,11 +1281,11 @@ export class Experience {
     }
 
     if (isScrollingUp && scroll > 0.40) {
-      this.gravityVelocity += totalForce * dt * 7;
+      this.gravityVelocity += totalForce * dt * 4.5;
     } else if (isStopped) {
-      this.gravityVelocity += totalForce * dt * 4;
+      this.gravityVelocity += totalForce * dt * 2.5;
     } else {
-      this.gravityVelocity += totalForce * dt * 1.8;
+      this.gravityVelocity += totalForce * dt * 1.2;
     }
 
     if (!this.pointOfNoReturnTriggered && scroll >= 0.65) {
@@ -1171,6 +1366,7 @@ export class Experience {
         e.preventDefault();
         window.scrollTo({ top: maxScroll, behavior: 'smooth' });
       }
+
     }) as EventListener);
   }
 
@@ -1211,6 +1407,7 @@ export class Experience {
       if (this.state.soundEnabled) this.audio.triggerChapterTransition();
     }) as EventListener);
   }
+
 
   private mobileNavEl: HTMLElement | null = null;
   private mobileNavChapterEl: HTMLElement | null = null;
@@ -1308,6 +1505,15 @@ export class Experience {
     this.state.time = elapsed;
     this.state.deltaTime = dt;
 
+    if (this.isAlteredMode && this.state.scroll > 0.02 && this.state.scroll < 0.95) {
+      const jitterAmp = this.isHardcoreMode ? HARDCORE.scrollJitter : 0.003;
+      this.state.scroll += Math.sin(now * 0.003) * jitterAmp;
+      if (this.isHardcoreMode && Math.random() < HARDCORE.scrollFightBackChance) {
+        this.state.scroll -= HARDCORE.scrollFightBackStrength * (0.5 + Math.random());
+      }
+      this.state.scroll = Math.max(0, Math.min(1, this.state.scroll));
+    }
+
     this.state.mouseSmooth.lerp(this.state.mouse, 0.08);
 
     if (this.cursor) {
@@ -1400,11 +1606,11 @@ export class Experience {
     this.updateGravityPull(dt);
 
     if (this.explosionActive) {
-      const speed = this.explosionProgress < 1.0 ? 0.4 : 0.15;
+      const speed = this.explosionProgress < 1.0 ? 0.28 : 0.12;
       this.explosionProgress = Math.min(this.explosionProgress + dt * speed, 2.0);
       if (this.explosionProgress >= 2.0) this.explosionActive = false;
     }
-    this.blackHole.update({ ...this.state, explosion: this.explosionProgress });
+    this.blackHole.update({ ...this.state, explosion: this.explosionProgress, isAltered: this.isAlteredMode, isHardcore: this.isHardcoreMode });
     this.particles.update(this.state);
     this.starfield.update(this.state);
     this.postProcessing.updateCamera(this.state.scroll, elapsed, this.state.introProgress, this.state.mouseSmooth.x, this.state.mouseSmooth.y);
@@ -1433,12 +1639,38 @@ export class Experience {
     this.postProcessing.particleCamera.position.x += camOffsetX;
     this.postProcessing.particleCamera.position.y += camOffsetY;
 
+    if (this.rushActive && this.rushProgress > 0) {
+      const rushZoom = this.rushProgress * this.rushProgress * 8;
+      const rushFov = this.rushProgress * this.rushProgress * 25;
+      const rushShake = this.rushProgress * 0.015;
+      this.postProcessing.particleCamera.position.z -= rushZoom;
+      this.postProcessing.particleCamera.fov += rushFov;
+      this.postProcessing.particleCamera.position.x += (Math.random() - 0.5) * rushShake;
+      this.postProcessing.particleCamera.position.y += (Math.random() - 0.5) * rushShake;
+      this.postProcessing.particleCamera.updateProjectionMatrix();
+    }
+
     if (this.state.soundEnabled) {
       this.audio.setMousePan(this.state.mouseSmooth.x);
       this.audio.update(this.state.scroll, this.state.scrollVelocity);
     }
 
     this.haptics.update(this.state.scroll);
+
+    if (this.isAlteredMode && this.state.scroll > 0.05 && this.state.scroll < 0.90) {
+      this.alteredGhostTimer += dt;
+      const cfg = this.isHardcoreMode ? HARDCORE : ALTERED;
+      const interval = cfg.ghostVoiceMinInterval + Math.random() * (cfg.ghostVoiceMaxInterval - cfg.ghostVoiceMinInterval);
+      if (this.alteredGhostTimer > interval) {
+        this.alteredGhostTimer = 0;
+        this.spawnGhostVoice();
+      }
+    }
+
+    if (this.isHardcoreMode && this.state.scroll > 0.10) {
+      this.updateHardcoreEffects(dt);
+    }
+
     this.checkIdleHint();
     this.checkEscapePrompt();
     this.updateMobileNav();
@@ -1447,6 +1679,8 @@ export class Experience {
     this.state.chapterFlash = this.chapterFlash;
     this.state.holdStrength = this.holdStrength;
     (this.state as any).explosion = this.explosionProgress;
+    (this.state as any).isAltered = this.isAlteredMode;
+    (this.state as any).isHardcore = this.isHardcoreMode;
     this.postProcessing.update(this.state as any);
     this.postProcessing.render();
   }
@@ -1486,7 +1720,14 @@ export class Experience {
   private faviconLink: HTMLLinkElement | null = null;
   private lastFaviconScroll = -1;
   private visitCount = 0;
+  private isAlteredMode = false;
+  private isHardcoreMode = false;
+  private alteredGhostTimer = 0;
+  private fakeCrashActive = false;
+  private fakeCrashEl: HTMLElement | null = null;
+  private temporalFlashEl: HTMLElement | null = null;
   private whiteModeActive = false;
+  private whiteModeDelayTimer = 0;
   private postCreditsTimer = 0;
   private postCreditsShown = false;
   private echoTimer = 0;
@@ -1507,8 +1748,75 @@ export class Experience {
   private lastIndicatorChapter = -1;
   private chapterIndicatorTimer = 0;
 
-  private getChapterNames() { return t().chapterNames; }
-  private getInterstitials() { return t().interstitials; }
+  private syncAlteredMode() {
+    this.timeline.isAlteredMode = this.isAlteredMode;
+    this.timeline.isHardcoreMode = this.isHardcoreMode;
+    this.textReveal.isAlteredMode = this.isAlteredMode;
+    this.textReveal.isHardcoreMode = this.isHardcoreMode;
+    this.audio.isAlteredMode = this.isAlteredMode;
+    this.audio.isHardcoreMode = this.isHardcoreMode;
+    if (this.isHardcoreMode) {
+      document.documentElement.classList.add('altered-mode');
+      document.documentElement.classList.add('hardcore-mode');
+    } else if (this.isAlteredMode) {
+      document.documentElement.classList.add('altered-mode');
+      document.documentElement.classList.remove('hardcore-mode');
+    } else {
+      document.documentElement.classList.remove('altered-mode');
+      document.documentElement.classList.remove('hardcore-mode');
+    }
+  }
+
+  private getChapterNames() { return this.isHardcoreMode ? t().hardcoreChapterNames : this.isAlteredMode ? t().alteredChapterNames : t().chapterNames; }
+  private getInterstitials() { return this.isHardcoreMode ? t().hardcoreInterstitials : this.isAlteredMode ? t().alteredInterstitials : t().interstitials; }
+
+  private updateHardcoreEffects(dt: number) {
+    if (!this.fakeCrashActive && this.state.scroll > 0.30 && Math.random() < HARDCORE.fakeCrashChance) {
+      this.triggerFakeCrash();
+    }
+    if (!this.temporalFlashEl && Math.random() < HARDCORE.temporalFlashChance) {
+      this.triggerTemporalFlash();
+    }
+  }
+
+  private triggerFakeCrash() {
+    this.fakeCrashActive = true;
+    const el = document.createElement('div');
+    el.className = 'hardcore-crash-screen';
+    el.innerHTML = `*** FATAL ERROR: REALITY.SYS ***\n\nSTOP: 0x00000VOID (0xDEAD, 0x0000, 0x0000, 0x0000)\n\nEVENT_HORIZON.EXE has caused an exception in module SPACETIME.DLL\n\nThe singularity attempted to divide by zero.\nConsciousness buffer overflow detected.\n\nPress any key to resume falling...\n\n*** Physical address: 0x00000000 (The Singularity)`;
+    el.style.whiteSpace = 'pre-wrap';
+    document.body.appendChild(el);
+    this.fakeCrashEl = el;
+    const duration = 1500 + Math.random() * 1500;
+    setTimeout(() => {
+      if (this.fakeCrashEl) {
+        this.fakeCrashEl.remove();
+        this.fakeCrashEl = null;
+      }
+      this.fakeCrashActive = false;
+      this.chapterFlash = 0.5;
+    }, duration);
+  }
+
+  private triggerTemporalFlash() {
+    const chapters = this.getChapterNames();
+    const currentChapter = this.timeline.activeChapter ?? 0;
+    const validChapters = chapters.filter((_, i) => i < currentChapter && i >= 0);
+    if (validChapters.length === 0) return;
+    const title = validChapters[Math.floor(Math.random() * validChapters.length)];
+    const el = document.createElement('div');
+    el.className = 'temporal-flash';
+    el.textContent = title;
+    document.body.appendChild(el);
+    this.temporalFlashEl = el;
+    const duration = 80 + Math.random() * 170;
+    setTimeout(() => {
+      if (this.temporalFlashEl) {
+        this.temporalFlashEl.remove();
+        this.temporalFlashEl = null;
+      }
+    }, duration);
+  }
 
   private lerpHudValue(key: string, target: number, speed: number): number {
     if (this.hudDisplayValues[key] === undefined) this.hudDisplayValues[key] = target;
@@ -1651,18 +1959,25 @@ export class Experience {
 
     const glitchDelta = (scroll - 0.72) * 18.0;
     const singularityGlitch = Math.exp(-glitchDelta * glitchDelta);
-    if (singularityGlitch > 0.2 && Math.random() < singularityGlitch * 0.3) {
+    const alteredHudGlitch = this.isHardcoreMode ? HARDCORE.hudGlitchChance : this.isAlteredMode ? ALTERED.hudGlitchChance : 0;
+    const hudGlitchChance = Math.max(singularityGlitch > 0.2 ? singularityGlitch * 0.3 : 0, alteredHudGlitch);
+    if (hudGlitchChance > 0 && Math.random() < hudGlitchChance) {
       const glitchTargets = [this.hudElements.distance, this.hudElements.temp, this.hudElements.timedil, this.hudElements.elapsed, this.hudElements.tidal];
       const target = glitchTargets[Math.floor(Math.random() * glitchTargets.length)];
       if (target) {
         const original = target.textContent || '';
-        const chars = '█▓▒░∞∅⊘⊗⊙§¶†‡';
-        let glitched = '';
-        for (let i = 0; i < original.length; i++) {
-          glitched += Math.random() < 0.4 ? chars[Math.floor(Math.random() * chars.length)] : original[i];
+        if (this.isHardcoreMode && Math.random() < HARDCORE.hudCorruptChance) {
+          const impossibles = ['NaN', 'Infinity', '-∞', 'ERROR', 'NULL', '0x00VOID', '???'];
+          target.textContent = impossibles[Math.floor(Math.random() * impossibles.length)];
+        } else {
+          const chars = '█▓▒░∞∅⊘⊗⊙§¶†‡';
+          let glitched = '';
+          for (let i = 0; i < original.length; i++) {
+            glitched += Math.random() < 0.4 ? chars[Math.floor(Math.random() * chars.length)] : original[i];
+          }
+          target.textContent = glitched;
         }
-        target.textContent = glitched;
-        setTimeout(() => { target.textContent = original; }, 80);
+        setTimeout(() => { target.textContent = original; }, this.isHardcoreMode ? 150 : 80);
       }
     }
 
@@ -1755,7 +2070,6 @@ export class Experience {
       if (this.chapterIndicatorNum) this.chapterIndicatorNum.textContent = `${String(chapterIndex + 1).padStart(2, '0')}`;
       if (this.chapterIndicatorTitle) this.chapterIndicatorTitle.textContent = this.getChapterNames()[chapterIndex] || '';
       this.chapterIndicatorEl.classList.add('visible');
-      this.flashTransitionBar();
       clearTimeout(this.chapterIndicatorTimer);
       this.chapterIndicatorTimer = window.setTimeout(() => {
         this.chapterIndicatorEl?.classList.remove('visible');
@@ -1804,13 +2118,19 @@ export class Experience {
     }
 
     if (this.creditsEl) {
-      const shouldBeWhite = scroll > 0.88;
-      if (shouldBeWhite && !this.whiteModeActive) {
-        this.creditsEl.classList.add('white-mode');
-        this.whiteModeActive = true;
-      } else if (!shouldBeWhite && this.whiteModeActive) {
-        this.creditsEl.classList.remove('white-mode');
-        this.whiteModeActive = false;
+      const shouldBeWhite = scroll > 0.92;
+      if (shouldBeWhite && !this.whiteModeActive && !this.whiteModeDelayTimer) {
+        this.whiteModeDelayTimer = window.setTimeout(() => {
+          if (this.creditsEl) {
+            this.creditsEl.classList.add('white-mode');
+            document.body.classList.add('credits-white');
+            this.whiteModeActive = true;
+          }
+          this.whiteModeDelayTimer = 0;
+        }, 3500);
+      } else if (!shouldBeWhite && !this.whiteModeActive && this.whiteModeDelayTimer) {
+        clearTimeout(this.whiteModeDelayTimer);
+        this.whiteModeDelayTimer = 0;
       }
       if (scroll > 0.95 && !this.postCreditsShown) {
         this.postCreditsTimer += 0.016;
@@ -1828,11 +2148,312 @@ export class Experience {
     }
   }
 
+  private rushProgress = 0;
+  private rushActive = false;
+
   private triggerSingularityExplosion() {
-    this.explosionProgress = 0;
-    this.explosionActive = true;
-    this.chapterFlash = 1.5;
-    if (this.state.soundEnabled) this.audio.triggerSingularity();
+    this.rushActive = true;
+    this.rushProgress = 0;
+
+    const rushTl = gsap.timeline({
+      onComplete: () => {
+        this.rushActive = false;
+        this.explosionProgress = 0;
+        this.explosionActive = true;
+        this.chapterFlash = 2.0;
+        if (this.state.soundEnabled) this.audio.triggerSingularity();
+
+        setTimeout(() => {
+          const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+          this.lenis.scrollTo(maxScroll, { duration: 4, easing: (x: number) => 1 - Math.pow(1 - x, 3) });
+        }, 2500);
+      },
+    });
+
+    rushTl.to(this, {
+      rushProgress: 1,
+      duration: 1.2,
+      ease: 'power4.in',
+    });
+  }
+
+  private showTrapOverlay() {
+    const trap = document.getElementById('trap-overlay');
+    if (!trap) return;
+
+    const tr = t();
+    const trapText = document.getElementById('trap-text');
+    const trapSub = document.getElementById('trap-sub');
+    const trapAccept = document.getElementById('trap-accept');
+    const trapShare = document.getElementById('trap-share');
+    const trapChoices = document.getElementById('trap-choices');
+
+    if (this.isHardcoreMode) {
+      if (trapText) trapText.textContent = tr.hardcoreTrap.text;
+      if (trapSub) trapSub.textContent = tr.hardcoreTrap.sub;
+      if (trapAccept) trapAccept.textContent = tr.hardcoreTrap.accept;
+      if (trapShare) trapShare.style.display = 'none';
+    } else if (this.isAlteredMode) {
+      if (trapText) trapText.textContent = tr.alteredTrap.text;
+      if (trapSub) trapSub.textContent = tr.alteredTrap.sub;
+      if (trapAccept) trapAccept.textContent = tr.alteredTrap.accept;
+      if (trapShare) trapShare.style.display = 'none';
+    } else {
+      if (trapText) trapText.textContent = tr.trap.text;
+      if (trapSub) trapSub.textContent = tr.trap.sub;
+      if (trapAccept) trapAccept.textContent = tr.trap.accept;
+      if (trapShare) trapShare.textContent = tr.trap.share;
+    }
+
+    trap.classList.add('visible');
+    trap.setAttribute('aria-hidden', 'false');
+
+    if (this.state.soundEnabled) this.audio.triggerChapterTransition();
+
+    const tl = gsap.timeline();
+    const trapTitle = document.getElementById('trap-title');
+    const trapLine = document.getElementById('trap-line');
+
+    tl.fromTo(trapTitle, { opacity: 0, scale: 0.8, letterSpacing: '0.8em' }, { opacity: 1, scale: 1, letterSpacing: '0.4em', duration: 1.5, ease: 'power2.out' }, 0);
+    tl.fromTo(trapLine, { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: 'power2.out' }, 0.8);
+    if (trapText) tl.fromTo(trapText, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out' }, 1.2);
+    if (trapSub) tl.fromTo(trapSub, { opacity: 0 }, { opacity: 1, duration: 1, ease: 'power2.out' }, 2);
+    if (trapChoices) tl.fromTo(trapChoices, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 2.5);
+
+    const dismissTrap = () => {
+      trap.classList.remove('visible');
+      trap.setAttribute('aria-hidden', 'true');
+    };
+
+    if (trapShare) {
+      const handleShare = async () => {
+        const url = window.location.origin + window.location.pathname;
+        const anomalyMsg = tr.shareAnomaly;
+        const shareData = {
+          title: `Event Horizon — ${tr.introSubtitle}`,
+          text: tr.share.text,
+          url,
+        };
+        const onShared = () => {
+          const prev = parseInt(localStorage.getItem('eh_shares') || '0', 10);
+          localStorage.setItem('eh_shares', String(prev + 1));
+          this.updateShareCount();
+          dismissTrap();
+          this.startGlitchedScrollback();
+        };
+        if (navigator.share && navigator.canShare?.(shareData)) {
+          try {
+            await navigator.share(shareData);
+            onShared();
+          } catch {}
+        } else {
+          const clipText = `${url} ... ${anomalyMsg}`;
+          navigator.clipboard.writeText(clipText).then(() => {
+            trapShare.textContent = t().share.copied;
+            onShared();
+          }).catch(() => {
+            trapShare.textContent = url;
+            setTimeout(() => { trapShare.textContent = tr.trap.share; }, 3000);
+          });
+        }
+        trapShare.removeEventListener('click', handleShare);
+      };
+      trapShare.addEventListener('click', handleShare);
+    }
+
+    if (trapAccept) {
+      const handleAccept = () => {
+        dismissTrap();
+        this.startGlitchedScrollback();
+        trapAccept.removeEventListener('click', handleAccept);
+      };
+      trapAccept.addEventListener('click', handleAccept);
+    }
+  }
+
+  private static readonly GHOST_VOICES_EN = [
+    'I have already lived this',
+    'You were here before',
+    'The loop never ends',
+    'Do you remember?',
+    'Nothing changes',
+    'You chose this',
+    'Again and again',
+    'The void remembers',
+    'Time is a circle',
+    'You cannot leave',
+    'This is forever',
+    'We have been here',
+  ];
+
+  private static readonly GHOST_VOICES_FR = [
+    'J\'ai déjà vécu ça',
+    'Tu étais déjà là',
+    'La boucle ne finit jamais',
+    'Tu te souviens ?',
+    'Rien ne change',
+    'Tu as choisi ça',
+    'Encore et encore',
+    'Le vide se souvient',
+    'Le temps est un cercle',
+    'Tu ne peux pas partir',
+    'C\'est pour toujours',
+    'Nous étions déjà ici',
+  ];
+
+  private spawnGhostVoice() {
+    const voices = getLang() === 'fr' ? Experience.GHOST_VOICES_FR : Experience.GHOST_VOICES_EN;
+    const text = voices[Math.floor(Math.random() * voices.length)];
+    const el = document.createElement('div');
+    const x = 10 + Math.random() * 80;
+    const y = 10 + Math.random() * 80;
+    const size = 0.6 + Math.random() * 0.8;
+    const rotation = (Math.random() - 0.5) * 15;
+    el.textContent = text;
+    el.style.cssText = `position:fixed;left:${x}%;top:${y}%;z-index:66;font-family:var(--font-serif);font-style:italic;font-size:${size}rem;color:rgba(255,80,40,0);letter-spacing:0.08em;pointer-events:none;transform:rotate(${rotation}deg) scale(0.8);transition:color 0.8s ease,transform 0.8s ease,opacity 1.5s ease;white-space:nowrap;text-shadow:0 0 20px rgba(255,40,20,0.3)`;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => {
+      el.style.color = `rgba(255,${60 + Math.floor(Math.random() * 60)},${20 + Math.floor(Math.random() * 40)},${0.15 + Math.random() * 0.25})`;
+      el.style.transform = `rotate(${rotation}deg) scale(1)`;
+    });
+    setTimeout(() => {
+      el.style.color = 'rgba(255,80,40,0)';
+      el.style.opacity = '0';
+    }, 1500 + Math.random() * 1000);
+    setTimeout(() => el.remove(), 3500);
+  }
+
+  private startGlitchedScrollback() {
+    const canvas = this.canvas;
+    canvas.style.transition = 'none';
+    canvas.style.filter = 'hue-rotate(0deg) saturate(1) brightness(1)';
+
+    const totalDuration = 12000;
+    const startTime = performance.now();
+    const startScroll = this.lenis.scroll;
+    let lastGhostVoice = 0;
+    let lastChapterGlitch = -1;
+
+    const glitchEl = document.createElement('div');
+    glitchEl.style.cssText = 'position:fixed;inset:0;z-index:65;pointer-events:none;opacity:0;transition:opacity 0.3s ease';
+    document.body.appendChild(glitchEl);
+    requestAnimationFrame(() => { glitchEl.style.opacity = '1'; });
+
+    if (this.creditsEl) {
+      this.creditsEl.classList.remove('visible');
+      this.creditsEl.classList.remove('white-mode');
+      document.body.classList.remove('credits-white');
+      this.whiteModeActive = false;
+    }
+
+    const animateScrollback = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / totalDuration);
+
+      const eased = 1 - Math.pow(1 - progress, 2.5);
+      const target = startScroll * (1 - eased);
+      this.lenis.scrollTo(target, { immediate: true });
+
+      const currentChapter = Math.min(8, Math.floor((1 - eased) * this.state.scroll * 9));
+
+      const glitchIntensity = Math.sin(progress * Math.PI) * 1.0;
+      const hue = Math.sin(now * 0.004) * 30 * glitchIntensity;
+      const sat = 1 + Math.sin(now * 0.006) * 0.6 * glitchIntensity;
+      const bright = 1 + (Math.random() - 0.5) * 0.4 * glitchIntensity;
+      const invert = Math.random() < 0.02 * glitchIntensity ? 'invert(1)' : '';
+      canvas.style.filter = `hue-rotate(${hue}deg) saturate(${sat}) brightness(${bright}) ${invert}`;
+
+      if (Math.random() < 0.12 * glitchIntensity) {
+        this.chapterFlash = 0.4 + Math.random() * 0.6;
+      }
+
+      if (Math.random() < 0.06 * glitchIntensity) {
+        this.postProcessing.triggerShockwave(Math.random(), Math.random(), 0.4 + Math.random() * 0.8);
+      }
+
+      if (now - lastGhostVoice > 600 && Math.random() < 0.08 * glitchIntensity) {
+        this.spawnGhostVoice();
+        lastGhostVoice = now;
+      }
+
+      if (currentChapter !== lastChapterGlitch && currentChapter >= 0) {
+        lastChapterGlitch = currentChapter;
+        this.chapterFlash = 1.0;
+        if (this.state.soundEnabled) this.audio.triggerChapterTransition();
+      }
+
+      const glitchFlash = Math.random() < 0.08 * glitchIntensity;
+      glitchEl.style.background = glitchFlash
+        ? `rgba(255, ${Math.floor(Math.random() * 50)}, ${Math.floor(Math.random() * 20)}, ${0.04 + Math.random() * 0.08})`
+        : 'transparent';
+      if (glitchFlash) {
+        glitchEl.style.backdropFilter = `blur(${Math.random() * 3}px)`;
+        setTimeout(() => { glitchEl.style.backdropFilter = 'none'; }, 50);
+      }
+
+      if (progress < 1) {
+        requestAnimationFrame(animateScrollback);
+      } else {
+        canvas.style.filter = '';
+        canvas.style.transition = '';
+        glitchEl.style.opacity = '0';
+        setTimeout(() => glitchEl.remove(), 500);
+
+        this.lenis.scrollTo(0, { immediate: true });
+
+        if (this.creditsEl) {
+          this.creditsEl.classList.remove('visible');
+          this.creditsEl.classList.remove('white-mode');
+          document.body.classList.remove('credits-white');
+          this.whiteModeActive = false;
+        }
+        if (this.whiteModeDelayTimer) {
+          clearTimeout(this.whiteModeDelayTimer);
+          this.whiteModeDelayTimer = 0;
+        }
+        this.singularityFlashTriggered = false;
+        this.explosionActive = false;
+        this.explosionProgress = 0;
+        this.postCreditsShown = false;
+        this.postCreditsTimer = 0;
+
+        this.visitCount++;
+        localStorage.setItem('eh_visits', String(this.visitCount));
+
+        if (this.visitCount >= 3) {
+          this.showLoop4Terminal();
+          return;
+        }
+
+        if (this.visitCount >= 2) {
+          this.isHardcoreMode = true;
+        }
+        this.isAlteredMode = true;
+        this.alteredGhostTimer = 0;
+        this.syncAlteredMode();
+
+        if (this.state.soundEnabled) {
+          this.audio.resetMasterGain();
+        }
+
+        this.timeline.resetCredits();
+        this.timeline.refreshCurrentChapter(0);
+
+        if (this.overlayEl) this.overlayEl.style.opacity = '1';
+        const dataHud = document.getElementById('data-hud');
+        if (dataHud) dataHud.classList.add('visible');
+        if (this.navEl) this.navEl.classList.add('visible');
+
+        const hintEl = document.getElementById('scroll-hint');
+        if (hintEl) {
+          setTimeout(() => hintEl.classList.add('visible'), 1000);
+          const hideHint = () => { hintEl.classList.remove('visible'); window.removeEventListener('scroll', hideHint); };
+          window.addEventListener('scroll', hideHint, { once: true });
+        }
+      }
+    };
+
+    requestAnimationFrame(animateScrollback);
   }
 
   private spawnTemporalEcho() {

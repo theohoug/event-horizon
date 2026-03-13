@@ -13,10 +13,16 @@ export default defineConfig({
   build: {
     target: 'es2022',
     minify: 'esbuild',
+    cssMinify: 'esbuild',
+    reportCompressedSize: true,
+    chunkSizeWarningLimit: 500,
+    assetsInlineLimit: 4096,
     rollupOptions: {
       output: {
         manualChunks: {
           three: ['three'],
+          gsap: ['gsap'],
+          lenis: ['lenis'],
         },
       },
     },

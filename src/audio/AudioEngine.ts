@@ -17,8 +17,12 @@ function smoothstep(edge0: number, edge1: number, x: number): number {
 }
 
 export class AudioEngine {
+  isAlteredMode = false;
+  isHardcoreMode = false;
   private ctx: AudioContext | null = null;
   private masterGain!: GainNode;
+  private masterTarget = 0.55;
+  private bitCrusher: WaveShaperNode | null = null;
   private droneGain!: GainNode;
   private shepardGain!: GainNode;
   private binauralGain!: GainNode;
@@ -70,7 +74,31 @@ export class AudioEngine {
 
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.value = 0;
-    this.masterGain.connect(this.stereoPanner);
+    if (this.isHardcoreMode) {
+      this.bitCrusher = this.ctx.createWaveShaper();
+      const bits = 6;
+      const n = Math.pow(2, bits);
+      const samples = 8192;
+      const curve = new Float32Array(samples);
+      for (let i = 0; i < samples; i++) {
+        const x = (i * 2) / samples - 1;
+        curve[i] = Math.round(x * n) / n;
+      }
+      this.bitCrusher.curve = curve;
+      const crusherGain = this.ctx.createGain();
+      crusherGain.gain.value = 0.15;
+      const dryGain = this.ctx.createGain();
+      dryGain.gain.value = 0.85;
+      const merger = this.ctx.createGain();
+      this.masterGain.connect(this.bitCrusher);
+      this.bitCrusher.connect(crusherGain);
+      crusherGain.connect(merger);
+      this.masterGain.connect(dryGain);
+      dryGain.connect(merger);
+      merger.connect(this.stereoPanner);
+    } else {
+      this.masterGain.connect(this.stereoPanner);
+    }
 
     this.droneGain = this.ctx.createGain();
     this.droneGain.gain.value = 0.12;
@@ -107,8 +135,9 @@ export class AudioEngine {
 
     this.isPlaying = true;
 
+    this.masterTarget = this.isHardcoreMode ? 0.35 : this.isAlteredMode ? 0.42 : 0.55;
     this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
-    this.masterGain.gain.linearRampToValueAtTime(0.55, this.ctx.currentTime + 4);
+    this.masterGain.gain.linearRampToValueAtTime(this.masterTarget, this.ctx.currentTime + 4);
 
     this.startDrone();
     this.startShepard();
@@ -135,6 +164,8 @@ export class AudioEngine {
       const gain = this.ctx!.createGain();
       gain.gain.value = h.gain;
 
+      if (this.isHardcoreMode) osc.detune.value = -400;
+      else if (this.isAlteredMode) osc.detune.value = -200;
       osc.connect(gain);
       gain.connect(this.droneGain);
       osc.start();
@@ -188,7 +219,7 @@ export class AudioEngine {
 
     this.binauralOscLeft = this.ctx.createOscillator();
     this.binauralOscLeft.type = 'sine';
-    this.binauralOscLeft.frequency.value = 200;
+    this.binauralOscLeft.frequency.value = this.isHardcoreMode ? 160 : this.isAlteredMode ? 180 : 200;
     const leftGain = this.ctx.createGain();
     leftGain.gain.value = 0.06;
     this.binauralOscLeft.connect(leftGain);
@@ -197,7 +228,7 @@ export class AudioEngine {
 
     this.binauralOscRight = this.ctx.createOscillator();
     this.binauralOscRight.type = 'sine';
-    this.binauralOscRight.frequency.value = 204;
+    this.binauralOscRight.frequency.value = this.isHardcoreMode ? 173 : this.isAlteredMode ? 187 : 204;
     const rightGain = this.ctx.createGain();
     rightGain.gain.value = 0.06;
     this.binauralOscRight.connect(rightGain);
@@ -404,18 +435,37 @@ export class AudioEngine {
     this.binauralGain.gain.linearRampToValueAtTime(binauralLevel, now + 0.5);
 
     if (this.binauralOscLeft && this.binauralOscRight) {
-      const beatFreq = 4 + scrollProgress * 6;
+      const binauralBase = this.isHardcoreMode ? 160 : this.isAlteredMode ? 180 : 200;
+      const beatFreq = (this.isHardcoreMode ? 13 : this.isAlteredMode ? 7 : 4) + scrollProgress * 6;
       this.binauralOscRight.frequency.linearRampToValueAtTime(
-        200 + beatFreq,
+        binauralBase + beatFreq,
         now + 0.2
       );
     }
 
-    const noiseLevel = scrollProgress * scrollProgress * 0.15;
+    const noiseMult = this.isHardcoreMode ? 2.5 : this.isAlteredMode ? 1.5 : 1.0;
+    const noiseLevel = scrollProgress * scrollProgress * 0.15 * noiseMult;
     this.noiseGain.gain.linearRampToValueAtTime(noiseLevel, now + 0.1);
     if (this.noiseFilter) {
-      const filterFreq = 60 + scrollProgress * 300;
+      const filterBoost = this.isHardcoreMode ? 200 : this.isAlteredMode ? 400 : 300;
+      const filterFreq = 60 + scrollProgress * filterBoost;
       this.noiseFilter.frequency.linearRampToValueAtTime(filterFreq, now + 0.1);
+    }
+
+    const dropoutChance = this.isHardcoreMode ? 0.006 : this.isAlteredMode ? 0.002 : 0;
+    if (dropoutChance > 0 && Math.random() < dropoutChance) {
+      this.masterGain.gain.setValueAtTime(0, now);
+      this.masterGain.gain.setValueAtTime(this.masterTarget, now + 0.08 + Math.random() * 0.12);
+    }
+
+    if (this.isHardcoreMode && Math.random() < 0.004) {
+      const stutterCount = 3 + Math.floor(Math.random() * 3);
+      const duration = (40 + Math.random() * 100) / 1000;
+      const interval = duration / stutterCount;
+      for (let s = 0; s < stutterCount; s++) {
+        this.masterGain.gain.setValueAtTime(s % 2 === 0 ? 0 : this.masterTarget, now + s * interval);
+      }
+      this.masterGain.gain.setValueAtTime(this.masterTarget, now + duration);
     }
 
     if (scrollProgress > 0.15 && scrollProgress < 0.20) this.triggerFrisson(1);
@@ -434,15 +484,16 @@ export class AudioEngine {
 
     if (finalSilence > 0.01) {
       const silenceAmount = finalSilence * finalSilence;
-      this.masterGain.gain.linearRampToValueAtTime(0.55 * (1 - silenceAmount * 0.95), now + 0.3);
+      this.masterGain.gain.linearRampToValueAtTime(this.masterTarget * (1 - silenceAmount * 0.95), now + 0.3);
     }
 
     const velocityFactor = Math.min(Math.abs(scrollVelocity) * 0.02, 1.0);
     const detuneAmount = scrollVelocity * -8;
+    const alteredDetuneOffset = this.isHardcoreMode ? -400 : this.isAlteredMode ? -200 : 0;
     this.droneOscillators.forEach((osc, i) => {
       if (i < this.droneGains.length) {
         osc.detune.linearRampToValueAtTime(
-          detuneAmount + scrollProgress * -50 + Math.sin(now * 0.2 + i) * 2,
+          alteredDetuneOffset + detuneAmount + scrollProgress * -50 + Math.sin(now * 0.2 + i) * 2,
           now + 0.1
         );
       }
@@ -537,32 +588,47 @@ export class AudioEngine {
     if (!this.ctx || !this.isPlaying) return;
     const now = this.ctx.currentTime;
 
+    this.sfxGain.gain.setValueAtTime(this.sfxGain.gain.value, now);
+    this.sfxGain.gain.linearRampToValueAtTime(0.7, now + 0.05);
+    this.sfxGain.gain.linearRampToValueAtTime(0.25, now + 4.0);
+
     const subBoom = this.ctx.createOscillator();
     subBoom.type = 'sine';
-    subBoom.frequency.setValueAtTime(60, now);
-    subBoom.frequency.exponentialRampToValueAtTime(20, now + 2.0);
+    subBoom.frequency.setValueAtTime(80, now);
+    subBoom.frequency.exponentialRampToValueAtTime(18, now + 2.5);
     const subGain = this.ctx.createGain();
-    subGain.gain.setValueAtTime(0.5, now);
-    subGain.gain.linearRampToValueAtTime(0.6, now + 0.1);
-    subGain.gain.exponentialRampToValueAtTime(0.001, now + 3.0);
+    subGain.gain.setValueAtTime(0.8, now);
+    subGain.gain.linearRampToValueAtTime(1.0, now + 0.08);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
     subBoom.connect(subGain).connect(this.sfxGain);
     subBoom.start(now);
-    subBoom.stop(now + 3.2);
+    subBoom.stop(now + 3.7);
 
     const impact = this.ctx.createOscillator();
     impact.type = 'sawtooth';
-    impact.frequency.setValueAtTime(120, now);
-    impact.frequency.exponentialRampToValueAtTime(30, now + 0.8);
+    impact.frequency.setValueAtTime(150, now);
+    impact.frequency.exponentialRampToValueAtTime(25, now + 1.0);
     const impactGain = this.ctx.createGain();
-    impactGain.gain.setValueAtTime(0.35, now);
-    impactGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+    impactGain.gain.setValueAtTime(0.6, now);
+    impactGain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
     const impactFilter = this.ctx.createBiquadFilter();
     impactFilter.type = 'lowpass';
-    impactFilter.frequency.setValueAtTime(800, now);
-    impactFilter.frequency.exponentialRampToValueAtTime(80, now + 1.5);
+    impactFilter.frequency.setValueAtTime(1200, now);
+    impactFilter.frequency.exponentialRampToValueAtTime(60, now + 1.8);
     impact.connect(impactFilter).connect(impactGain).connect(this.sfxGain);
     impact.start(now);
-    impact.stop(now + 1.6);
+    impact.stop(now + 2.0);
+
+    const crack = this.ctx.createOscillator();
+    crack.type = 'square';
+    crack.frequency.setValueAtTime(400, now);
+    crack.frequency.exponentialRampToValueAtTime(40, now + 0.3);
+    const crackGain = this.ctx.createGain();
+    crackGain.gain.setValueAtTime(0.4, now);
+    crackGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+    crack.connect(crackGain).connect(this.sfxGain);
+    crack.start(now);
+    crack.stop(now + 0.5);
 
     const noiseLen = this.ctx.sampleRate * 5;
     const noiseBuf = this.ctx.createBuffer(2, noiseLen, this.ctx.sampleRate);
@@ -574,45 +640,45 @@ export class AudioEngine {
     noiseSource.buffer = noiseBuf;
     const noiseGain = this.ctx.createGain();
     noiseGain.gain.setValueAtTime(0, now);
-    noiseGain.gain.linearRampToValueAtTime(0.25, now + 0.05);
-    noiseGain.gain.linearRampToValueAtTime(0.15, now + 0.5);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 4.0);
+    noiseGain.gain.linearRampToValueAtTime(0.5, now + 0.03);
+    noiseGain.gain.linearRampToValueAtTime(0.3, now + 0.5);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 4.5);
     const noiseFilt = this.ctx.createBiquadFilter();
     noiseFilt.type = 'bandpass';
-    noiseFilt.frequency.setValueAtTime(400, now);
-    noiseFilt.frequency.exponentialRampToValueAtTime(60, now + 3.0);
-    noiseFilt.Q.setValueAtTime(0.5, now);
+    noiseFilt.frequency.setValueAtTime(600, now);
+    noiseFilt.frequency.exponentialRampToValueAtTime(40, now + 3.5);
+    noiseFilt.Q.setValueAtTime(0.7, now);
     noiseSource.connect(noiseFilt).connect(noiseGain).connect(this.sfxGain);
     noiseSource.start(now);
-    noiseSource.stop(now + 4.5);
+    noiseSource.stop(now + 5.0);
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       const shimmer = this.ctx.createOscillator();
       shimmer.type = 'sine';
-      const freq = [2200, 3300, 4400][i];
-      shimmer.frequency.setValueAtTime(freq, now + 0.3);
-      shimmer.frequency.exponentialRampToValueAtTime(freq * 0.4, now + 4.0);
+      const freq = [1800, 2600, 3600, 5000][i];
+      shimmer.frequency.setValueAtTime(freq, now + 0.2);
+      shimmer.frequency.exponentialRampToValueAtTime(freq * 0.3, now + 4.5);
       const sGain = this.ctx.createGain();
       sGain.gain.setValueAtTime(0, now);
-      sGain.gain.linearRampToValueAtTime(0.02, now + 0.5);
-      sGain.gain.linearRampToValueAtTime(0.04, now + 1.5);
-      sGain.gain.exponentialRampToValueAtTime(0.001, now + 5.0);
+      sGain.gain.linearRampToValueAtTime(0.05, now + 0.4);
+      sGain.gain.linearRampToValueAtTime(0.08, now + 1.5);
+      sGain.gain.exponentialRampToValueAtTime(0.001, now + 5.5);
       shimmer.connect(sGain).connect(this.sfxGain);
-      shimmer.start(now + 0.3);
-      shimmer.stop(now + 5.2);
+      shimmer.start(now + 0.2);
+      shimmer.stop(now + 5.7);
     }
 
     const rumble = this.ctx.createOscillator();
     rumble.type = 'triangle';
-    rumble.frequency.setValueAtTime(35, now + 1.0);
-    rumble.frequency.linearRampToValueAtTime(25, now + 5.0);
+    rumble.frequency.setValueAtTime(40, now + 0.5);
+    rumble.frequency.linearRampToValueAtTime(20, now + 5.0);
     const rumbleGain = this.ctx.createGain();
     rumbleGain.gain.setValueAtTime(0, now);
-    rumbleGain.gain.linearRampToValueAtTime(0.15, now + 1.5);
-    rumbleGain.gain.exponentialRampToValueAtTime(0.001, now + 6.0);
+    rumbleGain.gain.linearRampToValueAtTime(0.3, now + 1.0);
+    rumbleGain.gain.exponentialRampToValueAtTime(0.001, now + 6.5);
     rumble.connect(rumbleGain).connect(this.sfxGain);
-    rumble.start(now + 0.5);
-    rumble.stop(now + 6.5);
+    rumble.start(now + 0.3);
+    rumble.stop(now + 7.0);
   }
 
   triggerUIHover() {
@@ -632,10 +698,16 @@ export class AudioEngine {
 
   setMuted(muted: boolean) {
     if (!this.ctx) return;
-    this.masterGain.gain.linearRampToValueAtTime(
-      muted ? 0 : 0.55,
-      this.ctx.currentTime + 0.3
-    );
+    const target = muted ? 0 : (this.isHardcoreMode ? 0.35 : this.isAlteredMode ? 0.42 : 0.55);
+    this.masterGain.gain.linearRampToValueAtTime(target, this.ctx.currentTime + 0.3);
+  }
+
+  resetMasterGain() {
+    if (!this.ctx) return;
+    this.masterTarget = this.isHardcoreMode ? 0.35 : this.isAlteredMode ? 0.42 : 0.55;
+    this.masterGain.gain.cancelScheduledValues(this.ctx.currentTime);
+    this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, this.ctx.currentTime);
+    this.masterGain.gain.linearRampToValueAtTime(this.masterTarget, this.ctx.currentTime + 1.5);
   }
 
   destroy() {

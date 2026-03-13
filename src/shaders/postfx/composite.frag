@@ -23,6 +23,13 @@ uniform float uHoldStrength;
 uniform vec2 uMouse;
 uniform float uMotionBlur;
 uniform float uExplosion;
+uniform vec3 uColorShift;
+uniform float uInvert;
+uniform float uScanLineHardcore;
+uniform float uCrtCurvature;
+uniform float uRgbSplit;
+uniform float uScreenTilt;
+uniform float uGlitchBlock;
 
 varying vec2 vUv;
 
@@ -117,10 +124,19 @@ void main() {
   }
 #endif
 
-  float edgeFadeBand = mix(0.005, 0.025, clamp(barrelStrength * 3.0, 0.0, 1.0));
-  float edgeFadeRaw = smoothstep(0.0, edgeFadeBand, distortedUv.x) * smoothstep(1.0, 1.0 - edgeFadeBand, distortedUv.x)
-                    * smoothstep(0.0, edgeFadeBand, distortedUv.y) * smoothstep(1.0, 1.0 - edgeFadeBand, distortedUv.y);
-  float edgeFade = mix(1.0, edgeFadeRaw, clamp(barrelStrength * 4.0, 0.0, 1.0));
+  if (uCrtCurvature > 0.001) {
+    vec2 crtUv = distortedUv - 0.5;
+    float crtDist = dot(crtUv, crtUv);
+    distortedUv = distortedUv + crtUv * crtDist * uCrtCurvature;
+  }
+  if (abs(uScreenTilt) > 0.001) {
+    vec2 tiltCenter = distortedUv - 0.5;
+    float cTilt = cos(uScreenTilt);
+    float sTilt = sin(uScreenTilt);
+    distortedUv = vec2(tiltCenter.x * cTilt - tiltCenter.y * sTilt, tiltCenter.x * sTilt + tiltCenter.y * cTilt) + 0.5;
+  }
+
+  float edgeFade = 1.0;
   distortedUv = clamp(distortedUv, 0.001, 0.999);
 
   float resScale = min(uResolution.x, uResolution.y) / 1080.0;
@@ -232,11 +248,10 @@ void main() {
   float grainStrength = 1.0 - sqrt(abs(luminance - 0.5) * 2.0);
   color += grainRaw * uGrainIntensity * grainStrength;
 
-  float v1 = 1.0 - smoothstep(0.25, 1.3, dist * 1.5);
-  v1 = v1 * sqrt(sqrt(v1));
-  float v2 = mix(1.0, 1.0 - smoothstep(0.12, 0.65, dist), smoothstep(0.4, 1.0, uScroll) * 0.6);
-  float velTunnel = min(absVel * 0.0006, 0.25) * uScroll;
-  float v3 = 1.0 - smoothstep(0.15, 0.55, dist) * velTunnel;
+  float v1 = 1.0 - smoothstep(0.55, 1.6, dist * 1.2);
+  float v2 = mix(1.0, 1.0 - smoothstep(0.20, 0.70, dist), smoothstep(0.5, 1.0, uScroll) * 0.35);
+  float velTunnel = min(absVel * 0.0004, 0.15) * uScroll;
+  float v3 = 1.0 - smoothstep(0.25, 0.60, dist) * velTunnel;
   float combinedVignette = mix(1.0, v1 * v2 * v3, uVignetteIntensity);
   color *= combinedVignette;
 
@@ -954,6 +969,43 @@ void main() {
     color = mix(color, warmShift, explosionWarm * 0.5);
     color.r += explosionWarm * 0.02;
     color.b -= explosionWarm * 0.03;
+  }
+
+  color += uColorShift;
+  if (uInvert > 0.5) {
+    color = 1.0 - color;
+  }
+
+  if (uRgbSplit > 0.01) {
+    float splitAngle = uTime * 0.7;
+    vec2 splitDir = vec2(cos(splitAngle), sin(splitAngle));
+    vec2 splitOffset = splitDir * uRgbSplit / uResolution;
+    color.r = texture2D(tDiffuse, clamp(distortedUv + splitOffset, 0.001, 0.999)).r;
+    color.b = texture2D(tDiffuse, clamp(distortedUv - splitOffset, 0.001, 0.999)).b;
+  }
+
+  if (uGlitchBlock > 0.01) {
+    float blockSeed = floor(uTime * 15.0);
+    float bw = 40.0 + fract(sin(blockSeed * 127.1) * 43758.5453) * 120.0;
+    float bh = 20.0 + fract(sin(blockSeed * 311.7) * 43758.5453) * 60.0;
+    vec2 blockUv = floor(gl_FragCoord.xy / vec2(bw, bh));
+    float blockHash = fract(sin(dot(blockUv + blockSeed * 0.1, vec2(127.1, 311.7))) * 43758.5453);
+    if (blockHash > 0.92) {
+      float ox = (fract(sin(dot(blockUv, vec2(269.5, 183.3))) * 43758.5453) - 0.5) * 0.1;
+      float oy = (fract(sin(dot(blockUv, vec2(419.2, 371.9))) * 43758.5453) - 0.5) * 0.05;
+      vec3 glitchColor = texture2D(tDiffuse, clamp(distortedUv + vec2(ox, oy), 0.001, 0.999)).rgb;
+      float glitchType = fract(sin(dot(blockUv, vec2(537.1, 213.7))) * 43758.5453);
+      if (glitchType > 0.7) glitchColor = 1.0 - glitchColor;
+      else if (glitchType > 0.4) glitchColor = glitchColor.gbr;
+      color = mix(color, glitchColor, uGlitchBlock);
+    }
+  }
+
+  if (uScanLineHardcore > 0.001) {
+    float scanY = gl_FragCoord.y + uTime * 60.0 * 2.0;
+    float scanLine1 = step(0.5, fract(scanY / 3.0)) * 0.8 + 0.2;
+    float scanLine2 = step(0.5, fract(scanY / 7.0 + 0.3)) * 0.15 + 0.85;
+    color *= mix(1.0, scanLine1 * scanLine2, uScanLineHardcore);
   }
 
   color = max(color, 0.0);

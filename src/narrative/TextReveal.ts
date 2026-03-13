@@ -8,6 +8,8 @@
 import gsap from 'gsap';
 
 export class TextReveal {
+  isAlteredMode = false;
+  isHardcoreMode = false;
   private started = false;
   private currentReveal: gsap.core.Timeline | null = null;
   private chars: HTMLElement[] = [];
@@ -97,6 +99,9 @@ export class TextReveal {
 
     const breatheTime = performance.now() * 0.001;
     const baseTransform = container.dataset.baseTransform || '';
+    const jitter = this.isAlteredMode
+      ? `translate(${(Math.random() - 0.5) * 1.2}px, ${(Math.random() - 0.5) * 1.2}px)`
+      : '';
     if (scroll > 0.33) {
       const hbBpm = 50 + Math.max(scroll - 0.35, 0) * 200;
       const hbPhase = breatheTime * hbBpm / 60 * Math.PI;
@@ -105,9 +110,9 @@ export class TextReveal {
       const hbPulse = hbS8 * hbS4 * 0.008 * Math.min((scroll - 0.33) * 5, 1);
       const breathe = Math.sin(breatheTime * 0.6) * 0.003 * scroll;
       const totalScale = 1 + hbPulse + breathe;
-      container.style.transform = `${baseTransform} scale(${totalScale.toFixed(5)})`;
+      container.style.transform = `${baseTransform} scale(${totalScale.toFixed(5)}) ${jitter}`;
     } else {
-      container.style.transform = baseTransform;
+      container.style.transform = `${baseTransform} ${jitter}`;
     }
 
     const r = Math.round(232 + scroll * 23);
@@ -186,7 +191,7 @@ export class TextReveal {
 
     if (this.chars.length === 0) return;
 
-    const gravityStart = 0.42;
+    const gravityStart = this.isHardcoreMode ? 0.18 : this.isAlteredMode ? 0.30 : 0.42;
     const gravityFactor = Math.max(0, (scroll - gravityStart) / (1.0 - gravityStart));
 
     if (Math.abs(scroll - this.lastScrollChange) > 0.001) {
@@ -258,7 +263,8 @@ export class TextReveal {
 
     const maxDist = Math.sqrt(screenCx * screenCx + screenCy * screenCy);
     const invMaxDist = 1 / maxDist;
-    const pullStrength = gentlePhase * 0.3 + intensePhase * intensePhase * 0.5;
+    const pullStrengthBase = gentlePhase * 0.3 + intensePhase * intensePhase * 0.5;
+    const pullStrength = this.isHardcoreMode ? pullStrengthBase * 1.8 : this.isAlteredMode ? pullStrengthBase * 1.3 : pullStrengthBase;
     const pullFactor = pullStrength * 0.08;
     const mxPx = this.mouseX * window.innerWidth;
     const myPx = this.mouseY * window.innerHeight;
@@ -302,6 +308,14 @@ export class TextReveal {
       const opacity = Math.max(0.25, 1 - pullStrength * 0.6 * (1.0 - normalizedDist * 0.4));
       const rotation = angle * rotDegFactor;
 
+      let dripY = 0;
+      if (this.isHardcoreMode && effectiveGravity > 0.1) {
+        const dripSeed = Math.sin(i * 127.1 + Math.floor(time * 0.5)) * 0.5 + 0.5;
+        if (dripSeed > 0.85) {
+          dripY = Math.sin(time * 2 + i * 0.3) * 20 * effectiveGravity;
+        }
+      }
+
       const cosA = Math.cos(angle);
       const sinA = Math.sin(angle);
       const absCos = Math.abs(cosA);
@@ -309,7 +323,7 @@ export class TextReveal {
       const sx = absCos * stretchRadial + absSin * stretchPerp;
       const sy = absSin * stretchRadial + absCos * stretchPerp;
 
-      char.style.transform = `translate(${pullX + wobbleX + repulseX}px, ${pullY + wobbleY + repulseY}px) scale(${sx.toFixed(3)}, ${sy.toFixed(3)}) rotate(${rotation.toFixed(1)}deg)`;
+      char.style.transform = `translate(${pullX + wobbleX + repulseX}px, ${pullY + wobbleY + repulseY + dripY}px) scale(${sx.toFixed(3)}, ${sy.toFixed(3)}) rotate(${rotation.toFixed(1)}deg)`;
       char.style.filter = `blur(${blur.toFixed(1)}px)`;
       char.style.opacity = `${opacity.toFixed(3)}`;
     });

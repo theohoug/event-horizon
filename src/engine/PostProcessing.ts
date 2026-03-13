@@ -122,6 +122,13 @@ export class PostProcessing {
         uMouse: { value: new THREE.Vector2(0.5, 0.5) },
         uMotionBlur: { value: quality === 'medium' ? 0.0 : 1.0 },
         uExplosion: { value: 0 },
+        uColorShift: { value: new THREE.Vector3(0, 0, 0) },
+        uInvert: { value: 0 },
+        uScanLineHardcore: { value: 0 },
+        uCrtCurvature: { value: 0 },
+        uRgbSplit: { value: 0 },
+        uScreenTilt: { value: 0 },
+        uGlitchBlock: { value: 0 },
       },
       depthTest: false,
       depthWrite: false,
@@ -139,7 +146,7 @@ export class PostProcessing {
     if (this.shockwaves.length > 4) this.shockwaves.shift();
   }
 
-  update(state: { time: number; deltaTime: number; scroll: number; scrollVelocity: number; chapterFlash?: number; introProgress?: number; holdStrength?: number; mouseSmooth?: { x: number; y: number }; explosion?: number }) {
+  update(state: { time: number; deltaTime: number; scroll: number; scrollVelocity: number; chapterFlash?: number; introProgress?: number; holdStrength?: number; mouseSmooth?: { x: number; y: number }; explosion?: number; isAltered?: boolean; isHardcore?: boolean }) {
     const intro = state.introProgress ?? 0;
     const introBloomBoost = intro > 0 && intro < 1 ? (1 - intro) * 0.3 : 0;
 
@@ -175,7 +182,7 @@ export class PostProcessing {
     this.compositeMaterial.uniforms.uChromaticIntensity.value = chromatic;
     this.compositeMaterial.uniforms.uGrainIntensity.value = (0.035 + s * 0.04 + climaxBoost * 0.025) * (1 - breathCalm * 0.5);
 
-    const vignetteBase = s < 0.5 ? 0.3 + s * 0.35 : 0.475 + (s - 0.5) * 0.85;
+    const vignetteBase = s < 0.5 ? 0.08 + s * 0.12 : 0.14 + (s - 0.5) * 0.22;
     this.compositeMaterial.uniforms.uVignetteIntensity.value = (vignetteBase + velBoost * 0.1 + hbPulse) * (1 - breathCalm * 0.3);
     const aftermathDim = ex > 1.0 ? Math.min((ex - 1.0) * 2, 1) : 0;
     this.compositeMaterial.uniforms.uBloomMix.value = (0.30 + s * 0.30 + introBloomBoost + climaxBoost * 0.25) * (1 - aftermathDim * 0.6);
@@ -185,6 +192,56 @@ export class PostProcessing {
     this.compositeMaterial.uniforms.uHoldStrength.value = state.holdStrength ?? 0;
     this.compositeMaterial.uniforms.uMouse.value.set(state.mouseSmooth?.x ?? 0.5, state.mouseSmooth?.y ?? 0.5);
     this.compositeMaterial.uniforms.uExplosion.value = state.explosion ?? 0;
+
+    if (state.isHardcore) {
+      this.compositeMaterial.uniforms.uChromaticIntensity.value *= 6.0;
+      this.compositeMaterial.uniforms.uGrainIntensity.value *= 5.0;
+      this.compositeMaterial.uniforms.uVignetteIntensity.value *= 2.0;
+      this.compositeMaterial.uniforms.uBloomMix.value *= 1.6;
+      this.compositeMaterial.uniforms.uColorShift.value.set(0.20, -0.12, -0.18);
+
+      this.compositeMaterial.uniforms.uScanLineHardcore.value = 0.08 * Math.min(s * 2.5, 1);
+      this.compositeMaterial.uniforms.uCrtCurvature.value = 0.03 * s;
+      this.compositeMaterial.uniforms.uRgbSplit.value = 3.0 + Math.sin(state.time * 2.0) * 1.0;
+      this.compositeMaterial.uniforms.uScreenTilt.value = Math.sin(state.time * 0.4 * Math.PI * 2) * 1.5 * (Math.PI / 180) * s;
+      this.compositeMaterial.uniforms.uGlitchBlock.value = (this.quality !== 'medium' && Math.random() < 0.06) ? 0.8 + Math.random() * 0.2 : 0;
+
+      if (Math.random() < 0.10) {
+        this.compositeMaterial.uniforms.uChapterFlash.value += 0.3 + Math.random() * 0.5;
+      }
+      if (Math.random() < 0.025) {
+        this.compositeMaterial.uniforms.uInvert.value = 1.0;
+        setTimeout(() => { this.compositeMaterial.uniforms.uInvert.value = 0.0; }, 50 + Math.random() * 80);
+      }
+    } else if (state.isAltered) {
+      this.compositeMaterial.uniforms.uChromaticIntensity.value *= 3.5;
+      this.compositeMaterial.uniforms.uGrainIntensity.value *= 3.0;
+      this.compositeMaterial.uniforms.uVignetteIntensity.value *= 1.6;
+      this.compositeMaterial.uniforms.uBloomMix.value *= 1.3;
+      this.compositeMaterial.uniforms.uColorShift.value.set(0.12, -0.06, -0.10);
+
+      this.compositeMaterial.uniforms.uScanLineHardcore.value = 0;
+      this.compositeMaterial.uniforms.uCrtCurvature.value = 0;
+      this.compositeMaterial.uniforms.uRgbSplit.value = 0;
+      this.compositeMaterial.uniforms.uScreenTilt.value = 0;
+      this.compositeMaterial.uniforms.uGlitchBlock.value = 0;
+
+      if (Math.random() < 0.04) {
+        this.compositeMaterial.uniforms.uChapterFlash.value += 0.3 + Math.random() * 0.4;
+      }
+      if (Math.random() < 0.008) {
+        this.compositeMaterial.uniforms.uInvert.value = 1.0;
+        setTimeout(() => { this.compositeMaterial.uniforms.uInvert.value = 0.0; }, 50 + Math.random() * 50);
+      }
+    } else {
+      this.compositeMaterial.uniforms.uColorShift.value.set(0, 0, 0);
+      this.compositeMaterial.uniforms.uInvert.value = 0;
+      this.compositeMaterial.uniforms.uScanLineHardcore.value = 0;
+      this.compositeMaterial.uniforms.uCrtCurvature.value = 0;
+      this.compositeMaterial.uniforms.uRgbSplit.value = 0;
+      this.compositeMaterial.uniforms.uScreenTilt.value = 0;
+      this.compositeMaterial.uniforms.uGlitchBlock.value = 0;
+    }
 
     const dt = state.deltaTime ?? 0.016;
     for (let i = this.shockwaves.length - 1; i >= 0; i--) {

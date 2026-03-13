@@ -17,6 +17,8 @@ uniform float uDistortion;
 uniform float uDiskSpeed;
 uniform float uIntensity;
 uniform float uExplosion;
+uniform vec3 uAlteredTint;
+uniform float uPulsation;
 
 varying vec2 vUv;
 
@@ -43,13 +45,7 @@ vec3 starfield(vec3 rd) {
   float _ss = max(uScroll - 0.6, 0.0);
   float scrollStretch = uScroll * uScroll * 0.6 + _ss * _ss * 2.0;
   vec3 stretchDir = vec3(0.0, 0.0, -1.0);
-  float spiralTwist = uScroll * uScroll * 0.3;
-  vec3 twistedRd = vec3(
-    rd.x * cos(spiralTwist) - rd.y * sin(spiralTwist),
-    rd.x * sin(spiralTwist) + rd.y * cos(spiralTwist),
-    rd.z
-  );
-  vec3 stretchedRd = normalize(twistedRd + stretchDir * dot(twistedRd, stretchDir) * scrollStretch);
+  vec3 stretchedRd = normalize(rd + stretchDir * dot(rd, stretchDir) * scrollStretch);
 
   for (int layer = 0; layer < 3; layer++) {
     float scale = 50.0 + float(layer) * 45.0;
@@ -57,35 +53,43 @@ vec3 starfield(vec3 rd) {
     vec3 id = floor(p);
     vec3 fd = fract(p);
 
-    vec3 h3 = hash33(id);
-    float dist = length(h3 - fd);
-    float h = hash(dot(id, vec3(127.1, 311.7, 74.7)));
-
     float threshold = 0.38 - float(layer) * 0.04;
 
-    if (h > threshold) {
-      float magnitude = (h - threshold) / (1.0 - threshold);
+    for (int ox = -1; ox <= 1; ox++) {
+    for (int oy = -1; oy <= 1; oy++) {
+    for (int oz = -1; oz <= 1; oz++) {
+      vec3 offset = vec3(float(ox), float(oy), float(oz));
+      vec3 nid = id + offset;
+      vec3 h3 = hash33(nid);
+      float dist = length(h3 + offset - fd);
+      float h = hash(dot(nid, vec3(127.1, 311.7, 74.7)));
 
-      float core = exp(-dist * dist * 350.0);
-      float halo = exp(-dist * dist * 60.0) * 0.3;
-      float softGlow = exp(-dist * dist * 14.0) * 0.06;
-      float brightness = core + halo * magnitude + softGlow * magnitude;
-      brightness *= sqrt(magnitude);
+      if (h > threshold) {
+        float magnitude = (h - threshold) / (1.0 - threshold);
 
-      float twinkle = sin(uTime * (0.5 + h * 1.2) + h * TAU) * 0.08 + 0.92;
-      float twinkle2 = sin(uTime * (1.8 + h * 3.0) + h * 17.0) * 0.04 + 0.96;
-      brightness *= twinkle * twinkle2;
+        float core = exp(-dist * dist * 350.0);
+        float halo = exp(-dist * dist * 60.0) * 0.3;
+        float softGlow = exp(-dist * dist * 14.0) * 0.06;
+        float brightness = core + halo * magnitude + softGlow * magnitude;
+        brightness *= sqrt(magnitude);
 
-      float colorSeed = hash(dot(id, vec3(53.1, 97.3, 161.7)));
-      vec3 starColor;
-      if (colorSeed < 0.08) starColor = mix(vec3(1.0, 0.67, 0.37), vec3(1.0, 0.72, 0.47), colorSeed * 12.5);
-      else if (colorSeed < 0.22) starColor = mix(vec3(1.0, 0.76, 0.54), vec3(1.0, 0.85, 0.72), (colorSeed - 0.08) * 7.14);
-      else if (colorSeed < 0.5) starColor = mix(vec3(1.0, 0.93, 0.86), vec3(1.0, 1.0, 1.0), (colorSeed - 0.22) * 3.57);
-      else if (colorSeed < 0.78) starColor = mix(vec3(1.0, 0.92, 0.82), vec3(1.0, 0.88, 0.75), (colorSeed - 0.5) * 3.57);
-      else starColor = mix(vec3(1.0, 0.82, 0.65), vec3(1.0, 0.78, 0.58), (colorSeed - 0.78) * 4.55);
+        float twinkle = sin(uTime * (0.5 + h * 1.2) + h * TAU) * 0.08 + 0.92;
+        float twinkle2 = sin(uTime * (1.8 + h * 3.0) + h * 17.0) * 0.04 + 0.96;
+        brightness *= twinkle * twinkle2;
 
-      float layerScale = 0.7 / float(layer + 1);
-      col += starColor * brightness * layerScale * 1.2;
+        float colorSeed = hash(dot(nid, vec3(53.1, 97.3, 161.7)));
+        vec3 starColor;
+        if (colorSeed < 0.08) starColor = mix(vec3(1.0, 0.67, 0.37), vec3(1.0, 0.72, 0.47), colorSeed * 12.5);
+        else if (colorSeed < 0.22) starColor = mix(vec3(1.0, 0.76, 0.54), vec3(1.0, 0.85, 0.72), (colorSeed - 0.08) * 7.14);
+        else if (colorSeed < 0.5) starColor = mix(vec3(1.0, 0.93, 0.86), vec3(1.0, 1.0, 1.0), (colorSeed - 0.22) * 3.57);
+        else if (colorSeed < 0.78) starColor = mix(vec3(1.0, 0.92, 0.82), vec3(1.0, 0.88, 0.75), (colorSeed - 0.5) * 3.57);
+        else starColor = mix(vec3(1.0, 0.82, 0.65), vec3(1.0, 0.78, 0.58), (colorSeed - 0.78) * 4.55);
+
+        float layerScale = 0.7 / float(layer + 1);
+        col += starColor * brightness * layerScale * 1.2;
+      }
+    }
+    }
     }
   }
 
@@ -324,6 +328,14 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
     diskColor = mix(diskColor, vec3(dot(diskColor, vec3(0.2126, 0.7152, 0.0722))), (diskPeak - 1.2) * 0.15);
   }
 
+  diskColor += uAlteredTint * density * 0.3;
+
+  if (uPulsation > 0.01 && uScroll > 0.7) {
+    float fragStr = (uScroll - 0.7) / 0.3 * 0.3;
+    float fragNoise = fract(sin(floor(rotAngle * 8.0 + r * 3.0 + uTime * 0.5) * 127.1) * 43758.5453);
+    density *= 1.0 - fragStr * step(0.6, fragNoise);
+  }
+
   return vec4(diskColor * density, density * scrollDim);
 }
 
@@ -399,10 +411,11 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
   for (int i = 0; i < MAX_STEPS; i++) {
     float r = length(pos);
 
-    if (r < SCHWARZSCHILD_RADIUS) {
-      float edgeDist = smoothstep(SCHWARZSCHILD_RADIUS * 0.4, SCHWARZSCHILD_RADIUS, r);
+    float pulseSR = SCHWARZSCHILD_RADIUS * (1.0 + uPulsation * sin(uTime * 5.0) * 0.15);
+    if (r < pulseSR) {
+      float edgeDist = smoothstep(pulseSR * 0.4, pulseSR, r);
       vec3 edgeRim = vec3(0.6, 0.35, 0.15) * edgeDist * edgeDist * 0.06;
-      float captureRedshift = smoothstep(SCHWARZSCHILD_RADIUS, SCHWARZSCHILD_RADIUS * 0.3, r);
+      float captureRedshift = smoothstep(pulseSR, pulseSR * 0.3, r);
       color = accumulatedDiskColor * (1.0 - captureRedshift) + edgeRim;
       glow = edgeDist * 0.15;
       return;
@@ -590,8 +603,8 @@ void main() {
     float sDist = length(sUv);
     float sAngle = atan(sUv.y, sUv.x);
 
-    float flashPeak = smoothstep(0.0, 0.015, ex) * (1.0 - smoothstep(0.015, 0.12, ex));
-    color = mix(color, vec3(1.0, 0.97, 0.9) * 12.0, flashPeak);
+    float flashPeak = smoothstep(0.0, 0.015, ex) * (1.0 - smoothstep(0.015, 0.15, ex));
+    color = mix(color, vec3(1.0, 0.97, 0.9) * 16.0, flashPeak);
 
     float expandSpeed = 2.5;
     float expandR = exClamped * expandSpeed;
@@ -608,7 +621,7 @@ void main() {
     fireColor = mix(fireColor, vec3(1.0, 0.45, 0.08), fireTemp * fireTemp);
     fireColor = mix(fireColor, vec3(0.6, 0.12, 0.02), pow(fireTemp, 3.0));
     fireColor *= 0.6 + firePattern * 0.8;
-    color += fireColor * fireEdge * fireActive * 4.0;
+    color += fireColor * fireEdge * fireActive * 5.5;
 
     for (int sw = 0; sw < 3; sw++) {
       float swDelay = float(sw) * 0.06;
@@ -655,7 +668,7 @@ void main() {
     float hotCore = exp(-sDist * sDist * mix(0.5, 15.0, smoothstep(0.05, 0.5, ex)));
     float coreActive = smoothstep(0.01, 0.04, ex) * (1.0 - smoothstep(0.6, 0.95, ex));
     vec3 coreCol = mix(vec3(1.0, 0.97, 0.9), vec3(1.0, 0.75, 0.35), smoothstep(0.1, 0.5, ex));
-    color += coreCol * hotCore * coreActive * 6.0;
+    color += coreCol * hotCore * coreActive * 8.0;
 
     float smokeActive = smoothstep(0.1, 0.25, ex) * (1.0 - smoothstep(0.7, 1.0, ex));
     float smN1 = snoise(vec3(sUv * 3.0 + ex * 1.5, uTime * 0.4)) * 0.5 + 0.5;

@@ -44,6 +44,8 @@ export class BlackHole {
         uDiskSpeed: { value: 1.2 },
         uIntensity: { value: 1.2 },
         uExplosion: { value: 0 },
+        uAlteredTint: { value: new THREE.Vector3(0, 0, 0) },
+        uPulsation: { value: 0 },
       },
       depthTest: false,
       depthWrite: false,
@@ -69,7 +71,7 @@ export class BlackHole {
     );
   }
 
-  update(state: { time: number; scroll: number; mouseSmooth: THREE.Vector2; explosion?: number }) {
+  update(state: { time: number; scroll: number; mouseSmooth: THREE.Vector2; explosion?: number; isAltered?: boolean; isHardcore?: boolean }) {
     this.material.uniforms.uTime.value = state.time;
     this.material.uniforms.uScroll.value = state.scroll;
     this.material.uniforms.uMouse.value.copy(state.mouseSmooth);
@@ -77,6 +79,19 @@ export class BlackHole {
     this.material.uniforms.uIntensity.value = 1.0 + state.scroll * 0.3;
     if (state.explosion !== undefined) {
       this.material.uniforms.uExplosion.value = state.explosion;
+    }
+    if (state.isHardcore) {
+      this.material.uniforms.uAlteredTint.value.set(0.35, -0.15, -0.25);
+      this.material.uniforms.uDiskSpeed.value = 2.2;
+      this.material.uniforms.uPulsation.value = 0.15;
+    } else if (state.isAltered) {
+      this.material.uniforms.uAlteredTint.value.set(0.2, -0.1, -0.15);
+      this.material.uniforms.uDiskSpeed.value = 1.5;
+      this.material.uniforms.uPulsation.value = 0;
+    } else {
+      this.material.uniforms.uAlteredTint.value.set(0, 0, 0);
+      this.material.uniforms.uDiskSpeed.value = 1.2;
+      this.material.uniforms.uPulsation.value = 0;
     }
   }
 

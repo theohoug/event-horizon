@@ -598,8 +598,9 @@ function computeVisualAnalysis(desktopFrames: VisualFrame[], mobileFrames: Visua
   };
 }
 
-async function captureData(browser: Browser): Promise<CaptureData> {
-  log('Launching analysis browser...', 'phase');
+async function captureData(browser: Browser, visitCount = 0): Promise<CaptureData> {
+  const modeName = ANALYSER_CONFIG.visitModes.find(m => m.visits === visitCount)?.name || `visit-${visitCount}`;
+  log(`Launching analysis browser (mode: ${modeName}, visits: ${visitCount})...`, 'phase');
   const context = await browser.newContext({
     viewport: { width: ANALYSER_CONFIG.capture.screenshotWidth, height: ANALYSER_CONFIG.capture.screenshotHeight },
   });
@@ -635,7 +636,7 @@ async function captureData(browser: Browser): Promise<CaptureData> {
 
   log('Loading site...', 'info');
   await page.goto(ANALYSER_CONFIG.DEV_SERVER_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await page.evaluate(`localStorage.setItem('eh_visits', '5')`);
+  await page.evaluate(`localStorage.setItem('eh_visits', '${visitCount}')`);
 
   const loadStart = Date.now();
   await page.reload({ waitUntil: 'networkidle', timeout: 60000 });
@@ -886,7 +887,7 @@ async function captureData(browser: Browser): Promise<CaptureData> {
       };
     });
     await mobilePage.goto(ANALYSER_CONFIG.DEV_SERVER_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    await mobilePage.evaluate(`localStorage.setItem('eh_visits', '5')`);
+    await mobilePage.evaluate(`localStorage.setItem('eh_visits', '${visitCount}')`);
     await mobilePage.reload({ waitUntil: 'networkidle', timeout: 60000 });
     await mobilePage.waitForTimeout(2000);
 
@@ -1114,6 +1115,106 @@ async function runInteractionTest(browser: Browser): Promise<CaptureData['intera
   }
 
   return { scrollResponsive, mouseResponsive, avgResponseMs, errors, interactions };
+}
+
+interface ModeCapture {
+  modeName: string;
+  visitCount: number;
+  screenshots: Map<number, Buffer>;
+  visualFrames: VisualFrame[];
+  chapterTexts: string[];
+  consoleErrors: string[];
+}
+
+async function captureModeLight(browser: Browser, visitCount: number, positions: number): Promise<ModeCapture> {
+  const modeName = ANALYSER_CONFIG.visitModes.find(m => m.visits === visitCount)?.name || `visit-${visitCount}`;
+  log(`Capturing mode "${modeName}" (visits=${visitCount}, ${positions} positions)...`, 'phase');
+
+  const context = await browser.newContext({
+    viewport: { width: ANALYSER_CONFIG.capture.screenshotWidth, height: ANALYSER_CONFIG.capture.screenshotHeight },
+  });
+  const page = await context.newPage();
+  await page.addInitScript(() => {
+    const origGetContext = HTMLCanvasElement.prototype.getContext;
+    (HTMLCanvasElement.prototype as any).getContext = function(type: string, attrs?: any) {
+      if (type === 'webgl' || type === 'webgl2' || type === 'experimental-webgl') {
+        attrs = Object.assign({}, attrs, { preserveDrawingBuffer: true });
+      }
+      return origGetContext.call(this, type, attrs);
+    };
+  });
+
+  const consoleErrors: string[] = [];
+  page.on('console', msg => {
+    if (msg.type() === 'error') consoleErrors.push(msg.text());
+  });
+
+  await page.goto(ANALYSER_CONFIG.DEV_SERVER_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.evaluate(`localStorage.setItem('eh_visits', '${visitCount}')`);
+  await page.reload({ waitUntil: 'networkidle', timeout: 60000 });
+
+  await page.waitForFunction(() => {
+    const loader = document.getElementById('loader');
+    if (!loader) return true;
+    const s = getComputedStyle(loader);
+    return s.display === 'none' || s.opacity === '0';
+  }, { timeout: 30000 }).catch(() => {});
+  await page.waitForTimeout(1000);
+
+  try {
+    const noBtn = await page.$('#sound-prompt-no');
+    if (noBtn) await noBtn.click();
+    else await page.keyboard.press('Escape');
+  } catch {}
+  await page.waitForTimeout(2000);
+
+  const screenshots = new Map<number, Buffer>();
+  const visualFrames: VisualFrame[] = [];
+  let captured = 0;
+
+  for (let i = 0; i < positions; i++) {
+    const scrollPos = i / (positions - 1);
+    const pct = Math.round(scrollPos * 100);
+
+    try {
+      await page.evaluate((s: number) => {
+        window.scrollTo(0, s * Math.max(document.body.scrollHeight - window.innerHeight, 1));
+      }, scrollPos);
+      await page.waitForTimeout(ANALYSER_CONFIG.capture.settleTime);
+    } catch { continue; }
+
+    try {
+      const buf = await page.screenshot({ type: 'png', timeout: 8000 });
+      if (buf && buf.length > 1000) {
+        screenshots.set(scrollPos, buf);
+        captured++;
+
+        const visualData = analyzeScreenshotPixels(buf);
+        if (visualData && visualData.avgLuminance > 0.001) {
+          visualFrames.push({ scrollPos, ...visualData });
+        }
+
+        if (i % 5 === 0) log(`  [${modeName}] @ ${String(pct).padStart(3)}% — ${captured}/${positions}`, 'info');
+      }
+    } catch {}
+  }
+
+  const chapterTexts: string[] = [];
+  try {
+    const texts = await page.evaluate(() => {
+      const ct = document.getElementById('chapter-text');
+      if (!ct) return [];
+      return Array.from(ct.querySelectorAll('.line')).map(l => (l as HTMLElement).textContent?.trim() || '');
+    });
+    chapterTexts.push(...texts.filter(t => t.length > 0));
+  } catch {}
+
+  log(`  [${modeName}] Done: ${captured} screenshots, ${visualFrames.length} pixel frames, ${consoleErrors.length} errors`, captured > 0 ? 'ok' : 'warn');
+
+  await page.close();
+  await context.close();
+
+  return { modeName, visitCount, screenshots, visualFrames, chapterTexts, consoleErrors };
 }
 
 function analyzeCode(): CodeAnalysis {
@@ -1933,7 +2034,7 @@ function computeOverallConfidence(
   };
 }
 
-function generateReport(result: AnalysisResult, visualData?: VisualAnalysis, captureData?: CaptureData): string {
+function generateReport(result: AnalysisResult, visualData?: VisualAnalysis, captureData?: CaptureData, secondaryModes?: ModeCapture[]): string {
   const { predictions: p, categories: cats, competitiveAnalysis: comp, jurySimulation: jury } = result;
   const bar = (pct: number) => {
     const filled = Math.round(pct / 5);
@@ -1948,7 +2049,7 @@ function generateReport(result: AnalysisResult, visualData?: VisualAnalysis, cap
   let report = `
 \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
 \u2551                                                                   \u2551
-\u2551   SOTY ANALYSER v3.0 \u2014 Honest Bayesian Prediction Engine         \u2551
+\u2551   SOTY ANALYSER v3.1 \u2014 Multi-Mode Prediction Engine               \u2551
 \u2551   ${result.dataPointsUsed} data points \u2022 ${measuredCount}/${totalSources} sources \u2022 ${totalScreenshots}+ captures   \u2551
 \u2551   Crafted by Cleanlystudio                                        \u2551
 \u2551                                                                   \u2551
@@ -2114,6 +2215,69 @@ ${result.strengthsAndWeaknesses.quickWins.map(q => `    \u2192 ${q}`).join('\n')
 ${result.strengthsAndWeaknesses.sotyGapAnalysis.map(g => `    \u2022 ${g}`).join('\n')}
 `;
 
+  if (secondaryModes && secondaryModes.length > 0) {
+    report += `
+\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+                    MULTI-MODE ANALYSIS (${secondaryModes.length + 1} visit loops)
+\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+
+  The experience evolves across repeat visits (localStorage-tracked).
+  Each mode was captured independently with separate browser contexts.
+
+  MODE: NORMAL (visit #1) \u2014 Primary analysis above
+    Screenshots: ${captureData?.screenshots.size || 0} desktop + ${captureData?.mobileScreenshots.size || 0} mobile
+`;
+
+    for (const mode of secondaryModes) {
+      const avgLum = mode.visualFrames.length > 0
+        ? mode.visualFrames.reduce((s, f) => s + f.avgLuminance, 0) / mode.visualFrames.length
+        : 0;
+      const avgSat = mode.visualFrames.length > 0
+        ? mode.visualFrames.reduce((s, f) => s + f.saturation, 0) / mode.visualFrames.length
+        : 0;
+      const avgContrast = mode.visualFrames.length > 0
+        ? mode.visualFrames.reduce((s, f) => s + f.contrast, 0) / mode.visualFrames.length
+        : 0;
+
+      report += `
+  MODE: ${mode.modeName.toUpperCase()} (visit #${mode.visitCount + 1})
+    Screenshots: ${mode.screenshots.size}
+    Visual frames: ${mode.visualFrames.length}
+    Avg Luminance: ${(avgLum * 100).toFixed(1)}%
+    Avg Saturation: ${(avgSat * 100).toFixed(1)}%
+    Avg Contrast: ${(avgContrast * 100).toFixed(1)}%
+    Console errors: ${mode.consoleErrors.length}${mode.consoleErrors.length > 0 ? ` \u2014 ${mode.consoleErrors.slice(0, 3).join('; ')}` : ''}
+    Chapter texts found: ${mode.chapterTexts.length}${mode.chapterTexts.length > 0 ? `\n      ${mode.chapterTexts.slice(0, 5).map(t => `"${t.slice(0, 50)}"`).join('\n      ')}` : ''}
+`;
+
+      if (mode.visualFrames.length > 0) {
+        report += `    Per-frame breakdown:\n`;
+        for (const f of mode.visualFrames) {
+          report += `      @ ${(f.scrollPos * 100).toFixed(0).padStart(3)}%  L:${(f.avgLuminance * 100).toFixed(0).padStart(3)}%  S:${(f.saturation * 100).toFixed(0).padStart(3)}%  C:${(f.contrast * 100).toFixed(0).padStart(3)}%  ${f.dominantHueName.padEnd(12)}  Dark:${(f.darkPixelRatio * 100).toFixed(0)}%\n`;
+        }
+      }
+    }
+
+    const normalLum = captureData?.visualAnalysis?.avgLuminance ?? 0;
+    report += `
+  CROSS-MODE COMPARISON:
+    Mode              Avg Luminance  Avg Saturation  Screenshots  Errors
+    Normal            ${(normalLum * 100).toFixed(1).padStart(6)}%        ${((captureData?.visualAnalysis?.avgSaturation ?? 0) * 100).toFixed(1).padStart(6)}%       ${String(captureData?.screenshots.size || 0).padStart(4)}      ${String(captureData?.consoleErrors.length || 0).padStart(3)}
+`;
+    for (const mode of secondaryModes) {
+      const avgL = mode.visualFrames.length > 0 ? mode.visualFrames.reduce((s, f) => s + f.avgLuminance, 0) / mode.visualFrames.length : 0;
+      const avgS = mode.visualFrames.length > 0 ? mode.visualFrames.reduce((s, f) => s + f.saturation, 0) / mode.visualFrames.length : 0;
+      report += `    ${mode.modeName.padEnd(18)}${(avgL * 100).toFixed(1).padStart(6)}%        ${(avgS * 100).toFixed(1).padStart(6)}%       ${String(mode.screenshots.size).padStart(4)}      ${String(mode.consoleErrors.length).padStart(3)}\n`;
+    }
+
+    report += `
+  NOTE: Awwwards scoring is based on the NORMAL (first visit) mode.
+  Secondary modes demonstrate replay value and creative depth — a significant
+  differentiator for SOTY consideration. The experience offers ${secondaryModes.length + 1} distinct
+  visual/narrative states that reward repeat visitors.
+`;
+  }
+
   return report;
 }
 
@@ -2121,8 +2285,8 @@ async function main() {
   console.log(`
 ${A.magenta}${A.bold}
   \u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
-  \u2551   SOTY ANALYSER v3.0 \u2014 Bayesian Prediction Engine   \u2551
-  \u2551   200+ refs \u2022 20 jury profiles \u2022 33 teleport caps  \u2551
+  \u2551   SOTY ANALYSER v3.1 \u2014 Multi-Mode Prediction Engine  \u2551
+  \u2551   200+ refs \u2022 20 jury \u2022 3 visit loops \u2022 pixel caps  \u2551
   \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d
 ${A.reset}`);
 
@@ -2151,7 +2315,15 @@ ${A.reset}`);
       '--disable-vulkan-fallback-to-gl-for-testing',
     ],
   });
-  const capture = await captureData(browser);
+  const primaryMode = ANALYSER_CONFIG.visitModes.find(m => m.isPrimary)!;
+  const capture = await captureData(browser, primaryMode.visits);
+
+  const secondaryModes: ModeCapture[] = [];
+  for (const mode of ANALYSER_CONFIG.visitModes) {
+    if (mode.isPrimary) continue;
+    const modeCapture = await captureModeLight(browser, mode.visits, mode.positions);
+    secondaryModes.push(modeCapture);
+  }
   await browser.close();
 
   log('Scoring categories (Bayesian cross-validation)...', 'phase');
@@ -2221,7 +2393,7 @@ ${A.reset}`);
     detailedReport: '',
   };
 
-  result.detailedReport = generateReport(result, capture.visualAnalysis, capture);
+  result.detailedReport = generateReport(result, capture.visualAnalysis, capture, secondaryModes);
 
   const outDir = ANALYSER_CONFIG.OUTPUT_DIR;
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
@@ -2232,8 +2404,8 @@ ${A.reset}`);
   fs.writeFileSync(path.join(reportDir, 'analysis.json'), JSON.stringify(result, null, 2));
   fs.writeFileSync(path.join(reportDir, 'report.txt'), result.detailedReport);
 
-  const desktopDir = path.join(reportDir, 'desktop');
-  const mobileDir = path.join(reportDir, 'mobile');
+  const desktopDir = path.join(reportDir, 'desktop-normal');
+  const mobileDir = path.join(reportDir, 'mobile-normal');
   fs.mkdirSync(desktopDir, { recursive: true });
   fs.mkdirSync(mobileDir, { recursive: true });
   for (const [pos, buf] of capture.screenshots) {
@@ -2242,7 +2414,16 @@ ${A.reset}`);
   for (const [pos, buf] of capture.mobileScreenshots) {
     fs.writeFileSync(path.join(mobileDir, `${String(Math.round(pos * 100)).padStart(3, '0')}.png`), buf);
   }
-  log(`  ${capture.screenshots.size} desktop + ${capture.mobileScreenshots.size} mobile screenshots saved`, 'ok');
+  log(`  ${capture.screenshots.size} desktop + ${capture.mobileScreenshots.size} mobile screenshots saved (normal mode)`, 'ok');
+
+  for (const mode of secondaryModes) {
+    const modeDir = path.join(reportDir, `desktop-${mode.modeName}`);
+    fs.mkdirSync(modeDir, { recursive: true });
+    for (const [pos, buf] of mode.screenshots) {
+      fs.writeFileSync(path.join(modeDir, `${String(Math.round(pos * 100)).padStart(3, '0')}.png`), buf);
+    }
+    log(`  ${mode.screenshots.size} screenshots saved (${mode.modeName} mode)`, 'ok');
+  }
 
   log(`Report saved to ${reportDir}`, 'ok');
 

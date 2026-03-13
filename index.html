@@ -28,29 +28,44 @@
   <meta name="color-scheme" content="dark" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="manifest" href="/manifest.json" />
-  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+  <meta name="robots" content="index, follow" />
   <title>Event Horizon — An Interactive Journey Into a Black Hole</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@300;400&family=Space+Grotesk:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    #loader{position:fixed;inset:0;z-index:10000;background:#050505;display:flex;align-items:center;justify-content:center;transition:opacity .6s}
+    #loader-inner{text-align:center;color:rgba(232,232,255,.9);font-family:system-ui,-apple-system,sans-serif}
+    #loader-text{font-size:clamp(1rem,3vw,1.8rem);letter-spacing:.4em;margin-bottom:.5rem}
+    #loader-sub{font-size:.75rem;opacity:.5;margin-bottom:1.5rem}
+    #loader-bar{width:200px;height:1px;background:rgba(255,255,255,.1);margin:0 auto;border-radius:1px;overflow:hidden}
+    #loader-bar-fill{width:0;height:100%;background:linear-gradient(90deg,#FFB347,#592187);transition:width .3s}
+    #loader-pct{font-size:.65rem;margin-top:.5rem;opacity:.4;font-variant-numeric:tabular-nums}
+  </style>
+  <link rel="preload" href="/fonts/cinzel-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
+    "@type": "WebApplication",
     "name": "Event Horizon — An Interactive Journey Into a Black Hole",
-    "description": "Scroll through 9 chapters of cosmic terror. Experience spaghettification, time dilation, and singularity — all in your browser.",
+    "description": "A scroll-driven WebGL experience that simulates falling into a black hole. 9 chapters explore gravitational lensing, spaghettification, time dilation, and singularity — with procedural audio, GLSL shaders, and narrative storytelling.",
     "url": "https://event-horizon.cleanlystudio.pro",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "WebGL 2.0",
     "author": {
       "@type": "Organization",
       "name": "Cleanlystudio",
       "url": "https://cleanlystudio.pro"
     },
     "genre": "Interactive Experience",
-    "inLanguage": "en",
+    "inLanguage": ["en", "fr"],
     "isAccessibleForFree": true,
     "datePublished": "2026-03-05",
-    "keywords": "black hole, interactive, WebGL, three.js, cosmic, experience"
+    "keywords": "black hole, interactive experience, WebGL, three.js, GLSL shaders, cosmic horror, scroll-driven, procedural audio, gravitational lensing, spaghettification",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
   }
   </script>
   <!-- Crafted by Cleanlystudio • cleanlystudio.pro -->
@@ -82,7 +97,6 @@
     </div>
 
     <div id="scan-line" aria-hidden="true"></div>
-    <div id="chapter-transition-bar" aria-hidden="true"></div>
 
     <div class="corner-ornament top-left" aria-hidden="true"></div>
     <div class="corner-ornament top-right" aria-hidden="true"></div>
@@ -181,7 +195,8 @@
           <button id="sound-prompt-yes">Enter with sound</button>
           <button id="sound-prompt-no">Skip</button>
         </div>
-        <button id="sound-lang-toggle" aria-label="Switch language" data-hint="changer de langue">EN / FR</button>
+        <button id="sound-lang-toggle" aria-label="Switch language"><span class="lang-opt" data-lang="en">EN</span><span class="lang-sep">·</span><span class="lang-opt" data-lang="fr">FR</span></button>
+        <div id="sound-warning" aria-label="Content warning">This experience contains flashing lights and psychological themes.</div>
       </div>
     </div>
 
@@ -206,6 +221,7 @@
         <div class="credits-line credits-spacer"></div>
         <div class="credits-line credits-footer">A <a href="https://cleanlystudio.pro" target="_blank" rel="noopener">Cleanlystudio</a> experience · 2026</div>
         <div id="share-section">
+          <div id="share-count" aria-hidden="true"></div>
           <button id="share-btn" aria-label="Share this experience">Share this journey</button>
           <button id="return-btn" aria-label="Return to the beginning">Return to surface</button>
         </div>
@@ -241,9 +257,48 @@
       </button>
     </div>
 
-    <div id="lang-switch" aria-label="Language selector">
-      <button class="lang-opt" data-lang="en" aria-label="English">EN</button>
-      <button class="lang-opt" data-lang="fr" aria-label="Français">FR</button>
+    <button id="lang-btn" aria-label="Switch language"><span class="lang-opt" data-lang="en">EN</span><span class="lang-sep">·</span><span class="lang-opt" data-lang="fr">FR</span></button>
+
+
+
+    <div id="trap-overlay" aria-hidden="true">
+      <div id="trap-vortex" aria-hidden="true"></div>
+      <div id="trap-particles" aria-hidden="true">
+        <span class="trap-particle"></span><span class="trap-particle"></span><span class="trap-particle"></span>
+        <span class="trap-particle"></span><span class="trap-particle"></span><span class="trap-particle"></span>
+        <span class="trap-particle"></span><span class="trap-particle"></span><span class="trap-particle"></span>
+        <span class="trap-particle"></span><span class="trap-particle"></span><span class="trap-particle"></span>
+      </div>
+      <div id="trap-inner">
+        <div id="trap-title">EVENT HORIZON</div>
+        <div id="trap-line"></div>
+        <div id="trap-text"></div>
+        <div id="trap-sub"></div>
+        <div id="trap-choices">
+          <button id="trap-share" class="trap-choice">Share to escape</button>
+          <button id="trap-accept" class="trap-choice trap-choice-dim">Accept the void</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="loop4-terminal" aria-hidden="true">
+      <div id="loop4-inner">
+        <div id="loop4-scanline" aria-hidden="true"></div>
+        <div id="loop4-text"></div>
+        <div id="loop4-countdown"></div>
+        <div id="loop4-cursor" aria-hidden="true">_</div>
+      </div>
+    </div>
+
+    <div id="escape-catcher" aria-hidden="true">
+      <div id="escape-catcher-inner">
+        <div id="escape-glitch-line" aria-hidden="true"></div>
+        <div id="escape-title">You tried to escape.</div>
+        <div id="escape-subtitle">But time does not forget you.</div>
+        <div id="escape-loop-count"></div>
+        <div id="escape-static" aria-hidden="true"></div>
+        <button id="escape-resume">Resume falling</button>
+      </div>
     </div>
 
     <button id="mute-btn" aria-label="Toggle sound">

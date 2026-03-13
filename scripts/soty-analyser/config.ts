@@ -49,4 +49,10 @@ export const ANALYSER_CONFIG = {
     { id: 7, name: 'SINGULARITY', scroll: 0.7778 },
     { id: 8, name: 'WHAT REMAINS', scroll: 0.8889 },
   ],
+
+  visitModes: [
+    { name: 'normal', visits: 0, positions: 120, isPrimary: true },
+    { name: 'altered', visits: 1, positions: 30, isPrimary: false },
+    { name: 'hardcore', visits: 2, positions: 30, isPrimary: false },
+  ],
 } as const;

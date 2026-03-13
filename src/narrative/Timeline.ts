@@ -34,9 +34,10 @@ const CHAPTER_REVEALS: { triggerStart: string; triggerEnd: string; reveal: Revea
   { triggerStart: 'top center', triggerEnd: 'bottom bottom', reveal: 'center-out' },
 ];
 
-function getChapters(): Chapter[] {
+function getChapters(isAltered = false, isHardcore = false): Chapter[] {
   const tr = t();
-  return tr.chapters.map((ch, i) => ({
+  const src = isHardcore ? tr.hardcoreChapters : isAltered ? tr.alteredChapters : tr.chapters;
+  return src.map((ch, i) => ({
     id: i,
     title: ch.title,
     subtitle: ch.subtitle,
@@ -46,17 +47,26 @@ function getChapters(): Chapter[] {
 
 export class Timeline {
   private started = false;
-  private activeChapter = -1;
+  activeChapter = -1;
   private transitioning = false;
   private creditsVisible = false;
   private pendingChapter: Chapter | null = null;
   private currentPattern: RevealPattern = 'char-rise';
   private creditsTl: gsap.core.Timeline | null = null;
+  isAlteredMode = false;
+  isHardcoreMode = false;
+
+  resetCredits() {
+    this.creditsVisible = false;
+    this.activeChapter = -1;
+    this.transitioning = false;
+    if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
+  }
 
   refreshCurrentChapter(scroll: number) {
     if (!this.started || this.creditsVisible) return;
     const chapterIndex = Math.min(8, Math.floor(scroll * 9));
-    const chapters = getChapters();
+    const chapters = getChapters(this.isAlteredMode, this.isHardcoreMode);
     const chapter = chapters[chapterIndex];
     if (!chapter) return;
     this.activeChapter = -1;
@@ -68,7 +78,7 @@ export class Timeline {
     if (this.started) return;
     this.started = true;
 
-    const chapters = getChapters();
+    const chapters = getChapters(this.isAlteredMode, this.isHardcoreMode);
     chapters.forEach((chapter) => {
       const section = document.querySelector(`[data-chapter="${chapter.id}"]`);
       if (!section) return;
@@ -80,7 +90,7 @@ export class Timeline {
         onEnter: () => this.showChapter(chapter),
         onLeaveBack: () => {
           if (chapter.id > 0) {
-            this.showChapter(getChapters()[chapter.id - 1]);
+            this.showChapter(getChapters(this.isAlteredMode, this.isHardcoreMode)[chapter.id - 1]);
           }
         },
       });
@@ -90,14 +100,14 @@ export class Timeline {
     if (lastSection) {
       ScrollTrigger.create({
         trigger: lastSection,
-        start: 'top+=15% center',
+        start: 'top+=55% center',
         end: 'bottom bottom',
         onEnter: () => this.showCredits(),
         onLeaveBack: () => this.hideCredits(),
       });
     }
 
-    setTimeout(() => this.showChapter(getChapters()[0]), 300);
+    setTimeout(() => this.showChapter(getChapters(this.isAlteredMode, this.isHardcoreMode)[0]), 300);
   }
 
   private showCredits() {
@@ -344,30 +354,39 @@ export class Timeline {
     chars.forEach((c) => c.classList.add('revealed'));
   }
 
-  private revealCenterOut(chars: NodeListOf<Element>, tl: gsap.core.Timeline, delay: number, parent?: HTMLElement, isOpening?: boolean) {
+  private clearInlineFilter(el: HTMLElement) {
+    el.style.removeProperty('filter');
+    el.style.removeProperty('-webkit-filter');
+  }
+
+  private revealCenterOut(chars: NodeListOf<Element>, tl: gsap.core.Timeline, pos: number, parent?: HTMLElement, isOpening?: boolean) {
     if (parent) {
       const startScale = isOpening ? 1.6 : 1.15;
       const startBlur = isOpening ? 30 : 12;
       const duration = isOpening ? 2.0 : 1.0;
+      const el = parent;
       tl.fromTo(
         parent,
-        { opacity: 0, scale: startScale, filter: `blur(${startBlur}px)` },
+        { opacity: 0, scale: startScale, filter: `blur(${startBlur}px)`, y: 0 },
         {
           opacity: 1,
           scale: 1,
           filter: 'blur(0px)',
+          y: 0,
           duration,
           ease: isOpening ? 'power4.out' : 'power3.out',
-          delay,
-        }
+          onComplete: () => this.clearInlineFilter(el),
+        },
+        pos
       );
     }
-    tl.set(chars, { opacity: 1 }, delay);
-    tl.add(() => this.markRevealed(chars), delay + 0.1);
+    tl.set(chars, { opacity: 1 }, pos);
+    tl.add(() => this.markRevealed(chars), pos + 0.1);
   }
 
-  private revealWordCascade(parent: HTMLElement, tl: gsap.core.Timeline, delay: number) {
+  private revealWordCascade(parent: HTMLElement, tl: gsap.core.Timeline, pos: number) {
     const allChars = parent.querySelectorAll('.char');
+    const el = parent;
     tl.fromTo(
       parent,
       { opacity: 0, y: 25, filter: 'blur(8px)' },
@@ -377,48 +396,55 @@ export class Timeline {
         filter: 'blur(0px)',
         duration: 0.9,
         ease: 'power2.out',
-        delay,
-      }
+        onComplete: () => this.clearInlineFilter(el),
+      },
+      pos
     );
-    tl.set(allChars, { opacity: 1 }, delay);
-    tl.add(() => this.markRevealed(allChars), delay + 0.1);
+    tl.set(allChars, { opacity: 1 }, pos);
+    tl.add(() => this.markRevealed(allChars), pos + 0.1);
   }
 
-  private revealFlashBloom(chars: NodeListOf<Element>, tl: gsap.core.Timeline, delay: number, parent?: HTMLElement) {
+  private revealFlashBloom(chars: NodeListOf<Element>, tl: gsap.core.Timeline, pos: number, parent?: HTMLElement) {
     if (parent) {
+      const el = parent;
       tl.fromTo(
         parent,
-        { opacity: 0, scale: 1.3, filter: 'blur(6px) brightness(2)' },
+        { opacity: 0, scale: 1.3, filter: 'blur(6px) brightness(2)', y: 0 },
         {
           opacity: 1,
           scale: 1,
           filter: 'blur(0px) brightness(1)',
+          y: 0,
           duration: 0.7,
           ease: 'expo.out',
-          delay,
-        }
+          onComplete: () => this.clearInlineFilter(el),
+        },
+        pos
       );
     }
-    tl.set(chars, { opacity: 1 }, delay);
-    tl.add(() => this.markRevealed(chars), delay + 0.1);
+    tl.set(chars, { opacity: 1 }, pos);
+    tl.add(() => this.markRevealed(chars), pos + 0.1);
   }
 
-  private revealTypewriter(chars: NodeListOf<Element>, tl: gsap.core.Timeline, delay: number, parent?: HTMLElement) {
+  private revealTypewriter(chars: NodeListOf<Element>, tl: gsap.core.Timeline, pos: number, parent?: HTMLElement) {
     if (parent) {
+      const el = parent;
       tl.fromTo(
         parent,
-        { opacity: 0, filter: 'blur(10px)' },
+        { opacity: 0, filter: 'blur(10px)', y: 0 },
         {
           opacity: 1,
           filter: 'blur(0px)',
+          y: 0,
           duration: 1.2,
           ease: 'power2.out',
-          delay,
-        }
+          onComplete: () => this.clearInlineFilter(el),
+        },
+        pos
       );
     }
-    tl.set(chars, { opacity: 1 }, delay);
-    tl.add(() => this.markRevealed(chars), delay + 0.1);
+    tl.set(chars, { opacity: 1 }, pos);
+    tl.add(() => this.markRevealed(chars), pos + 0.1);
   }
 
   private static TEXT_OFFSETS: Record<number, { x: number; y: number; align: string }> = {
@@ -433,10 +459,21 @@ export class Timeline {
     8: { x: 0, y: 0, align: 'center' },
   };
 
+  private corruptText(text: string): string {
+    const glitchChars = ['\u0336', '\u0337', '\u0338'];
+    return text.split('').map(c => {
+      if (c === ' ' || c === '\n') return c;
+      if (Math.random() < 0.08) return c + glitchChars[Math.floor(Math.random() * glitchChars.length)];
+      return c;
+    }).join('');
+  }
+
   private createChapterContent(container: HTMLElement, chapter: Chapter) {
     container.innerHTML = '';
     const pattern = chapter.reveal;
     this.currentPattern = pattern;
+    if (this.isHardcoreMode) container.classList.add('hardcore-text');
+    else if (this.isAlteredMode) container.classList.add('altered-text');
 
     const offset = Timeline.TEXT_OFFSETS[chapter.id] || { x: 0, y: 0, align: 'center' };
     const centerTransform = 'translateX(-50%)';
@@ -452,16 +489,16 @@ export class Timeline {
     if (chapter.id === 0) {
       const poetryLine = document.createElement('div');
       poetryLine.className = 'line chapter-poetry';
-      poetryLine.textContent = t().poetry;
+      poetryLine.textContent = this.isHardcoreMode ? t().hardcorePoetry : this.isAlteredMode ? t().alteredPoetry : t().poetry;
       container.appendChild(poetryLine);
       tl.fromTo(poetryLine,
         { opacity: 0, filter: 'blur(12px)', y: 5 },
-        { opacity: 0.35, filter: 'blur(0px)', y: 0, duration: 2.5, ease: 'power2.out' },
+        { opacity: 0.35, filter: 'blur(0px)', y: 0, duration: 1.5, ease: 'power2.out' },
         0
       );
       tl.to(poetryLine,
-        { opacity: 0, filter: 'blur(6px)', y: -8, duration: 1.5, ease: 'power2.in' },
-        3.5
+        { opacity: 0, filter: 'blur(6px)', y: -8, duration: 1.0, ease: 'power2.in' },
+        2.0
       );
     }
 
@@ -470,10 +507,10 @@ export class Timeline {
     chapterNum.setAttribute('aria-hidden', 'true');
     chapterNum.textContent = String(chapter.id + 1).padStart(2, '0');
     container.appendChild(chapterNum);
-    const numDelay = chapter.id === 0 ? 1.5 : 0;
+    const numDelay = chapter.id === 0 ? 0.8 : 0;
     tl.fromTo(chapterNum,
       { opacity: 0, scale: 1.5, filter: 'blur(8px)' },
-      { opacity: 0.06, scale: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power2.out' },
+      { opacity: 0.12, scale: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power2.out' },
       numDelay
     );
 
@@ -485,44 +522,52 @@ export class Timeline {
     else if (chapter.id === 8) titleClass = 'line chapter-final';
     titleLine.className = titleClass;
     container.appendChild(titleLine);
-    this.splitTextToChars(titleLine, chapter.title);
-
+    const titleText = chapter.title;
+    this.splitTextToChars(titleLine, titleText);
     const titleChars = titleLine.querySelectorAll('.char');
-    const openingDelay = chapter.id === 0 ? 2.0 : 0;
+    const titlePos = chapter.id === 0 ? 1.0 : 0.3;
+    const subPos = chapter.id === 0 ? 2.0 : 1.0;
 
     if (chapter.id === 6) {
       titleLine.className = 'line chapter-vertical';
+      const el6 = titleLine;
       tl.fromTo(
         titleLine,
         { opacity: 0, filter: 'blur(12px)', y: 30 },
-        { opacity: 1, filter: 'blur(0px)', y: 0, duration: 1.5, ease: 'power3.out' }
+        { opacity: 1, filter: 'blur(0px)', y: 0, duration: 1.5, ease: 'power3.out', onComplete: () => this.clearInlineFilter(el6) },
+        titlePos
       );
-      tl.set(titleChars, { opacity: 1 }, 0);
-      tl.add(() => this.markRevealed(titleChars), 0.1);
+      tl.set(titleChars, { opacity: 1 }, titlePos);
+      tl.add(() => this.markRevealed(titleChars), titlePos + 0.1);
     } else if (chapter.id === 8) {
+      const el8 = titleLine;
       tl.fromTo(
         titleLine,
-        { opacity: 0, filter: 'blur(0px) brightness(3)', scale: 0.9 },
-        { opacity: 1, filter: 'blur(0px) brightness(1)', scale: 1, duration: 3.0, ease: 'power2.out' }
+        { opacity: 0, filter: 'blur(0px) brightness(3)', scale: 0.9, y: 0 },
+        { opacity: 1, filter: 'blur(0px) brightness(1)', scale: 1, y: 0, duration: 3.0, ease: 'power2.out', onComplete: () => this.clearInlineFilter(el8) },
+        titlePos
       );
-      tl.set(titleChars, { opacity: 1 }, 0);
-      tl.add(() => this.markRevealed(titleChars), 0.1);
+      tl.set(titleChars, { opacity: 1 }, titlePos);
+      tl.add(() => this.markRevealed(titleChars), titlePos + 0.1);
     } else if (chapter.id === 7) {
+      const el7 = titleLine;
       tl.fromTo(
         titleLine,
-        { opacity: 0, scale: 2.5, filter: 'blur(20px)', letterSpacing: '0.8em' },
-        { opacity: 1, scale: 1, filter: 'blur(0px)', letterSpacing: '0.35em', duration: 2.0, ease: 'power4.out' }
+        { opacity: 0, scale: 2.5, filter: 'blur(20px)', letterSpacing: '0.8em', y: 0 },
+        { opacity: 1, scale: 1, filter: 'blur(0px)', letterSpacing: '0.35em', y: 0, duration: 2.0, ease: 'power4.out', onComplete: () => this.clearInlineFilter(el7) },
+        titlePos
       );
-      tl.set(titleChars, { opacity: 1 }, 0);
-      tl.add(() => this.markRevealed(titleChars), 0.1);
+      tl.set(titleChars, { opacity: 1 }, titlePos);
+      tl.add(() => this.markRevealed(titleChars), titlePos + 0.1);
     } else switch (pattern) {
       case 'center-out':
-        this.revealCenterOut(titleChars, tl, openingDelay, titleLine, chapter.id === 0);
+        this.revealCenterOut(titleChars, tl, titlePos, titleLine, chapter.id === 0);
         break;
       case 'flash-bloom':
-        this.revealFlashBloom(titleChars, tl, 0, titleLine);
+        this.revealFlashBloom(titleChars, tl, titlePos, titleLine);
         break;
-      default:
+      default: {
+        const elDef = titleLine;
         tl.fromTo(
           titleLine,
           { opacity: 0, y: 15, filter: 'blur(8px)' },
@@ -532,11 +577,14 @@ export class Timeline {
             filter: 'blur(0px)',
             duration: 0.8,
             ease: 'power3.out',
-          }
+            onComplete: () => this.clearInlineFilter(elDef),
+          },
+          titlePos
         );
-        tl.set(titleChars, { opacity: 1 }, 0);
-        tl.add(() => this.markRevealed(titleChars), 0.1);
+        tl.set(titleChars, { opacity: 1 }, titlePos);
+        tl.add(() => this.markRevealed(titleChars), titlePos + 0.1);
         break;
+      }
     }
 
     {
@@ -546,22 +594,22 @@ export class Timeline {
       this.splitTextToChars(subtitleLine, chapter.subtitle);
 
       const subChars = subtitleLine.querySelectorAll('.char');
-      const subDelay = 0.6;
 
       switch (pattern) {
         case 'center-out':
-          this.revealCenterOut(subChars, tl, subDelay, subtitleLine);
+          this.revealCenterOut(subChars, tl, subPos, subtitleLine);
           break;
         case 'word-cascade':
-          this.revealWordCascade(subtitleLine, tl, subDelay);
+          this.revealWordCascade(subtitleLine, tl, subPos);
           break;
         case 'flash-bloom':
-          this.revealFlashBloom(subChars, tl, subDelay, subtitleLine);
+          this.revealFlashBloom(subChars, tl, subPos, subtitleLine);
           break;
         case 'typewriter':
-          this.revealTypewriter(subChars, tl, subDelay, subtitleLine);
+          this.revealTypewriter(subChars, tl, subPos, subtitleLine);
           break;
-        default:
+        default: {
+          const elSub = subtitleLine;
           tl.fromTo(
             subtitleLine,
             { opacity: 0, y: 12, filter: 'blur(6px)' },
@@ -571,12 +619,14 @@ export class Timeline {
               filter: 'blur(0px)',
               duration: 0.9,
               ease: 'power2.out',
-              delay: subDelay,
-            }
+              onComplete: () => this.clearInlineFilter(elSub),
+            },
+            subPos
           );
-          tl.set(subChars, { opacity: 1 }, subDelay);
-          tl.add(() => this.markRevealed(subChars), subDelay + 0.1);
+          tl.set(subChars, { opacity: 1 }, subPos);
+          tl.add(() => this.markRevealed(subChars), subPos + 0.1);
           break;
+        }
       }
     }
   }

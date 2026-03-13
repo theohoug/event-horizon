@@ -152,19 +152,11 @@ void main() {
   vec3 color;
 #ifdef QUALITY_MEDIUM
   {
-    vec3 spectral = vec3(0.0);
-    float totalW = 0.0;
-    for (int i = 0; i < 4; i++) {
-      float t = (float(i) - 1.5) / 1.5;
-      vec2 sampleUv = distortedUv + chromaticOffset * t;
-      vec3 s = texture2D(tDiffuse, sampleUv).rgb;
-      vec3 w;
-      if (t < 0.0) w = vec3(0.0, 0.2, 0.6);
-      else w = vec3(0.6, 0.2, 0.0);
-      spectral += s * w;
-      totalW += (w.r + w.g + w.b) / 3.0;
-    }
-    color = spectral / totalW;
+    vec2 uvR = distortedUv + chromaticOffset;
+    vec2 uvB = distortedUv - chromaticOffset;
+    vec3 sR = texture2D(tDiffuse, uvR).rgb;
+    vec3 sB = texture2D(tDiffuse, uvB).rgb;
+    color = vec3(sR.r, mix(sR.g, sB.g, 0.5), sB.b);
   }
 #else
   if (motionBlurStrength > 0.001) {

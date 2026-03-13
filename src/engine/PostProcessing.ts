@@ -39,7 +39,7 @@ export class PostProcessing {
     this.renderer = renderer;
     this.quality = quality;
 
-    this.bloomPasses = quality === 'ultra' ? 4 : quality === 'high' ? 3 : 2;
+    this.bloomPasses = quality === 'ultra' ? 4 : quality === 'high' ? 3 : 1;
 
     this.bgScene = new THREE.Scene();
     this.bgCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);

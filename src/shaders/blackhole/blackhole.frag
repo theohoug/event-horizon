@@ -47,6 +47,58 @@ vec3 starfield(vec3 rd) {
   vec3 stretchDir = vec3(0.0, 0.0, -1.0);
   vec3 stretchedRd = normalize(rd + stretchDir * dot(rd, stretchDir) * scrollStretch);
 
+#ifdef QUALITY_MEDIUM
+  {
+    float scale = 55.0;
+    vec3 p = stretchedRd * scale;
+    vec3 id = floor(p);
+    vec3 fd = fract(p);
+    float threshold = 0.35;
+
+    for (int ox = 0; ox <= 1; ox++) {
+    for (int oy = 0; oy <= 1; oy++) {
+    for (int oz = 0; oz <= 1; oz++) {
+      vec3 offset = vec3(float(ox), float(oy), float(oz));
+      vec3 nid = id + offset;
+      vec3 h3 = hash33(nid);
+      float dist = length(h3 + offset - fd);
+      float h = hash(dot(nid, vec3(127.1, 311.7, 74.7)));
+
+      if (h > threshold) {
+        float magnitude = (h - threshold) / (1.0 - threshold);
+        float core = exp(-dist * dist * 350.0);
+        float halo = exp(-dist * dist * 60.0) * 0.3;
+        float brightness = (core + halo * magnitude) * sqrt(magnitude);
+        float twinkle = sin(uTime * (0.5 + h * 1.2) + h * TAU) * 0.08 + 0.92;
+        brightness *= twinkle;
+
+        float colorSeed = hash(dot(nid, vec3(53.1, 97.3, 161.7)));
+        vec3 starColor = mix(vec3(1.0, 0.85, 0.72), vec3(1.0, 0.78, 0.58), colorSeed);
+        col += starColor * brightness * 1.0;
+      }
+    }
+    }
+    }
+  }
+
+  {
+    float bScale = 20.0;
+    vec3 bp = stretchedRd * bScale;
+    vec3 bId = floor(bp);
+    vec3 bFd = fract(bp);
+    float bH = hash(dot(bId, vec3(17.3, 259.1, 131.7)));
+
+    if (bH > 0.98) {
+      vec3 bCenter = hash33(bId);
+      float bDist = length(bCenter - bFd);
+      float core = exp(-bDist * bDist * 1800.0);
+      float innerHalo = exp(-bDist * bDist * 250.0) * 0.45;
+      float brightness = (core + innerHalo) * (sin(uTime * (1.2 + bH * 2.0) + bH * TAU) * 0.1 + 0.9);
+      vec3 bColor = mix(vec3(1.0, 0.85, 0.72), vec3(1.0, 0.78, 0.58), hash(dot(bId, vec3(41.7, 199.3, 77.1))));
+      col += bColor * brightness * 1.1;
+    }
+  }
+#else
   for (int layer = 0; layer < 3; layer++) {
     float scale = 50.0 + float(layer) * 45.0;
     vec3 p = stretchedRd * scale;
@@ -132,9 +184,15 @@ vec3 starfield(vec3 rd) {
       col += bColor * (brightness + spikes) * 1.1;
     }
   }
+#endif
 
   float nebulaBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 1.5;
 
+#ifdef QUALITY_MEDIUM
+  float nebSeed = dot(rd * 5.0, vec3(127.1, 311.7, 74.7)) + uTime * 0.004;
+  float _nb = hash(nebSeed); float _nb2m = _nb*_nb; float nebula = _nb2m * _nb2m * 0.12;
+  col += vec3(0.11, 0.06, 0.04) * nebula * nebulaBoost;
+#else
   float n1 = snoise(rd * 2.5 + vec3(uTime * 0.008));
   float _nb1 = n1 * 0.5 + 0.5; float _nb1_2 = _nb1*_nb1; float nebula = _nb1_2 * sqrt(_nb1) * 0.14;
   float nebSeed2 = dot(rd * 5.0, vec3(127.1, 311.7, 74.7)) + uTime * 0.004;
@@ -142,6 +200,7 @@ vec3 starfield(vec3 rd) {
 
   col += vec3(0.12, 0.06, 0.05) * nebula * nebulaBoost;
   col += vec3(0.10, 0.06, 0.03) * nebula2 * nebulaBoost;
+#endif
 
 #ifndef QUALITY_MEDIUM
   float n4 = snoise(rd * 3.8 + vec3(uTime * 0.006, 0.0, 42.0));
@@ -159,8 +218,10 @@ vec3 starfield(vec3 rd) {
   float _cg = max(1.0 - abs(rd.y - 0.1) * 1.2, 0.0); float _cg2 = _cg*_cg; float cosmicGlow = _cg2 * sqrt(_cg) * 0.04;
   col += vec3(0.06, 0.04, 0.025) * cosmicGlow * nebulaBoost;
 
+#ifndef QUALITY_MEDIUM
   float _an = n3 * 0.5 + 0.5; float asymNebula = _an * _an * _an * 0.05;
   col += vec3(0.08, 0.05, 0.03) * asymNebula * nebulaBoost * smoothstep(0.0, 0.3, rd.x + 0.2);
+#endif
 
   float _mw = max(1.0 - abs(rd.y) * 1.6, 0.0); float _mw2 = _mw*_mw; float milkyWay = _mw2 * _mw;
   float milkySeed = dot(rd, vec3(127.1, 311.7, 74.7));
@@ -168,6 +229,7 @@ vec3 starfield(vec3 rd) {
   float milkyBoost = 1.0 + smoothstep(0.2, 0.0, uScroll) * 0.8;
   col += vec3(0.045, 0.035, 0.025) * milkyWay * (0.5 + milkyDetail) * milkyBoost;
 
+#ifndef QUALITY_MEDIUM
   for (int bgLayer = 0; bgLayer < 2; bgLayer++) {
     float bgScale = 160.0 + float(bgLayer) * 120.0;
     vec3 bgP = rd * bgScale;
@@ -195,6 +257,7 @@ vec3 starfield(vec3 rd) {
   float _sc6 = hash(clusterSeed); float _sc6_2 = _sc6*_sc6; float starCluster = _sc6_2 * _sc6_2;
   float dustShimmer = sin(uTime * 2.0 + dot(rd, vec3(47.0, 13.0, 91.0))) * 0.5 + 0.5;
   col += vec3(0.85, 0.7, 0.5) * starCluster * dustShimmer * 0.05;
+#endif
 
   return col;
 }
@@ -217,18 +280,24 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   float rotAngle = angle + uTime * uDiskSpeed * orbitalSpeed;
 
   float turb1 = snoise(vec3(r * 2.5, rotAngle * 3.0, uTime * 0.25)) * 0.38;
+#ifdef QUALITY_MEDIUM
+  float turbulence = turb1;
+#else
   float turb2 = snoise(vec3(r * 6.0, rotAngle * 5.0, uTime * 0.4 + 31.0)) * 0.15;
   float turbulence = turb1 + turb2;
+#endif
 
   float spiralArm = sin(rotAngle * 3.0 + r * 1.8 + turbulence * 5.0) * 0.5 + 0.5;
   spiralArm = sqrt(spiralArm);
   float secondaryArm = sin(rotAngle * 7.0 + r * 3.5 - uTime * 0.3) * 0.5 + 0.5;
+  spiralArm = mix(spiralArm, spiralArm * secondaryArm, 0.4);
+#ifndef QUALITY_MEDIUM
   float tertiaryArm = sin(rotAngle * 13.0 + r * 5.0 + uTime * 0.15) * 0.5 + 0.5;
   float quaternaryArm = sin(rotAngle * 19.0 + r * 8.0 + uTime * 0.1) * 0.5 + 0.5;
-  spiralArm = mix(spiralArm, spiralArm * secondaryArm, 0.4);
   float highFreqFade = smoothstep(0.0, 0.35, uScroll);
   spiralArm += tertiaryArm * tertiaryArm * tertiaryArm * mix(0.04, 0.1, highFreqFade);
   float _q2 = quaternaryArm * quaternaryArm; spiralArm += _q2 * _q2 * mix(0.01, 0.04, highFreqFade);
+#endif
 
   float viewIncidence = abs(dot(normalize(rd), vec3(0.0, 1.0, 0.0)));
   float volumeOpacity = mix(2.5, 1.0, viewIncidence);
@@ -263,7 +332,7 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   tempBrightness = tempBrightness / (1.0 + tempBrightness * 0.3);
   diskColor *= tempBrightness;
 
-  float turbColor = (turb1 + turb2) * 0.8;
+  float turbColor = turbulence * 0.8;
   diskColor *= 1.0 + turbColor * vec3(0.2, -0.05, -0.1);
 
   float _hs1 = max(sin(rotAngle * 2.0 + uTime * 0.15 + r * 0.5) * 0.5 + 0.5, 0.0); float _hs1_2 = _hs1*_hs1; float _hs1_4 = _hs1_2*_hs1_2; float hotSpot1 = _hs1_4 * _hs1_2;

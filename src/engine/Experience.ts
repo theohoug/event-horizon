@@ -234,10 +234,11 @@ export class Experience {
 
   private async init() {
     const isMobileDevice = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    const isWebKit = /AppleWebKit/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
     const qualityPresets = {
       ultra: { pixelRatio: Math.min(window.devicePixelRatio, 2), antialias: true },
-      high: { pixelRatio: Math.min(window.devicePixelRatio, isMobileDevice ? 2 : 1.5), antialias: !isMobileDevice },
-      medium: { pixelRatio: Math.min(window.devicePixelRatio, 1.5), antialias: false },
+      high: { pixelRatio: Math.min(window.devicePixelRatio, isMobileDevice ? 1.5 : 1.5), antialias: !isMobileDevice },
+      medium: { pixelRatio: Math.min(window.devicePixelRatio, isMobileDevice && isWebKit ? 1.0 : 1.25), antialias: false },
     };
     const preset = qualityPresets[this.state.quality];
 

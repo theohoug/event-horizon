@@ -17,7 +17,7 @@ type Quality = 'ultra' | 'high' | 'medium';
 const TEXTURE_SIZES: Record<Quality, number> = {
   ultra: 256,
   high: 192,
-  medium: 128,
+  medium: 80,
 };
 
 export class GPGPUParticles {

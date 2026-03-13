@@ -14,7 +14,7 @@ type Quality = 'ultra' | 'high' | 'medium';
 const PARTICLE_COUNT = {
   ultra: 12000,
   high: 8000,
-  medium: 4000,
+  medium: 2000,
 };
 
 export class Starfield {

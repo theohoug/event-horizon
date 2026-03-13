@@ -22,10 +22,10 @@ export class BlackHole {
 
     const defines: Record<string, string> = {};
     if (quality === 'medium') {
-      defines['MAX_STEPS'] = '64';
+      defines['MAX_STEPS'] = '36';
       defines['QUALITY_MEDIUM'] = '1';
     } else if (quality === 'high') {
-      defines['MAX_STEPS'] = '96';
+      defines['MAX_STEPS'] = '80';
     }
 
     this.material = new THREE.ShaderMaterial({

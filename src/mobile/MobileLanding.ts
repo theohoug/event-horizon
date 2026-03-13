@@ -1,8 +1,8 @@
 /**
  * @file MobileLanding.ts
- * @description Mobile landing page — blocks WebGL, explains the experience
+ * @description Mobile landing page — blocks WebGL, explains the experience, offers QR scanner
  * @author Cleanlystudio
- * @version 1.0.0
+ * @version 2.0.0
  */
 
 import './mobile-landing.css';
@@ -16,13 +16,19 @@ const content = {
     desc2: 'Built with real-time raymarched GLSL shaders, procedural audio, and physics based on peer-reviewed astrophysics research.',
     desktopOnly: 'Desktop experience only',
     companionTitle: 'COMPANION MODE',
-    companionText: 'Connect your phone to a desktop session for live scientific documentation of what\u2019s happening on screen.',
+    companionText: 'Turn your phone into a <span class="ml-highlight">live mission console</span> — real-time telemetry and astrophysics documentation synced to the desktop experience.',
+    scanBtn: 'Scan QR Code',
+    scanOr: 'or follow these steps',
     step1: 'Open the site on a desktop computer',
     step2: 'A QR code will appear on the intro screen',
-    step3: 'Scan it with your phone for real-time documentation',
+    step3: 'Scan it to get live scientific data on your phone',
     chaptersTitle: '9 CHAPTERS',
     chapters: ['YOU', 'THE PULL', 'THE WARP', 'THE PHOTON SPHERE', 'THE FALL', 'SPAGHETTIFICATION', 'TIME DILATION', 'SINGULARITY', 'WHAT REMAINS'],
     footer: 'Crafted by',
+    scannerTitle: 'Scan QR Code',
+    scannerHint: 'Point your camera at the QR code on the desktop screen',
+    scannerDenied: 'Camera access denied. Use your native camera app to scan the QR code.',
+    scannerUnsupported: 'QR scanning not available on this browser. Use your native camera app instead.',
   },
   fr: {
     subtitle: 'Un Voyage Interactif Dans un Trou Noir',
@@ -30,13 +36,19 @@ const content = {
     desc2: 'Construit avec des shaders GLSL en temps r\u00E9el, un audio proc\u00E9dural, et une physique bas\u00E9e sur la recherche astrophysique.',
     desktopOnly: 'Exp\u00E9rience desktop uniquement',
     companionTitle: 'MODE COMPAGNON',
-    companionText: 'Connectez votre t\u00E9l\u00E9phone \u00E0 une session desktop pour une documentation scientifique en direct de ce qui se passe \u00E0 l\u2019\u00E9cran.',
+    companionText: 'Transformez votre t\u00E9l\u00E9phone en <span class="ml-highlight">console de mission</span> — t\u00E9l\u00E9m\u00E9trie en temps r\u00E9el et documentation astrophysique synchronis\u00E9es \u00E0 l\u2019exp\u00E9rience desktop.',
+    scanBtn: 'Scanner le QR Code',
+    scanOr: 'ou suivez ces \u00E9tapes',
     step1: 'Ouvrez le site sur un ordinateur',
     step2: 'Un QR code appara\u00EEtra sur l\u2019\u00E9cran d\u2019intro',
-    step3: 'Scannez-le avec votre t\u00E9l\u00E9phone pour la documentation en temps r\u00E9el',
+    step3: 'Scannez-le pour recevoir les donn\u00E9es scientifiques en direct',
     chaptersTitle: '9 CHAPITRES',
     chapters: ['TOI', 'L\u2019ATTRACTION', 'LA DISTORSION', 'LA SPH\u00C8RE DE PHOTONS', 'LA CHUTE', 'LA SPAGHETTIFICATION', 'LA DILATATION TEMPORELLE', 'SINGULARIT\u00C9', 'CE QUI RESTE'],
     footer: 'Con\u00E7u par',
+    scannerTitle: 'Scanner le QR Code',
+    scannerHint: 'Dirigez votre cam\u00E9ra vers le QR code sur l\u2019\u00E9cran du PC',
+    scannerDenied: 'Acc\u00E8s cam\u00E9ra refus\u00E9. Utilisez votre app cam\u00E9ra native pour scanner le QR code.',
+    scannerUnsupported: 'Scan QR non disponible sur ce navigateur. Utilisez votre app cam\u00E9ra native.',
   },
 };
 
@@ -49,11 +61,18 @@ function render() {
   root.innerHTML = `
     <div id="ml-grain"></div>
     <div id="ml-content">
+      <div class="ml-topbar">
+        <div class="ml-lang">
+          <button class="ml-lang-btn ${currentLang === 'en' ? 'active' : ''}" data-lang="en">EN</button>
+          <span class="ml-lang-sep">\u00B7</span>
+          <button class="ml-lang-btn ${currentLang === 'fr' ? 'active' : ''}" data-lang="fr">FR</button>
+        </div>
+      </div>
+
       <div class="ml-hero">
-        <div class="ml-icon">\u25CE</div>
-        <div class="ml-title">EVENT HORIZON</div>
-        <div class="ml-subtitle">${t.subtitle}</div>
+        <div class="ml-title">EVENT<br>HORIZON</div>
         <div class="ml-line"></div>
+        <div class="ml-subtitle">${t.subtitle}</div>
       </div>
 
       <div class="ml-description">
@@ -71,9 +90,26 @@ function render() {
       </div>
 
       <div class="ml-companion">
-        <div class="ml-companion-icon">\uD83D\uDCF1</div>
-        <div class="ml-companion-title">${t.companionTitle}</div>
+        <div class="ml-companion-label">${t.companionTitle}</div>
         <div class="ml-companion-text">${t.companionText}</div>
+
+        <button id="ml-scan-btn" class="ml-scan-btn">
+          <svg class="ml-scan-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 3H5a2 2 0 00-2 2v2"></path>
+            <path d="M17 3h2a2 2 0 012 2v2"></path>
+            <path d="M7 21H5a2 2 0 01-2-2v-2"></path>
+            <path d="M17 21h2a2 2 0 002-2v-2"></path>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+          </svg>
+          ${t.scanBtn}
+        </button>
+
+        <div class="ml-scan-divider">
+          <span class="ml-scan-divider-line"></span>
+          <span class="ml-scan-divider-text">${t.scanOr}</span>
+          <span class="ml-scan-divider-line"></span>
+        </div>
+
         <div class="ml-companion-steps">
           <div class="ml-step">
             <span class="ml-step-num">1</span>
@@ -102,11 +138,6 @@ function render() {
         </div>
       </div>
 
-      <div class="ml-lang">
-        <button class="ml-lang-btn ${currentLang === 'en' ? 'active' : ''}" data-lang="en">EN</button>
-        <button class="ml-lang-btn ${currentLang === 'fr' ? 'active' : ''}" data-lang="fr">FR</button>
-      </div>
-
       <div class="ml-footer">
         <div class="ml-footer-text">${t.footer} <a href="https://cleanlystudio.pro" target="_blank">Cleanlystudio</a></div>
       </div>
@@ -122,6 +153,95 @@ function render() {
       render();
     });
   });
+
+  const scanBtn = document.getElementById('ml-scan-btn');
+  if (scanBtn) scanBtn.addEventListener('click', openScanner);
+}
+
+function openScanner() {
+  const t = content[currentLang];
+
+  const overlay = document.createElement('div');
+  overlay.id = 'ml-scanner-overlay';
+  overlay.innerHTML = `
+    <div class="ml-scanner-header">
+      <div class="ml-scanner-title">${t.scannerTitle}</div>
+      <button class="ml-scanner-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="ml-scanner-viewport">
+      <video id="ml-scanner-video" autoplay playsinline muted></video>
+      <div class="ml-scanner-frame">
+        <span class="ml-sf-corner ml-sf-tl"></span>
+        <span class="ml-sf-corner ml-sf-tr"></span>
+        <span class="ml-sf-corner ml-sf-bl"></span>
+        <span class="ml-sf-corner ml-sf-br"></span>
+        <div class="ml-scanner-laser"></div>
+      </div>
+    </div>
+    <div class="ml-scanner-hint">${t.scannerHint}</div>
+  `;
+  document.body.appendChild(overlay);
+
+  requestAnimationFrame(() => overlay.classList.add('active'));
+
+  const video = document.getElementById('ml-scanner-video') as HTMLVideoElement;
+  const hintEl = overlay.querySelector('.ml-scanner-hint') as HTMLElement;
+  const closeBtn = overlay.querySelector('.ml-scanner-close')!;
+  let stream: MediaStream | null = null;
+  let rafId = 0;
+  let destroyed = false;
+
+  closeBtn.addEventListener('click', cleanup);
+
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+    .then(s => {
+      if (destroyed) { s.getTracks().forEach(tr => tr.stop()); return; }
+      stream = s;
+      video.srcObject = s;
+      video.play();
+      startDetection();
+    })
+    .catch(() => {
+      hintEl.textContent = t.scannerDenied;
+    });
+
+  function startDetection() {
+    const BarcodeDetectorClass = (window as unknown as Record<string, unknown>).BarcodeDetector as
+      (new (opts: { formats: string[] }) => { detect(source: HTMLVideoElement): Promise<Array<{ rawValue: string }>> }) | undefined;
+
+    if (!BarcodeDetectorClass) {
+      hintEl.textContent = t.scannerUnsupported;
+      return;
+    }
+
+    const detector = new BarcodeDetectorClass({ formats: ['qr_code'] });
+
+    function detect() {
+      if (destroyed) return;
+      if (video.readyState >= 2) {
+        detector.detect(video).then(barcodes => {
+          if (destroyed) return;
+          for (const barcode of barcodes) {
+            if (barcode.rawValue && barcode.rawValue.includes('companion=')) {
+              cleanup();
+              window.location.href = barcode.rawValue;
+              return;
+            }
+          }
+        }).catch(() => {});
+      }
+      rafId = requestAnimationFrame(detect);
+    }
+    detect();
+  }
+
+  function cleanup() {
+    destroyed = true;
+    cancelAnimationFrame(rafId);
+    if (stream) stream.getTracks().forEach(tr => tr.stop());
+    overlay.classList.remove('active');
+    setTimeout(() => overlay.remove(), 300);
+  }
 }
 
 export function init() {

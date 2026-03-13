@@ -866,6 +866,14 @@ gl_FragColor=vec4(col,1.0);}`;
     onLangChange(() => {
       this.updateLangToggle(langBtn);
       this.applyTranslations();
+      if (this.broadcaster) {
+        this.broadcaster.sendMeta({
+          lang: getLang(),
+          isAltered: this.isAlteredMode,
+          isHardcore: this.isHardcoreMode,
+          totalChapters: 9,
+        });
+      }
     });
   }
 

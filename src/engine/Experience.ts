@@ -1229,63 +1229,20 @@ gl_FragColor=vec4(col,1.0);}`;
   private setupLenis() {
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
-    // Compute wheelMultiplier based on total scroll height.
-    // Precision trackpads send tiny deltas (3-5px) which feel frozen on a 30,000+ px page.
-    // We scale the multiplier so that scroll always feels responsive regardless of total height.
-    const scrollLimit = document.documentElement.scrollHeight - window.innerHeight;
-    const idealLimit = 18000; // ~2000vh on a 900px viewport = feels snappy
-    const wheelMult = Math.max(1.0, Math.min(3.0, scrollLimit / idealLimit));
-
     this.lenis = new Lenis({
-      duration: isMobile ? 1.4 : 1.8,
+      duration: isMobile ? 1.6 : 2.4,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      wheelMultiplier: isMobile ? 1.0 : wheelMult,
-      touchMultiplier: isMobile ? 1.8 : 1.0,
+      wheelMultiplier: isMobile ? 0.8 : 0.7,
+      touchMultiplier: isMobile ? 1.4 : 1.0,
       infinite: false,
     });
 
-    // Backup scroll ticker: ensures Lenis processes scroll events even when
-    // the GPU is stalling the RAF loop (heavy shader sections).
-    // Runs every 100ms independently of rendering.
     this.lenisBackupInterval = window.setInterval(() => {
       const timeSinceRaf = performance.now() - this.lastRafTime;
-      // Only kick in when RAF is stalling (>200ms since last frame)
-      if (timeSinceRaf > 200) {
+      if (timeSinceRaf > 300) {
         this.lenis.raf(performance.now());
       }
-    }, 100);
-
-    // Scroll assist: track raw wheel deltas to detect when Lenis falls behind.
-    // Precision trackpads can send hundreds of tiny events per second; Lenis may
-    // only process one per animation frame, losing most of the accumulated delta.
-    let rawWheelAccum = 0;
-    let lastAssistCheck = performance.now();
-    let lastAssistScroll = 0;
-    window.addEventListener('wheel', (e) => { rawWheelAccum += e.deltaY; }, { passive: true });
-
-    // Every 500ms, check if Lenis moved proportionally to the raw wheel input.
-    // If not, force-scroll to catch up — this makes scroll work on ANY device.
-    const assistInterval = window.setInterval(() => {
-      const now = performance.now();
-      const elapsed = now - lastAssistCheck;
-      if (elapsed < 400) return;
-
-      const scrollMoved = this.lenis.scroll - lastAssistScroll;
-      const expectedMove = rawWheelAccum * wheelMult;
-
-      // If user sent significant wheel input but Lenis barely moved, push it
-      if (Math.abs(expectedMove) > 50 && Math.abs(scrollMoved) < Math.abs(expectedMove) * 0.3) {
-        const deficit = expectedMove - scrollMoved;
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        const target = Math.max(0, Math.min(maxScroll, this.lenis.scroll + deficit * 0.5));
-        this.lenis.scrollTo(target, { immediate: true });
-      }
-
-      rawWheelAccum = 0;
-      lastAssistScroll = this.lenis.scroll;
-      lastAssistCheck = now;
-    }, 500);
-    this.addTrackedListener(window, 'beforeunload', (() => clearInterval(assistInterval)) as EventListener);
+    }, 150);
 
     const progressFill = document.getElementById('progress-fill');
     const progressBar = document.getElementById('progress-bar');
@@ -1596,11 +1553,11 @@ gl_FragColor=vec4(col,1.0);}`;
     const isScrollingUp = this.state.scrollVelocity < -0.3;
 
     let totalForce = 0;
-    totalForce += scroll * scroll * 0.8;
-    if (scroll > 0.15) { const g1 = (scroll - 0.15) / 0.85; totalForce += g1 * Math.sqrt(g1) * 1.5; }
-    if (scroll > 0.35) { const g2 = (scroll - 0.35) / 0.65; totalForce += g2 * Math.sqrt(g2) * 3; }
-    if (scroll > 0.55) { const g3 = (scroll - 0.55) / 0.45; totalForce += g3 * g3 * 6; }
-    if (scroll > 0.75) { const g4 = (scroll - 0.75) / 0.25; totalForce += g4 * g4 * 12; }
+    totalForce += scroll * scroll * 0.3;
+    if (scroll > 0.15) { const g1 = (scroll - 0.15) / 0.85; totalForce += g1 * Math.sqrt(g1) * 0.5; }
+    if (scroll > 0.35) { const g2 = (scroll - 0.35) / 0.65; totalForce += g2 * Math.sqrt(g2) * 1.0; }
+    if (scroll > 0.55) { const g3 = (scroll - 0.55) / 0.45; totalForce += g3 * g3 * 2.0; }
+    if (scroll > 0.75) { const g4 = (scroll - 0.75) / 0.25; totalForce += g4 * g4 * 4.0; }
 
     const extraVisits = Math.min(this.visitCount - 1, 4);
     if (extraVisits > 0) totalForce *= 1 + extraVisits * 0.2;
@@ -1618,11 +1575,11 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     if (isScrollingUp && scroll > 0.40) {
-      this.gravityVelocity += totalForce * dt * 4.5;
+      this.gravityVelocity += totalForce * dt * 1.5;
     } else if (isStopped) {
-      this.gravityVelocity += totalForce * dt * 2.5;
+      this.gravityVelocity += totalForce * dt * 0.8;
     } else {
-      this.gravityVelocity += totalForce * dt * 1.2;
+      this.gravityVelocity += totalForce * dt * 0.4;
     }
 
     if (!this.pointOfNoReturnTriggered && scroll >= 0.65) {
@@ -1635,15 +1592,15 @@ gl_FragColor=vec4(col,1.0);}`;
       if (this.state.soundEnabled) this.audio.triggerSingularity();
     }
 
-    this.gravityVelocity = Math.min(this.gravityVelocity, 4 + scroll * 14);
-    this.gravityVelocity *= 0.96;
+    this.gravityVelocity = Math.min(this.gravityVelocity, 2 + scroll * 6);
+    this.gravityVelocity *= 0.94;
 
-    if (this.gravityVelocity > 0.02) {
+    if (this.gravityVelocity > 0.05) {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const currentTop = this.lenis.scroll;
       const newTop = Math.min(currentTop + this.gravityVelocity, maxScroll);
       if (newTop > currentTop) {
-        this.lenis.scrollTo(newTop, { immediate: true });
+        this.lenis.scrollTo(newTop, { duration: 0.8 });
       }
     }
   }

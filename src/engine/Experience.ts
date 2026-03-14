@@ -429,6 +429,7 @@ gl_FragColor=vec4(col,1.0);}`;
     this.postProcessing = new PostProcessing(this.renderer, this.perfConfig.bloomPasses, this.perfConfig.bloomScale, this.perfConfig.qualityMedium, this.perfConfig.motionBlur);
 
     this.blackHole = new BlackHole(this.postProcessing.bgScene, this.perfConfig.maxSteps, this.perfConfig.qualityMedium, this.perfConfig.dpr);
+    this.blackHole.setRenderer(this.renderer);
     if (!isMobileDevice) {
       this.particles = new GPGPUParticles(this.renderer, this.postProcessing.particleScene, this.perfConfig.gpgpuTexSize, this.perfConfig.dpr);
     }
@@ -1678,6 +1679,7 @@ gl_FragColor=vec4(col,1.0);}`;
       this.canvas.style.width = '100vw';
       this.canvas.style.height = '100vh';
       this.postProcessing.resize();
+      this.blackHole.syncResolution();
     };
 
     this.addTrackedListener(window, 'resize', onResize as EventListener);
@@ -1790,6 +1792,7 @@ gl_FragColor=vec4(col,1.0);}`;
         if (newPr < currentPr) {
           this.renderer.setPixelRatio(newPr);
           this.postProcessing.resize();
+          this.blackHole.syncResolution();
           { const _v = clampedViewportSize(); this.renderer.setSize(_v.w, _v.h); };
           this.downgradeCount++;
           this.fpsStableCount = 0;
@@ -1823,6 +1826,7 @@ gl_FragColor=vec4(col,1.0);}`;
         if (newPr < currentPr) {
           this.renderer.setPixelRatio(newPr);
           this.postProcessing.resize();
+          this.blackHole.syncResolution();
           { const _v = clampedViewportSize(); this.renderer.setSize(_v.w, _v.h); };
         }
         this.lowFpsCount = 0;
@@ -1837,6 +1841,7 @@ gl_FragColor=vec4(col,1.0);}`;
           const newPr = Math.min(targetPr, Math.round((currentPr + 0.05) * 20) / 20);
           this.renderer.setPixelRatio(newPr);
           this.postProcessing.resize();
+          this.blackHole.syncResolution();
           { const _v = clampedViewportSize(); this.renderer.setSize(_v.w, _v.h); };
           this.downgradeCount--;
         }

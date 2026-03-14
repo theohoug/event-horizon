@@ -13,14 +13,15 @@ export class BlackHole {
   private mesh: THREE.Mesh;
   private material: THREE.ShaderMaterial;
   private resizeHandler: () => void;
-  private pixelRatio: number;
+  private renderer: THREE.WebGLRenderer | null = null;
 
   constructor(scene: THREE.Scene, maxSteps: number, qualityMedium: boolean, pixelRatio: number) {
-    this.pixelRatio = pixelRatio;
-
     const defines: Record<string, string> = {};
     defines['MAX_STEPS'] = String(maxSteps);
     if (qualityMedium) defines['QUALITY_MEDIUM'] = '1';
+
+    const initW = (window.visualViewport?.width ?? window.innerWidth) * pixelRatio;
+    const initH = (window.visualViewport?.height ?? window.innerHeight) * pixelRatio;
 
     this.material = new THREE.ShaderMaterial({
       vertexShader: blackholeVert,
@@ -28,10 +29,7 @@ export class BlackHole {
       defines,
       uniforms: {
         uTime: { value: 0 },
-        uResolution: { value: new THREE.Vector2(
-          (window.visualViewport?.width ?? window.innerWidth) * pixelRatio,
-          (window.visualViewport?.height ?? window.innerHeight) * pixelRatio
-        ) },
+        uResolution: { value: new THREE.Vector2(initW, initH) },
         uMouse: { value: new THREE.Vector2(0.5, 0.5) },
         uScroll: { value: 0 },
         uDistortion: { value: 0 },
@@ -59,14 +57,23 @@ export class BlackHole {
     this.onResize();
   }
 
-  private onResize() {
-    const vv = window.visualViewport;
-    const w = vv ? Math.round(vv.width) : window.innerWidth;
-    const h = vv ? Math.round(vv.height) : window.innerHeight;
+  setRenderer(renderer: THREE.WebGLRenderer) {
+    this.renderer = renderer;
+    this.syncResolution();
+  }
+
+  syncResolution() {
+    if (!this.renderer) return;
+    const size = this.renderer.getSize(new THREE.Vector2());
+    const pr = this.renderer.getPixelRatio();
     this.material.uniforms.uResolution.value.set(
-      w * this.pixelRatio,
-      h * this.pixelRatio
+      Math.floor(size.x * pr),
+      Math.floor(size.y * pr)
     );
+  }
+
+  private onResize() {
+    this.syncResolution();
   }
 
   update(state: { time: number; scroll: number; mouseSmooth: THREE.Vector2; explosion?: number; isAltered?: boolean; isHardcore?: boolean }) {

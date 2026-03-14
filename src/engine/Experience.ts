@@ -1553,11 +1553,11 @@ gl_FragColor=vec4(col,1.0);}`;
     const isScrollingUp = this.state.scrollVelocity < -0.3;
 
     let totalForce = 0;
-    totalForce += scroll * scroll * 0.3;
-    if (scroll > 0.15) { const g1 = (scroll - 0.15) / 0.85; totalForce += g1 * Math.sqrt(g1) * 0.5; }
-    if (scroll > 0.35) { const g2 = (scroll - 0.35) / 0.65; totalForce += g2 * Math.sqrt(g2) * 1.0; }
-    if (scroll > 0.55) { const g3 = (scroll - 0.55) / 0.45; totalForce += g3 * g3 * 2.0; }
-    if (scroll > 0.75) { const g4 = (scroll - 0.75) / 0.25; totalForce += g4 * g4 * 4.0; }
+    totalForce += scroll * scroll * 0.15;
+    if (scroll > 0.30) { const g1 = (scroll - 0.30) / 0.70; totalForce += g1 * g1 * 0.8; }
+    if (scroll > 0.50) { const g2 = (scroll - 0.50) / 0.50; totalForce += g2 * Math.sqrt(g2) * 2.5; }
+    if (scroll > 0.65) { const g3 = (scroll - 0.65) / 0.35; totalForce += g3 * g3 * 5.0; }
+    if (scroll > 0.80) { const g4 = (scroll - 0.80) / 0.20; totalForce += g4 * g4 * 10.0; }
 
     const extraVisits = Math.min(this.visitCount - 1, 4);
     if (extraVisits > 0) totalForce *= 1 + extraVisits * 0.2;
@@ -1575,11 +1575,11 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     if (isScrollingUp && scroll > 0.40) {
-      this.gravityVelocity += totalForce * dt * 1.5;
+      this.gravityVelocity += totalForce * dt * 3.0;
     } else if (isStopped) {
-      this.gravityVelocity += totalForce * dt * 0.8;
+      this.gravityVelocity += totalForce * dt * 1.8;
     } else {
-      this.gravityVelocity += totalForce * dt * 0.4;
+      this.gravityVelocity += totalForce * dt * 0.6;
     }
 
     if (!this.pointOfNoReturnTriggered && scroll >= 0.65) {
@@ -1592,15 +1592,16 @@ gl_FragColor=vec4(col,1.0);}`;
       if (this.state.soundEnabled) this.audio.triggerSingularity();
     }
 
-    this.gravityVelocity = Math.min(this.gravityVelocity, 2 + scroll * 6);
-    this.gravityVelocity *= 0.94;
+    this.gravityVelocity = Math.min(this.gravityVelocity, 3 + scroll * 10);
+    this.gravityVelocity *= 0.95;
 
-    if (this.gravityVelocity > 0.05) {
+    if (this.gravityVelocity > 0.1) {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const currentTop = this.lenis.scroll;
       const newTop = Math.min(currentTop + this.gravityVelocity, maxScroll);
       if (newTop > currentTop) {
-        this.lenis.scrollTo(newTop, { duration: 0.8 });
+        const smoothDuration = scroll > 0.7 ? 0.4 : 0.8;
+        this.lenis.scrollTo(newTop, { duration: smoothDuration });
       }
     }
   }

@@ -1556,11 +1556,11 @@ gl_FragColor=vec4(col,1.0);}`;
     const isScrollingUp = this.state.scrollVelocity < -0.3;
 
     let totalForce = 0;
-    if (scroll > 0.25) { const g0 = (scroll - 0.25) / 0.75; totalForce += g0 * 0.3; }
-    if (scroll > 0.40) { const g1 = (scroll - 0.40) / 0.60; totalForce += g1 * g1 * 1.5; }
-    if (scroll > 0.55) { const g2 = (scroll - 0.55) / 0.45; totalForce += g2 * Math.sqrt(g2) * 4.0; }
-    if (scroll > 0.70) { const g3 = (scroll - 0.70) / 0.30; totalForce += g3 * g3 * 8.0; }
-    if (scroll > 0.82) { const g4 = (scroll - 0.82) / 0.18; totalForce += g4 * g4 * 16.0; }
+    if (scroll > 0.15) { const g0 = (scroll - 0.15) / 0.85; totalForce += g0 * 0.5; }
+    if (scroll > 0.35) { const g1 = (scroll - 0.35) / 0.65; totalForce += g1 * g1 * 3.0; }
+    if (scroll > 0.50) { const g2 = (scroll - 0.50) / 0.50; totalForce += g2 * Math.sqrt(g2) * 8.0; }
+    if (scroll > 0.65) { const g3 = (scroll - 0.65) / 0.35; totalForce += g3 * g3 * 18.0; }
+    if (scroll > 0.80) { const g4 = (scroll - 0.80) / 0.20; totalForce += g4 * g4 * 35.0; }
 
     const extraVisits = Math.min(this.visitCount - 1, 4);
     if (extraVisits > 0) totalForce *= 1 + extraVisits * 0.2;
@@ -1598,7 +1598,7 @@ gl_FragColor=vec4(col,1.0);}`;
     this.gravityVelocity = Math.min(this.gravityVelocity, 4 + scroll * 12);
     this.gravityVelocity *= 0.96;
 
-    this.smoothGravity += (this.gravityVelocity - this.smoothGravity) * 0.08;
+    this.smoothGravity += (this.gravityVelocity - this.smoothGravity) * 0.3;
 
     if (this.smoothGravity > 0.05) {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;

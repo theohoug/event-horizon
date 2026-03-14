@@ -423,6 +423,8 @@ gl_FragColor=vec4(col,1.0);}`;
 
     this.renderer.setPixelRatio(this.perfConfig.dpr);
     this.renderer.setSize(initSize.w, initSize.h);
+    this.canvas.style.width = '100vw';
+    this.canvas.style.height = '100vh';
 
     this.postProcessing = new PostProcessing(this.renderer, this.perfConfig.bloomPasses, this.perfConfig.bloomScale, this.perfConfig.qualityMedium, this.perfConfig.motionBlur);
 
@@ -1673,6 +1675,8 @@ gl_FragColor=vec4(col,1.0);}`;
     const onResize = () => {
       const { w, h } = clampedViewportSize();
       this.renderer.setSize(w, h);
+      this.canvas.style.width = '100vw';
+      this.canvas.style.height = '100vh';
       this.postProcessing.resize();
     };
 

@@ -567,9 +567,19 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
       return;
     }
 
+    float whBirth = smoothstep(0.60, 0.85, ex);
+    float whMature = smoothstep(0.85, 1.3, ex);
+    float whFade = 1.0 - smoothstep(1.7, 2.0, ex);
+    float whActive = whBirth * whFade;
+    float whCoreR = whBirth * 1.2 + whMature * 0.8;
+    float whOutDiskR = whCoreR * 1.5 + whBirth * 6.0 + whMature * 10.0;
+    float whJetReach = whBirth * 3.0 + whMature * 8.0;
+    float whNebR = 5.0 + whMature * 16.0;
+
     if (acc < 0.90 && ex > 0.10) {
       float maxExR = max(shellR + shellThick * 2.0, max(gasR, debrisR + 3.0));
       if (nebActive > 0.01) maxExR = max(maxExR, 12.0 + max(ex - 0.75, 0.0) * 20.0);
+      if (whActive > 0.01) maxExR = max(maxExR, max(whOutDiskR, max(whJetReach, whNebR)) + 2.0);
       if (r < maxExR + 1.5) {
 
         if (shellActive > 0.01 && shellR > 0.3) {
@@ -646,6 +656,67 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
           }
         }
 
+        if (whActive > 0.01) {
+          if (r < whCoreR + 1.5) {
+            float coreSurf = exp(-(r - whCoreR) * (r - whCoreR) * 4.0);
+            float pulse = 1.0 + sin(uTime * 2.0 + r * 3.0) * 0.12 * whMature;
+            vec3 coreCol = mix(vec3(1.0, 0.95, 0.85), vec3(1.0, 1.0, 0.98), whMature);
+            float cAlpha = coreSurf * whActive * 0.45;
+            accCol += coreCol * (3.0 + whMature * 5.0) * pulse * cAlpha * (1.0 - acc);
+            acc += cAlpha * 0.3 * (1.0 - acc);
+          }
+
+          float dkH = exp(-pos.y * pos.y / (0.12 + whMature * 0.22));
+          float dkEdge = smoothstep(whOutDiskR, whCoreR * 1.2, r);
+          float dkInner = smoothstep(whCoreR * 0.8, whCoreR * 1.4, r);
+          float dkBase = dkH * dkEdge * dkInner;
+          if (dkBase > 0.008) {
+            float dkAngle = atan(pos.z, pos.x);
+            float dkOrb = 1.0 / max(sqrt(r), 0.5);
+            float sp1 = sin(dkAngle * 4.0 + r * 1.5 - uTime * dkOrb * 3.0);
+            float sp2 = sin(dkAngle * 7.0 - r * 0.9 + uTime * dkOrb * 2.0);
+            float spMask = max(sp1, 0.0) * 0.65 + max(sp2, 0.0) * 0.35;
+            float dkDensity = dkBase * (0.35 + spMask * 0.65);
+            float rN = clamp((r - whCoreR) / max(whOutDiskR - whCoreR, 0.1), 0.0, 1.0);
+            vec3 dkInnerC = vec3(1.0, 0.88, 0.6);
+            vec3 dkMidC = vec3(0.45, 0.80, 1.0);
+            vec3 dkOuterC = vec3(0.6, 0.28, 0.88);
+            vec3 dkCol = rN < 0.5 ? mix(dkInnerC, dkMidC, rN * 2.0) : mix(dkMidC, dkOuterC, (rN - 0.5) * 2.0);
+            float dkAlpha = dkDensity * whActive * 0.09;
+            accCol += dkCol * dkAlpha * (1.0 - acc) * 3.5;
+            acc += dkAlpha * (1.0 - acc);
+          }
+
+          if (whBirth > 0.2) {
+            float jtW = exp(-(pos.x * pos.x + pos.z * pos.z) * 2.5);
+            float jtL = abs(pos.y);
+            float jtFade = smoothstep(whJetReach, 0.3, jtL);
+            float jtBase = smoothstep(whCoreR * 0.3, whCoreR * 1.5, jtL);
+            float jtS = jtW * jtFade * jtBase;
+            if (jtS > 0.005) {
+              float jtFlicker = sin(pos.y * 12.0 - uTime * sign(pos.y) * 7.0) * 0.2 + 0.8;
+              float jtDensity = jtS * jtFlicker * whBirth;
+              vec3 jtCol = mix(vec3(1.0, 0.93, 0.78), vec3(0.45, 0.65, 1.0), clamp(jtL / max(whJetReach, 0.1), 0.0, 1.0));
+              float jtAlpha = jtDensity * whActive * 0.06;
+              accCol += jtCol * jtAlpha * (1.0 - acc) * 2.5;
+              acc += jtAlpha * 0.3 * (1.0 - acc);
+            }
+          }
+
+          if (whMature > 0.05 && r < whNebR && r > whCoreR * 2.5) {
+            float wnn = vnoise3(pos * 0.25 + vec3(uTime * 0.04));
+            float wnDensity = max(wnn * 2.0 - 0.6, 0.0);
+            wnDensity *= wnDensity;
+            wnDensity *= smoothstep(whNebR, whNebR * 0.15, r);
+            wnDensity *= 0.025 * whMature * whFade;
+            float wnn2 = vnoise3(pos * 0.45 + vec3(uTime * 0.02, -uTime * 0.01, 0.0));
+            vec3 wnCol = mix(vec3(0.65, 0.35, 1.0), vec3(0.25, 0.7, 1.0), wnn2);
+            wnCol = mix(wnCol, vec3(1.0, 0.65, 0.25), max(wnn - 0.4, 0.0) * 2.5);
+            accCol += wnCol * wnDensity * (1.0 - acc);
+            acc += wnDensity * 0.12 * (1.0 - acc);
+          }
+        }
+
         if (acc > 0.90) break;
       }
     }
@@ -686,7 +757,8 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
     float h2 = dot(crossPV, crossPV);
     float r2 = r * r;
     float r5 = r2 * r2 * r;
-    vec3 accel = -1.5 * h2 * pos / max(r5, 1e-8) * gravMult;
+    float whRepel = whActive * 0.35;
+    vec3 accel = -1.5 * h2 * pos / max(r5, 1e-8) * (gravMult - whRepel);
 
     float baseDt = clamp((r - max(dynSR, 0.1)) * 0.4, 0.03, 1.5);
     float exBoost = 1.0 + smoothstep(0.35, 0.65, ex) * (1.0 - bhLife) * 1.5;
@@ -843,28 +915,46 @@ void main() {
     float fadeW = smoothstep(0.93, 1.0, ex);
     color = mix(color, vec3(1.0, 0.98, 0.96), fadeW * fadeW * 0.85);
 
+    if (ex > 0.55) {
+      float whSS = smoothstep(0.55, 0.80, ex);
+      float whSSMat = smoothstep(0.80, 1.3, ex);
+      float whSSFade = 1.0 - smoothstep(1.7, 2.0, ex);
+
+      float whPulse = 1.0 + sin(uTime * 2.0) * 0.15 * whSSMat;
+      float whGlow = exp(-ld * ld * mix(6.0, 2.0, whSSMat)) * whSS * whPulse * whSSFade;
+      color += vec3(1.0, 0.97, 0.92) * whGlow * 2.5;
+
+      for (int ri = 0; ri < 3; ri++) {
+        float rif = float(ri);
+        float ringR = whSS * (0.08 + rif * 0.09) + whSSMat * rif * 0.04;
+        float ringV = exp(-(ld - ringR) * (ld - ringR) * 700.0);
+        vec3 ringCol = mix(vec3(1.0, 0.9, 0.65), vec3(0.5, 0.75, 1.0), rif / 3.0);
+        color += ringCol * ringV * 0.45 * whSSMat * whSSFade;
+      }
+
+      float whAngle = atan(uv.y, uv.x);
+      float rayP = max(sin(whAngle * 8.0 + uTime * 0.4) * 0.5 + 0.5, 0.0);
+      rayP = rayP * rayP * rayP * rayP;
+      float rayMask = exp(-ld * ld * 1.2) * smoothstep(0.015, 0.07, ld);
+      color += vec3(1.0, 0.82, 0.5) * rayP * rayMask * whSSMat * 0.22 * whSSFade;
+
+      float aurora = sin(whAngle * 3.0 + ld * 6.0 - uTime * 1.0) * 0.5 + 0.5;
+      float auroraMask = smoothstep(0.04, 0.13, ld) * smoothstep(0.45, 0.15, ld);
+      vec3 auroraCol = mix(vec3(0.2, 0.7, 0.5), vec3(0.4, 0.2, 0.8), aurora);
+      color += auroraCol * aurora * auroraMask * whSSMat * 0.12 * whSSFade;
+    }
+
     if (ex > 1.0) {
       float aftermath = ex - 1.0;
-      float whiteDissolve = 1.0 - smoothstep(0.0, 0.3, aftermath);
-      color = mix(color, vec3(1.0, 0.98, 0.95), whiteDissolve);
+      float whRetreat = smoothstep(0.0, 0.25, aftermath) * 0.5;
+      float whStr = max(0.0, 1.0 - aftermath * 3.5);
+      float whMask = 1.0 - smoothstep(whRetreat - 0.04, whRetreat + 0.04, ld);
+      color = mix(color, vec3(1.0, 0.98, 0.95), whMask * whStr);
 
-      for (int ss = 0; ss < 4; ss++) {
-        float ssTime = uTime * 0.25 + float(ss) * 5.3;
-        float ssCycle = fract(ssTime);
-        if (ssCycle < 0.25 && aftermath > 0.4) {
-          float ssSeed = hash(floor(ssTime) * 127.1 + float(ss) * 311.7);
-          float ssSeed2 = hash(floor(ssTime) * 41.7 + float(ss) * 199.3);
-          vec2 ssStart = vec2(ssSeed * 2.0 - 1.0, ssSeed2 - 0.3) * 0.7;
-          vec2 ssDir = normalize(vec2(ssSeed2 - 0.5, -0.25 - ssSeed * 0.4));
-          vec2 ssPos = ssStart + ssDir * ssCycle * 2.0;
-          vec2 toPoint = uv - ssPos;
-          float along = dot(toPoint, ssDir);
-          float perp = length(toPoint - ssDir * along);
-          float trail = exp(-perp * perp * 4000.0) * smoothstep(0.0, -0.12, along) * smoothstep(-0.22, -0.04, along);
-          float head = exp(-perp * perp * 6000.0) * exp(-along * along * 300.0);
-          float ssAlpha = smoothstep(0.4, 0.6, aftermath) * max(1.0 - ssCycle * 4.0, 0.0);
-          color += vec3(1.0, 0.95, 0.85) * (trail * 0.8 + head * 2.0) * ssAlpha;
-        }
+      float sparkle = hash(gl_FragCoord.x * 127.1 + gl_FragCoord.y * 311.7 + uTime * 7.0 + aftermath);
+      float whSSFade2 = 1.0 - smoothstep(1.7, 2.0, ex);
+      if (sparkle > 0.9997 && aftermath > 0.15) {
+        color += vec3(1.0, 0.95, 0.9) * 1.5 * whSSFade2;
       }
     }
   }

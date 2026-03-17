@@ -2081,9 +2081,15 @@ gl_FragColor=vec4(col,1.0);}`;
     this.updateGravityPull(dt);
 
     if (this.explosionActive) {
-      const speed = this.explosionProgress < 1.0 ? 0.28 : 0.12;
+      let speed: number;
+      if (this.explosionProgress < 0.5) speed = 0.30;
+      else if (this.explosionProgress < 1.0) speed = 0.18;
+      else if (this.explosionProgress < 1.5) speed = 0.10;
+      else speed = 0.06;
       this.explosionProgress = Math.min(this.explosionProgress + dt * speed, 2.0);
       if (this.explosionProgress >= 2.0) this.explosionActive = false;
+
+      this.updateWhiteHoleOverlay();
     }
     this.blackHole.update({ ...this.state, explosion: this.explosionProgress, isAltered: this.isAlteredMode, isHardcore: this.isHardcoreMode, enterPulse: this.enterPulse });
     if (this.particles) this.particles.update(this.state);
@@ -2637,6 +2643,22 @@ gl_FragColor=vec4(col,1.0);}`;
 
   private rushProgress = 0;
   private rushActive = false;
+  private whiteHoleShown = false;
+
+  private updateWhiteHoleOverlay() {
+    const wh = document.getElementById('white-hole');
+    if (!wh) return;
+
+    if (this.explosionProgress > 0.55 && !this.whiteHoleShown) {
+      this.whiteHoleShown = true;
+      wh.classList.remove('fading');
+      wh.classList.add('active');
+    } else if (this.explosionProgress > 1.7 && this.whiteHoleShown) {
+      this.whiteHoleShown = false;
+      wh.classList.add('fading');
+      setTimeout(() => wh.classList.remove('active', 'fading'), 4000);
+    }
+  }
 
   private triggerSingularityExplosion() {
     this.rushActive = true;
@@ -2652,8 +2674,8 @@ gl_FragColor=vec4(col,1.0);}`;
 
         setTimeout(() => {
           const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-          this.lenis.scrollTo(maxScroll, { duration: 4, easing: (x: number) => 1 - Math.pow(1 - x, 3) });
-        }, 2500);
+          this.lenis.scrollTo(maxScroll, { duration: 6, easing: (x: number) => 1 - Math.pow(1 - x, 3) });
+        }, 4000);
       },
     });
 
@@ -2907,6 +2929,9 @@ gl_FragColor=vec4(col,1.0);}`;
         this.gravityMaxReached = 0;
         this.pointOfNoReturnTriggered = false;
         this.singularityTriggered = false;
+        this.whiteHoleShown = false;
+        const whEl = document.getElementById('white-hole');
+        if (whEl) whEl.classList.remove('active', 'fading');
         this.visitCount++;
 
         if (this.visitCount >= 3) {

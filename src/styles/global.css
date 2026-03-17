@@ -5001,6 +5001,157 @@ html.hardcore-mode .corner-ornament {
   }
 }
 
+/* ── White Hole — Rebirth ── */
+
+#white-hole {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 2s cubic-bezier(0.4, 0, 0, 1);
+}
+
+#white-hole.active {
+  opacity: 1;
+}
+
+#white-hole.fading {
+  opacity: 0;
+  transition: opacity 4s ease;
+}
+
+.wh-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 255, 250, 0.9) 0%, rgba(255, 240, 210, 0.5) 30%, rgba(200, 170, 255, 0.1) 60%, transparent 80%);
+  box-shadow: 0 0 60px 30px rgba(255, 250, 240, 0.3), 0 0 120px 60px rgba(200, 170, 255, 0.1);
+  animation: wh-core-grow 4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes wh-core-grow {
+  0% { width: 0; height: 0; }
+  30% { width: 4vmin; height: 4vmin; }
+  100% { width: 12vmin; height: 12vmin; }
+}
+
+.wh-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8vmin;
+  height: 8vmin;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 240, 210, 0.15);
+  box-shadow: 0 0 20px 5px rgba(200, 170, 255, 0.05), inset 0 0 20px 5px rgba(255, 240, 210, 0.03);
+  opacity: 0;
+}
+
+.wh-ring:nth-child(2) {
+  animation: wh-ring-pulse 3s ease-out 0.5s infinite;
+}
+
+.wh-ring:nth-child(3) {
+  animation: wh-ring-pulse 3s ease-out 1.5s infinite;
+}
+
+.wh-ring:nth-child(4) {
+  animation: wh-ring-pulse 3s ease-out 2.5s infinite;
+}
+
+@keyframes wh-ring-pulse {
+  0% { width: 8vmin; height: 8vmin; opacity: 0.4; border-color: rgba(255, 240, 210, 0.25); }
+  100% { width: 80vmin; height: 80vmin; opacity: 0; border-color: rgba(200, 170, 255, 0.02); }
+}
+
+.wh-rays {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    rgba(255, 240, 210, 0.03) 15deg,
+    transparent 30deg,
+    rgba(200, 180, 255, 0.02) 60deg,
+    transparent 75deg,
+    rgba(255, 240, 210, 0.03) 105deg,
+    transparent 120deg,
+    rgba(200, 180, 255, 0.02) 150deg,
+    transparent 165deg,
+    rgba(255, 240, 210, 0.03) 195deg,
+    transparent 210deg,
+    rgba(200, 180, 255, 0.02) 240deg,
+    transparent 255deg,
+    rgba(255, 240, 210, 0.03) 285deg,
+    transparent 300deg,
+    rgba(200, 180, 255, 0.02) 330deg,
+    transparent 345deg,
+    rgba(255, 240, 210, 0.03) 360deg
+  );
+  mask-image: radial-gradient(circle at 50% 50%, black 5%, transparent 50%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 5%, transparent 50%);
+  animation: wh-rays-spin 30s linear infinite;
+  opacity: 0;
+  transition: opacity 3s ease 1s;
+}
+
+#white-hole.active .wh-rays {
+  opacity: 1;
+}
+
+@keyframes wh-rays-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.wh-particles {
+  position: absolute;
+  inset: 0;
+}
+
+.wh-p {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(255, 240, 220, 0.6);
+  box-shadow: 0 0 4px 1px rgba(255, 240, 220, 0.3);
+  opacity: 0;
+}
+
+.wh-p:nth-child(1) { animation: wh-eject 2.5s ease-out 0.3s infinite; --wh-angle: 0deg; }
+.wh-p:nth-child(2) { animation: wh-eject 2.8s ease-out 0.6s infinite; --wh-angle: 30deg; }
+.wh-p:nth-child(3) { animation: wh-eject 2.3s ease-out 0.9s infinite; --wh-angle: 60deg; }
+.wh-p:nth-child(4) { animation: wh-eject 2.6s ease-out 1.2s infinite; --wh-angle: 100deg; }
+.wh-p:nth-child(5) { animation: wh-eject 2.4s ease-out 0.1s infinite; --wh-angle: 140deg; }
+.wh-p:nth-child(6) { animation: wh-eject 2.7s ease-out 0.7s infinite; --wh-angle: 180deg; }
+.wh-p:nth-child(7) { animation: wh-eject 2.2s ease-out 1.0s infinite; --wh-angle: 210deg; }
+.wh-p:nth-child(8) { animation: wh-eject 2.9s ease-out 0.4s infinite; --wh-angle: 250deg; }
+.wh-p:nth-child(9) { animation: wh-eject 2.5s ease-out 1.5s infinite; --wh-angle: 280deg; }
+.wh-p:nth-child(10) { animation: wh-eject 2.6s ease-out 0.2s infinite; --wh-angle: 310deg; }
+.wh-p:nth-child(11) { animation: wh-eject 2.3s ease-out 0.8s infinite; --wh-angle: 340deg; }
+.wh-p:nth-child(12) { animation: wh-eject 2.7s ease-out 1.3s infinite; --wh-angle: 155deg; }
+
+@keyframes wh-eject {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--wh-angle)) translateX(2vmin) scale(0.5);
+  }
+  10% { opacity: 0.8; }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--wh-angle)) translateX(35vmin) scale(0.2);
+  }
+}
+
 #escape-msg {
   position: fixed;
   top: 50%;

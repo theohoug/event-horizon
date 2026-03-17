@@ -398,19 +398,34 @@ void main() {
   }
 
 #ifndef QUALITY_MEDIUM
-  float spaghettiPhase = smoothstep(0.43, 0.48, uScroll) * smoothstep(0.58, 0.52, uScroll);
+  float spaghettiPhase = smoothstep(0.43, 0.48, uScroll) * smoothstep(0.62, 0.52, uScroll);
   if (spaghettiPhase > 0.01) {
-    float waveTime = uTime * 0.6;
-    float waveRadius = mod(waveTime, 1.8);
-    float wave = g2((dist - waveRadius * 0.5) * 18.0);
+    float waveTime = uTime * 0.8;
     vec2 waveDir = dist > 0.001 ? center / dist : vec2(0.0);
-    vec2 waveOffset = waveDir * wave * 0.012 * spaghettiPhase;
-    vec3 warpedColor = texture2D(tDiffuse, distortedUv + waveOffset).rgb;
-    color = mix(color, warpedColor, wave * spaghettiPhase * 0.6);
-    color += vec3(0.14, 0.08, 0.03) * wave * spaghettiPhase * 0.25;
-    float wave2Radius = mod(waveTime + 0.9, 1.8);
-    float wave2 = g2((dist - wave2Radius * 0.5) * 18.0);
-    color += vec3(0.08, 0.04, 0.02) * wave2 * spaghettiPhase * 0.15;
+
+    float vertStretch = sin(center.x * 25.0 + uTime * 2.0) * 0.008 * spaghettiPhase;
+    vec2 stretchUv = distortedUv + vec2(0.0, vertStretch * (1.0 + dist * 3.0));
+    vec3 stretchedCol = texture2D(tDiffuse, stretchUv).rgb;
+    color = mix(color, stretchedCol, spaghettiPhase * 0.5);
+
+    for (int w = 0; w < 3; w++) {
+      float wR = mod(waveTime + float(w) * 0.6, 2.0);
+      float wave = g2((dist - wR * 0.4) * 22.0);
+      vec2 wOff = waveDir * wave * 0.025 * spaghettiPhase;
+      vec3 wCol = texture2D(tDiffuse, distortedUv + wOff).rgb;
+      color = mix(color, wCol, wave * spaghettiPhase * 0.4);
+      vec3 wTint = mix(vec3(1.0, 0.7, 0.3), vec3(1.0, 0.4, 0.1), float(w) / 3.0);
+      color += wTint * wave * spaghettiPhase * 0.08;
+    }
+
+    float tearY = sin(uTime * 0.5) * 0.03;
+    float tear = exp(-pow(center.y - tearY, 2.0) * 800.0) * spaghettiPhase;
+    vec2 tearUp = distortedUv + vec2(0.0, tear * 0.04);
+    vec2 tearDown = distortedUv - vec2(0.0, tear * 0.04);
+    vec3 tornUp = texture2D(tDiffuse, tearUp).rgb;
+    vec3 tornDown = texture2D(tDiffuse, tearDown).rgb;
+    color = mix(color, (tornUp + tornDown) * 0.5, tear * 0.6);
+    color += vec3(1.0, 0.8, 0.4) * tear * 0.15;
   }
 #endif
 
@@ -508,10 +523,10 @@ void main() {
 
   float noReturnPhase = g2((uScroll - 0.37) * 50.0);
   if (noReturnPhase > 0.01) {
-    float blackoutWave = noReturnPhase*noReturnPhase*noReturnPhase;
-    color *= 1.0 - blackoutWave * 0.92;
+    float blackoutWave = noReturnPhase * noReturnPhase;
+    color *= 1.0 - blackoutWave * 0.35;
     float _rf = max(noReturnPhase - 0.3, 0.0) * 1.43; float recoverFlash = _rf * _rf;
-    color += vec3(0.95, 0.9, 1.0) * recoverFlash * 0.08;
+    color += vec3(1.0, 0.85, 0.6) * recoverFlash * 0.12;
   }
 
   float horizonPeak = g2((uScroll - 0.65) * 50.0);
@@ -547,8 +562,7 @@ void main() {
     float voidDarken = voidChapter * (0.45 + voidBreath * 0.15);
     color *= 1.0 - voidDarken;
 
-    float abyssPull = exp(-dist * dist * 20.0) * voidChapter;
-    color *= 1.0 - abyssPull * 0.40;
+    /* abyssPull center darkening removed */
 
     float voidPulseRing = g2((dist - 0.12 - voidBreath * 0.08) * 18.0);
     float voidPulseRing2 = g2((dist - 0.28 - voidBreath2 * 0.06) * 12.0);
@@ -592,53 +606,7 @@ void main() {
     color += vec3(0.03, 0.02, 0.06) * echoRing2 * voidChapter * 0.10;
   }
 
-  float ehExpSuppress = 1.0 - smoothstep(0.0, 0.1, uExplosion);
-  float ehRadius = uScroll * 0.08 * ehExpSuppress;
-  float ehEdge = smoothstep(ehRadius, ehRadius - 0.015, dist);
-  float ehRing = g2((dist - ehRadius) * 60.0);
-  if (ehRadius > 0.005) {
-    float scrollFade = smoothstep(0.1, 0.5, uScroll);
-    color *= 1.0 - ehEdge * scrollFade * 0.85;
-    color += vec3(0.6, 0.35, 0.15) * ehRing * smoothstep(0.3, 0.6, uScroll) * 0.2;
-    color += vec3(0.15, 0.15, 0.35) * ehRing * smoothstep(0.6, 0.9, uScroll) * 0.12;
-
-    float photonRadius = ehRadius + 0.008;
-    float photonRing = g2((dist - photonRadius) * 120.0);
-    float photonPulse = 0.8 + sin(uTime * 2.0 + dist * 40.0) * 0.2;
-    float deepIntensity = 1.0 + smoothstep(0.5, 0.9, uScroll) * 1.5;
-    color += vec3(1.0, 0.85, 0.6) * photonRing * scrollFade * 0.35 * photonPulse * deepIntensity;
-
-    float photonRing2 = g2((dist - photonRadius - 0.004) * 150.0);
-    color += vec3(0.8, 0.65, 1.0) * photonRing2 * scrollFade * 0.15 * deepIntensity;
-
-    float orbitAngle = uTime * 0.6 + uScroll * 8.0;
-    vec2 orbitPos = vec2(cos(orbitAngle), sin(orbitAngle)) * photonRadius;
-    float orbitDist = length(center - orbitPos);
-    float orbitSpot = exp(-orbitDist * orbitDist * 6000.0);
-    float orbitGlow = exp(-orbitDist * orbitDist * 400.0);
-    float orbitActive = scrollFade * smoothstep(0.85, 0.70, uScroll);
-    color += vec3(1.0, 0.95, 0.85) * orbitSpot * orbitActive * 0.5;
-    color += vec3(0.8, 0.6, 0.3) * orbitGlow * orbitActive * 0.08;
-
-    float ehAura = g2((dist - ehRadius - 0.02) * 25.0);
-    color += vec3(0.12, 0.10, 0.20) * ehAura * scrollFade * 0.18 * deepIntensity;
-
-#ifndef QUALITY_MEDIUM
-    float lensingZone = smoothstep(ehRadius + 0.06, ehRadius, dist) * (1.0 - ehEdge);
-    if (lensingZone > 0.01) {
-      vec2 lensingDir = dist > 0.001 ? center / dist : vec2(0.0);
-      float lensingStrength = lensingZone * 0.035 * scrollFade;
-      vec2 lensingUv = distortedUv + lensingDir * lensingStrength;
-      vec3 lensedColor = texture2D(tDiffuse, lensingUv).rgb;
-      color = mix(color, lensedColor, lensingZone * 0.6);
-
-      float einsteinRing = g2((dist - ehRadius - 0.025) * 80.0);
-      float einsteinAngle = centerAngle;
-      float einsteinFlicker = 0.7 + sin(einsteinAngle * 6.0 + uTime * 1.5) * 0.3;
-      color += vec3(0.9, 0.75, 0.5) * einsteinRing * scrollFade * 0.12 * einsteinFlicker;
-    }
-#endif
-  }
+  /* Event horizon post-process shadow removed */
 
   float nebulaPhase = smoothstep(0.15, 0.45, uScroll) * smoothstep(0.75, 0.55, uScroll);
   if (nebulaPhase > 0.01) {

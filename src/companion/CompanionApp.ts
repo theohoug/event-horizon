@@ -320,7 +320,7 @@ export async function init(roomId: string) {
     statusText.textContent = labels.sourcesBtn;
   }
 
-  await hub.join(roomId);
+  await hub.join(roomId, 'companion');
   dot.classList.add('connected');
   statusText.textContent = labels.waiting;
 }

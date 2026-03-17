@@ -12,6 +12,9 @@ export class DesktopBroadcaster {
   private lastSend = 0;
   private roomId: string;
   private throttleMs = 50;
+  private companionConnected = false;
+  private onCompanionJoinCbs: (() => void)[] = [];
+  private onCompanionLeaveCbs: (() => void)[] = [];
 
   constructor(roomId: string) {
     this.roomId = roomId;
@@ -19,8 +22,20 @@ export class DesktopBroadcaster {
   }
 
   async connect() {
-    await this.hub.join(this.roomId);
+    this.hub.onPresence('companion_join', () => {
+      this.companionConnected = true;
+      this.onCompanionJoinCbs.forEach(cb => cb());
+    });
+    this.hub.onPresence('companion_leave', () => {
+      this.companionConnected = false;
+      this.onCompanionLeaveCbs.forEach(cb => cb());
+    });
+    await this.hub.join(this.roomId, 'desktop');
   }
+
+  onCompanionJoin(cb: () => void) { this.onCompanionJoinCbs.push(cb); }
+  onCompanionLeave(cb: () => void) { this.onCompanionLeaveCbs.push(cb); }
+  get isCompanionConnected() { return this.companionConnected; }
 
   sendState(data: {
     scroll: number;

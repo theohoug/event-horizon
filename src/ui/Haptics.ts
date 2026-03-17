@@ -86,26 +86,28 @@ export class Haptics {
 
   private triggeredZones = new Set<number>();
 
-  update(scroll: number) {
+  update(scroll: number, chapterIndex?: number) {
     if (!this.supported) return;
 
-    const zone = Math.floor(scroll * 9);
+    const zone = chapterIndex !== undefined ? chapterIndex : Math.floor(scroll * 9);
     if (!this.triggeredZones.has(zone) && zone > 0) {
       this.triggeredZones.add(zone);
       this.pulse(0.2 + scroll * 0.5);
     }
 
-    if (scroll > 0.4 && scroll < 0.5) {
+    if (zone === 2) {
+      this.approach();
+    } else if (zone === 3) {
       this.disintegrate();
-    } else if (scroll > 0.55 && scroll < 0.65) {
+    } else if (zone === 4) {
       this.timeDilation();
-    } else if (scroll > 0.65 && scroll < 0.75) {
+    } else if (zone === 5) {
       this.singularity();
-    } else if (scroll > 0.78 && scroll < 0.88) {
+    } else if (zone === 6) {
       this.theVoid();
-    } else if (scroll > 0.88 && scroll < 0.95) {
+    } else if (zone === 7) {
       this.heartbeat();
-    } else if (scroll >= 0.95) {
+    } else if (zone === 8) {
       this.impact();
     }
   }

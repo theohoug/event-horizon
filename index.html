@@ -36,7 +36,7 @@
   <meta name="robots" content="index, follow" />
   <title>Event Horizon</title>
   <style>
-    #loader{position:fixed;inset:0;z-index:10000;background:#050505;display:flex;align-items:center;justify-content:center;transition:opacity .6s}
+    #loader{position:fixed;inset:0;z-index:10000;background:rgba(5,5,5,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;transition:opacity .6s}
     #loader-inner{text-align:center;color:rgba(232,232,255,.9);font-family:system-ui,-apple-system,sans-serif}
     #loader-text{font-size:clamp(1rem,3vw,1.8rem);letter-spacing:.4em;margin-bottom:.5rem}
     #loader-sub{font-size:.75rem;opacity:.5;margin-bottom:1.5rem}
@@ -187,42 +187,73 @@
 
     <div id="sound-prompt" role="dialog" aria-label="Sound preference" aria-modal="true">
       <div id="sound-prompt-inner">
-        <div id="sound-logo" aria-hidden="true">
-          <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="52" height="52">
-            <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,179,71,0.06)" stroke-width="0.5"/>
-            <ellipse cx="32" cy="32" rx="24" ry="7" fill="none" stroke="rgba(255,179,71,0.5)" stroke-width="1.2" transform="rotate(-12 32 32)"/>
-            <ellipse cx="32" cy="32" rx="20" ry="5" fill="none" stroke="rgba(255,179,71,0.2)" stroke-width="0.5" transform="rotate(-12 32 32)"/>
-            <circle cx="32" cy="32" r="10" fill="#050505"/>
-            <circle cx="32" cy="32" r="10.5" fill="none" stroke="rgba(255,179,71,0.4)" stroke-width="0.5"/>
-          </svg>
+        <div id="prompt-main">
+          <div id="sound-logo" aria-hidden="true">
+            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" width="56" height="56">
+              <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,179,71,0.06)" stroke-width="0.5"/>
+              <ellipse cx="32" cy="32" rx="24" ry="7" fill="none" stroke="rgba(255,179,71,0.5)" stroke-width="1.2" transform="rotate(-12 32 32)"/>
+              <ellipse cx="32" cy="32" rx="20" ry="5" fill="none" stroke="rgba(255,179,71,0.2)" stroke-width="0.5" transform="rotate(-12 32 32)"/>
+              <circle cx="32" cy="32" r="10" fill="#050505"/>
+              <circle cx="32" cy="32" r="10.5" fill="none" stroke="rgba(255,179,71,0.4)" stroke-width="0.5"/>
+            </svg>
+          </div>
+          <div id="prompt-title">EVENT HORIZON</div>
+          <div id="prompt-tagline">Fall into a black hole.</div>
+          <div id="sound-prompt-line" aria-hidden="true"></div>
+          <div id="prompt-description">A scroll-driven interactive journey through<br>9 chapters of real astrophysics.</div>
+          <div id="prompt-keywords">
+            <span class="prompt-kw">Gravitational Lensing</span>
+            <span class="prompt-kw-sep">·</span>
+            <span class="prompt-kw">Time Dilation</span>
+            <span class="prompt-kw-sep">·</span>
+            <span class="prompt-kw">Singularity</span>
+          </div>
+          <div id="prompt-recommend">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="14" height="14"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
+            <span id="prompt-recommend-text">Headphones & fullscreen recommended</span>
+          </div>
+          <div id="sound-wave" aria-hidden="true">
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+          </div>
+          <div id="sound-prompt-text">Sound</div>
+          <div id="sound-prompt-buttons">
+            <button id="sound-prompt-yes">Enter with sound</button>
+            <button id="sound-prompt-no">Skip</button>
+          </div>
+          <button id="sound-lang-toggle" aria-label="Switch language"><span class="lang-opt" data-lang="en">EN</span><span class="lang-sep">·</span><span class="lang-opt" data-lang="fr">FR</span></button>
+          <div id="sound-warning" aria-label="Content warning">This experience contains flashing lights and psychological themes.</div>
         </div>
-        <div id="sound-wave" aria-hidden="true">
-          <span class="wave-bar"></span>
-          <span class="wave-bar"></span>
-          <span class="wave-bar"></span>
-          <span class="wave-bar"></span>
-          <span class="wave-bar"></span>
-        </div>
-        <div id="sound-prompt-text">Sound</div>
-        <div id="sound-prompt-line" aria-hidden="true"></div>
-        <div id="sound-prompt-buttons">
-          <button id="sound-prompt-yes">Enter with sound</button>
-          <button id="sound-prompt-no">Skip</button>
-        </div>
-        <button id="sound-lang-toggle" aria-label="Switch language"><span class="lang-opt" data-lang="en">EN</span><span class="lang-sep">·</span><span class="lang-opt" data-lang="fr">FR</span></button>
         <div id="sound-companion" aria-hidden="true">
-          <div id="sound-companion-headline">Enhance your immersion</div>
+          <div id="sound-companion-badge"><span id="sound-companion-dot"></span><span id="sound-companion-badge-text">DUAL SCREEN</span></div>
+          <div id="sound-companion-headline">Connect your phone</div>
           <div id="sound-companion-line"></div>
-          <div id="sound-companion-row">
+          <div id="sound-companion-qr-wrap">
             <div id="sound-companion-qr"></div>
-            <div id="sound-companion-info">
-              <div id="sound-companion-label"><span id="sound-companion-dot"></span>LIVE</div>
-              <div id="sound-companion-title">Second screen</div>
-              <div id="sound-companion-text">Your phone becomes a mission console. Real-time telemetry and astrophysics synced to your descent into the black hole.</div>
+            <div id="sound-companion-scan">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" width="12" height="12"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 7h3v3H7zM14 7h3v3h-3zM7 14h3v3H7z"/></svg>
+              <span id="sound-companion-scan-text">Point your camera</span>
             </div>
           </div>
+          <div id="sound-companion-title">Mission console</div>
+          <div id="sound-companion-text">Your phone synchronizes in real-time with your descent into the black hole.</div>
+          <div id="sound-companion-features">
+            <div class="comp-feat"><span class="comp-feat-dot">◈</span> <span class="comp-feat-label">Live telemetry</span></div>
+            <div class="comp-feat"><span class="comp-feat-dot">◈</span> <span class="comp-feat-label">Physics briefings</span></div>
+            <div class="comp-feat"><span class="comp-feat-dot">◈</span> <span class="comp-feat-label">Haptic feedback</span></div>
+            <div class="comp-feat"><span class="comp-feat-dot">◈</span> <span class="comp-feat-label">Chapter-synced data</span></div>
+          </div>
+          <div id="sound-companion-urgency">The void is deeper with two screens.</div>
+          <div id="sound-companion-synced" aria-hidden="true">
+            <div id="synced-pulse" aria-hidden="true"></div>
+            <svg id="synced-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="32" height="32"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <div id="synced-text">Console synchronized.</div>
+            <div id="synced-sub">Ready for the jump.</div>
+          </div>
         </div>
-        <div id="sound-warning" aria-label="Content warning">This experience contains flashing lights and psychological themes.</div>
       </div>
     </div>
 

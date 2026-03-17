@@ -157,9 +157,12 @@ export class PostProcessing {
     const s = state.scroll;
     const ex = state.explosion ?? 0;
 
-    const climaxT = s > 0.65 ? (s - 0.65) / 0.35 : 0;
+    const ch5Mid = (state as any).ch5Mid ?? 0.73;
+    const singMid = (state as any).singMid ?? 0.85;
+    const climaxStart = ch5Mid - 0.04;
+    const climaxT = s > climaxStart ? (s - climaxStart) / (1 - climaxStart) : 0;
     const climaxBoost = climaxT * Math.sqrt(climaxT);
-    const singDelta = (s - 0.77) * 18;
+    const singDelta = (s - singMid) * 18;
     const singularityPeak = Math.exp(-singDelta * singDelta);
 
     const hbActive = s > 0.33 ? 1 : 0;
@@ -170,15 +173,17 @@ export class PostProcessing {
     const hbPulse = hbActive * hbSin8 * hbSin4 * 0.08;
 
     const breathD1 = (s - 0.45) * 16; const breathZone1 = Math.exp(-breathD1 * breathD1);
-    const breathD2 = (s - 0.72) * 16; const breathZone2 = Math.exp(-breathD2 * breathD2);
+    const ch6Mid = (state as any).ch6Mid ?? 0.76;
+    const breathD2 = (s - ch6Mid) * 16; const breathZone2 = Math.exp(-breathD2 * breathD2);
     const breathCalm = Math.max(breathZone1, breathZone2) * 0.4;
 
     const hbChroma = hbPulse * 3.5;
     const chapterFlashChroma = (state.chapterFlash ?? 0) * 6;
-    const whiteOutT = s > 0.82 ? (s - 0.82) / 0.18 : 0;
+    const whiteOutStart = singMid + 0.03;
+    const whiteOutT = s > whiteOutStart ? (s - whiteOutStart) / (1 - whiteOutStart) : 0;
     const whiteOutFade = whiteOutT * whiteOutT;
     const exFade = ex > 0.5 ? Math.min((ex - 0.5) * 2, 1) : 0;
-    const chromatic = (0.25 + s * 1.8 + velBoost * 0.7 + climaxBoost * 1.2 + singularityPeak * 5.0 + hbChroma + chapterFlashChroma) * (1 - breathCalm) * Math.max(0, 1 - whiteOutFade * 1.1) * (1 - exFade * 0.7);
+    const chromatic = (0.25 + s * 1.8 + velBoost * 0.7 + climaxBoost * 1.2 + singularityPeak * 8.0 + hbChroma + chapterFlashChroma) * (1 - breathCalm) * Math.max(0, 1 - whiteOutFade * 1.1) * (1 - exFade * 0.7);
 
     this.compositeMaterial.uniforms.uTime.value = state.time;
     this.compositeMaterial.uniforms.uScroll.value = s;

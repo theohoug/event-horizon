@@ -93,6 +93,7 @@ export class Experience {
   private rafId: number = 0;
   private cursor: HTMLDivElement | null = null;
   private chapterFlash: number = 0;
+  private enterPulse: number = 0;
   private lastChapterIndex: number = -1;
   private cursorRafId: number = 0;
   private overlayEl: HTMLElement | null = null;
@@ -103,6 +104,44 @@ export class Experience {
   private creditsEl: HTMLElement | null = null;
   private themeColorMeta: HTMLMetaElement | null = null;
   private boundHandlers: { target: EventTarget; event: string; handler: EventListener }[] = [];
+  private chapterBreaks: number[] = [];
+
+  private chapterMids: number[] = [];
+
+  private computeChapterBreaks() {
+    const sections = document.querySelectorAll('.chapter');
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    if (total <= 0) { this.chapterBreaks = []; this.chapterMids = []; return; }
+    const breaks: number[] = [];
+    const mids: number[] = [];
+    const vh = window.innerHeight;
+    let cum = 0;
+    sections.forEach((s, i) => {
+      const el = s as HTMLElement;
+      cum += el.offsetHeight;
+      breaks.push(cum / total);
+      const trigPct = i === 0 ? 0 : i === 8 ? 0.5 : 0.65;
+      const start = Math.max(0, el.offsetTop - vh * trigPct) / total;
+      const nextEl = sections[i + 1] as HTMLElement | undefined;
+      const nextPct = i + 1 === 0 ? 0 : i + 1 === 8 ? 0.5 : 0.65;
+      const end = nextEl ? Math.max(0, nextEl.offsetTop - vh * nextPct) / total : 1.0;
+      mids.push((start + end) / 2);
+    });
+    this.chapterBreaks = breaks;
+    this.chapterMids = mids;
+  }
+
+  getChapterMid(chapter: number): number {
+    return this.chapterMids[chapter] ?? (chapter + 0.5) / 9;
+  }
+
+  getChapterFromScroll(scroll: number): number {
+    if (this.chapterBreaks.length === 0) return Math.min(8, Math.floor(scroll * 9));
+    for (let i = 0; i < this.chapterBreaks.length; i++) {
+      if (scroll < this.chapterBreaks[i]) return i;
+    }
+    return this.chapterBreaks.length - 1;
+  }
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -419,6 +458,14 @@ gl_FragColor=vec4(col,1.0);}`;
     this.renderer.toneMapping = THREE.NoToneMapping;
 
     this.perfConfig = this.profileGpu(this.renderer);
+    const urlQuality = new URL(window.location.href).searchParams.get('quality') as 'ultra' | 'high' | 'medium' | null;
+    if (urlQuality === 'ultra' || urlQuality === 'high' || urlQuality === 'medium') {
+      this.perfConfig = urlQuality === 'ultra'
+        ? { dpr: Math.min(window.devicePixelRatio, 2), maxSteps: 160, qualityMedium: false, gpgpuTexSize: 256, starfieldCount: 12000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 100, quality: 'ultra' }
+        : urlQuality === 'high'
+        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 80, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: true, gpuScore: 60, quality: 'high' }
+        : { dpr: 1.0, maxSteps: 36, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 3000, bloomPasses: 2, bloomScale: 0.2, motionBlur: false, antialias: false, gpuScore: 25, quality: 'medium' };
+    }
     this.state.quality = this.perfConfig.quality;
 
     this.renderer.setPixelRatio(this.perfConfig.dpr);
@@ -444,6 +491,7 @@ gl_FragColor=vec4(col,1.0);}`;
     this.syncAlteredMode();
     this.haptics = new Haptics();
     this.setupLenis();
+    this.computeChapterBreaks();
     this.setupMouse();
     this.setupHoldInteraction();
     this.setupCursor();
@@ -459,6 +507,8 @@ gl_FragColor=vec4(col,1.0);}`;
       const baseUrl = window.location.origin + window.location.pathname;
       this.qrOverlay = new QROverlay(roomId, baseUrl);
       this.generateSoundPromptQR(`${baseUrl}?companion=${roomId}&lang=${getLang()}`);
+      this.broadcaster.onCompanionJoin(() => this.onCompanionConnected());
+      this.broadcaster.onCompanionLeave(() => this.onCompanionDisconnected());
     }
 
     await this.preload();
@@ -535,10 +585,9 @@ gl_FragColor=vec4(col,1.0);}`;
     const loader = document.getElementById('loader');
     if (loader) {
       setTimeout(() => {
-        loader.classList.add('hidden');
-        setTimeout(() => {
           if (this.visitCount >= 3) {
-            this.showLoop4Terminal();
+            loader.classList.add('hidden');
+            setTimeout(() => this.showLoop4Terminal(), 100);
             return;
           }
 
@@ -548,13 +597,15 @@ gl_FragColor=vec4(col,1.0);}`;
             if (this.visitCount >= 2) { this.isHardcoreMode = true; }
             this.isAlteredMode = true;
             this.syncAlteredMode();
-            this.showEscapeCatcher();
+            loader.classList.add('hidden');
+            setTimeout(() => this.showEscapeCatcher(), 100);
             return;
           }
 
           if (this.isAlteredMode) {
             const soundPrompt = document.getElementById('sound-prompt');
             if (soundPrompt) soundPrompt.style.display = 'none';
+            loader.classList.add('hidden');
             this.state.soundEnabled = true;
             this.audio.start().then(() => {
               const muteBtn = document.getElementById('mute-btn');
@@ -569,8 +620,9 @@ gl_FragColor=vec4(col,1.0);}`;
 
           const soundPrompt = document.getElementById('sound-prompt');
           if (soundPrompt) soundPrompt.classList.add('visible');
+          this.lenis.stop();
           this.setupSoundPrompt();
-        }, 600);
+          loader.classList.add('hidden');
       }, 400);
     }
   }
@@ -714,16 +766,27 @@ gl_FragColor=vec4(col,1.0);}`;
     const dismiss = async (withSound: boolean) => {
       this.state.soundEnabled = withSound;
       localStorage.setItem('eh_sound', withSound ? '1' : '0');
-      if (prompt) {
-        prompt.classList.remove('visible');
-        setTimeout(() => { prompt.style.display = 'none'; }, 500);
-      }
+
       if (withSound) {
         await this.audio.start();
         if (muteBtn) muteBtn.classList.add('sound-on');
+        this.audio.triggerEnterPulse();
       }
 
-      this.playIntroCinematic();
+      this.postProcessing.triggerShockwave(0.5, 0.5, 0.35);
+      this.enterPulse = 1.0;
+      this.chapterFlash = 0.3;
+
+      if (prompt) {
+        prompt.classList.add('dissolving');
+        setTimeout(() => prompt.classList.remove('visible'), 50);
+        setTimeout(() => { prompt.style.display = 'none'; }, 1200);
+      }
+      this.lenis.start();
+
+      setTimeout(() => {
+        this.playIntroCinematic();
+      }, 500);
     };
 
     if (yesBtn) this.addTrackedListener(yesBtn, 'click', () => dismiss(true));
@@ -742,6 +805,14 @@ gl_FragColor=vec4(col,1.0);}`;
         if (sNo) sNo.textContent = tr.sound.no;
         const sWarn = document.getElementById('sound-warning');
         if (sWarn) sWarn.textContent = tr.accessWarning;
+        const pTagline = document.getElementById('prompt-tagline');
+        if (pTagline) pTagline.textContent = tr.prompt.tagline;
+        const pDesc = document.getElementById('prompt-description');
+        if (pDesc) pDesc.innerHTML = tr.prompt.description.replace('9', '<br>9');
+        const pKws = document.querySelectorAll('.prompt-kw');
+        pKws.forEach((el, i) => { if (tr.prompt.keywords[i]) el.textContent = tr.prompt.keywords[i]; });
+        const pRec = document.getElementById('prompt-recommend-text');
+        if (pRec) pRec.textContent = tr.prompt.recommend;
       };
       updateSoundLangBtn();
       this.addTrackedListener(soundLangToggle, 'click', (e: Event) => {
@@ -753,6 +824,31 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     if (yesBtn) setTimeout(() => yesBtn.focus(), 100);
+
+    if (yesBtn) {
+      const magnetic = 12;
+      const glowEl = document.createElement('div');
+      glowEl.id = 'btn-magnetic-glow';
+      yesBtn.appendChild(glowEl);
+
+      this.addTrackedListener(yesBtn, 'mousemove', ((e: MouseEvent) => {
+        const rect = yesBtn.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (e.clientX - cx) / (rect.width / 2);
+        const dy = (e.clientY - cy) / (rect.height / 2);
+        yesBtn.style.transform = `translate(${dx * magnetic}px, ${dy * magnetic}px)`;
+        const px = ((e.clientX - rect.left) / rect.width) * 100;
+        const py = ((e.clientY - rect.top) / rect.height) * 100;
+        glowEl.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,179,71,0.25) 0%, transparent 60%)`;
+        glowEl.style.opacity = '1';
+      }) as EventListener);
+
+      this.addTrackedListener(yesBtn, 'mouseleave', (() => {
+        yesBtn.style.transform = '';
+        glowEl.style.opacity = '0';
+      }) as EventListener);
+    }
 
     const promptKeyHandler = (e: KeyboardEvent) => {
       if (!prompt || prompt.style.display === 'none') return;
@@ -775,6 +871,14 @@ gl_FragColor=vec4(col,1.0);}`;
         if (titleEl) titleEl.textContent = tr.companion.title;
         const headlineEl = document.getElementById('sound-companion-headline');
         if (headlineEl) headlineEl.textContent = tr.companion.headline;
+        const badgeEl = document.getElementById('sound-companion-badge-text');
+        if (badgeEl) badgeEl.textContent = tr.companion.badge;
+        const scanEl = document.getElementById('sound-companion-scan-text');
+        if (scanEl) scanEl.textContent = tr.companion.scan;
+        const urgencyEl = document.getElementById('sound-companion-urgency');
+        if (urgencyEl) urgencyEl.textContent = tr.companion.urgency;
+        const featEls = document.querySelectorAll('.comp-feat-label');
+        featEls.forEach((el, i) => { if (tr.companion.features[i]) el.textContent = tr.companion.features[i]; });
       };
       updateCompanionLang();
       onLangChange(updateCompanionLang);
@@ -947,6 +1051,14 @@ gl_FragColor=vec4(col,1.0);}`;
     if (soundText) soundText.textContent = tr.sound.label;
     if (soundYes) soundYes.textContent = tr.sound.yes;
     if (soundNo) soundNo.textContent = tr.sound.no;
+    const pTagline2 = document.getElementById('prompt-tagline');
+    if (pTagline2) pTagline2.textContent = tr.prompt.tagline;
+    const pDesc2 = document.getElementById('prompt-description');
+    if (pDesc2) pDesc2.innerHTML = tr.prompt.description.replace('9', '<br>9');
+    const pKws2 = document.querySelectorAll('.prompt-kw');
+    pKws2.forEach((el, i) => { if (tr.prompt.keywords[i]) el.textContent = tr.prompt.keywords[i]; });
+    const pRec2 = document.getElementById('prompt-recommend-text');
+    if (pRec2) pRec2.textContent = tr.prompt.recommend;
 
     const shareBtn = document.getElementById('share-btn');
     const returnBtn = document.getElementById('return-btn');
@@ -994,7 +1106,7 @@ gl_FragColor=vec4(col,1.0);}`;
     });
 
     if (this.chapterIndicatorTitle) {
-      const chapterIndex = Math.min(8, Math.floor(this.state.scroll * 9));
+      const chapterIndex = this.getChapterFromScroll(this.state.scroll);
       this.chapterIndicatorTitle.textContent = tr.chapterNames[chapterIndex] || '';
     }
 
@@ -1004,7 +1116,7 @@ gl_FragColor=vec4(col,1.0);}`;
     this.updateShareCount();
 
     if (this.timeline) {
-      this.timeline.refreshCurrentChapter(this.state.scroll);
+      this.timeline.refreshCurrentChapter(this.state.scroll, this.getChapterFromScroll(this.state.scroll));
     }
   }
 
@@ -1051,7 +1163,7 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     this.state.introActive = true;
-    this.state.introProgress = 0;
+    this.state.introProgress = 0.97;
     intro.classList.add('active');
 
     if (this.broadcaster) {
@@ -1233,10 +1345,10 @@ gl_FragColor=vec4(col,1.0);}`;
     const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 
     this.lenis = new Lenis({
-      duration: isMobile ? 1.6 : 2.4,
+      duration: isMobile ? 1.2 : 1.4,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      wheelMultiplier: isMobile ? 0.8 : 0.7,
-      touchMultiplier: isMobile ? 1.4 : 1.0,
+      wheelMultiplier: isMobile ? 1.2 : 1.3,
+      touchMultiplier: isMobile ? 1.8 : 1.2,
       infinite: false,
     });
 
@@ -1588,12 +1700,12 @@ gl_FragColor=vec4(col,1.0);}`;
       this.gravityVelocity += totalForce * dt * 0.8;
     }
 
-    if (!this.pointOfNoReturnTriggered && scroll >= 0.65) {
+    if (!this.pointOfNoReturnTriggered && scroll >= this.getChapterMid(4)) {
       this.pointOfNoReturnTriggered = true;
       if (this.state.soundEnabled) this.audio.triggerPointOfNoReturn();
     }
 
-    if (!this.singularityTriggered && scroll >= 0.88) {
+    if (!this.singularityTriggered && scroll >= this.getChapterMid(7)) {
       this.singularityTriggered = true;
       if (this.state.soundEnabled) this.audio.triggerSingularity();
     }
@@ -1618,7 +1730,7 @@ gl_FragColor=vec4(col,1.0);}`;
   private setupKeyboard() {
     this.addTrackedListener(window, 'keydown', ((e: KeyboardEvent) => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const currentChapter = Math.min(8, Math.floor(this.state.scroll * 9));
+      const currentChapter = this.getChapterFromScroll(this.state.scroll);
 
       if (e.key.length === 1) {
         this.easterBuffer = (this.easterBuffer + e.key.toLowerCase()).slice(-10);
@@ -1680,6 +1792,7 @@ gl_FragColor=vec4(col,1.0);}`;
       this.canvas.style.height = '100vh';
       this.postProcessing.resize();
       this.blackHole.syncResolution();
+      this.computeChapterBreaks();
     };
 
     this.addTrackedListener(window, 'resize', onResize as EventListener);
@@ -1920,11 +2033,11 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     const timelineChapter = this.timeline.activeChapter;
-    const currentChapter = timelineChapter >= 0 ? timelineChapter : Math.min(8, Math.floor(this.state.scroll * 9));
+    const currentChapter = timelineChapter >= 0 ? timelineChapter : this.getChapterFromScroll(this.state.scroll);
     if (currentChapter !== this.lastChapterIndex) {
       if (this.lastChapterIndex >= 0) {
-        this.chapterFlash = 1.0;
-        this.postProcessing.triggerShockwave(0.5, 0.5, 1.2);
+        this.chapterFlash = currentChapter === 7 ? 2.5 : 1.0;
+        this.postProcessing.triggerShockwave(0.5, 0.5, currentChapter === 7 ? 2.0 : 1.2);
         if (this.state.soundEnabled) {
           this.audio.triggerChapterTransition();
           this.audio.triggerTextRevealShimmer();
@@ -1955,6 +2068,8 @@ gl_FragColor=vec4(col,1.0);}`;
     this.lastChapterIndex = currentChapter;
     this.chapterFlash *= 0.92;
     if (this.chapterFlash < 0.01) this.chapterFlash = 0;
+    this.enterPulse *= 0.95;
+    if (this.enterPulse < 0.01) this.enterPulse = 0;
 
     if (this.isHolding && this.state.scroll > 0.25) {
       this.holdStrength = Math.min(this.holdStrength + dt * 2, 1);
@@ -1970,7 +2085,7 @@ gl_FragColor=vec4(col,1.0);}`;
       this.explosionProgress = Math.min(this.explosionProgress + dt * speed, 2.0);
       if (this.explosionProgress >= 2.0) this.explosionActive = false;
     }
-    this.blackHole.update({ ...this.state, explosion: this.explosionProgress, isAltered: this.isAlteredMode, isHardcore: this.isHardcoreMode });
+    this.blackHole.update({ ...this.state, explosion: this.explosionProgress, isAltered: this.isAlteredMode, isHardcore: this.isHardcoreMode, enterPulse: this.enterPulse });
     if (this.particles) this.particles.update(this.state);
     this.starfield.update(this.state);
     this.postProcessing.updateCamera(this.state.scroll, elapsed, this.state.introProgress, this.state.mouseSmooth.x, this.state.mouseSmooth.y);
@@ -1985,8 +2100,9 @@ gl_FragColor=vec4(col,1.0);}`;
 
     const velocityShake = Math.min(Math.abs(this.state.scrollVelocity) * 0.0003, 0.002);
     const flashShake = this.chapterFlash * 0.004;
-    const singShakeDelta = (this.state.scroll - 0.77) * 12;
-    const singularityShake = Math.exp(-singShakeDelta * singShakeDelta) * 0.012;
+    const singMid = this.getChapterMid(7);
+    const singShakeDelta = (this.state.scroll - singMid) * 10;
+    const singularityShake = Math.exp(-singShakeDelta * singShakeDelta) * 0.025;
     const deepShake = Math.max(0, this.state.scroll - 0.6) * 0.001;
     const shakeIntensity = velocityShake + flashShake + singularityShake + deepShake;
 
@@ -2015,9 +2131,9 @@ gl_FragColor=vec4(col,1.0);}`;
       this.audio.update(this.state.scroll, this.state.scrollVelocity);
     }
 
-    this.haptics.update(this.state.scroll);
+    this.haptics.update(this.state.scroll, this.getChapterFromScroll(this.state.scroll));
 
-    if (this.isAlteredMode && this.state.scroll > 0.05 && this.state.scroll < 0.90) {
+    if (this.isAlteredMode && this.state.scroll > 0.05 && this.state.scroll < 0.89) {
       this.alteredGhostTimer += dt;
       const cfg = this.isHardcoreMode ? HARDCORE : ALTERED;
       const interval = cfg.ghostVoiceMinInterval + Math.random() * (cfg.ghostVoiceMaxInterval - cfg.ghostVoiceMinInterval);
@@ -2041,6 +2157,9 @@ gl_FragColor=vec4(col,1.0);}`;
     (this.state as any).explosion = this.explosionProgress;
     (this.state as any).isAltered = this.isAlteredMode;
     (this.state as any).isHardcore = this.isHardcoreMode;
+    (this.state as any).singMid = this.getChapterMid(7);
+    (this.state as any).ch5Mid = this.getChapterMid(5);
+    (this.state as any).ch6Mid = this.getChapterMid(6);
     this.postProcessing.update(this.state as any);
     this.postProcessing.render();
   }
@@ -2330,7 +2449,8 @@ gl_FragColor=vec4(col,1.0);}`;
       this.spawnTemporalEcho();
     }
 
-    const glitchDelta = (scroll - 0.72) * 18.0;
+    const glitchCenter = this.getChapterMid(7);
+    const glitchDelta = (scroll - glitchCenter) * 18.0;
     const singularityGlitch = Math.exp(-glitchDelta * glitchDelta);
     const alteredHudGlitch = this.isHardcoreMode ? HARDCORE.hudGlitchChance : this.isAlteredMode ? ALTERED.hudGlitchChance : 0;
     const hudGlitchChance = Math.max(singularityGlitch > 0.2 ? singularityGlitch * 0.3 : 0, alteredHudGlitch);
@@ -2394,7 +2514,7 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     const timelineActive = this.timeline.activeChapter;
-    const chapterIndex = timelineActive >= 0 ? timelineActive : Math.min(8, Math.floor(scroll * 9));
+    const chapterIndex = timelineActive >= 0 ? timelineActive : this.getChapterFromScroll(scroll);
     if (this.navEl) {
       if (scroll > 0.02 && scroll < 0.96) {
         this.navEl.classList.add('visible');
@@ -2474,10 +2594,11 @@ gl_FragColor=vec4(col,1.0);}`;
       }
     }
 
-    if (!this.singularityFlashTriggered && scroll >= 0.90) {
+    const ch8Start = this.chapterMids.length > 8 ? (this.chapterBreaks[7] ?? 0.93) : 0.93;
+    if (!this.singularityFlashTriggered && scroll >= ch8Start - 0.02) {
       this.singularityFlashTriggered = true;
       this.triggerSingularityExplosion();
-    } else if (scroll <= 0.88) {
+    } else if (scroll <= ch8Start - 0.04) {
       this.singularityFlashTriggered = false;
       this.explosionProgress = 0;
       this.explosionActive = false;
@@ -2786,7 +2907,6 @@ gl_FragColor=vec4(col,1.0);}`;
         this.gravityMaxReached = 0;
         this.pointOfNoReturnTriggered = false;
         this.singularityTriggered = false;
-
         this.visitCount++;
 
         if (this.visitCount >= 3) {
@@ -2969,6 +3089,21 @@ gl_FragColor=vec4(col,1.0);}`;
     requestAnimationFrame(() => {
       requestAnimationFrame(() => overlay.classList.add('visible'));
     });
+
+    const dismissOverlay = () => {
+      if (!this.scrollOverlayEl) return;
+      this.scrollOverlayEl.classList.remove('visible');
+      this.scrollOverlayEl.classList.add('fade-out');
+      const el = this.scrollOverlayEl;
+      this.scrollOverlayEl = null;
+      setTimeout(() => el.remove(), 700);
+      window.removeEventListener('wheel', dismissOverlay);
+      window.removeEventListener('touchstart', dismissOverlay);
+      window.removeEventListener('keydown', dismissOverlay);
+    };
+    window.addEventListener('wheel', dismissOverlay, { once: true });
+    window.addEventListener('touchstart', dismissOverlay, { once: true });
+    window.addEventListener('keydown', dismissOverlay, { once: true });
   }
 
   private getEscapeMessages() { return t().escape; }
@@ -3032,6 +3167,31 @@ gl_FragColor=vec4(col,1.0);}`;
         this.idleHintEl?.classList.remove('visible');
       }, 4000);
     }
+  }
+
+  private onCompanionConnected() {
+    const companion = document.getElementById('sound-companion');
+    const badge = document.getElementById('sound-companion-badge-text');
+    const syncedText = document.getElementById('synced-text');
+    const syncedSub = document.getElementById('synced-sub');
+    if (!companion) return;
+
+    const tr = t();
+    if (badge) badge.textContent = tr.companion.syncedBadge;
+    if (syncedText) syncedText.textContent = tr.companion.synced;
+    if (syncedSub) syncedSub.textContent = tr.companion.syncedSub;
+
+    companion.classList.add('companion-linked');
+  }
+
+  private onCompanionDisconnected() {
+    const companion = document.getElementById('sound-companion');
+    const badge = document.getElementById('sound-companion-badge-text');
+    if (!companion) return;
+
+    const tr = t();
+    if (badge) badge.textContent = tr.companion.badge;
+    companion.classList.remove('companion-linked');
   }
 
   destroy() {

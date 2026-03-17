@@ -24,13 +24,13 @@ interface Chapter {
 
 const CHAPTER_REVEALS: { triggerStart: string; triggerEnd: string; reveal: RevealPattern }[] = [
   { triggerStart: 'top top', triggerEnd: 'bottom center', reveal: 'center-out' },
-  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'char-rise' },
-  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'char-rise' },
-  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'word-cascade' },
-  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'flash-bloom' },
-  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'center-out' },
-  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'flash-bloom' },
-  { triggerStart: 'top center', triggerEnd: 'bottom center', reveal: 'center-out' },
+  { triggerStart: 'top 65%', triggerEnd: 'bottom center', reveal: 'char-rise' },
+  { triggerStart: 'top 65%', triggerEnd: 'bottom center', reveal: 'char-rise' },
+  { triggerStart: 'top 65%', triggerEnd: 'bottom center', reveal: 'word-cascade' },
+  { triggerStart: 'top 65%', triggerEnd: 'bottom center', reveal: 'flash-bloom' },
+  { triggerStart: 'top 65%', triggerEnd: 'bottom center', reveal: 'center-out' },
+  { triggerStart: 'top 65%', triggerEnd: 'bottom center', reveal: 'flash-bloom' },
+  { triggerStart: 'top 65%', triggerEnd: 'bottom center', reveal: 'center-out' },
   { triggerStart: 'top center', triggerEnd: 'bottom bottom', reveal: 'center-out' },
 ];
 
@@ -63,9 +63,9 @@ export class Timeline {
     if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
   }
 
-  refreshCurrentChapter(scroll: number) {
+  refreshCurrentChapter(scroll: number, chapterIndex?: number) {
     if (!this.started || this.creditsVisible) return;
-    const chapterIndex = Math.min(8, Math.floor(scroll * 9));
+    if (chapterIndex === undefined) chapterIndex = Math.min(8, Math.floor(scroll * 9));
     const chapters = getChapters(this.isAlteredMode, this.isHardcoreMode);
     const chapter = chapters[chapterIndex];
     if (!chapter) return;

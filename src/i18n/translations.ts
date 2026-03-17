@@ -15,6 +15,7 @@ interface Translations {
   hud: { distance: string; temp: string; timeDilation: string; elapsed: string; tidalForce: string };
   loader: { title: string; sub: string; steps: string[] };
   sound: { label: string; yes: string; no: string; switchLang: string };
+  prompt: { tagline: string; description: string; keywords: string[]; recommend: string };
   scroll: { desktop: string; mobile: string; descentDesktop: string; descentMobile: string };
   credits: { sub: string; epigraph: string; roles: { role: string; name: string }[]; footer: string };
   share: { share: string; return: string; copied: string; text: string; count: string };
@@ -51,7 +52,7 @@ interface Translations {
   loop4: { line1: string; line2: string; line3: string; countdown: string };
   accessWarning: string;
   shareAnomaly: string;
-  companion: { label: string; headline: string; title: string; text: string };
+  companion: { label: string; headline: string; title: string; text: string; badge: string; scan: string; urgency: string; features: string[]; synced: string; syncedSub: string; syncedBadge: string };
   alteredTitle: string;
   scrollBegin: string;
 }
@@ -96,6 +97,7 @@ const en: Translations = {
     ],
   },
   sound: { label: 'Sound', yes: 'Enter with sound', no: 'Skip', switchLang: 'changer de langue' },
+  prompt: { tagline: 'Fall into a black hole.', description: 'A scroll-driven interactive journey through 9 chapters of real astrophysics.', keywords: ['Gravitational Lensing', 'Time Dilation', 'Singularity'], recommend: 'Headphones & fullscreen recommended' },
   scroll: { desktop: 'Scroll down to travel deeper', mobile: 'Swipe up to travel deeper', descentDesktop: 'Use your mouse wheel to descend', descentMobile: 'Swipe up to continue the descent' },
   credits: {
     sub: 'An Interactive Journey Into a Black Hole',
@@ -240,9 +242,16 @@ const en: Translations = {
   shareAnomaly: 'Spread the anomaly.',
   companion: {
     label: 'COMPANION',
-    headline: 'Enhance your immersion',
-    title: 'Second screen',
-    text: 'Your phone becomes a mission console. Real-time telemetry and astrophysics synced to your descent into the black hole.',
+    headline: 'Connect your phone',
+    title: 'Mission console',
+    text: 'Your phone synchronizes in real-time with your descent into the black hole.',
+    badge: 'DUAL SCREEN',
+    scan: 'Point your camera',
+    urgency: 'The void is deeper with two screens.',
+    features: ['Live telemetry', 'Physics briefings', 'Haptic feedback', 'Chapter-synced data'],
+    synced: 'Console synchronized.',
+    syncedSub: 'Ready for the jump.',
+    syncedBadge: 'LINKED',
   },
   alteredTitle: 'EVENT HORIZON (AGAIN)',
   scrollBegin: 'Scroll to begin',
@@ -288,6 +297,7 @@ const fr: Translations = {
     ],
   },
   sound: { label: 'Son', yes: 'Entrer avec le son', no: 'Passer', switchLang: 'switch language' },
+  prompt: { tagline: 'Tombez dans un trou noir.', description: 'Un voyage interactif en scroll à travers 9 chapitres d\'astrophysique réelle.', keywords: ['Lentille Gravitationnelle', 'Dilatation du Temps', 'Singularité'], recommend: 'Casque & plein écran recommandés' },
   scroll: { desktop: 'Scrollez vers le bas pour voyager', mobile: 'Glissez vers le haut pour voyager', descentDesktop: 'Utilisez la molette pour descendre', descentMobile: 'Glissez vers le haut pour continuer' },
   credits: {
     sub: 'Un Voyage Interactif Dans un Trou Noir',
@@ -432,9 +442,16 @@ const fr: Translations = {
   shareAnomaly: 'Répands l\'anomalie.',
   companion: {
     label: 'COMPAGNON',
-    headline: 'Améliorez votre immersion',
-    title: 'Second écran',
-    text: 'Scannez le QR code avec votre téléphone. Démarrez le voyage sur le navigateur et votre mobile se synchronisera automatiquement avec votre descente.',
+    headline: 'Connectez votre téléphone',
+    title: 'Console de mission',
+    text: 'Votre téléphone se synchronise en temps réel avec votre descente dans le trou noir.',
+    badge: 'DOUBLE ÉCRAN',
+    scan: 'Pointez votre caméra',
+    urgency: 'Le vide est plus profond avec deux écrans.',
+    features: ['Télémétrie live', 'Briefings physique', 'Retour haptique', 'Données par chapitre'],
+    synced: 'Console synchronisée.',
+    syncedSub: 'Prêt pour le saut.',
+    syncedBadge: 'LIÉ',
   },
   alteredTitle: 'EVENT HORIZON (ENCORE)',
   scrollBegin: 'Scrollez pour commencer',

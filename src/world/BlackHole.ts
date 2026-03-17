@@ -76,12 +76,12 @@ export class BlackHole {
     this.syncResolution();
   }
 
-  update(state: { time: number; scroll: number; mouseSmooth: THREE.Vector2; explosion?: number; isAltered?: boolean; isHardcore?: boolean }) {
+  update(state: { time: number; scroll: number; mouseSmooth: THREE.Vector2; explosion?: number; isAltered?: boolean; isHardcore?: boolean; enterPulse?: number }) {
     this.material.uniforms.uTime.value = state.time;
     this.material.uniforms.uScroll.value = state.scroll;
     this.material.uniforms.uMouse.value.copy(state.mouseSmooth);
     this.material.uniforms.uDistortion.value = state.scroll;
-    this.material.uniforms.uIntensity.value = 1.0 + state.scroll * 0.3;
+    this.material.uniforms.uIntensity.value = 1.0 + state.scroll * 0.3 + (state.enterPulse ?? 0) * 0.5;
     if (state.explosion !== undefined) {
       this.material.uniforms.uExplosion.value = state.explosion;
     }

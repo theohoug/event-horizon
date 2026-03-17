@@ -681,6 +681,34 @@ export class AudioEngine {
     rumble.stop(now + 7.0);
   }
 
+  triggerEnterPulse() {
+    if (!this.ctx || !this.isPlaying) return;
+    const now = this.ctx.currentTime;
+    const sub = this.ctx.createOscillator();
+    sub.type = 'sine';
+    sub.frequency.setValueAtTime(40, now);
+    sub.frequency.exponentialRampToValueAtTime(25, now + 1.5);
+    const subGain = this.ctx.createGain();
+    subGain.gain.setValueAtTime(0, now);
+    subGain.gain.linearRampToValueAtTime(0.08, now + 0.15);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+    sub.connect(subGain).connect(this.sfxGain);
+    sub.start(now);
+    sub.stop(now + 1.6);
+    [1200, 1800, 2400].forEach((freq, i) => {
+      const osc = this.ctx!.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const gain = this.ctx!.createGain();
+      gain.gain.setValueAtTime(0, now + 0.05 + i * 0.03);
+      gain.gain.linearRampToValueAtTime(0.015, now + 0.15 + i * 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+      osc.connect(gain).connect(this.sfxGain);
+      osc.start(now + 0.05 + i * 0.03);
+      osc.stop(now + 0.9);
+    });
+  }
+
   triggerUIHover() {
     if (!this.ctx || !this.isPlaying) return;
     const now = this.ctx.currentTime;

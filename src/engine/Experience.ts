@@ -221,12 +221,13 @@ export class Experience {
 
     const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v8') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v9') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
     // Clear old cache versions
     try { localStorage.removeItem('eh_perf_v6'); } catch {}
     try { localStorage.removeItem('eh_perf_v7'); } catch {}
+    try { localStorage.removeItem('eh_perf_v8'); } catch {}
 
     let heuristicBonus = 0;
     if (gpuRenderer.includes('rtx 40') || gpuRenderer.includes('rtx 50')) heuristicBonus = 18;
@@ -345,7 +346,7 @@ gl_FragColor=vec4(col,1.0);}`;
       gpuScore: Math.round(gpuScore),
       quality: 'ultra',
     };
-    try { localStorage.setItem('eh_perf_v8', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v9', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
@@ -1670,7 +1671,7 @@ gl_FragColor=vec4(col,1.0);}`;
       return;
     }
 
-    if (this.state.introActive || scroll > 0.93) {
+    if (this.state.introActive || scroll > 0.93 || this.cinematicAutoScrollStarted) {
       this.gravityVelocity *= 0.85;
       this.smoothGravity *= 0.85;
       return;
@@ -1694,20 +1695,12 @@ gl_FragColor=vec4(col,1.0);}`;
       totalForce *= 1 - this.holdStrength * 0.6;
     }
 
-    const voidCenter = 0.80;
-    const voidWidth = 8.0;
-    const voidDelta = (scroll - voidCenter) * voidWidth;
-    const voidResistance = Math.exp(-voidDelta * voidDelta);
-    if (voidResistance > 0.01) {
-      totalForce *= 1 - voidResistance * 0.75;
-    }
-
     if (isScrollingUp && scroll > 0.40) {
-      this.gravityVelocity += totalForce * dt * 3.5;
-    } else if (isStopped) {
       this.gravityVelocity += totalForce * dt * 2.0;
+    } else if (isStopped) {
+      this.gravityVelocity += totalForce * dt * 1.5;
     } else {
-      this.gravityVelocity += totalForce * dt * 0.8;
+      this.gravityVelocity += totalForce * dt * 0.6;
     }
 
     if (!this.pointOfNoReturnTriggered && scroll >= this.getChapterMid(4)) {
@@ -1718,6 +1711,7 @@ gl_FragColor=vec4(col,1.0);}`;
     if (!this.singularityTriggered && scroll >= this.getChapterMid(7)) {
       this.singularityTriggered = true;
       if (this.state.soundEnabled) this.audio.triggerSingularity();
+      this.startCinematicAutoScroll();
     }
 
     this.gravityVelocity = Math.min(this.gravityVelocity, 4 + scroll * 12);
@@ -2224,6 +2218,7 @@ gl_FragColor=vec4(col,1.0);}`;
   private singularityFlashTriggered = false;
   private explosionProgress = 0;
   private explosionActive = false;
+  private cinematicAutoScrollStarted = false;
   private faviconCanvas: HTMLCanvasElement | null = null;
   private faviconCtx: CanvasRenderingContext2D | null = null;
   private faviconLink: HTMLLinkElement | null = null;
@@ -2631,6 +2626,7 @@ gl_FragColor=vec4(col,1.0);}`;
       this.singularityFlashTriggered = false;
       this.explosionProgress = 0;
       this.explosionActive = false;
+      this.cinematicAutoScrollStarted = false;
     }
 
     if (this.creditsEl) {
@@ -2666,6 +2662,19 @@ gl_FragColor=vec4(col,1.0);}`;
 
   private rushProgress = 0;
   private rushActive = false;
+
+  private startCinematicAutoScroll() {
+    if (this.cinematicAutoScrollStarted) return;
+    this.cinematicAutoScrollStarted = true;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const targetScroll = maxScroll * 0.94;
+    setTimeout(() => {
+      this.lenis.scrollTo(targetScroll, {
+        duration: 5,
+        easing: (x: number) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
+      });
+    }, 1500);
+  }
 
   private triggerSingularityExplosion() {
     this.rushActive = true;
@@ -2936,6 +2945,7 @@ gl_FragColor=vec4(col,1.0);}`;
         this.gravityMaxReached = 0;
         this.pointOfNoReturnTriggered = false;
         this.singularityTriggered = false;
+        this.cinematicAutoScrollStarted = false;
         this.visitCount++;
 
         if (this.visitCount >= 3) {

@@ -53,6 +53,7 @@ export class Timeline {
   private pendingChapter: Chapter | null = null;
   private currentPattern: RevealPattern = 'char-rise';
   private creditsTl: gsap.core.Timeline | null = null;
+  private lastLeaveBackTime = 0;
   isAlteredMode = false;
   isHardcoreMode = false;
 
@@ -89,7 +90,9 @@ export class Timeline {
         end: chapter.triggerEnd,
         onEnter: () => this.showChapter(chapter),
         onLeaveBack: () => {
-          if (chapter.id > 0) {
+          const now = performance.now();
+          if (chapter.id > 0 && now - this.lastLeaveBackTime > 400) {
+            this.lastLeaveBackTime = now;
             this.showChapter(getChapters(this.isAlteredMode, this.isHardcoreMode)[chapter.id - 1]);
           }
         },

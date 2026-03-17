@@ -193,16 +193,16 @@ export class Experience {
     if (isMobile) {
       return {
         dpr: 1.0,
-        maxSteps: 24,
-        qualityMedium: true,
-        gpgpuTexSize: 32,
-        starfieldCount: 800,
-        bloomPasses: 1,
-        bloomScale: 0.12,
+        maxSteps: 48,
+        qualityMedium: false,
+        gpgpuTexSize: 64,
+        starfieldCount: 1500,
+        bloomPasses: 2,
+        bloomScale: 0.20,
         motionBlur: false,
         antialias: false,
-        gpuScore: 20,
-        quality: 'medium',
+        gpuScore: 30,
+        quality: 'high',
       };
     }
 
@@ -221,11 +221,12 @@ export class Experience {
 
     const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v7') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v8') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
     // Clear old cache versions
     try { localStorage.removeItem('eh_perf_v6'); } catch {}
+    try { localStorage.removeItem('eh_perf_v7'); } catch {}
 
     let heuristicBonus = 0;
     if (gpuRenderer.includes('rtx 40') || gpuRenderer.includes('rtx 50')) heuristicBonus = 18;
@@ -320,8 +321,6 @@ gl_FragColor=vec4(col,1.0);}`;
       }
     }
 
-    const qualityMedium = bestSteps < 40;
-
     const fullCost = costPerPxStep * screenPx * maxDpr * maxDpr * 160 + overhead;
     let gpuScore = Math.min(100, Math.max(0, (bhBudget / Math.max(fullCost, 0.01)) * 100));
     gpuScore = Math.max(0, Math.min(100, gpuScore + heuristicBonus * 0.5));
@@ -329,21 +328,28 @@ gl_FragColor=vec4(col,1.0);}`;
     const lerp = (a: number, b: number, v: number) => a + (b - a) * Math.max(0, Math.min(1, v));
     const t01 = gpuScore / 100;
 
-    const gpgpuSizes = [128, 128, 128, 160, 192, 224, 256, 256];
+    const gpgpuSizes = [128, 128, 160, 192, 224, 256, 256, 256];
     const gpgpuTexSize = gpgpuSizes[Math.min(gpgpuSizes.length - 1, Math.floor(t01 * gpgpuSizes.length))];
-    const starfieldCount = Math.round(lerp(1500, 12000, t01));
-    const bloomPasses = gpuScore > 75 ? 4 : gpuScore > 50 ? 3 : gpuScore > 25 ? 2 : 1;
-    const bloomScale = Math.round(lerp(0.15, 0.5, t01) * 100) / 100;
-    const motionBlur = gpuScore > 15;
-    const antialias = gpuScore > 40;
-    const quality: 'ultra' | 'high' | 'medium' = gpuScore >= 50 ? 'ultra' : gpuScore >= 20 ? 'high' : 'medium';
+    const starfieldCount = Math.round(lerp(3000, 12000, t01));
 
-    const config: PerfConfig = { dpr: bestDpr, maxSteps: bestSteps, qualityMedium, gpgpuTexSize, starfieldCount, bloomPasses, bloomScale, motionBlur, antialias, gpuScore: Math.round(gpuScore), quality };
-    try { localStorage.setItem('eh_perf_v7', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    const config: PerfConfig = {
+      dpr: maxDpr,
+      maxSteps: 160,
+      qualityMedium: false,
+      gpgpuTexSize,
+      starfieldCount,
+      bloomPasses: 4,
+      bloomScale: 0.5,
+      motionBlur: true,
+      antialias: true,
+      gpuScore: Math.round(gpuScore),
+      quality: 'ultra',
+    };
+    try { localStorage.setItem('eh_perf_v8', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
-      return { dpr: 1.5, maxSteps: 60, qualityMedium: false, gpgpuTexSize: 128, starfieldCount: 6000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: false, gpuScore: 50, quality: 'high' };
+      return { dpr: Math.min(window.devicePixelRatio, 2), maxSteps: 160, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 50, quality: 'ultra' };
     }
   }
 
@@ -467,6 +473,10 @@ gl_FragColor=vec4(col,1.0);}`;
         : { dpr: 1.0, maxSteps: 36, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 3000, bloomPasses: 2, bloomScale: 0.2, motionBlur: false, antialias: false, gpuScore: 25, quality: 'medium' };
     }
     this.state.quality = this.perfConfig.quality;
+    this.adaptiveDpr = this.perfConfig.dpr;
+    this.adaptiveMaxSteps = this.perfConfig.maxSteps;
+    this.adaptiveBloomPasses = this.perfConfig.bloomPasses;
+    this.adaptiveBloomScale = this.perfConfig.bloomScale;
 
     this.renderer.setPixelRatio(this.perfConfig.dpr);
     this.renderer.setSize(initSize.w, initSize.h);
@@ -1869,6 +1879,64 @@ gl_FragColor=vec4(col,1.0);}`;
   private downgradeCount = 0;
   private fpsStableCount = 0;
   private emergencySlowFrames = 0;
+  private adaptiveLevel = 0;
+  private adaptiveDpr = 2.0;
+  private adaptiveMaxSteps = 160;
+  private adaptiveBloomPasses = 4;
+  private adaptiveBloomScale = 0.5;
+
+  private applyAdaptiveQuality() {
+    this.renderer.setPixelRatio(this.adaptiveDpr);
+    this.postProcessing.setBloomPasses(this.adaptiveBloomPasses);
+    this.postProcessing.setBloomScale(this.adaptiveBloomScale);
+    this.blackHole.setMaxSteps(this.adaptiveMaxSteps);
+    this.postProcessing.resize();
+    this.blackHole.syncResolution();
+    { const _v = clampedViewportSize(); this.renderer.setSize(_v.w, _v.h); }
+  }
+
+  private adaptiveDowngrade(emergency: boolean) {
+    if (this.adaptiveLevel >= 8) return;
+    this.adaptiveLevel++;
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    const maxDpr = isMobile ? 1.0 : Math.min(window.devicePixelRatio, 2);
+    const minDpr = isMobile ? 0.75 : 1.0;
+
+    switch (this.adaptiveLevel) {
+      case 1: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.25); break;
+      case 2: this.adaptiveBloomPasses = 3; this.adaptiveBloomScale = 0.40; break;
+      case 3: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.5); break;
+      case 4: this.adaptiveMaxSteps = 120; break;
+      case 5: this.adaptiveBloomPasses = 2; this.adaptiveBloomScale = 0.30; break;
+      case 6: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.75); this.adaptiveMaxSteps = 90; break;
+      case 7: this.adaptiveBloomPasses = 1; this.adaptiveBloomScale = 0.20; this.adaptiveMaxSteps = 60; break;
+      case 8: this.adaptiveDpr = minDpr; this.adaptiveMaxSteps = 40; break;
+    }
+    if (emergency && this.adaptiveLevel < 8) {
+      this.adaptiveLevel++;
+      this.adaptiveDpr = Math.max(minDpr, this.adaptiveDpr - 0.15);
+      this.adaptiveMaxSteps = Math.max(40, this.adaptiveMaxSteps - 20);
+    }
+    this.applyAdaptiveQuality();
+  }
+
+  private adaptiveUpgrade() {
+    if (this.adaptiveLevel <= 0) return;
+    this.adaptiveLevel--;
+    const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    const maxDpr = isMobile ? 1.0 : Math.min(window.devicePixelRatio, 2);
+
+    switch (this.adaptiveLevel) {
+      case 0: this.adaptiveDpr = maxDpr; this.adaptiveMaxSteps = 160; this.adaptiveBloomPasses = 4; this.adaptiveBloomScale = 0.5; break;
+      case 1: this.adaptiveDpr = Math.max(1.0, maxDpr - 0.25); this.adaptiveMaxSteps = 160; this.adaptiveBloomPasses = 4; this.adaptiveBloomScale = 0.5; break;
+      case 2: this.adaptiveDpr = Math.max(1.0, maxDpr - 0.25); this.adaptiveMaxSteps = 160; this.adaptiveBloomPasses = 3; this.adaptiveBloomScale = 0.40; break;
+      case 3: this.adaptiveDpr = Math.max(1.0, maxDpr - 0.5); this.adaptiveMaxSteps = 160; this.adaptiveBloomPasses = 3; this.adaptiveBloomScale = 0.40; break;
+      case 4: this.adaptiveMaxSteps = 120; break;
+      case 5: this.adaptiveBloomPasses = 2; this.adaptiveBloomScale = 0.30; break;
+      default: break;
+    }
+    this.applyAdaptiveQuality();
+  }
 
   private animate(timestamp?: number) {
     this.rafId = requestAnimationFrame((t) => this.animate(t));
@@ -1882,38 +1950,18 @@ gl_FragColor=vec4(col,1.0);}`;
     this.fpsFrames++;
     const now = performance.now();
 
-    // Emergency: if frames are stalling, skip GPU render to unblock the main thread.
-    // This is the ONLY way to guarantee scroll doesn't freeze — if we skip render(),
-    // the browser can immediately process queued scroll/wheel events.
     if (dt > 0.3) {
       this.emergencySlowFrames = (this.emergencySlowFrames || 0) + 1;
     } else {
       if (this.emergencySlowFrames > 0) this.emergencySlowFrames = Math.max(0, this.emergencySlowFrames - 1);
     }
 
-    // After 2 consecutive slow frames: skip rendering for this frame entirely
-    // The screen freezes for 1 frame but scroll keeps working — much better than being stuck
     if (this.emergencySlowFrames >= 2) {
-      // Still update scroll-related state so the experience stays responsive
       this.updateGravityPull(Math.min(dt, 0.033));
       ScrollTrigger.update();
-      // Downgrade quality to prevent it from happening again
-      if (this.downgradeCount < 5) {
-        const currentPr = this.renderer.getPixelRatio();
-        const minPr = /Android|iPhone|iPad/i.test(navigator.userAgent) ? 0.5 : 1.0;
-        const newPr = Math.max(minPr, currentPr - 0.15);
-        if (newPr < currentPr) {
-          this.renderer.setPixelRatio(newPr);
-          this.postProcessing.resize();
-          this.blackHole.syncResolution();
-          { const _v = clampedViewportSize(); this.renderer.setSize(_v.w, _v.h); };
-          this.downgradeCount++;
-          this.fpsStableCount = 0;
-          this.lowFpsCount = 0;
-        }
-      }
+      this.adaptiveDowngrade(true);
       this.emergencySlowFrames = Math.max(0, this.emergencySlowFrames - 1);
-      return; // ← SKIP the entire render pipeline, freeing the GPU/main thread
+      return;
     }
 
     if (now - this.fpsLastTime > 800) {
@@ -1931,33 +1979,14 @@ gl_FragColor=vec4(col,1.0);}`;
         this.fpsStableCount++;
       }
 
-      if (this.lowFpsCount >= (isMobileDevice ? 2 : 4) && this.downgradeCount < 5) {
-        const currentPr = this.renderer.getPixelRatio();
-        const step = this.fpsValue < 20 ? 0.25 : 0.15;
-        const minPr = isMobileDevice ? 0.5 : 1.0;
-        const newPr = Math.max(minPr, currentPr - step);
-        if (newPr < currentPr) {
-          this.renderer.setPixelRatio(newPr);
-          this.postProcessing.resize();
-          this.blackHole.syncResolution();
-          { const _v = clampedViewportSize(); this.renderer.setSize(_v.w, _v.h); };
-        }
+      if (this.lowFpsCount >= (isMobileDevice ? 2 : 4) && this.adaptiveLevel < 8) {
+        this.adaptiveDowngrade(false);
         this.lowFpsCount = 0;
-        this.downgradeCount++;
         this.fpsStableCount = 0;
       }
 
-      if (this.fpsStableCount >= 10 && this.downgradeCount > 0) {
-        const currentPr = this.renderer.getPixelRatio();
-        const targetPr = this.perfConfig.dpr;
-        if (currentPr < targetPr) {
-          const newPr = Math.min(targetPr, Math.round((currentPr + 0.05) * 20) / 20);
-          this.renderer.setPixelRatio(newPr);
-          this.postProcessing.resize();
-          this.blackHole.syncResolution();
-          { const _v = clampedViewportSize(); this.renderer.setSize(_v.w, _v.h); };
-          this.downgradeCount--;
-        }
+      if (this.fpsStableCount >= 12 && this.adaptiveLevel > 0) {
+        this.adaptiveUpgrade();
         this.fpsStableCount = 0;
       }
     }

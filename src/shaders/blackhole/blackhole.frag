@@ -19,6 +19,7 @@ uniform float uIntensity;
 uniform float uExplosion;
 uniform vec3 uAlteredTint;
 uniform float uPulsation;
+uniform float uMaxSteps;
 
 varying vec2 vUv;
 
@@ -543,7 +544,9 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
   float dimBell = g2((uScroll - 0.62) * 5.0);
   float starBoostFactor = 1.0 + smoothstep(0.3, 0.0, uScroll) * 2.0;
 
+  float effectiveSteps = uMaxSteps > 0.0 ? uMaxSteps : float(MAX_STEPS);
   for (int i = 0; i < MAX_STEPS; i++) {
+    if (float(i) >= effectiveSteps) break;
     float r = length(pos);
 
     float captureR = dynSR * 0.15;

@@ -376,6 +376,15 @@ export class PostProcessing {
     this.compositeMaterial.uniforms.uResolution.value.set(sw, sh);
   }
 
+  setBloomPasses(passes: number) {
+    this.bloomPasses = passes;
+  }
+
+  setBloomScale(scale: number) {
+    this.bloomScaleValue = scale;
+    this.resize();
+  }
+
   destroy() {
     this.sceneTarget.texture.dispose();
     this.sceneTarget.dispose();

@@ -17,7 +17,7 @@ export class BlackHole {
 
   constructor(scene: THREE.Scene, maxSteps: number, qualityMedium: boolean, pixelRatio: number) {
     const defines: Record<string, string> = {};
-    defines['MAX_STEPS'] = String(maxSteps);
+    defines['MAX_STEPS'] = '160';
     if (qualityMedium) defines['QUALITY_MEDIUM'] = '1';
 
     const initW = (window.visualViewport?.width ?? window.innerWidth) * pixelRatio;
@@ -38,6 +38,7 @@ export class BlackHole {
         uExplosion: { value: 0 },
         uAlteredTint: { value: new THREE.Vector3(0, 0, 0) },
         uPulsation: { value: 0 },
+        uMaxSteps: { value: maxSteps },
       },
       depthTest: false,
       depthWrite: false,
@@ -98,6 +99,10 @@ export class BlackHole {
       this.material.uniforms.uDiskSpeed.value = 1.2;
       this.material.uniforms.uPulsation.value = 0;
     }
+  }
+
+  setMaxSteps(steps: number) {
+    this.material.uniforms.uMaxSteps.value = steps;
   }
 
   destroy() {

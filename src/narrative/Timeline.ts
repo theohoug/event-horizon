@@ -517,7 +517,7 @@ export class Timeline {
     const titleLine = document.createElement('div');
     let titleClass = 'line';
     if (chapter.id === 0) titleClass = 'line chapter-opening';
-    else if (chapter.id === 5) titleClass = 'line chapter-wide';
+    else if (chapter.id === 5) titleClass = 'line chapter-spaghetti';
     else if (chapter.id === 7) titleClass = 'line chapter-impact';
     else if (chapter.id === 8) titleClass = 'line chapter-final';
     titleLine.className = titleClass;
@@ -528,7 +528,27 @@ export class Timeline {
     const titlePos = chapter.id === 0 ? 1.0 : 0.3;
     const subPos = chapter.id === 0 ? 2.0 : 1.0;
 
-    if (chapter.id === 6) {
+    if (chapter.id === 5) {
+      titleLine.className = 'line chapter-spaghetti';
+      const el5 = titleLine;
+      const chars5 = titleLine.querySelectorAll('.char');
+      tl.fromTo(
+        titleLine,
+        { opacity: 0, scaleY: 0.3, scaleX: 1.6, filter: 'blur(4px)', y: 0 },
+        { opacity: 1, scaleY: 1, scaleX: 1, filter: 'blur(0px)', y: 0, duration: 0.5, ease: 'power2.out',
+          onComplete: () => this.clearInlineFilter(el5) },
+        titlePos
+      );
+      chars5.forEach((char, ci) => {
+        tl.fromTo(char,
+          { scaleY: 3.5, scaleX: 0.3, opacity: 0, y: -20 + Math.random() * 40 },
+          { scaleY: 1, scaleX: 1, opacity: 1, y: 0, duration: 0.8 + Math.random() * 0.4,
+            ease: 'elastic.out(1, 0.4)', delay: ci * 0.03 },
+          titlePos + 0.15
+        );
+      });
+      tl.add(() => this.markRevealed(chars5), titlePos + 0.3);
+    } else if (chapter.id === 6) {
       titleLine.className = 'line chapter-vertical';
       const el6 = titleLine;
       tl.fromTo(

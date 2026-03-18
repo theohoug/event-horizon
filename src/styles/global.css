@@ -719,11 +719,7 @@ body {
   animation-play-state: running;
 }
 
-#chapter-text .line.chapter-opening .char,
-#chapter-text .line.chapter-wide .char,
-#chapter-text .line.chapter-spaghetti .char,
-#chapter-text .line.chapter-impact .char,
-#chapter-text .line.chapter-final .char {
+#chapter-text .line:not(.data) .char {
   opacity: 1;
   will-change: auto;
   animation: none;

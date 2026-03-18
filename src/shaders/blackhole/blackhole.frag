@@ -45,7 +45,8 @@ vec3 starfield(vec3 rd) {
 
   float _ss = max(uScroll - 0.6, 0.0);
   float _deep = max(uScroll - 0.75, 0.0);
-  float scrollStretch = uScroll * uScroll * 0.6 + _ss * _ss * 3.0 + _deep * _deep * 15.0;
+  float _warpStr = smoothstep(0.08, 0.25, uScroll) * (1.0 - smoothstep(0.38, 0.58, uScroll));
+  float scrollStretch = uScroll * uScroll * 0.6 + _ss * _ss * 3.0 + _deep * _deep * 15.0 + _warpStr * 0.12;
   vec3 stretchDir = vec3(0.0, 0.0, -1.0);
   vec3 stretchedRd = normalize(rd + stretchDir * dot(rd, stretchDir) * scrollStretch);
 
@@ -784,7 +785,8 @@ void main() {
 
   float scrollEffect = uScroll;
   float approach = smootherstep(0.0, 1.0, scrollEffect);
-  float fov = mix(1.4, 0.2, approach);
+  float warpPull = smoothstep(0.08, 0.25, scrollEffect) * (1.0 - smoothstep(0.38, 0.58, scrollEffect));
+  float fov = mix(1.4, 0.2, approach) * (1.0 - warpPull * 0.22);
 
   vec2 mouseParallax = (uMouse - 0.5);
   float mouseLen = length(mouseParallax);
@@ -792,7 +794,7 @@ void main() {
   vec3 camPos = vec3(
     sin(scrollEffect * 0.4) * 0.1 * closeFade + sin(uTime * 0.03) * 0.01 * closeFade + mouseParallax.x * mix(0.4, 0.0, scrollEffect),
     mix(1.2, 0.06, scrollEffect * (0.8 + 0.2 * scrollEffect)) + sin(uTime * 0.08) * 0.02 * closeFade + mouseParallax.y * mix(0.25, 0.0, scrollEffect),
-    mix(38.0, 2.5, scrollEffect)
+    mix(38.0, 2.5, scrollEffect + warpPull * 0.12)
   );
 
   vec3 target = vec3(mouseParallax.x * mix(0.1, 0.0, scrollEffect), mouseParallax.y * mix(0.06, 0.0, scrollEffect), 0.0);
@@ -890,9 +892,10 @@ void main() {
   float gravPull = exp(-lensDist * lensDist * mix(3.0, 12.0, scrollEffect));
   color = mix(color, color * vec3(1.08, 0.95, 0.85), gravPull * scrollEffect * 0.4);
 
-  float spaceWarp = sin(lensDist * mix(15.0, 40.0, scrollEffect) - uTime * 0.8) * 0.5 + 0.5;
+  float warpPhaseBoost = smoothstep(0.08, 0.25, scrollEffect) * (1.0 - smoothstep(0.38, 0.58, scrollEffect));
+  float spaceWarp = sin(lensDist * mix(15.0, 40.0, scrollEffect + warpPhaseBoost * 0.3) - uTime * 0.8) * 0.5 + 0.5;
   float warpMask = smoothstep(0.5, 0.08, lensDist) * smoothstep(0.0, 0.15, scrollEffect);
-  color += vec3(0.06, 0.03, 0.01) * spaceWarp * warpMask * gravPull * 0.5;
+  color += vec3(0.06, 0.03, 0.01) * spaceWarp * warpMask * gravPull * (0.5 + warpPhaseBoost * 0.8);
 
   float lum = dot(color, vec3(0.2126, 0.7152, 0.0722));
   float satBoost = 1.0 + uScroll * 0.20;

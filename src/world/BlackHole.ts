@@ -81,7 +81,9 @@ export class BlackHole {
     this.material.uniforms.uTime.value = state.time;
     this.material.uniforms.uScroll.value = state.scroll;
     this.material.uniforms.uMouse.value.copy(state.mouseSmooth);
-    this.material.uniforms.uDistortion.value = state.scroll;
+    const s = state.scroll;
+    const warpBoost = s > 0.08 && s < 0.5 ? Math.sin(Math.min((s - 0.08) / 0.34, 1.0) * Math.PI) * 0.35 : 0;
+    this.material.uniforms.uDistortion.value = s + warpBoost;
     this.material.uniforms.uIntensity.value = 1.0 + state.scroll * 0.3 + (state.enterPulse ?? 0) * 0.5;
     if (state.explosion !== undefined) {
       this.material.uniforms.uExplosion.value = state.explosion;

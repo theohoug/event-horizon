@@ -350,16 +350,12 @@ export class Timeline {
   }
 
   private showChapter(chapter: Chapter) {
-    if (this.activeChapter === chapter.id || this.creditsVisible) {
-      if (chapter.id === 5 || chapter.id === 7) console.warn(`[CH${chapter.id}] BLOCKED: same=${this.activeChapter === chapter.id} credits=${this.creditsVisible}`);
-      return;
-    }
+    if (this.activeChapter === chapter.id || this.creditsVisible) return;
 
     if (chapter.id > this.activeChapter + 1 && this.activeChapter >= 0) {
       if (!this.pendingChapter || chapter.id < this.pendingChapter.id) {
         this.pendingChapter = chapter;
       }
-      if (chapter.id === 5 || chapter.id === 7) console.warn(`[CH${chapter.id}] QUEUED (too far ahead): active=${this.activeChapter} pending=${this.pendingChapter?.id}`);
       return;
     }
 
@@ -367,11 +363,8 @@ export class Timeline {
       if (!this.pendingChapter || chapter.id <= this.pendingChapter.id) {
         this.pendingChapter = chapter;
       }
-      if (chapter.id === 5 || chapter.id === 7) console.warn(`[CH${chapter.id}] LOCKED: lockRemaining=${(this.lockUntil - performance.now()).toFixed(0)}ms pending=${this.pendingChapter?.id}`);
       return;
     }
-
-    if (chapter.id === 5 || chapter.id === 7) console.warn(`[CH${chapter.id}] SHOWING "${chapter.title}" at t=${performance.now().toFixed(0)}`);
 
     const container = document.getElementById('chapter-text');
     if (!container) return;
@@ -701,19 +694,20 @@ export class Timeline {
       tl.fromTo(
         titleLine,
         { opacity: 0, scaleY: 0.3, scaleX: 1.6, filter: 'blur(4px)', y: 0 },
-        { opacity: 1, scaleY: 1, scaleX: 1, filter: 'blur(0px)', y: 0, duration: 0.5, ease: 'power2.out',
+        { opacity: 1, scaleY: 1, scaleX: 1, filter: 'blur(0px)', y: 0, duration: 0.4, ease: 'power2.out',
           onComplete: () => this.clearInlineFilter(el5) },
-        titlePos
+        0.1
       );
+      tl.set(chars5, { opacity: 1 }, 0.15);
       chars5.forEach((char, ci) => {
         tl.fromTo(char,
-          { scaleY: 3.5, scaleX: 0.3, opacity: 0, y: -20 + Math.random() * 40 },
-          { scaleY: 1, scaleX: 1, opacity: 1, y: 0, duration: 0.8 + Math.random() * 0.4,
-            ease: 'elastic.out(1, 0.4)', delay: ci * 0.03 },
-          titlePos + 0.15
+          { scaleY: 2.5, scaleX: 0.4, y: -15 + Math.random() * 30 },
+          { scaleY: 1, scaleX: 1, y: 0, duration: 0.6 + Math.random() * 0.3,
+            ease: 'elastic.out(1, 0.5)', delay: ci * 0.02 },
+          0.2
         );
       });
-      tl.add(() => this.markRevealed(chars5), titlePos + 0.3);
+      tl.add(() => this.markRevealed(chars5), 0.3);
     } else if (chapter.id === 6) {
       titleLine.className = 'line chapter-vertical';
       const el6 = titleLine;

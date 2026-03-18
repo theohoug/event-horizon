@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<!-- Crafted by Cleanlystudio • cleanlystudio.com -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lost in the Void — Event Horizon</title>
+  <meta name="robots" content="noindex" />
+  <style>
+    /* Cleanlystudio — Premium Web Development */
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Outfit:wght@200;300&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #050505;
+      color: rgba(255, 245, 230, 0.75);
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    .void-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(ellipse at 50% 50%,
+        rgba(26, 15, 8, 0.4) 0%,
+        rgba(10, 10, 15, 0.2) 40%,
+        #050505 70%
+      );
+    }
+
+    .singularity {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        #000 0%,
+        #000 18%,
+        transparent 19%
+      );
+      z-index: 1;
+      animation: pulse 8s ease-in-out infinite;
+    }
+
+    .singularity::before {
+      content: '';
+      position: absolute;
+      inset: -30px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        transparent 0%,
+        rgba(255, 179, 71, 0.08) 10%,
+        transparent 20%,
+        rgba(255, 179, 71, 0.05) 35%,
+        transparent 45%,
+        rgba(255, 179, 71, 0.1) 55%,
+        transparent 65%,
+        rgba(255, 179, 71, 0.06) 80%,
+        transparent 90%
+      );
+      animation: orbit 20s linear infinite;
+      filter: blur(8px);
+    }
+
+    .singularity::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 179, 71, 0.12);
+      box-shadow:
+        0 0 30px rgba(255, 179, 71, 0.06),
+        0 0 60px rgba(255, 179, 71, 0.03),
+        inset 0 0 30px rgba(0, 0, 0, 0.8);
+      animation: ringPulse 4s ease-in-out infinite;
+    }
+
+    .photon-ring {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 179, 71, 0.04);
+      z-index: 1;
+      animation: photonSpin 30s linear infinite;
+    }
+
+    .photon-ring::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 204, 128, 0.02);
+      animation: photonSpin 45s linear infinite reverse;
+    }
+
+    .lensing {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      height: 260px;
+      border-radius: 50%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 179, 71, 0.015) 20%,
+        rgba(255, 179, 71, 0.03) 50%,
+        rgba(255, 179, 71, 0.015) 80%,
+        transparent 100%
+      );
+      z-index: 1;
+      filter: blur(12px);
+      animation: lensBreathe 6s ease-in-out infinite;
+    }
+
+    .stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      background: rgba(255, 245, 230, 0.5);
+      border-radius: 50%;
+      animation: twinkle var(--dur) ease-in-out infinite;
+      animation-delay: var(--delay);
+    }
+
+    .content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .error-code {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: clamp(5rem, 12vw, 9rem);
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: transparent;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 179, 71, 0.5) 0%,
+        rgba(255, 179, 71, 0.15) 60%,
+        rgba(255, 179, 71, 0.03) 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 1.2rem;
+      animation: fadeIn 2s ease-out;
+      text-shadow: none;
+      position: relative;
+    }
+
+    .error-code::after {
+      content: '404';
+      position: absolute;
+      inset: 0;
+      color: transparent;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 179, 71, 0.08) 0%,
+        transparent 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      filter: blur(20px);
+    }
+
+    .title {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(255, 204, 128, 0.6);
+      margin-bottom: 2rem;
+      animation: fadeIn 2.5s ease-out;
+    }
+
+    .subtitle {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(0.9rem, 1.6vw, 1.15rem);
+      color: rgba(255, 245, 230, 0.3);
+      line-height: 1.8;
+      max-width: 320px;
+      margin-bottom: 3rem;
+      animation: fadeIn 3s ease-out;
+    }
+
+    .return-link {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-weight: 300;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255, 179, 71, 0.5);
+      text-decoration: none;
+      border: 1px solid rgba(255, 179, 71, 0.15);
+      padding: 0.75rem 2rem;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0, 1);
+      animation: fadeIn 3.5s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .return-link::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 179, 71, 0.04);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0, 1);
+    }
+
+    .return-link:hover {
+      color: rgba(255, 179, 71, 0.85);
+      border-color: rgba(255, 179, 71, 0.35);
+      box-shadow: 0 0 30px rgba(255, 179, 71, 0.06);
+    }
+
+    .return-link:hover::before {
+      transform: scaleX(1);
+    }
+
+    .return-link span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .telemetry {
+      position: fixed;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: rgba(255, 179, 71, 0.12);
+      z-index: 10;
+      animation: fadeIn 4s ease-out;
+      white-space: nowrap;
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      pointer-events: none;
+      opacity: 0.04;
+      mix-blend-mode: overlay;
+    }
+
+    .grain::before {
+      content: '';
+      position: absolute;
+      inset: -100%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+      animation: grain 0.5s steps(4) infinite;
+    }
+
+    @keyframes grain {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-5%, -5%); }
+      50% { transform: translate(5%, 2%); }
+      75% { transform: translate(-2%, 5%); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.04); }
+    }
+
+    @keyframes orbit {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes ringPulse {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.02); }
+    }
+
+    @keyframes photonSpin {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @keyframes lensBreathe {
+      0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scaleX(1); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scaleX(1.08); }
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: var(--base-opacity); }
+      50% { opacity: 0.1; }
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; filter: blur(8px); transform: translateY(10px); }
+      100% { opacity: 1; filter: blur(0px); transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      .singularity { width: 200px; height: 200px; }
+      .singularity::before { inset: -20px; }
+      .photon-ring { width: 240px; height: 240px; }
+      .lensing { width: 300px; height: 160px; }
+      .telemetry { font-size: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="void-bg"></div>
+
+  <div class="stars" id="stars"></div>
+
+  <div class="lensing"></div>
+  <div class="singularity"></div>
+  <div class="photon-ring"></div>
+
+  <div class="content">
+    <div class="error-code">404</div>
+    <div class="title">Lost Beyond the Horizon</div>
+    <div class="subtitle">This region of spacetime does not exist. The coordinates you seek have collapsed into the singularity.</div>
+    <a href="/" class="return-link"><span>Return to the Observable Universe</span></a>
+  </div>
+
+  <div class="telemetry">SIGNAL LOST &nbsp;&middot;&nbsp; COORDINATES: NULL &nbsp;&middot;&nbsp; DISTANCE: &infin; &nbsp;&middot;&nbsp; STATUS: BEYOND EVENT HORIZON</div>
+
+  <div class="grain"></div>
+
+  <script>
+    const stars = document.getElementById('stars');
+    for (let i = 0; i < 80; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      const baseOp = 0.2 + Math.random() * 0.6;
+      star.style.cssText = `
+        left: ${Math.random() * 100}%;
+        top: ${Math.random() * 100}%;
+        width: ${0.5 + Math.random() * 1.5}px;
+        height: ${0.5 + Math.random() * 1.5}px;
+        --dur: ${3 + Math.random() * 5}s;
+        --delay: ${Math.random() * 5}s;
+        --base-opacity: ${baseOp};
+        opacity: ${baseOp};
+      `;
+      stars.appendChild(star);
+    }
+  </script>
+</body>
+</html>

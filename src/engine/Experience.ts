@@ -1677,6 +1677,17 @@ gl_FragColor=vec4(col,1.0);}`;
       return;
     }
 
+    if (!this.pointOfNoReturnTriggered && scroll >= this.getChapterMid(4)) {
+      this.pointOfNoReturnTriggered = true;
+      if (this.state.soundEnabled) this.audio.triggerPointOfNoReturn();
+    }
+
+    if (!this.singularityTriggered && scroll >= this.getChapterMid(7)) {
+      this.singularityTriggered = true;
+      if (this.state.soundEnabled) this.audio.triggerSingularity();
+      this.startCinematicAutoScroll();
+    }
+
     if (this.state.introActive || scroll > 0.93 || this.cinematicAutoScrollStarted) {
       this.gravityVelocity *= 0.85;
       this.smoothGravity *= 0.85;
@@ -1707,17 +1718,6 @@ gl_FragColor=vec4(col,1.0);}`;
       this.gravityVelocity += totalForce * dt * 1.5;
     } else {
       this.gravityVelocity += totalForce * dt * 0.6;
-    }
-
-    if (!this.pointOfNoReturnTriggered && scroll >= this.getChapterMid(4)) {
-      this.pointOfNoReturnTriggered = true;
-      if (this.state.soundEnabled) this.audio.triggerPointOfNoReturn();
-    }
-
-    if (!this.singularityTriggered && scroll >= this.getChapterMid(7)) {
-      this.singularityTriggered = true;
-      if (this.state.soundEnabled) this.audio.triggerSingularity();
-      this.startCinematicAutoScroll();
     }
 
     this.gravityVelocity = Math.min(this.gravityVelocity, 4 + scroll * 12);

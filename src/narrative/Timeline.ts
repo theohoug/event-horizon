@@ -84,7 +84,7 @@ export class Timeline {
     this.pendingChapter = null;
     this.lockUntil = 0;
     this.showChapter(chapter);
-    this.lockUntil = performance.now() + 1500;
+    this.lockUntil = performance.now() + 2500;
   }
 
   start(withSound: boolean) {
@@ -225,6 +225,12 @@ export class Timeline {
 
   private showChapter(chapter: Chapter) {
     if (this.activeChapter === chapter.id || this.creditsVisible) return;
+
+    if (chapter.id > this.activeChapter + 1 && this.activeChapter >= 0) {
+      this.pendingChapter = chapter;
+      return;
+    }
+
     if (performance.now() < this.lockUntil && chapter.id > this.activeChapter) return;
 
     const container = document.getElementById('chapter-text');
@@ -241,6 +247,7 @@ export class Timeline {
     }
 
     this.activeChapter = chapter.id;
+    this.lockUntil = Math.max(this.lockUntil, performance.now() + 2000);
     this.transitioning = true;
 
     const finishTransition = () => {

@@ -109,12 +109,15 @@ export class Experience {
 
   private chapterMids: number[] = [];
 
+  private chapterTriggerBreaks: number[] = [];
+
   private computeChapterBreaks() {
     const sections = document.querySelectorAll('.chapter');
     const total = document.documentElement.scrollHeight - window.innerHeight;
-    if (total <= 0) { this.chapterBreaks = []; this.chapterMids = []; return; }
+    if (total <= 0) { this.chapterBreaks = []; this.chapterMids = []; this.chapterTriggerBreaks = []; return; }
     const breaks: number[] = [];
     const mids: number[] = [];
+    const trigBreaks: number[] = [];
     const vh = window.innerHeight;
     let cum = 0;
     sections.forEach((s, i) => {
@@ -122,14 +125,23 @@ export class Experience {
       cum += el.offsetHeight;
       breaks.push(cum / total);
       const trigPct = i === 0 ? 0 : i === 8 ? 0.5 : 0.65;
-      const start = Math.max(0, el.offsetTop - vh * trigPct) / total;
+      const trigStart = Math.max(0, el.offsetTop - vh * trigPct) / total;
+      trigBreaks.push(trigStart);
       const nextEl = sections[i + 1] as HTMLElement | undefined;
       const nextPct = i + 1 === 0 ? 0 : i + 1 === 8 ? 0.5 : 0.65;
       const end = nextEl ? Math.max(0, nextEl.offsetTop - vh * nextPct) / total : 1.0;
-      mids.push((start + end) / 2);
+      mids.push((trigStart + end) / 2);
     });
     this.chapterBreaks = breaks;
     this.chapterMids = mids;
+    this.chapterTriggerBreaks = trigBreaks;
+  }
+
+  getChapterFromTrigger(scroll: number): number {
+    for (let i = this.chapterTriggerBreaks.length - 1; i >= 0; i--) {
+      if (scroll >= this.chapterTriggerBreaks[i]) return i;
+    }
+    return 0;
   }
 
   getChapterMid(chapter: number): number {
@@ -2090,16 +2102,15 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     const timelineChapter = this.timeline.activeChapter;
-    const scrollChapter = this.getChapterFromScroll(this.state.scroll);
-    if (timelineChapter >= 0 && scrollChapter > timelineChapter) {
+    const triggerChapter = this.getChapterFromTrigger(this.state.scroll);
+    if (timelineChapter >= 0 && triggerChapter > timelineChapter) {
       const now = performance.now();
-      if (now - this.lastChapterSyncTime > 1500) {
-        const nextCh = Math.min(scrollChapter, timelineChapter + 1);
+      if (now > this.timeline.lockUntil) {
+        const nextCh = Math.min(triggerChapter, timelineChapter + 1);
         this.timeline.refreshCurrentChapter(this.state.scroll, nextCh);
-        this.lastChapterSyncTime = now;
       }
     }
-    const currentChapter = this.timeline.activeChapter >= 0 ? this.timeline.activeChapter : scrollChapter;
+    const currentChapter = this.timeline.activeChapter >= 0 ? this.timeline.activeChapter : triggerChapter;
     if (currentChapter !== this.lastChapterIndex) {
       if (this.lastChapterIndex >= 0) {
         this.chapterFlash = currentChapter === 7 ? 2.5 : 1.0;

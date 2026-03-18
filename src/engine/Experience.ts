@@ -1689,7 +1689,19 @@ gl_FragColor=vec4(col,1.0);}`;
       this.startCinematicAutoScroll();
     }
 
-    if (this.state.introActive || scroll > 0.93 || this.cinematicAutoScrollStarted) {
+    if (this.cinematicAutoScrollStarted) {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const currentTop = this.lenis.scroll;
+      if (currentTop < maxScroll - 1) {
+        const speed = 2 + (scroll - 0.82) * 8;
+        this.lenis.scrollTo(Math.min(currentTop + speed, maxScroll), { immediate: true });
+      }
+      this.gravityVelocity = 0;
+      this.smoothGravity = 0;
+      return;
+    }
+
+    if (this.state.introActive || scroll > 0.93) {
       this.gravityVelocity *= 0.85;
       this.smoothGravity *= 0.85;
       return;
@@ -2684,13 +2696,6 @@ gl_FragColor=vec4(col,1.0);}`;
   private startCinematicAutoScroll() {
     if (this.cinematicAutoScrollStarted) return;
     this.cinematicAutoScrollStarted = true;
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    setTimeout(() => {
-      this.lenis.scrollTo(maxScroll, {
-        duration: 5,
-        easing: (x: number) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2,
-      });
-    }, 800);
   }
 
   private triggerSingularityExplosion() {

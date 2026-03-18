@@ -54,6 +54,7 @@ export class Timeline {
   private currentPattern: RevealPattern = 'char-rise';
   private creditsTl: gsap.core.Timeline | null = null;
   private lastLeaveBackTime = 0;
+  lockUntil = 0;
   isAlteredMode = false;
   isHardcoreMode = false;
 
@@ -61,6 +62,7 @@ export class Timeline {
     this.creditsVisible = false;
     this.activeChapter = -1;
     this.transitioning = false;
+    this.lockUntil = 0;
     if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
   }
 
@@ -72,7 +74,9 @@ export class Timeline {
     if (!chapter) return;
     this.activeChapter = -1;
     this.transitioning = false;
+    this.lockUntil = 0;
     this.showChapter(chapter);
+    this.lockUntil = performance.now() + 1500;
   }
 
   start(withSound: boolean) {
@@ -213,6 +217,7 @@ export class Timeline {
 
   private showChapter(chapter: Chapter) {
     if (this.activeChapter === chapter.id || this.creditsVisible) return;
+    if (performance.now() < this.lockUntil && chapter.id > this.activeChapter) return;
 
     const container = document.getElementById('chapter-text');
     if (!container) return;

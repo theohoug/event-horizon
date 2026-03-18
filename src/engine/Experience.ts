@@ -1738,6 +1738,10 @@ gl_FragColor=vec4(col,1.0);}`;
     if (scroll > 0.65) { const g3 = (scroll - 0.65) / 0.35; totalForce += g3 * g3 * 18.0; }
     if (scroll > 0.80) { const g4 = (scroll - 0.80) / 0.20; totalForce += g4 * g4 * 35.0; }
 
+    if (scroll > 0.54 && scroll < 0.68) {
+      totalForce *= 0.35;
+    }
+
     const extraVisits = Math.min(this.visitCount - 1, 4);
     if (extraVisits > 0) totalForce *= 1 + extraVisits * 0.2;
 
@@ -2769,11 +2773,14 @@ gl_FragColor=vec4(col,1.0);}`;
     });
   }
 
+  private trapScene: import('../ui/TrapScene').TrapScene | null = null;
+
   private showTrapOverlay() {
     const trap = document.getElementById('trap-overlay');
     if (!trap) return;
 
     const tr = t();
+    const trapSubTop = document.getElementById('trap-sub-top');
     const trapText = document.getElementById('trap-text');
     const trapSub = document.getElementById('trap-sub');
     const trapAccept = document.getElementById('trap-accept');
@@ -2781,16 +2788,19 @@ gl_FragColor=vec4(col,1.0);}`;
     const trapChoices = document.getElementById('trap-choices');
 
     if (this.isHardcoreMode) {
+      if (trapSubTop) trapSubTop.textContent = 'SIMULATION ERROR';
       if (trapText) trapText.textContent = tr.hardcoreTrap.text;
       if (trapSub) trapSub.textContent = tr.hardcoreTrap.sub;
       if (trapAccept) trapAccept.textContent = tr.hardcoreTrap.accept;
       if (trapShare) trapShare.style.display = 'none';
     } else if (this.isAlteredMode) {
+      if (trapSubTop) trapSubTop.textContent = 'EVENT HORIZON';
       if (trapText) trapText.textContent = tr.alteredTrap.text;
       if (trapSub) trapSub.textContent = tr.alteredTrap.sub;
       if (trapAccept) trapAccept.textContent = tr.alteredTrap.accept;
       if (trapShare) trapShare.style.display = 'none';
     } else {
+      if (trapSubTop) trapSubTop.textContent = 'EVENT HORIZON';
       if (trapText) trapText.textContent = tr.trap.text;
       if (trapSub) trapSub.textContent = tr.trap.sub;
       if (trapAccept) trapAccept.textContent = tr.trap.accept;
@@ -2800,21 +2810,32 @@ gl_FragColor=vec4(col,1.0);}`;
     trap.classList.add('visible');
     trap.setAttribute('aria-hidden', 'false');
 
+    const trapCanvas = document.getElementById('trap-canvas') as HTMLCanvasElement;
+    if (trapCanvas && !this.trapScene) {
+      import('../ui/TrapScene').then(({ TrapScene }) => {
+        this.trapScene = new TrapScene(trapCanvas);
+        this.trapScene.start();
+      });
+    } else if (this.trapScene) {
+      this.trapScene.start();
+    }
+
     if (this.state.soundEnabled) this.audio.triggerChapterTransition();
 
     const tl = gsap.timeline();
-    const trapTitle = document.getElementById('trap-title');
-    const trapLine = document.getElementById('trap-line');
 
-    tl.fromTo(trapTitle, { opacity: 0, scale: 0.8, letterSpacing: '0.8em' }, { opacity: 1, scale: 1, letterSpacing: '0.4em', duration: 1.5, ease: 'power2.out' }, 0);
-    tl.fromTo(trapLine, { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: 'power2.out' }, 0.8);
-    if (trapText) tl.fromTo(trapText, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out' }, 1.2);
-    if (trapSub) tl.fromTo(trapSub, { opacity: 0 }, { opacity: 1, duration: 1, ease: 'power2.out' }, 2);
-    if (trapChoices) tl.fromTo(trapChoices, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 2.5);
+    if (trapSubTop) tl.fromTo(trapSubTop, { opacity: 0, letterSpacing: '0.8em' }, { opacity: 1, letterSpacing: '0.4em', duration: 1.5, ease: 'power2.out' }, 3.0);
+    if (trapText) tl.fromTo(trapText, { opacity: 0, y: 20, filter: 'blur(6px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.5, ease: 'power2.out' }, 4.0);
+    if (trapSub) tl.fromTo(trapSub, { opacity: 0 }, { opacity: 1, duration: 1, ease: 'power2.out' }, 5.5);
+    if (trapChoices) tl.fromTo(trapChoices, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 6.5);
 
     const dismissTrap = () => {
       trap.classList.remove('visible');
       trap.setAttribute('aria-hidden', 'true');
+      if (this.trapScene) {
+        this.trapScene.destroy();
+        this.trapScene = null;
+      }
     };
 
     if (trapShare) {

@@ -218,6 +218,42 @@ export class Timeline {
         );
       }
     });
+
+    const shareSection = document.getElementById('share-section');
+    if (shareSection) {
+      this.creditsTl.fromTo(shareSection,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.01 },
+        9.0
+      );
+    }
+    const shareBtn = document.getElementById('share-btn');
+    if (shareBtn) {
+      this.creditsTl.fromTo(shareBtn,
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out' },
+        9.0
+      );
+    }
+    const returnBtn = document.getElementById('return-btn');
+    if (returnBtn) {
+      const fullText = returnBtn.textContent || 'Return to surface';
+      returnBtn.textContent = '';
+      returnBtn.style.opacity = '1';
+      returnBtn.style.borderBottomColor = 'transparent';
+
+      const chars = fullText.split('');
+      chars.forEach((char, ci) => {
+        this.creditsTl!.call(() => {
+          returnBtn.textContent = fullText.slice(0, ci + 1);
+        }, [], 10.0 + ci * 0.06);
+      });
+
+      this.creditsTl.to(returnBtn,
+        { borderBottomColor: 'rgba(255, 180, 70, 0.2)', duration: 0.5, ease: 'power2.out' },
+        10.0 + chars.length * 0.06
+      );
+    }
   }
 
   private hideCredits() {
@@ -264,7 +300,8 @@ export class Timeline {
     }
 
     this.activeChapter = chapter.id;
-    this.lockUntil = Math.max(this.lockUntil, performance.now() + 2000);
+    const lockDuration = chapter.id === 5 ? 3500 : 2000;
+    this.lockUntil = Math.max(this.lockUntil, performance.now() + lockDuration);
     this.transitioning = true;
 
     const finishTransition = () => {

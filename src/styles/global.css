@@ -3186,36 +3186,98 @@ html:has(#sound-prompt.visible) {
   color: rgba(30, 30, 40, 0.8);
 }
 
-#return-btn {
+#return-wrap {
+  position: relative;
   display: inline-block;
-  padding: 0.65rem 2.5rem;
-  border: 1px solid rgba(255, 140, 50, 0.15);
+  margin-top: 2rem;
+}
+
+#return-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 300%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at center, rgba(255, 140, 50, 0.08) 0%, rgba(255, 100, 30, 0.03) 40%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#return-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 200%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 140, 50, 0.06);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: return-ring-spin 12s linear infinite;
+}
+
+#return-ring::before {
+  content: '';
+  position: absolute;
+  inset: -15px;
+  border: 1px solid rgba(255, 140, 50, 0.03);
+  border-radius: 50%;
+  animation: return-ring-spin 20s linear infinite reverse;
+}
+
+@keyframes return-ring-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+#return-btn {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  padding: 1rem 3.5rem;
+  border: 1px solid rgba(255, 140, 50, 0.12);
   border-radius: 999px;
   background: rgba(255, 140, 50, 0.03);
-  color: rgba(255, 200, 150, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: rgba(255, 200, 150, 0.55);
   font-family: var(--font-serif);
   font-weight: 400;
   font-style: italic;
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
   cursor: pointer;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0, 1);
-  margin-top: 1.2rem;
-  position: relative;
-  animation: return-btn-pulse 3s ease-in-out infinite;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0, 1);
 }
 
-@keyframes return-btn-pulse {
-  0%, 100% { box-shadow: 0 0 15px rgba(255, 140, 50, 0.05), 0 0 40px rgba(255, 100, 30, 0.02); }
-  50% { box-shadow: 0 0 20px rgba(255, 140, 50, 0.12), 0 0 60px rgba(255, 100, 30, 0.06); }
+#return-wrap.alive #return-btn {
+  animation: return-btn-breathe 4s ease-in-out infinite;
+}
+
+@keyframes return-btn-breathe {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 140, 50, 0.06), 0 0 60px rgba(255, 100, 30, 0.03);
+    border-color: rgba(255, 140, 50, 0.12);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 140, 50, 0.15), 0 0 80px rgba(255, 100, 30, 0.06), 0 0 120px rgba(255, 80, 20, 0.03);
+    border-color: rgba(255, 140, 50, 0.25);
+  }
 }
 
 #return-btn:hover {
-  border-color: rgba(255, 140, 50, 0.4);
-  color: rgba(255, 220, 180, 0.85);
-  background: rgba(255, 140, 50, 0.06);
-  box-shadow: 0 0 25px rgba(255, 140, 50, 0.2), 0 0 80px rgba(255, 100, 30, 0.08);
-  transform: scale(1.03);
+  border-color: rgba(255, 140, 50, 0.5);
+  color: rgba(255, 230, 200, 0.9);
+  background: rgba(255, 140, 50, 0.08);
+  box-shadow: 0 0 40px rgba(255, 140, 50, 0.25), 0 0 100px rgba(255, 100, 30, 0.1);
+  transform: scale(1.05);
+  letter-spacing: 0.16em;
+}
+
+#return-btn:active {
+  transform: scale(0.98);
 }
 
 .return-whisper {
@@ -3223,7 +3285,7 @@ html:has(#sound-prompt.visible) {
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 0.5rem;
-  color: rgba(255, 180, 100, 0.35);
+  color: rgba(255, 180, 100, 0.3);
   letter-spacing: 0.1em;
   white-space: nowrap;
   pointer-events: none;
@@ -3232,15 +3294,18 @@ html:has(#sound-prompt.visible) {
 }
 
 #credits.white-mode #return-btn {
-  border-color: rgba(80, 40, 10, 0.2);
+  border-color: rgba(80, 40, 10, 0.15);
   color: rgba(80, 40, 10, 0.5);
   background: rgba(80, 40, 10, 0.03);
-  animation-name: return-btn-pulse-white;
 }
 
-@keyframes return-btn-pulse-white {
-  0%, 100% { box-shadow: 0 0 15px rgba(80, 40, 10, 0.05); }
-  50% { box-shadow: 0 0 20px rgba(80, 40, 10, 0.1); }
+#credits.white-mode #return-wrap.alive #return-btn {
+  animation-name: return-btn-breathe-white;
+}
+
+@keyframes return-btn-breathe-white {
+  0%, 100% { box-shadow: 0 0 20px rgba(80, 40, 10, 0.05); border-color: rgba(80, 40, 10, 0.15); }
+  50% { box-shadow: 0 0 30px rgba(80, 40, 10, 0.1); border-color: rgba(80, 40, 10, 0.25); }
 }
 
 #credits.white-mode #return-btn:hover {
@@ -3250,7 +3315,7 @@ html:has(#sound-prompt.visible) {
 }
 
 #credits.white-mode .return-whisper {
-  color: rgba(80, 40, 10, 0.25);
+  color: rgba(80, 40, 10, 0.2);
 }
 
 /* ─── Chapter Navigation ─── */

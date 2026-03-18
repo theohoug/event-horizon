@@ -234,28 +234,40 @@ export class Timeline {
       this.creditsTl.fromTo(shareSection,
         { opacity: 0 },
         { opacity: 1, duration: 0.01 },
-        8.0
+        8.5
       );
     }
-    const shareBtn = document.getElementById('share-btn');
-    if (shareBtn) {
-      this.creditsTl.fromTo(shareBtn,
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out' },
-        8.0
-      );
-    }
+
+    const returnWrap = document.getElementById('return-wrap');
+    const returnGlow = document.getElementById('return-glow');
+    const returnRing = document.getElementById('return-ring');
     const returnBtn = document.getElementById('return-btn');
-    if (returnBtn) {
+
+    if (returnWrap && returnBtn) {
+      this.creditsTl.fromTo(returnGlow || returnWrap,
+        { opacity: 0, scale: 0.3 },
+        { opacity: 1, scale: 1, duration: 2.0, ease: 'power2.out' },
+        8.5
+      );
+
+      if (returnRing) {
+        this.creditsTl.fromTo(returnRing,
+          { opacity: 0, scale: 0.5, rotation: -180 },
+          { opacity: 1, scale: 1, rotation: 0, duration: 2.5, ease: 'elastic.out(1, 0.5)' },
+          9.0
+        );
+      }
+
       this.creditsTl.fromTo(returnBtn,
-        { opacity: 0, scale: 0.9, filter: 'blur(4px)' },
-        { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power2.out' },
+        { opacity: 0, scale: 0.6, letterSpacing: '0.5em', filter: 'blur(12px)' },
+        { opacity: 1, scale: 1, letterSpacing: '0.12em', filter: 'blur(0px)', duration: 2.0, ease: 'power4.out' },
         9.5
       );
 
       this.creditsTl.call(() => {
-        this.startWhispers(returnBtn);
-      }, [], 11.0);
+        returnWrap.classList.add('alive');
+        this.startWhispers(returnWrap);
+      }, [], 11.5);
     }
   }
 
@@ -341,12 +353,16 @@ export class Timeline {
     if (this.activeChapter === chapter.id || this.creditsVisible) return;
 
     if (chapter.id > this.activeChapter + 1 && this.activeChapter >= 0) {
-      this.pendingChapter = chapter;
+      if (!this.pendingChapter || chapter.id < this.pendingChapter.id) {
+        this.pendingChapter = chapter;
+      }
       return;
     }
 
     if (performance.now() < this.lockUntil && chapter.id > this.activeChapter) {
-      this.pendingChapter = chapter;
+      if (!this.pendingChapter || chapter.id <= this.pendingChapter.id) {
+        this.pendingChapter = chapter;
+      }
       return;
     }
 

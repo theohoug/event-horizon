@@ -50,12 +50,12 @@ vec3 starfield(vec3 rd) {
   vec3 stretchedRd = normalize(rd + stretchDir * dot(rd, stretchDir) * scrollStretch);
 
 #ifdef QUALITY_MEDIUM
-  {
-    float scale = 55.0;
+  for (int layer = 0; layer < 2; layer++) {
+    float scale = 50.0 + float(layer) * 50.0;
     vec3 p = stretchedRd * scale;
     vec3 id = floor(p);
     vec3 fd = fract(p);
-    float threshold = 0.35;
+    float threshold = 0.38 - float(layer) * 0.04;
 
     for (int ox = 0; ox <= 1; ox++) {
     for (int oy = 0; oy <= 1; oy++) {
@@ -70,21 +70,28 @@ vec3 starfield(vec3 rd) {
         float magnitude = (h - threshold) / (1.0 - threshold);
         float core = exp(-dist * dist * 350.0);
         float halo = exp(-dist * dist * 60.0) * 0.3;
-        float brightness = (core + halo * magnitude) * sqrt(magnitude);
+        float softGlow = exp(-dist * dist * 14.0) * 0.04;
+        float brightness = core + halo * magnitude + softGlow * magnitude;
+        brightness *= sqrt(magnitude);
         float twinkle = sin(uTime * (0.5 + h * 1.2) + h * TAU) * 0.08 + 0.92;
         brightness *= twinkle;
 
         float colorSeed = hash(dot(nid, vec3(53.1, 97.3, 161.7)));
-        vec3 starColor = mix(vec3(1.0, 0.85, 0.72), vec3(1.0, 0.78, 0.58), colorSeed);
-        col += starColor * brightness * 1.0;
+        vec3 starColor;
+        if (colorSeed < 0.15) starColor = mix(vec3(1.0, 0.67, 0.37), vec3(1.0, 0.85, 0.72), colorSeed * 6.67);
+        else if (colorSeed < 0.5) starColor = mix(vec3(1.0, 0.93, 0.86), vec3(1.0, 1.0, 1.0), (colorSeed - 0.15) * 2.86);
+        else starColor = mix(vec3(1.0, 0.82, 0.65), vec3(1.0, 0.78, 0.58), (colorSeed - 0.5) * 2.0);
+
+        float layerScale = 0.8 / float(layer + 1);
+        col += starColor * brightness * layerScale * 1.1;
       }
     }
     }
     }
   }
 
-  {
-    float bScale = 20.0;
+  for (int i = 0; i < 2; i++) {
+    float bScale = 18.0 + float(i) * 10.0;
     vec3 bp = stretchedRd * bScale;
     vec3 bId = floor(bp);
     vec3 bFd = fract(bp);
@@ -97,7 +104,17 @@ vec3 starfield(vec3 rd) {
       float innerHalo = exp(-bDist * bDist * 250.0) * 0.45;
       float brightness = (core + innerHalo) * (sin(uTime * (1.2 + bH * 2.0) + bH * TAU) * 0.1 + 0.9);
       vec3 bColor = mix(vec3(1.0, 0.85, 0.72), vec3(1.0, 0.78, 0.58), hash(dot(bId, vec3(41.7, 199.3, 77.1))));
-      col += bColor * brightness * 1.1;
+
+      vec2 starScreen = vec2(
+        dot(bCenter - bFd, vec3(1.0, 0.0, 0.0)),
+        dot(bCenter - bFd, vec3(0.0, 1.0, 0.0))
+      );
+      float streakFactor = 1.0 + scrollStretch * 3.0;
+      float spike1 = exp(-abs(starScreen.x) * 100.0 / streakFactor) * exp(-starScreen.y * starScreen.y * 400.0);
+      float spike2 = exp(-abs(starScreen.y) * 100.0) * exp(-starScreen.x * starScreen.x * 400.0 / streakFactor);
+      float spikes = (spike1 + spike2) * 0.15;
+
+      col += bColor * (brightness + spikes) * 1.1;
     }
   }
 #else
@@ -191,9 +208,16 @@ vec3 starfield(vec3 rd) {
   float nebulaBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 1.5;
 
 #ifdef QUALITY_MEDIUM
-  float nebSeed = dot(rd * 5.0, vec3(127.1, 311.7, 74.7)) + uTime * 0.004;
-  float _nb = hash(nebSeed); float _nb2m = _nb*_nb; float nebula = _nb2m * _nb2m * 0.12;
-  col += vec3(0.11, 0.06, 0.04) * nebula * nebulaBoost;
+  float n1m = snoise(rd * 2.5 + vec3(uTime * 0.008));
+  float _nb1m = n1m * 0.5 + 0.5; float _nb1m2 = _nb1m*_nb1m; float nebulaM = _nb1m2 * sqrt(_nb1m) * 0.12;
+  float nebSeedM = dot(rd * 5.0, vec3(127.1, 311.7, 74.7)) + uTime * 0.004;
+  float _nbM = hash(nebSeedM); float _nbM2 = _nbM*_nbM; float nebulaM2 = _nbM2 * _nbM2 * 0.06;
+  col += vec3(0.11, 0.06, 0.04) * nebulaM * nebulaBoost;
+  col += vec3(0.09, 0.05, 0.03) * nebulaM2 * nebulaBoost;
+
+  float n3m = snoise(rd * 1.2 + vec3(0.0, uTime * 0.003, 31.0));
+  float _dnm = n3m * 0.5 + 0.5; float deepNebulaM = _dnm * _dnm * _dnm * 0.06;
+  col += vec3(0.05, 0.035, 0.025) * deepNebulaM * nebulaBoost;
 #else
   float n1 = snoise(rd * 2.5 + vec3(uTime * 0.008));
   float _nb1 = n1 * 0.5 + 0.5; float _nb1_2 = _nb1*_nb1; float nebula = _nb1_2 * sqrt(_nb1) * 0.14;
@@ -202,9 +226,7 @@ vec3 starfield(vec3 rd) {
 
   col += vec3(0.12, 0.06, 0.05) * nebula * nebulaBoost;
   col += vec3(0.10, 0.06, 0.03) * nebula2 * nebulaBoost;
-#endif
 
-#ifndef QUALITY_MEDIUM
   float n4 = snoise(rd * 3.8 + vec3(uTime * 0.006, 0.0, 42.0));
   float _nb3 = n4 * 0.5 + 0.5; float nebula3 = _nb3 * _nb3 * _nb3 * 0.08;
   col += vec3(0.07, 0.04, 0.04) * nebula3 * nebulaBoost;
@@ -220,7 +242,10 @@ vec3 starfield(vec3 rd) {
   float _cg = max(1.0 - abs(rd.y - 0.1) * 1.2, 0.0); float _cg2 = _cg*_cg; float cosmicGlow = _cg2 * sqrt(_cg) * 0.04;
   col += vec3(0.06, 0.04, 0.025) * cosmicGlow * nebulaBoost;
 
-#ifndef QUALITY_MEDIUM
+#ifdef QUALITY_MEDIUM
+  float _anm = n3m * 0.5 + 0.5; float asymNebulaM = _anm * _anm * _anm * 0.04;
+  col += vec3(0.07, 0.04, 0.03) * asymNebulaM * nebulaBoost * smoothstep(0.0, 0.3, rd.x + 0.2);
+#else
   float _an = n3 * 0.5 + 0.5; float asymNebula = _an * _an * _an * 0.05;
   col += vec3(0.08, 0.05, 0.03) * asymNebula * nebulaBoost * smoothstep(0.0, 0.3, rd.x + 0.2);
 #endif
@@ -231,7 +256,34 @@ vec3 starfield(vec3 rd) {
   float milkyBoost = 1.0 + smoothstep(0.2, 0.0, uScroll) * 0.8;
   col += vec3(0.045, 0.035, 0.025) * milkyWay * (0.5 + milkyDetail) * milkyBoost;
 
-#ifndef QUALITY_MEDIUM
+#ifdef QUALITY_MEDIUM
+  {
+    float bgScale = 160.0;
+    vec3 bgP = rd * bgScale;
+    vec3 bgId = floor(bgP);
+    vec3 bgFd = fract(bgP);
+    vec3 bgH3 = hash33(bgId);
+    float bgDist = length(bgH3 - bgFd);
+    float bgH = hash(dot(bgId, vec3(97.3, 41.7, 213.1)));
+    if (bgH > 0.3) {
+      float bgMag = (bgH - 0.3) / 0.7;
+      float bgCore = exp(-bgDist * bgDist * 350.0);
+      float bgBright = bgCore * bgMag * bgMag * 0.10;
+      vec3 bgColor = mix(vec3(1.0, 0.88, 0.75), vec3(1.0, 0.95, 0.88), bgMag);
+      col += bgColor * bgBright;
+    }
+  }
+
+  float _dlm = max(1.0 - abs(rd.y + 0.05) * 3.0, 0.0); float _dlm2 = _dlm*_dlm; float dustLaneM = _dlm2 * _dlm2;
+  float dustSeedM = dot(rd, vec3(127.1, 311.7, 74.7)) * 12.0 + 7.0;
+  float dustNoiseM = hash(dustSeedM) * 0.7 + 0.15;
+  col *= 1.0 - dustLaneM * dustNoiseM * 0.2;
+
+  float clusterSeedM = dot(rd, vec3(97.3, 41.7, 213.1)) * 6.0 + 99.0;
+  float _sc6m = hash(clusterSeedM); float _sc6m2 = _sc6m*_sc6m; float starClusterM = _sc6m2 * _sc6m2;
+  float dustShimmerM = sin(uTime * 2.0 + dot(rd, vec3(47.0, 13.0, 91.0))) * 0.5 + 0.5;
+  col += vec3(0.85, 0.7, 0.5) * starClusterM * dustShimmerM * 0.04;
+#else
   for (int bgLayer = 0; bgLayer < 2; bgLayer++) {
     float bgScale = 160.0 + float(bgLayer) * 120.0;
     vec3 bgP = rd * bgScale;
@@ -283,7 +335,8 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
 
   float turb1 = snoise(vec3(r * 2.0, rotAngle * 2.5, uTime * 0.25)) * 0.3;
 #ifdef QUALITY_MEDIUM
-  float turbulence = turb1;
+  float turb2m = snoise(vec3(r * 4.5, rotAngle * 4.0, uTime * 0.4 + 31.0)) * 0.10;
+  float turbulence = turb1 + turb2m;
 #else
   float turb2 = snoise(vec3(r * 4.5, rotAngle * 4.0, uTime * 0.4 + 31.0)) * 0.12;
   float turb3 = snoise(vec3(r * 10.0, rotAngle * 7.0, uTime * 0.7 + 67.0)) * 0.06;
@@ -294,7 +347,10 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   spiralArm = sqrt(spiralArm);
   float secondaryArm = sin(rotAngle * 5.0 + r * 2.8 - uTime * 0.3) * 0.5 + 0.5;
   spiralArm = mix(spiralArm, spiralArm * secondaryArm, 0.25);
-#ifndef QUALITY_MEDIUM
+#ifdef QUALITY_MEDIUM
+  float tertiaryArmM = sin(rotAngle * 13.0 + r * 5.0 + uTime * 0.15) * 0.5 + 0.5;
+  spiralArm = mix(spiralArm, spiralArm + tertiaryArmM * 0.10, 0.4);
+#else
   float tertiaryArm = sin(rotAngle * 13.0 + r * 5.0 + uTime * 0.15) * 0.5 + 0.5;
   spiralArm = mix(spiralArm, spiralArm + tertiaryArm * 0.15, 0.5);
 #endif
@@ -334,24 +390,35 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
 
   diskColor *= 1.0 + turbulence * vec3(0.15, 0.05, -0.05);
 
-#ifndef QUALITY_MEDIUM
+#ifdef QUALITY_MEDIUM
+  float waveM1 = sin(rotAngle * 8.0 + r * 5.0 - uTime * 2.0) * 0.5 + 0.5;
+  float waveM2 = sin(rotAngle * 12.0 - r * 4.0 + uTime * 2.5 + 1.3) * 0.5 + 0.5;
+  float waveM3 = sin(rotAngle * 18.0 + r * 8.0 + uTime * 1.2 + 2.7) * 0.5 + 0.5;
+  float waveCrestM = pow(waveM1 * 0.6 + waveM2 * 0.3 + waveM3 * 0.1, 1.5);
+  float waveMaskM = diskMask * smoothstep(DISK_INNER, DISK_INNER + 2.0, r) * smoothstep(DISK_OUTER, DISK_OUTER - 3.0, r);
+  diskColor += vec3(1.0, 0.9, 0.65) * waveCrestM * waveMaskM * 0.45;
+
+  float specM = pow(max(sin(rotAngle * 4.0 + r * 2.5 - uTime * 0.9), 0.0), 8.0);
+  float specMaskM = smoothstep(DISK_INNER, DISK_INNER + 2.0, r) * smoothstep(DISK_OUTER, DISK_OUTER - 3.0, r);
+  diskColor += vec3(1.0, 0.95, 0.9) * specM * 0.3 * specMaskM;
+#else
   float wave1 = sin(rotAngle * 8.0 + r * 5.0 - uTime * 2.0) * 0.5 + 0.5;
   float wave2 = sin(rotAngle * 12.0 - r * 4.0 + uTime * 2.5 + 1.3) * 0.5 + 0.5;
   float wave3 = sin(rotAngle * 18.0 + r * 8.0 + uTime * 1.2 + 2.7) * 0.5 + 0.5;
-  float waveCrest = pow(wave1 * wave2 + wave3 * 0.2, 3.0);
+  float waveCrest = pow(wave1 * 0.5 + wave2 * 0.3 + wave3 * 0.2, 1.5);
   float waveMask = diskMask * smoothstep(DISK_INNER, DISK_INNER + 2.0, r) * smoothstep(DISK_OUTER, DISK_OUTER - 3.0, r);
-  diskColor += vec3(1.0, 0.9, 0.65) * waveCrest * waveMask * 0.3;
+  diskColor += vec3(1.0, 0.9, 0.65) * waveCrest * waveMask * 0.5;
 
-  float spec = pow(max(sin(rotAngle * 4.0 + r * 2.5 - uTime * 0.9), 0.0), 16.0);
-  float spec2 = pow(max(sin(rotAngle * 6.0 - r * 1.8 + uTime * 0.7), 0.0), 20.0);
+  float spec = pow(max(sin(rotAngle * 4.0 + r * 2.5 - uTime * 0.9), 0.0), 10.0);
+  float spec2 = pow(max(sin(rotAngle * 6.0 - r * 1.8 + uTime * 0.7), 0.0), 14.0);
   float specMask = smoothstep(DISK_INNER, DISK_INNER + 2.0, r) * smoothstep(DISK_OUTER, DISK_OUTER - 3.0, r);
-  diskColor += vec3(1.0, 0.95, 0.9) * (spec * 0.25 + spec2 * 0.15) * specMask;
+  diskColor += vec3(1.0, 0.95, 0.9) * (spec * 0.3 + spec2 * 0.2) * specMask;
 
-  float caustic = pow(abs(sin(rotAngle * 22.0 + r * 12.0 + uTime * 3.0) * sin(rotAngle * 16.0 - r * 9.0 - uTime * 2.0)), 2.0);
-  diskColor += vec3(1.0, 0.8, 0.5) * caustic * specMask * 0.12;
+  float caustic = pow(abs(sin(rotAngle * 22.0 + r * 12.0 + uTime * 3.0) * sin(rotAngle * 16.0 - r * 9.0 - uTime * 2.0)), 1.5);
+  diskColor += vec3(1.0, 0.8, 0.5) * caustic * specMask * 0.18;
 
-  float filament = pow(abs(sin(rotAngle * 30.0 + r * 15.0 + turbulence * 10.0)), 12.0);
-  diskColor += vec3(1.0, 0.85, 0.55) * filament * specMask * 0.15;
+  float filament = pow(abs(sin(rotAngle * 30.0 + r * 15.0 + turbulence * 10.0)), 8.0);
+  diskColor += vec3(1.0, 0.85, 0.55) * filament * specMask * 0.2;
 #endif
 
   float _hs1 = max(sin(rotAngle * 2.0 + uTime * 0.15 + r * 0.5) * 0.5 + 0.5, 0.0);

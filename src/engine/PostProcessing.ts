@@ -123,7 +123,7 @@ export class PostProcessing {
         ] },
         uHoldStrength: { value: 0 },
         uMouse: { value: new THREE.Vector2(0.5, 0.5) },
-        uMotionBlur: { value: motionBlur ? 1.0 : 0.0 },
+        uMotionBlur: { value: motionBlur ? (qualityMedium ? 0.5 : 1.0) : 0.0 },
         uExplosion: { value: 0 },
         uColorShift: { value: new THREE.Vector3(0, 0, 0) },
         uInvert: { value: 0 },
@@ -212,7 +212,7 @@ export class PostProcessing {
       this.compositeMaterial.uniforms.uCrtCurvature.value = 0.03 * s;
       this.compositeMaterial.uniforms.uRgbSplit.value = 3.0 + Math.sin(state.time * 2.0) * 1.0;
       this.compositeMaterial.uniforms.uScreenTilt.value = Math.sin(state.time * 0.4 * Math.PI * 2) * 1.5 * (Math.PI / 180) * s;
-      this.compositeMaterial.uniforms.uGlitchBlock.value = (!this.qualityMedium && Math.random() < 0.06) ? 0.8 + Math.random() * 0.2 : 0;
+      this.compositeMaterial.uniforms.uGlitchBlock.value = (Math.random() < (this.qualityMedium ? 0.03 : 0.06)) ? 0.8 + Math.random() * 0.2 : 0;
 
       if (Math.random() < 0.10) {
         this.compositeMaterial.uniforms.uChapterFlash.value += 0.3 + Math.random() * 0.5;

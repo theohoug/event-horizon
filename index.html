@@ -279,7 +279,8 @@
         <div class="credits-line credits-role">Editor</div>
         <div class="credits-line credits-name">VS Code · Vite</div>
         <div class="credits-line credits-spacer"></div>
-        <div class="credits-line credits-footer">A <a href="https://cleanlystudio.pro" target="_blank" rel="noopener">Cleanlystudio</a> experience · 2026</div>
+        <div class="credits-line credits-footer">A <a href="https://cleanlystudio.pro" target="_blank" rel="noopener">Cleanlystudio</a> experience</div>
+        <div class="credits-line credits-legal">© 2026 Cleanlystudio · <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a></div>
         <div id="share-section">
           <div id="share-count" aria-hidden="true"></div>
           <button id="share-btn" aria-label="Share this experience">Share this journey</button>
@@ -373,6 +374,19 @@
   </div>
 
   <div id="grain-overlay" aria-hidden="true"></div>
+  <div id="webgl-fallback" role="alert" style="display:none;position:fixed;inset:0;z-index:9999;background:#050505;color:#fff;font-family:system-ui,-apple-system,sans-serif;align-items:center;justify-content:center;text-align:center;padding:2rem">
+    <div style="max-width:32rem">
+      <div style="font-size:3rem;margin-bottom:1.5rem;opacity:0.15;letter-spacing:0.3em;font-weight:200">◈</div>
+      <h1 style="font-size:1.4rem;margin-bottom:0.5rem;color:#FFB347;font-weight:300;letter-spacing:0.15em;text-transform:uppercase">Event Horizon</h1>
+      <p style="font-size:0.75rem;letter-spacing:0.3em;text-transform:uppercase;opacity:0.3;margin-bottom:2rem">Beyond the point of no return</p>
+      <div style="width:40px;height:1px;background:linear-gradient(90deg,transparent,#FFB347,transparent);margin:0 auto 2rem"></div>
+      <p style="line-height:1.8;opacity:0.6;font-size:0.9rem;font-weight:300">This experience requires WebGL 2.0 and hardware acceleration to render the black hole simulation.</p>
+      <p style="line-height:1.8;opacity:0.4;font-size:0.8rem;font-weight:300;margin-top:1rem">Try updating your browser, enabling hardware acceleration in settings, or using a device with a dedicated GPU.</p>
+      <div style="margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.05)">
+        <a href="https://cleanlystudio.com" style="color:#FFB347;text-decoration:none;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;opacity:0.5;transition:opacity 0.3s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">Cleanlystudio</a>
+      </div>
+    </div>
+  </div>
   <script>
     (function(){
       var c=document.createElement('canvas');
@@ -385,12 +399,6 @@
       }
     })();
   </script>
-  <div id="webgl-fallback" role="alert" style="display:none;position:fixed;inset:0;z-index:9999;background:#050505;color:#fff;font-family:system-ui,-apple-system,sans-serif;align-items:center;justify-content:center;text-align:center;padding:2rem">
-    <div>
-      <h1 style="font-size:1.5rem;margin-bottom:1rem;color:#FFB347">Event Horizon</h1>
-      <p style="max-width:28rem;margin:0 auto;line-height:1.6;opacity:0.8">This experience requires WebGL 2.0 to render the black hole simulation. Please update your browser or enable hardware acceleration in your settings.</p>
-    </div>
-  </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

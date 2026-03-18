@@ -54,6 +54,9 @@ export class Timeline {
   private currentPattern: RevealPattern = 'char-rise';
   private creditsTl: gsap.core.Timeline | null = null;
   private lastLeaveBackTime = 0;
+  private lastChapterShowTime = 0;
+  private deferredChapter: Chapter | null = null;
+  private deferTimer = 0;
   isAlteredMode = false;
   isHardcoreMode = false;
 
@@ -61,6 +64,9 @@ export class Timeline {
     this.creditsVisible = false;
     this.activeChapter = -1;
     this.transitioning = false;
+    this.lastChapterShowTime = 0;
+    if (this.deferTimer) { clearTimeout(this.deferTimer); this.deferTimer = 0; }
+    this.deferredChapter = null;
     if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
   }
 
@@ -214,19 +220,48 @@ export class Timeline {
   private showChapter(chapter: Chapter) {
     if (this.activeChapter === chapter.id || this.creditsVisible) return;
 
-    if (this.transitioning) {
-      this.pendingChapter = chapter;
+    const container = document.getElementById('chapter-text');
+    if (!container) return;
+
+    const now = performance.now();
+    const elapsed = now - this.lastChapterShowTime;
+    const MIN_DISPLAY = 1500;
+
+    if (this.lastChapterShowTime > 0 && elapsed < MIN_DISPLAY && chapter.id > this.activeChapter) {
+      this.deferredChapter = chapter;
+      if (!this.deferTimer) {
+        this.deferTimer = window.setTimeout(() => {
+          this.deferTimer = 0;
+          if (this.deferredChapter) {
+            const next = this.deferredChapter;
+            this.deferredChapter = null;
+            this.showChapter(next);
+          }
+        }, MIN_DISPLAY - elapsed) as unknown as number;
+      }
       return;
+    }
+
+    if (this.deferTimer) {
+      clearTimeout(this.deferTimer);
+      this.deferTimer = 0;
+      this.deferredChapter = null;
+    }
+
+    this.lastChapterShowTime = now;
+
+    if (this.transitioning) {
+      const existingChars = container.querySelectorAll('.char');
+      const existingLines = container.querySelectorAll('.line');
+      gsap.killTweensOf(existingChars);
+      gsap.killTweensOf(existingLines);
+      container.innerHTML = '';
+      this.transitioning = false;
+      this.pendingChapter = null;
     }
 
     this.activeChapter = chapter.id;
     this.transitioning = true;
-
-    const container = document.getElementById('chapter-text');
-    if (!container) {
-      this.transitioning = false;
-      return;
-    }
 
     const finishTransition = () => {
       this.createChapterContent(container, chapter);

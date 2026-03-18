@@ -61,6 +61,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  overflow-y: scroll;
   scrollbar-width: none;
   width: 100%;
   overscroll-behavior: none;
@@ -1480,6 +1481,9 @@ body {
   letter-spacing: 0.35em;
   color: var(--starlight);
   margin-bottom: 0.6rem;
+  min-width: 25rem;
+  min-height: 2.5rem;
+  text-align: center;
   animation: loader-text-breathe 5s ease-in-out infinite;
 }
 
@@ -3100,6 +3104,25 @@ html:has(#sound-prompt.visible) {
   width: 100%;
 }
 
+.credits-legal {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: rgba(255, 240, 224, 0.15);
+  margin-top: 0.5rem;
+}
+
+.credits-legal a {
+  color: rgba(255, 240, 224, 0.2);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.credits-legal a:hover {
+  color: rgba(255, 240, 224, 0.5);
+}
+
 #credits.white-mode {
   background: #faf8f5;
   transition: background 3s ease, opacity 2s cubic-bezier(0.4, 0, 0, 1);
@@ -3156,6 +3179,14 @@ html:has(#sound-prompt.visible) {
 
 #credits.white-mode .credits-footer a {
   color: #333;
+}
+
+#credits.white-mode .credits-legal {
+  color: rgba(80, 80, 80, 0.3);
+}
+
+#credits.white-mode .credits-legal a {
+  color: rgba(80, 80, 80, 0.35);
 }
 
 #share-section {

@@ -113,7 +113,15 @@ void main() {
   vec2 mouseScreenPos = vec2(uMouse.x, uMouse.y);
   float mouseLensActive = smoothstep(0.10, 0.55, uScroll) * smoothstep(0.75, 0.55, uScroll);
 
-#ifndef QUALITY_MEDIUM
+#ifdef QUALITY_MEDIUM
+  float hazeZone = exp(-dist * dist * 8.0) * smoothstep(0.08, 0.35, dist);
+  float hazeActive = smoothstep(0.1, 0.4, uScroll) * smoothstep(0.9, 0.7, uScroll);
+  if (hazeActive > 0.01 && hazeZone > 0.01) {
+    float hazeN1 = sin(distortedUv.x * 60.0 + uTime * 1.8);
+    vec2 hazeOffset = vec2(hazeN1, -hazeN1) * 0.0012 * hazeZone * hazeActive;
+    distortedUv += hazeOffset;
+  }
+#else
   float hazeZone = exp(-dist * dist * 8.0) * smoothstep(0.08, 0.35, dist);
   float hazeActive = smoothstep(0.1, 0.4, uScroll) * smoothstep(0.9, 0.7, uScroll);
   if (hazeActive > 0.01 && hazeZone > 0.01) {
@@ -151,7 +159,22 @@ void main() {
 
   vec3 color;
 #ifdef QUALITY_MEDIUM
-  {
+  if (motionBlurStrength > 0.001) {
+    vec3 spectralM = vec3(0.0);
+    for (int i = 0; i < 3; i++) {
+      float t = (float(i) - 1.0);
+      vec2 sampleUv = distortedUv + chromaticOffset * t;
+      vec2 blurDir = (sampleUv - vec2(0.5)) * motionBlurStrength;
+      vec3 s = vec3(0.0);
+      s += texture2D(tDiffuse, sampleUv).rgb * 0.5;
+      s += texture2D(tDiffuse, sampleUv + blurDir * 0.5).rgb * 0.25;
+      s += texture2D(tDiffuse, sampleUv - blurDir * 0.5).rgb * 0.25;
+      if (i == 0) spectralM.r = s.r;
+      else if (i == 1) spectralM.g = s.g;
+      else spectralM.b = s.b;
+    }
+    color = spectralM;
+  } else {
     vec2 uvR = distortedUv + chromaticOffset;
     vec2 uvB = distortedUv - chromaticOffset;
     vec3 sR = texture2D(tDiffuse, uvR).rgb;
@@ -397,7 +420,6 @@ void main() {
     color *= max(1.0 - dist * hbPulse * 0.22 * hbIntensity, 0.88);
   }
 
-#ifndef QUALITY_MEDIUM
   float spaghettiPhase = smoothstep(0.43, 0.48, uScroll) * smoothstep(0.62, 0.52, uScroll);
   if (spaghettiPhase > 0.01) {
     float waveTime = uTime * 0.8;
@@ -408,6 +430,14 @@ void main() {
     vec3 stretchedCol = texture2D(tDiffuse, stretchUv).rgb;
     color = mix(color, stretchedCol, spaghettiPhase * 0.5);
 
+#ifdef QUALITY_MEDIUM
+    float wR = mod(waveTime, 2.0);
+    float wave = g2((dist - wR * 0.4) * 22.0);
+    vec2 wOff = waveDir * wave * 0.02 * spaghettiPhase;
+    vec3 wCol = texture2D(tDiffuse, distortedUv + wOff).rgb;
+    color = mix(color, wCol, wave * spaghettiPhase * 0.35);
+    color += vec3(1.0, 0.7, 0.3) * wave * spaghettiPhase * 0.06;
+#else
     for (int w = 0; w < 3; w++) {
       float wR = mod(waveTime + float(w) * 0.6, 2.0);
       float wave = g2((dist - wR * 0.4) * 22.0);
@@ -417,6 +447,7 @@ void main() {
       vec3 wTint = mix(vec3(1.0, 0.7, 0.3), vec3(1.0, 0.4, 0.1), float(w) / 3.0);
       color += wTint * wave * spaghettiPhase * 0.08;
     }
+#endif
 
     float tearY = sin(uTime * 0.5) * 0.03;
     float tear = exp(-pow(center.y - tearY, 2.0) * 800.0) * spaghettiPhase;
@@ -427,7 +458,6 @@ void main() {
     color = mix(color, (tornUp + tornDown) * 0.5, tear * 0.6);
     color += vec3(1.0, 0.8, 0.4) * tear * 0.15;
   }
-#endif
 
   float timeDilPhase = smoothstep(0.52, 0.58, uScroll) * smoothstep(0.70, 0.64, uScroll);
   if (timeDilPhase > 0.01) {
@@ -438,7 +468,12 @@ void main() {
     float rippleMask = exp(-dist * dist * 5.0);
     color += vec3(0.06, 0.03, 0.015) * rippleCombined * rippleMask * timeDilPhase;
 
-#ifndef QUALITY_MEDIUM
+#ifdef QUALITY_MEDIUM
+    float timeStretchM = sin(uTime * 0.3) * 0.002 * timeDilPhase;
+    vec2 stretchUvM = distortedUv + vec2(0.0, timeStretchM * (1.0 - dist * 2.0));
+    vec3 stretchedColorM = texture2D(tDiffuse, stretchUvM).rgb;
+    color = mix(color, stretchedColorM, timeDilPhase * 0.15);
+#else
     float timeStretch = sin(uTime * 0.3) * 0.003 * timeDilPhase;
     vec2 stretchUv = distortedUv + vec2(0.0, timeStretch * (1.0 - dist * 2.0));
     vec3 stretchedColor = texture2D(tDiffuse, stretchUv).rgb;
@@ -492,7 +527,6 @@ void main() {
     color += vec3(0.06, 0.03, 0.02) * streakLine * speedFade * speedEdge * speedLinePhase * 0.25;
   }
 
-#ifndef QUALITY_MEDIUM
   float riftPhase = g2((uScroll - 0.50) * 16.0);
   if (riftPhase > 0.01) {
     float riftY = center.y + sin(uTime * 0.8) * 0.02;
@@ -502,6 +536,11 @@ void main() {
     float riftJag = sin(center.x * 120.0 + uTime * 5.0) * 0.004 * riftPhase;
     float riftMask = g2((center.y + riftJag) * 60.0) * riftPhase;
 
+#ifdef QUALITY_MEDIUM
+    color += vec3(1.0, 0.6, 0.25) * riftLine * riftPhase * 0.25;
+    color += vec3(1.0, 0.95, 0.9) * riftNoise * riftMask * 0.10;
+  }
+#else
     vec2 riftUvUp = distortedUv + vec2(0.0, riftMask * 0.03);
     vec2 riftUvDown = distortedUv - vec2(0.0, riftMask * 0.03);
     vec3 riftColorUp = texture2D(tDiffuse, riftUvUp).rgb;
@@ -732,11 +771,23 @@ void main() {
     color += vec3(1.0, 0.7, 0.3) * holdRing * uHoldStrength * 0.2;
   }
 
-#ifndef QUALITY_MEDIUM
   float deepGlitch = smoothstep(0.68, 0.80, uScroll) * smoothstep(0.92, 0.85, uScroll);
   if (deepGlitch > 0.01) {
     float glitchTime = floor(uTime * 5.0);
     float glitchRand = fract(sin(glitchTime * 91.7) * 43758.5453);
+#ifdef QUALITY_MEDIUM
+    if (glitchRand > 0.95) {
+      float scanY = gl_FragCoord.y / uResolution.y;
+      float tearLine = floor(scanY * 20.0) / 20.0;
+      float tearNoise = fract(sin(tearLine * 127.1 + glitchTime * 311.7) * 43758.5453);
+      if (tearNoise > 0.96) {
+        float tearShift = (tearNoise - 0.96) * 25.0 * 0.012 * deepGlitch;
+        vec2 tearUv = distortedUv + vec2(tearShift, 0.0);
+        vec3 tearColor = texture2D(tDiffuse, tearUv).rgb;
+        color = mix(color, tearColor, deepGlitch * 0.3);
+      }
+    }
+#else
     if (glitchRand > 0.92) {
       float scanY = gl_FragCoord.y / uResolution.y;
       float tearLine = floor(scanY * 30.0) / 30.0;
@@ -749,8 +800,8 @@ void main() {
         color.r = mix(color.r, texture2D(tDiffuse, tearUv + vec2(0.003, 0.0)).r, deepGlitch * 0.3);
       }
     }
-  }
 #endif
+  }
 
   float hawkingPhase = smoothstep(0.84, 0.89, uScroll) * smoothstep(0.96, 0.91, uScroll);
   if (hawkingPhase > 0.01) {

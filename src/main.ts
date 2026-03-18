@@ -61,13 +61,31 @@ if (companionRoom) {
     throw new Error('Canvas element #experience not found');
   }
 
-  import('./engine/Experience').then(({ Experience }) => {
-    const experience = new Experience(canvas);
+  function showFallback() {
+    const f = document.getElementById('webgl-fallback');
+    if (f) f.style.display = 'flex';
+    const a = document.getElementById('app');
+    if (a) a.style.display = 'none';
+  }
 
-    if (import.meta.hot) {
-      import.meta.hot.dispose(() => {
-        experience.destroy();
-      });
+  canvas.addEventListener('webglcontextlost', (e) => {
+    e.preventDefault();
+    showFallback();
+  });
+
+  import('./engine/Experience').then(({ Experience }) => {
+    try {
+      const experience = new Experience(canvas);
+
+      if (import.meta.hot) {
+        import.meta.hot.dispose(() => {
+          experience.destroy();
+        });
+      }
+    } catch {
+      showFallback();
     }
+  }).catch(() => {
+    showFallback();
   });
 }

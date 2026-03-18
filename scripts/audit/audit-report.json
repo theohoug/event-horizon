@@ -1,0 +1,433 @@
+{
+  "timestamp": "2026-03-18T16:36:53.492Z",
+  "url": "https://fade.run",
+  "desktop": {
+    "loaderState": {
+      "hasLoader": true,
+      "loaderVisible": false,
+      "loaderClasses": "hidden",
+      "hasCanvas": true,
+      "canvasSize": {
+        "w": 1920,
+        "h": 1080
+      },
+      "soundPromptVisible": true,
+      "bodyClasses": ""
+    },
+    "soundPrompt": {
+      "clicked": true,
+      "buttonText": "Enter with sound"
+    },
+    "domStats": {
+      "totalElements": 382,
+      "maxDepth": 9,
+      "canvasCount": 2,
+      "imgCount": 0,
+      "videoCount": 0,
+      "svgCount": 12
+    },
+    "accessibility": {
+      "lang": "en",
+      "title": "TIME DILATION · Event Horizon",
+      "metaDescription": "Fall into a black hole. A scroll-driven WebGL experience across 9 chapters. Sync your phone to feel ",
+      "metaOG": {
+        "title": "Event Horizon · Fall Into a Black Hole",
+        "image": "https://fade.run/og-image.png",
+        "description": "A scroll-driven WebGL journey through gravitational lensing, time dilation and singularity. 9 chapte"
+      },
+      "viewport": "width=device-width, initial-scale=1.0, viewport-fit=cover",
+      "favicon": true,
+      "ariaLandmarks": 2
+    },
+    "transitions": [
+      {
+        "pct": 0,
+        "scrollY": 0,
+        "canvasOk": true,
+        "bodyVisible": true
+      },
+      {
+        "pct": 0.1,
+        "scrollY": 1274,
+        "canvasOk": true,
+        "bodyVisible": true
+      },
+      {
+        "pct": 0.2,
+        "scrollY": 2549,
+        "canvasOk": true,
+        "bodyVisible": true
+      },
+      {
+        "pct": 0.3,
+        "scrollY": 3823,
+        "canvasOk": true,
+        "bodyVisible": true
+      },
+      {
+        "pct": 0.4,
+        "scrollY": 5098,
+        "canvasOk": true,
+        "bodyVisible": true
+      },
+      {
+        "pct": 0.5,
+        "scrollY": 6372,
+        "canvasOk": true,
+        "bodyVisible": true
+      },
+      {
+        "pct": 0.6,
+        "scrollY": 7646,
+        "canvasOk": true,
+        "bodyVisible": true
+      },
+      {
+        "pct": 0.7,
+        "scrollY": 8921,
+        "canvasOk": true,
+        "bodyVisible": true
+      },
+      {
+        "pct": 0.8,
+        "scrollY": 10195,
+        "canvasOk": true,
+        "bodyVisible": true
+      },
+      {
+        "pct": 0.9,
+        "scrollY": 11470,
+        "canvasOk": true,
+        "bodyVisible": true
+      },
+      {
+        "pct": 1,
+        "scrollY": 12744,
+        "canvasOk": true,
+        "bodyVisible": true
+      }
+    ],
+    "transitionErrors": []
+  },
+  "mobile": {
+    "fps_ch5": {
+      "avgFPS": 60.1
+    },
+    "layout": {
+      "viewportWidth": 375,
+      "overflowingElements": [],
+      "hasHorizontalScroll": false,
+      "scrollWidth": 375
+    },
+    "errors": []
+  },
+  "consoleErrors": [],
+  "consoleWarnings": [],
+  "consoleLogs": [],
+  "performanceMetrics": {
+    "navigationTiming": {
+      "domContentLoaded": 3870,
+      "loadEvent": 3872,
+      "ttfb": 17,
+      "domInteractive": 3862
+    },
+    "paint": [
+      {
+        "name": "first-paint",
+        "startTime": 3828
+      },
+      {
+        "name": "first-contentful-paint",
+        "startTime": 3828
+      }
+    ],
+    "resourceCount": 14,
+    "totalTransferKB": 471,
+    "largestResources": [
+      {
+        "name": "three-CqLHWMv7.js",
+        "sizeKB": 117,
+        "type": "script"
+      },
+      {
+        "name": "Experience-C9oOMm_x.js",
+        "sizeKB": 96,
+        "type": "script"
+      },
+      {
+        "name": "index-Bf_t4MGe.js",
+        "sizeKB": 46,
+        "type": "script"
+      },
+      {
+        "name": "cormorant-latin.woff2",
+        "sizeKB": 37,
+        "type": "css"
+      },
+      {
+        "name": "outfit-latin.woff2",
+        "sizeKB": 32,
+        "type": "link"
+      },
+      {
+        "name": "jetbrains-latin.woff2",
+        "sizeKB": 30,
+        "type": "css"
+      },
+      {
+        "name": "gsap-CB87Sc6I.js",
+        "sizeKB": 29,
+        "type": "script"
+      },
+      {
+        "name": "cinzel-latin.woff2",
+        "sizeKB": 26,
+        "type": "link"
+      },
+      {
+        "name": "cormorant-italic-latin.woff2",
+        "sizeKB": 22,
+        "type": "css"
+      },
+      {
+        "name": "index-B30ukDMB.css",
+        "sizeKB": 19,
+        "type": "link"
+      }
+    ]
+  },
+  "fontLoading": {
+    "fonts": [
+      {
+        "family": "Cinzel",
+        "status": "loaded",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "family": "Cinzel",
+        "status": "unloaded",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "family": "Cinzel",
+        "status": "unloaded",
+        "weight": "600",
+        "style": "normal"
+      },
+      {
+        "family": "Cinzel",
+        "status": "unloaded",
+        "weight": "600",
+        "style": "normal"
+      },
+      {
+        "family": "Outfit",
+        "status": "loaded",
+        "weight": "200",
+        "style": "normal"
+      },
+      {
+        "family": "Outfit",
+        "status": "unloaded",
+        "weight": "200",
+        "style": "normal"
+      },
+      {
+        "family": "Outfit",
+        "status": "loaded",
+        "weight": "300",
+        "style": "normal"
+      },
+      {
+        "family": "Outfit",
+        "status": "unloaded",
+        "weight": "300",
+        "style": "normal"
+      },
+      {
+        "family": "Outfit",
+        "status": "loaded",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "family": "Outfit",
+        "status": "unloaded",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "family": "Cormorant Garamond",
+        "status": "loaded",
+        "weight": "300",
+        "style": "normal"
+      },
+      {
+        "family": "Cormorant Garamond",
+        "status": "unloaded",
+        "weight": "300",
+        "style": "normal"
+      },
+      {
+        "family": "Cormorant Garamond",
+        "status": "unloaded",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "family": "Cormorant Garamond",
+        "status": "unloaded",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "family": "Cormorant Garamond",
+        "status": "loaded",
+        "weight": "300",
+        "style": "italic"
+      },
+      {
+        "family": "Cormorant Garamond",
+        "status": "unloaded",
+        "weight": "300",
+        "style": "italic"
+      },
+      {
+        "family": "JetBrains Mono",
+        "status": "loaded",
+        "weight": "300",
+        "style": "normal"
+      },
+      {
+        "family": "JetBrains Mono",
+        "status": "unloaded",
+        "weight": "300",
+        "style": "normal"
+      },
+      {
+        "family": "JetBrains Mono",
+        "status": "loaded",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "family": "JetBrains Mono",
+        "status": "unloaded",
+        "weight": "400",
+        "style": "normal"
+      }
+    ],
+    "allLoaded": true,
+    "count": 20
+  },
+  "customCursor": {
+    "hasCursorElement": true,
+    "cursorId": "custom-cursor",
+    "cursorClasses": "visible",
+    "hasCursorRing": true,
+    "bodyCursorStyle": "none"
+  },
+  "webgl": {
+    "hasCanvas": true,
+    "canvasWidth": 1920,
+    "canvasHeight": 1080,
+    "webglVersion": "WebGL2",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 (0x00001F82) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "fallbackVisible": false
+  },
+  "layoutShift": {
+    "cls": 1.8127318822479428,
+    "entries": 705,
+    "worst": [
+      {
+        "value": 0.1139699074074074,
+        "startTime": 76218.79999999702
+      },
+      {
+        "value": 0.09770833333333333,
+        "startTime": 43296.89999999106
+      },
+      {
+        "value": 0.09770833333333333,
+        "startTime": 67709.19999998808
+      }
+    ]
+  },
+  "fps": {
+    "chapter1": {
+      "avgFPS": 38.3,
+      "minFPS": 10,
+      "maxFPS": 172.4,
+      "frames": 115,
+      "elapsed": 3005,
+      "p1_delta": 8.5,
+      "p99_delta": 87.6,
+      "jank": 6
+    },
+    "chapter3": {
+      "avgFPS": 16.8,
+      "minFPS": 0.3,
+      "maxFPS": 126.6,
+      "frames": 100,
+      "elapsed": 5959,
+      "p1_delta": 9.4,
+      "p99_delta": 3561.3,
+      "jank": 4
+    },
+    "chapter5_spaghettification": {
+      "avgFPS": 9.5,
+      "minFPS": 0.3,
+      "maxFPS": 125,
+      "frames": 48,
+      "elapsed": 5059,
+      "p1_delta": 8,
+      "p99_delta": 3119.2,
+      "jank": 13
+    },
+    "chapter7_singularity": {
+      "avgFPS": 29.2,
+      "minFPS": 0.5,
+      "maxFPS": 135.1,
+      "frames": 117,
+      "elapsed": 4008,
+      "p1_delta": 9.1,
+      "p99_delta": 145.3,
+      "jank": 2
+    },
+    "credits": {
+      "avgFPS": 0.1,
+      "minFPS": 0.1,
+      "maxFPS": 0.1,
+      "frames": 1,
+      "elapsed": 8729,
+      "p1_delta": 8728.9,
+      "p99_delta": 8728.9,
+      "jank": 1
+    }
+  },
+  "chapters": {
+    "ch1": {
+      "chapterElement": "chapter",
+      "navVisible": true,
+      "scrollY": 1274
+    },
+    "ch5": {
+      "scrollY": 7009,
+      "hudVisible": true,
+      "hudContent": "\n        DISTANCE18.04 Rs\n        TEMP4316 nK\n        TIME DILATION×1.49\n        ELAPSED00:39\n      "
+    },
+    "ch7": {
+      "scrollY": 11535,
+      "canvasRendering": true
+    },
+    "credits": {
+      "creditsVisible": true,
+      "creditsClasses": "visible white-mode",
+      "legalText": "© 2026 Cleanlystudio · Privacy Policy",
+      "privacyLink": "https://fade.run/privacy.html",
+      "scrollY": 12744
+    }
+  }
+}

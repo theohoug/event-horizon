@@ -9,6 +9,8 @@ import * as THREE from 'three';
 const TEXT_PARTICLE_COUNT = 800;
 const BG_STAR_COUNT = 1500;
 const FORMATION_DURATION = 4.0;
+const CAM_FOV = 50;
+const CAM_Z = 4;
 
 interface Particle {
   targetX: number;
@@ -34,6 +36,7 @@ export class TrapScene {
   private rafId = 0;
   private mouse = { x: 0, y: 0 };
   private onMouseMove: ((e: MouseEvent) => void) | null = null;
+  private onResize: (() => void) | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -47,8 +50,8 @@ export class TrapScene {
     this.renderer.setClearColor(0x030305, 1);
 
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-    this.camera.position.z = 4;
+    this.camera = new THREE.PerspectiveCamera(CAM_FOV, 1, 0.1, 100);
+    this.camera.position.z = CAM_Z;
 
     this.resize();
     this.createBgStars();
@@ -59,6 +62,12 @@ export class TrapScene {
       this.mouse.y = -(e.clientY / window.innerHeight - 0.5) * 2;
     };
     window.addEventListener('mousemove', this.onMouseMove);
+
+    this.onResize = () => {
+      this.resize();
+      this.rebuildTextParticles();
+    };
+    window.addEventListener('resize', this.onResize);
   }
 
   private resize() {
@@ -69,7 +78,18 @@ export class TrapScene {
     this.camera.updateProjectionMatrix();
   }
 
+  private getVisibleSize(): { w: number; h: number } {
+    const vFov = CAM_FOV * Math.PI / 180;
+    const h = 2 * Math.tan(vFov / 2) * CAM_Z;
+    const w = h * (window.innerWidth / window.innerHeight);
+    return { w, h };
+  }
+
   private sampleTextPositions(text: string): { x: number; y: number }[] {
+    const visible = this.getVisibleSize();
+    const spreadX = Math.min(6.5, visible.w * 0.82);
+    const spreadY = Math.min(1.6, visible.h * 0.35);
+
     const offscreen = document.createElement('canvas');
     const fontSize = 160;
     offscreen.width = 1200;
@@ -92,14 +112,24 @@ export class TrapScene {
         const i = (y * offscreen.width + x) * 4;
         if (imageData.data[i] > 100) {
           positions.push({
-            x: (x / offscreen.width - 0.5) * 6.5,
-            y: -(y / offscreen.height - 0.5) * 1.6 + 0.8,
+            x: (x / offscreen.width - 0.5) * spreadX,
+            y: -(y / offscreen.height - 0.5) * spreadY + spreadY * 0.5,
           });
         }
       }
     }
 
     return positions;
+  }
+
+  private rebuildTextParticles() {
+    if (this.textParticles) {
+      this.textParticles.geometry.dispose();
+      (this.textParticles.material as THREE.Material).dispose();
+      this.scene.remove(this.textParticles);
+      this.textParticles = null;
+    }
+    this.createTextParticles();
   }
 
   private createTextParticles() {
@@ -294,6 +324,10 @@ export class TrapScene {
     if (this.onMouseMove) {
       window.removeEventListener('mousemove', this.onMouseMove);
       this.onMouseMove = null;
+    }
+    if (this.onResize) {
+      window.removeEventListener('resize', this.onResize);
+      this.onResize = null;
     }
 
     if (this.textParticles) {

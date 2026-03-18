@@ -875,6 +875,33 @@ void main() {
     color += vec3(whiteFlicker) * (1.0 - whiteMask);
   }
 
+  if (uExplosion > 0.01) {
+    float ex = uExplosion;
+
+    float flashIntensity = smoothstep(0.0, 0.08, ex) * smoothstep(0.45, 0.08, ex);
+    float flashRadius = ex * 3.0;
+    float flashMask = smoothstep(flashRadius, max(0.0, flashRadius - 0.8), dist);
+    color = mix(color, vec3(1.0, 0.97, 0.92), flashIntensity * flashMask * 0.85);
+
+    float ringRadius = ex * 0.7;
+    float ringW = 0.04 + ex * 0.025;
+    float ring = g2((dist - ringRadius) / ringW);
+    vec3 ringColor = mix(vec3(1.0, 0.65, 0.25), vec3(0.6, 0.35, 1.0), clamp(ex * 0.8, 0.0, 1.0));
+    float ringAlpha = smoothstep(0.0, 0.05, ex) * smoothstep(1.3, 0.2, ex);
+    color += ringColor * ring * ringAlpha * 0.6;
+
+    float ring2Radius = ex * 0.45;
+    float ring2 = g2((dist - ring2Radius) / 0.03);
+    color += vec3(0.8, 0.5, 1.0) * ring2 * smoothstep(0.05, 0.15, ex) * smoothstep(0.9, 0.3, ex) * 0.3;
+
+    float aftermath = smoothstep(0.6, 1.4, ex);
+    color *= 1.0 - aftermath * 0.65;
+
+    float coolShift = smoothstep(0.8, 1.8, ex);
+    float exLuma = dot(color, vec3(0.2126, 0.7152, 0.0722));
+    color = mix(color, vec3(exLuma * 0.7, exLuma * 0.8, exLuma * 1.15), coolShift * 0.45);
+  }
+
   float speedFeedback = smoothstep(80.0, 500.0, absVel) * uScroll;
   if (speedFeedback > 0.01) {
     float edgeMask = smoothstep(0.35, 0.52, dist);

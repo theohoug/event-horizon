@@ -183,7 +183,8 @@ export class PostProcessing {
     const whiteOutT = s > whiteOutStart ? (s - whiteOutStart) / (1 - whiteOutStart) : 0;
     const whiteOutFade = whiteOutT * whiteOutT;
     const exFade = ex > 0.5 ? Math.min((ex - 0.5) * 2, 1) : 0;
-    const chromatic = (0.25 + s * 1.8 + velBoost * 0.7 + climaxBoost * 1.2 + singularityPeak * 8.0 + hbChroma + chapterFlashChroma) * (1 - breathCalm) * Math.max(0, 1 - whiteOutFade * 1.1) * (1 - exFade * 0.7);
+    const exFlashChroma = ex > 0 && ex < 0.4 ? (1 - ex / 0.4) * 12.0 : 0;
+    const chromatic = (0.25 + s * 1.8 + velBoost * 0.7 + climaxBoost * 1.2 + singularityPeak * 8.0 + hbChroma + chapterFlashChroma + exFlashChroma) * (1 - breathCalm) * Math.max(0, 1 - whiteOutFade * 1.1) * (1 - exFade * 0.7);
 
     this.compositeMaterial.uniforms.uTime.value = state.time;
     this.compositeMaterial.uniforms.uScroll.value = s;

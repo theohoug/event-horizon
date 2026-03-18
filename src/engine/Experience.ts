@@ -2201,7 +2201,10 @@ gl_FragColor=vec4(col,1.0);}`;
     const singShakeDelta = (this.state.scroll - singMid) * 10;
     const singularityShake = Math.exp(-singShakeDelta * singShakeDelta) * 0.025;
     const deepShake = Math.max(0, this.state.scroll - 0.6) * 0.001;
-    const shakeIntensity = velocityShake + flashShake + singularityShake + deepShake;
+    const explosionShake = this.explosionActive && this.explosionProgress < 1.2
+      ? Math.max(0, 1 - this.explosionProgress) * 0.04
+      : 0;
+    const shakeIntensity = velocityShake + flashShake + singularityShake + deepShake + explosionShake;
 
     const idleBreath = Math.abs(this.state.scrollVelocity) < 5 ? 0.0008 * (1 + this.state.scroll * 2) : 0;
     const breathX = Math.sin(elapsed * 0.4) * idleBreath;

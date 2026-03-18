@@ -2121,6 +2121,7 @@ gl_FragColor=vec4(col,1.0);}`;
       if (canForce) {
         const nextCh = Math.min(triggerChapter, timelineChapter + 1);
         const lock = nextCh < triggerChapter ? 400 : 1200;
+        if (nextCh === 5 || nextCh === 7) console.warn(`[FALLBACK] Forcing ch${nextCh}: active=${timelineChapter} trigger=${triggerChapter} gap=${gap} lock=${lock}ms`);
         this.timeline.refreshCurrentChapter(this.state.scroll, nextCh, lock);
       }
     }

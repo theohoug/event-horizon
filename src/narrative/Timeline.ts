@@ -350,12 +350,16 @@ export class Timeline {
   }
 
   private showChapter(chapter: Chapter) {
-    if (this.activeChapter === chapter.id || this.creditsVisible) return;
+    if (this.activeChapter === chapter.id || this.creditsVisible) {
+      if (chapter.id === 5 || chapter.id === 7) console.warn(`[CH${chapter.id}] BLOCKED: same=${this.activeChapter === chapter.id} credits=${this.creditsVisible}`);
+      return;
+    }
 
     if (chapter.id > this.activeChapter + 1 && this.activeChapter >= 0) {
       if (!this.pendingChapter || chapter.id < this.pendingChapter.id) {
         this.pendingChapter = chapter;
       }
+      if (chapter.id === 5 || chapter.id === 7) console.warn(`[CH${chapter.id}] QUEUED (too far ahead): active=${this.activeChapter} pending=${this.pendingChapter?.id}`);
       return;
     }
 
@@ -363,8 +367,11 @@ export class Timeline {
       if (!this.pendingChapter || chapter.id <= this.pendingChapter.id) {
         this.pendingChapter = chapter;
       }
+      if (chapter.id === 5 || chapter.id === 7) console.warn(`[CH${chapter.id}] LOCKED: lockRemaining=${(this.lockUntil - performance.now()).toFixed(0)}ms pending=${this.pendingChapter?.id}`);
       return;
     }
+
+    if (chapter.id === 5 || chapter.id === 7) console.warn(`[CH${chapter.id}] SHOWING "${chapter.title}" at t=${performance.now().toFixed(0)}`);
 
     const container = document.getElementById('chapter-text');
     if (!container) return;

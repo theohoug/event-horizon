@@ -2667,11 +2667,10 @@ gl_FragColor=vec4(col,1.0);}`;
     if (!this.singularityFlashTriggered && scroll >= ch8Start - 0.02) {
       this.singularityFlashTriggered = true;
       this.triggerSingularityExplosion();
-    } else if (scroll <= ch8Start - 0.04) {
+    } else if (scroll <= ch8Start - 0.04 && !this.cinematicAutoScrollStarted) {
       this.singularityFlashTriggered = false;
       this.explosionProgress = 0;
       this.explosionActive = false;
-      this.cinematicAutoScrollStarted = false;
     }
 
     if (this.creditsEl) {

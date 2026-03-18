@@ -95,6 +95,7 @@ export class Experience {
   private chapterFlash: number = 0;
   private enterPulse: number = 0;
   private lastChapterIndex: number = -1;
+  private lastChapterSyncTime: number = 0;
   private cursorRafId: number = 0;
   private overlayEl: HTMLElement | null = null;
   private navEl: HTMLElement | null = null;
@@ -2063,7 +2064,16 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     const timelineChapter = this.timeline.activeChapter;
-    const currentChapter = timelineChapter >= 0 ? timelineChapter : this.getChapterFromScroll(this.state.scroll);
+    const scrollChapter = this.getChapterFromScroll(this.state.scroll);
+    if (timelineChapter >= 0 && scrollChapter > timelineChapter) {
+      const now = performance.now();
+      if (now - this.lastChapterSyncTime > 1500) {
+        const nextCh = Math.min(scrollChapter, timelineChapter + 1);
+        this.timeline.refreshCurrentChapter(this.state.scroll, nextCh);
+        this.lastChapterSyncTime = now;
+      }
+    }
+    const currentChapter = this.timeline.activeChapter >= 0 ? this.timeline.activeChapter : scrollChapter;
     if (currentChapter !== this.lastChapterIndex) {
       if (this.lastChapterIndex >= 0) {
         this.chapterFlash = currentChapter === 7 ? 2.5 : 1.0;

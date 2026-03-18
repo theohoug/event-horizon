@@ -1669,14 +1669,8 @@ gl_FragColor=vec4(col,1.0);}`;
 
   private smoothGravity = 0;
 
-  private updateGravityPull(dt: number) {
+  private updateCinematicScroll() {
     const scroll = this.state.scroll;
-
-    if (dt > 0.25) {
-      this.gravityVelocity *= 0.5;
-      this.smoothGravity *= 0.5;
-      return;
-    }
 
     if (!this.pointOfNoReturnTriggered && scroll >= this.getChapterMid(4)) {
       this.pointOfNoReturnTriggered = true;
@@ -1696,8 +1690,21 @@ gl_FragColor=vec4(col,1.0);}`;
         const speed = 2 + (scroll - 0.82) * 8;
         this.lenis.scrollTo(Math.min(currentTop + speed, maxScroll), { immediate: true });
       }
+    }
+  }
+
+  private updateGravityPull(dt: number) {
+    const scroll = this.state.scroll;
+
+    if (this.cinematicAutoScrollStarted) {
       this.gravityVelocity = 0;
       this.smoothGravity = 0;
+      return;
+    }
+
+    if (dt > 0.25) {
+      this.gravityVelocity *= 0.5;
+      this.smoothGravity *= 0.5;
       return;
     }
 
@@ -1973,7 +1980,14 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     if (this.emergencySlowFrames >= 2) {
+      this.updateCinematicScroll();
       this.updateGravityPull(Math.min(dt, 0.033));
+      if (this.explosionActive) {
+        const espeed = this.explosionProgress < 1.0 ? 0.28 : 0.12;
+        this.explosionProgress = Math.min(this.explosionProgress + Math.min(dt, 0.033) * espeed, 2.0);
+        if (this.explosionProgress >= 2.0) this.explosionActive = false;
+        (this.state as any).explosion = this.explosionProgress;
+      }
       ScrollTrigger.update();
       this.adaptiveDowngrade(true);
       this.emergencySlowFrames = Math.max(0, this.emergencySlowFrames - 1);
@@ -2130,6 +2144,7 @@ gl_FragColor=vec4(col,1.0);}`;
       if (this.holdStrength < 0.01) this.holdStrength = 0;
     }
 
+    this.updateCinematicScroll();
     this.updateGravityPull(dt);
 
     if (this.explosionActive) {

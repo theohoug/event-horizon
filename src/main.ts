@@ -18,21 +18,57 @@ if (companionRoom) {
 } else {
   const cycle = 0;
 
-  if (import.meta.env.DEV) {
-    console.log(
-      '%c ╔══════════════════════════════════════╗\n' +
-      ' ║                                      ║\n' +
-      ' ║   E V E N T   H O R I Z O N         ║\n' +
-      ' ║                                      ║\n' +
-      ' ║   Beyond the point of no return.     ║\n' +
-      ' ║                                      ║\n' +
-      ' ║   Crafted by Cleanlystudio           ║\n' +
-      ' ║   cleanlystudio.pro                  ║\n' +
-      ' ║                                      ║\n' +
-      ' ╚══════════════════════════════════════╝',
-      'color: #FFB347; font-family: monospace; font-size: 11px; line-height: 1.5'
-    );
+  console.log(
+    '%c\n' +
+    '     ·  ✦  ·\n' +
+    '   ✦ ╔═══════════════════════════════════╗ ✦\n' +
+    '     ║                                   ║\n' +
+    '     ║   E V E N T   H O R I Z O N      ║\n' +
+    '     ║   ─────────────────────────       ║\n' +
+    '     ║   Fall into a black hole.         ║\n' +
+    '     ║                                   ║\n' +
+    '     ║   9 chapters · WebGL · GLSL       ║\n' +
+    '     ║   Three.js · GSAP · Lenis         ║\n' +
+    '     ║                                   ║\n' +
+    '     ╚═══════════════════════════════════╝\n' +
+    '   ✦                                   ✦\n',
+    'color: #FFB347; font-family: monospace; font-size: 11px; line-height: 1.6; background: #050505; padding: 4px 8px;'
+  );
+  console.log(
+    '%cCrafted with obsession by %cCleanlystudio%c\n' +
+    'cleanlystudio.com · fade.run\n\n' +
+    'Type %chelp%c in this console for secrets.',
+    'color: #888; font-family: monospace; font-size: 11px;',
+    'color: #FFB347; font-weight: bold; font-family: monospace; font-size: 11px;',
+    'color: #888; font-family: monospace; font-size: 11px;',
+    'color: #FFB347; font-style: italic; font-family: monospace; font-size: 11px;',
+    'color: #888; font-family: monospace; font-size: 11px;'
+  );
 
+  (window as any).help = () => {
+    console.log(
+      '%c' +
+      '  ╭─ Event Horizon Console ─────────────────╮\n' +
+      '  │                                          │\n' +
+      '  │  Try typing these on the page:           │\n' +
+      '  │  · "help"    — cosmic whisper            │\n' +
+      '  │  · "time"    — temporal echo             │\n' +
+      '  │  · "void"    — stare into nothing        │\n' +
+      '  │  · "escape"  — there is no escape        │\n' +
+      '  │  · "love"    — even here, even now       │\n' +
+      '  │  · "god"     — are you there?            │\n' +
+      '  │                                          │\n' +
+      '  │  Hold mouse to resist gravity.            │\n' +
+      '  │  Scan the QR to sync your phone.         │\n' +
+      '  │  Press ? for keyboard shortcuts.         │\n' +
+      '  │                                          │\n' +
+      '  ╰──────────────────────────────────────────╯',
+      'color: #FFCC80; font-family: monospace; font-size: 10px; line-height: 1.5;'
+    );
+    return '✦';
+  };
+
+  if (import.meta.env.DEV) {
     if (cycle > 0) {
       console.log(
         '%c>_ SYSTEM ERROR: THE ATOMS REMEMBER. CYCLE ' + cycle + '. HE IS WATCHING.',

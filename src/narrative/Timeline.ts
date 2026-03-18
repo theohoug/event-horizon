@@ -72,8 +72,16 @@ export class Timeline {
     const chapters = getChapters(this.isAlteredMode, this.isHardcoreMode);
     const chapter = chapters[chapterIndex];
     if (!chapter) return;
+    const container = document.getElementById('chapter-text');
+    if (container) {
+      gsap.killTweensOf(container.querySelectorAll('.char'));
+      gsap.killTweensOf(container.querySelectorAll('.line'));
+      gsap.killTweensOf(container.querySelectorAll('.word'));
+      container.innerHTML = '';
+    }
     this.activeChapter = -1;
     this.transitioning = false;
+    this.pendingChapter = null;
     this.lockUntil = 0;
     this.showChapter(chapter);
     this.lockUntil = performance.now() + 1500;

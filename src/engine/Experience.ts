@@ -2120,7 +2120,7 @@ gl_FragColor=vec4(col,1.0);}`;
       const canForce = gap >= 2 || now > this.timeline.lockUntil;
       if (canForce) {
         const nextCh = Math.min(triggerChapter, timelineChapter + 1);
-        const lock = nextCh < triggerChapter ? 400 : 1200;
+        const lock = nextCh < triggerChapter ? 800 : 1200;
         this.timeline.refreshCurrentChapter(this.state.scroll, nextCh, lock);
       }
     }

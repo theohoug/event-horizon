@@ -483,8 +483,6 @@ body {
   font-weight: 400;
   font-size: clamp(1.4rem, 3.5vw, 3.2rem);
   color: var(--text-color, var(--starlight));
-  opacity: 0;
-  transform: translateY(20px);
   letter-spacing: 0.12em;
   line-height: 1.5;
   text-transform: uppercase;

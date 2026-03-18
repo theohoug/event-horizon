@@ -70,6 +70,8 @@ export class Timeline {
     if (this.whisperInterval) { clearInterval(this.whisperInterval); this.whisperInterval = 0; }
     document.querySelectorAll('.return-whisper').forEach(el => el.remove());
     if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
+    const chapterText = document.getElementById('chapter-text');
+    if (chapterText) gsap.set(chapterText, { opacity: 1 });
   }
 
   refreshCurrentChapter(scroll: number, chapterIndex?: number, lockMs?: number) {
@@ -680,12 +682,14 @@ export class Timeline {
     else if (chapter.id === 7) titleClass = 'line chapter-impact';
     else if (chapter.id === 8) titleClass = 'line chapter-final';
     titleLine.className = titleClass;
+    titleLine.style.opacity = '0';
+    titleLine.style.filter = 'blur(8px)';
     container.appendChild(titleLine);
     const titleText = chapter.title;
     this.splitTextToChars(titleLine, titleText);
     const titleChars = titleLine.querySelectorAll('.char');
-    const titlePos = chapter.id === 0 ? 1.0 : 0.3;
-    const subPos = chapter.id === 0 ? 2.0 : 1.0;
+    const titlePos = chapter.id === 0 ? 1.0 : 0.1;
+    const subPos = chapter.id === 0 ? 2.0 : 0.6;
 
     if (chapter.id === 5) {
       titleLine.className = 'line chapter-spaghetti';
@@ -770,6 +774,8 @@ export class Timeline {
     {
       const subtitleLine = document.createElement('div');
       subtitleLine.className = chapter.id === 0 ? 'line data chapter-opening-sub' : chapter.id === 8 ? 'line data chapter-final-sub' : 'line data';
+      subtitleLine.style.opacity = '0';
+      subtitleLine.style.filter = 'blur(6px)';
       container.appendChild(subtitleLine);
       this.splitTextToChars(subtitleLine, chapter.subtitle);
 
@@ -808,6 +814,20 @@ export class Timeline {
           break;
         }
       }
+
+      const _st = titleLine;
+      const _ss = subtitleLine;
+      const safetyMs = chapter.id === 0 ? 4000 : 1500;
+      setTimeout(() => {
+        if (_st.isConnected && parseFloat(getComputedStyle(_st).opacity) < 0.5) {
+          gsap.to(_st, { opacity: 1, filter: 'blur(0px)', duration: 0.3, ease: 'power2.out',
+            onComplete: () => { _st.style.removeProperty('filter'); _st.style.removeProperty('-webkit-filter'); } });
+        }
+        if (_ss.isConnected && parseFloat(getComputedStyle(_ss).opacity) < 0.5) {
+          gsap.to(_ss, { opacity: 1, filter: 'blur(0px)', duration: 0.3, ease: 'power2.out',
+            onComplete: () => { _ss.style.removeProperty('filter'); _ss.style.removeProperty('-webkit-filter'); } });
+        }
+      }, safetyMs);
     }
   }
 }

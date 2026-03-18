@@ -693,25 +693,27 @@ export class Timeline {
 
     if (chapter.id === 5) {
       titleLine.className = 'line chapter-spaghetti';
+      titleLine.style.opacity = '1';
+      titleLine.style.filter = '';
       const el5 = titleLine;
       const chars5 = titleLine.querySelectorAll('.char');
       tl.fromTo(
         titleLine,
-        { opacity: 0, scaleY: 0.3, scaleX: 1.6, filter: 'blur(4px)', y: 0 },
-        { opacity: 1, scaleY: 1, scaleX: 1, filter: 'blur(0px)', y: 0, duration: 0.4, ease: 'power2.out',
+        { scaleY: 0.3, scaleX: 1.6 },
+        { scaleY: 1, scaleX: 1, duration: 0.5, ease: 'elastic.out(1, 0.6)',
           onComplete: () => this.clearInlineFilter(el5) },
-        0.1
+        0
       );
-      tl.set(chars5, { opacity: 1 }, 0.15);
+      chars5.forEach((c) => { (c as HTMLElement).style.opacity = '1'; });
       chars5.forEach((char, ci) => {
         tl.fromTo(char,
           { scaleY: 2.5, scaleX: 0.4, y: -15 + Math.random() * 30 },
           { scaleY: 1, scaleX: 1, y: 0, duration: 0.6 + Math.random() * 0.3,
             ease: 'elastic.out(1, 0.5)', delay: ci * 0.02 },
-          0.2
+          0.05
         );
       });
-      tl.add(() => this.markRevealed(chars5), 0.3);
+      tl.add(() => this.markRevealed(chars5), 0.2);
     } else if (chapter.id === 6) {
       titleLine.className = 'line chapter-vertical';
       const el6 = titleLine;

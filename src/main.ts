@@ -19,53 +19,43 @@ if (companionRoom) {
   const cycle = 0;
 
   console.log(
-    '%c\n' +
-    '     ·  ✦  ·\n' +
-    '   ✦ ╔═══════════════════════════════════╗ ✦\n' +
-    '     ║                                   ║\n' +
-    '     ║   E V E N T   H O R I Z O N      ║\n' +
-    '     ║   ─────────────────────────       ║\n' +
-    '     ║   Fall into a black hole.         ║\n' +
-    '     ║                                   ║\n' +
-    '     ║   9 chapters · WebGL · GLSL       ║\n' +
-    '     ║   Three.js · GSAP · Lenis         ║\n' +
-    '     ║                                   ║\n' +
-    '     ╚═══════════════════════════════════╝\n' +
-    '   ✦                                   ✦\n',
-    'color: #FFB347; font-family: monospace; font-size: 11px; line-height: 1.6; background: #050505; padding: 4px 8px;'
+    '\n%cEVENT HORIZON\n%cFall into a black hole.\n\n%c9 chapters · WebGL · GLSL · Three.js\n%c— Cleanlystudio\n',
+    'color: #FFB347; font-size: 18px; font-weight: 300; letter-spacing: 0.4em; font-family: system-ui, sans-serif;',
+    'color: rgba(255,255,255,0.4); font-size: 11px; font-weight: 300; letter-spacing: 0.15em; font-family: system-ui, sans-serif;',
+    'color: rgba(255,255,255,0.2); font-size: 9px; letter-spacing: 0.1em; font-family: system-ui, sans-serif;',
+    'color: rgba(255,179,71,0.5); font-size: 9px; letter-spacing: 0.15em; font-family: system-ui, sans-serif;'
   );
   console.log(
-    '%cCrafted with obsession by %cCleanlystudio%c\n' +
-    'cleanlystudio.com · fade.run\n\n' +
-    'Type %chelp%c in this console for secrets.',
-    'color: #888; font-family: monospace; font-size: 11px;',
-    'color: #FFB347; font-weight: bold; font-family: monospace; font-size: 11px;',
-    'color: #888; font-family: monospace; font-size: 11px;',
-    'color: #FFB347; font-style: italic; font-family: monospace; font-size: 11px;',
-    'color: #888; font-family: monospace; font-size: 11px;'
+    '%cType %chelp%c for secrets.',
+    'color: #555; font-size: 10px; font-family: system-ui, sans-serif;',
+    'color: #FFB347; font-size: 10px; font-style: italic; font-family: system-ui, sans-serif;',
+    'color: #555; font-size: 10px; font-family: system-ui, sans-serif;'
   );
 
   (window as any).help = () => {
     console.log(
-      '%c' +
-      '  ╭─ Event Horizon Console ─────────────────╮\n' +
-      '  │                                          │\n' +
-      '  │  Try typing these on the page:           │\n' +
-      '  │  · "help"    — cosmic whisper            │\n' +
-      '  │  · "time"    — temporal echo             │\n' +
-      '  │  · "void"    — stare into nothing        │\n' +
-      '  │  · "escape"  — there is no escape        │\n' +
-      '  │  · "love"    — even here, even now       │\n' +
-      '  │  · "god"     — are you there?            │\n' +
-      '  │                                          │\n' +
-      '  │  Hold mouse to resist gravity.            │\n' +
-      '  │  Scan the QR to sync your phone.         │\n' +
-      '  │  Press ? for keyboard shortcuts.         │\n' +
-      '  │                                          │\n' +
-      '  ╰──────────────────────────────────────────╯',
-      'color: #FFCC80; font-family: monospace; font-size: 10px; line-height: 1.5;'
+      '\n%cSecrets\n\n' +
+      '%cType on the page while scrolling:\n' +
+      '%c  help     %ccosmic whisper\n' +
+      '%c  time     %ctemporal echo\n' +
+      '%c  void     %cstare into nothing\n' +
+      '%c  escape   %cthere is no escape\n' +
+      '%c  love     %ceven here, even now\n' +
+      '%c  god      %care you there?\n\n' +
+      '%cHold mouse to resist gravity.\n' +
+      'Scan QR to sync your phone.\n' +
+      'Press ? for keyboard shortcuts.\n',
+      'color: #FFB347; font-size: 13px; font-weight: 300; letter-spacing: 0.3em; font-family: system-ui;',
+      'color: rgba(255,255,255,0.5); font-size: 10px; font-family: system-ui;',
+      'color: #FFB347; font-size: 10px; font-family: monospace;', 'color: rgba(255,255,255,0.35); font-size: 10px; font-family: system-ui;',
+      'color: #FFB347; font-size: 10px; font-family: monospace;', 'color: rgba(255,255,255,0.35); font-size: 10px; font-family: system-ui;',
+      'color: #FFB347; font-size: 10px; font-family: monospace;', 'color: rgba(255,255,255,0.35); font-size: 10px; font-family: system-ui;',
+      'color: #FFB347; font-size: 10px; font-family: monospace;', 'color: rgba(255,255,255,0.35); font-size: 10px; font-family: system-ui;',
+      'color: #FFB347; font-size: 10px; font-family: monospace;', 'color: rgba(255,255,255,0.35); font-size: 10px; font-family: system-ui;',
+      'color: #FFB347; font-size: 10px; font-family: monospace;', 'color: rgba(255,255,255,0.35); font-size: 10px; font-family: system-ui;',
+      'color: rgba(255,255,255,0.3); font-size: 9px; font-family: system-ui;'
     );
-    return '✦';
+    return '';
   };
 
   if (import.meta.env.DEV) {

@@ -90,7 +90,8 @@ export class Timeline {
     this.pendingChapter = null;
     this.lockUntil = 0;
     this.showChapter(chapter);
-    this.lockUntil = performance.now() + 2500;
+    const catchUpLock = chapterIndex !== undefined && chapterIndex >= 6 ? 1200 : 2000;
+    this.lockUntil = performance.now() + catchUpLock;
   }
 
   start(withSound: boolean) {
@@ -380,7 +381,7 @@ export class Timeline {
     }
 
     this.activeChapter = chapter.id;
-    const lockDuration = chapter.id === 5 ? 3500 : 2000;
+    const lockDuration = chapter.id === 5 ? 3500 : chapter.id >= 6 ? 1200 : 2000;
     this.lockUntil = Math.max(this.lockUntil, performance.now() + lockDuration);
     this.transitioning = true;
 

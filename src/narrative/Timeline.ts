@@ -57,12 +57,16 @@ export class Timeline {
   lockUntil = 0;
   isAlteredMode = false;
   isHardcoreMode = false;
+  gateCredits = false;
+  private creditsPending = false;
 
   resetCredits() {
     this.creditsVisible = false;
     this.activeChapter = -1;
     this.transitioning = false;
     this.lockUntil = 0;
+    this.gateCredits = false;
+    this.creditsPending = false;
     if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
   }
 
@@ -125,10 +129,23 @@ export class Timeline {
     setTimeout(() => this.showChapter(getChapters(this.isAlteredMode, this.isHardcoreMode)[0]), 300);
   }
 
+  releaseCredits() {
+    this.gateCredits = false;
+    if (this.creditsPending) {
+      this.creditsPending = false;
+      this.showCredits();
+    }
+  }
+
   private showCredits() {
     const credits = document.getElementById('credits');
     const chapterText = document.getElementById('chapter-text');
     if (!credits) return;
+
+    if (this.gateCredits) {
+      this.creditsPending = true;
+      return;
+    }
 
     this.creditsVisible = true;
     this.transitioning = false;

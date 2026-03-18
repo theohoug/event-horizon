@@ -1699,7 +1699,8 @@ gl_FragColor=vec4(col,1.0);}`;
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const currentTop = this.lenis.scroll;
       if (currentTop < maxScroll - 1) {
-        const speed = 2 + (scroll - 0.82) * 8;
+        const progress = Math.max(0, scroll - 0.82) / 0.18;
+        const speed = 4 + progress * 20;
         this.lenis.scrollTo(Math.min(currentTop + speed, maxScroll), { immediate: true });
       }
     }
@@ -1997,6 +1998,10 @@ gl_FragColor=vec4(col,1.0);}`;
       if (this.explosionActive) {
         const espeed = this.explosionProgress < 1.0 ? 0.28 : 0.12;
         this.explosionProgress = Math.min(this.explosionProgress + Math.min(dt, 0.033) * espeed, 2.0);
+        if (this.explosionProgress >= 1.0 && this.timeline.gateCredits) {
+          this.timeline.releaseCredits();
+          this.stopCinematicScrollBlock();
+        }
         if (this.explosionProgress >= 2.0) this.explosionActive = false;
         (this.state as any).explosion = this.explosionProgress;
       }
@@ -2161,6 +2166,10 @@ gl_FragColor=vec4(col,1.0);}`;
     if (this.explosionActive) {
       const speed = this.explosionProgress < 1.0 ? 0.28 : 0.12;
       this.explosionProgress = Math.min(this.explosionProgress + dt * speed, 2.0);
+      if (this.explosionProgress >= 1.0 && this.timeline.gateCredits) {
+        this.timeline.releaseCredits();
+        this.stopCinematicScrollBlock();
+      }
       if (this.explosionProgress >= 2.0) this.explosionActive = false;
     }
     (this.state as any).explosion = this.explosionProgress;
@@ -2275,6 +2284,7 @@ gl_FragColor=vec4(col,1.0);}`;
   private explosionProgress = 0;
   private explosionActive = false;
   private cinematicAutoScrollStarted = false;
+  private cinematicScrollBlocker: ((e: Event) => void) | null = null;
   private faviconCanvas: HTMLCanvasElement | null = null;
   private faviconCtx: CanvasRenderingContext2D | null = null;
   private faviconLink: HTMLLinkElement | null = null;
@@ -2721,6 +2731,21 @@ gl_FragColor=vec4(col,1.0);}`;
   private startCinematicAutoScroll() {
     if (this.cinematicAutoScrollStarted) return;
     this.cinematicAutoScrollStarted = true;
+    this.timeline.gateCredits = true;
+
+    if (!this.cinematicScrollBlocker) {
+      this.cinematicScrollBlocker = (e: Event) => { e.preventDefault(); };
+      window.addEventListener('wheel', this.cinematicScrollBlocker, { passive: false });
+      window.addEventListener('touchmove', this.cinematicScrollBlocker, { passive: false });
+    }
+  }
+
+  private stopCinematicScrollBlock() {
+    if (this.cinematicScrollBlocker) {
+      window.removeEventListener('wheel', this.cinematicScrollBlocker);
+      window.removeEventListener('touchmove', this.cinematicScrollBlocker);
+      this.cinematicScrollBlocker = null;
+    }
   }
 
   private triggerSingularityExplosion() {
@@ -2988,6 +3013,8 @@ gl_FragColor=vec4(col,1.0);}`;
         this.pointOfNoReturnTriggered = false;
         this.singularityTriggered = false;
         this.cinematicAutoScrollStarted = false;
+        this.stopCinematicScrollBlock();
+        this.timeline.gateCredits = false;
         this.visitCount++;
 
         if (this.visitCount >= 3) {
@@ -3279,6 +3306,7 @@ gl_FragColor=vec4(col,1.0);}`;
     cancelAnimationFrame(this.rafId);
     cancelAnimationFrame(this.cursorRafId);
     clearInterval(this.lenisBackupInterval);
+    this.stopCinematicScrollBlock();
 
     this.lenis.destroy();
     this.audio.destroy();

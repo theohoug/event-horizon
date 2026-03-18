@@ -35,6 +35,18 @@
       height: 100%;
     }
 
+    .void-glow {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 35%,
+        rgba(255, 179, 71, 0.04) 0%,
+        rgba(180, 120, 50, 0.02) 30%,
+        transparent 65%
+      );
+    }
+
     .content {
       position: relative;
       z-index: 10;
@@ -169,6 +181,7 @@
 </head>
 <body>
   <canvas id="bg"></canvas>
+  <div class="void-glow"></div>
 
   <div class="content">
     <div class="title">Lost Beyond the Horizon</div>
@@ -196,7 +209,6 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x050505, 1);
-    renderer.domElement.style.background = 'radial-gradient(ellipse at 50% 40%, rgba(20, 12, 6, 0.5) 0%, rgba(8, 8, 12, 0.3) 40%, #050505 75%)';
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);

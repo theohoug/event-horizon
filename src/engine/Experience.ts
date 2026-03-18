@@ -2116,9 +2116,12 @@ gl_FragColor=vec4(col,1.0);}`;
     const triggerChapter = this.getChapterFromTrigger(this.state.scroll);
     if (timelineChapter >= 0 && triggerChapter > timelineChapter) {
       const now = performance.now();
-      if (now > this.timeline.lockUntil) {
+      const gap = triggerChapter - timelineChapter;
+      const canForce = gap >= 2 || now > this.timeline.lockUntil;
+      if (canForce) {
         const nextCh = Math.min(triggerChapter, timelineChapter + 1);
-        this.timeline.refreshCurrentChapter(this.state.scroll, nextCh);
+        const lock = nextCh < triggerChapter ? 400 : 1200;
+        this.timeline.refreshCurrentChapter(this.state.scroll, nextCh, lock);
       }
     }
     const currentChapter = this.timeline.activeChapter >= 0 ? this.timeline.activeChapter : triggerChapter;

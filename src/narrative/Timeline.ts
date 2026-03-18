@@ -72,7 +72,7 @@ export class Timeline {
     if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
   }
 
-  refreshCurrentChapter(scroll: number, chapterIndex?: number) {
+  refreshCurrentChapter(scroll: number, chapterIndex?: number, lockMs?: number) {
     if (!this.started || this.creditsVisible) return;
     if (chapterIndex === undefined) chapterIndex = Math.min(8, Math.floor(scroll * 9));
     const chapters = getChapters(this.isAlteredMode, this.isHardcoreMode);
@@ -90,8 +90,7 @@ export class Timeline {
     this.pendingChapter = null;
     this.lockUntil = 0;
     this.showChapter(chapter);
-    const catchUpLock = chapterIndex !== undefined && chapterIndex >= 6 ? 1200 : 2000;
-    this.lockUntil = performance.now() + catchUpLock;
+    this.lockUntil = performance.now() + (lockMs ?? 1200);
   }
 
   start(withSound: boolean) {
@@ -733,12 +732,12 @@ export class Timeline {
       const el7 = titleLine;
       tl.fromTo(
         titleLine,
-        { opacity: 0, scale: 2.5, filter: 'blur(20px)', letterSpacing: '0.8em', y: 0 },
-        { opacity: 1, scale: 1, filter: 'blur(0px)', letterSpacing: '0.35em', y: 0, duration: 2.0, ease: 'power4.out', onComplete: () => this.clearInlineFilter(el7) },
-        titlePos
+        { opacity: 0, scale: 1.8, filter: 'blur(8px)', letterSpacing: '0.6em', y: 0 },
+        { opacity: 1, scale: 1, filter: 'blur(0px)', letterSpacing: '0.35em', y: 0, duration: 0.5, ease: 'expo.out', onComplete: () => this.clearInlineFilter(el7) },
+        0.05
       );
-      tl.set(titleChars, { opacity: 1 }, titlePos);
-      tl.add(() => this.markRevealed(titleChars), titlePos + 0.1);
+      tl.set(titleChars, { opacity: 1 }, 0.05);
+      tl.add(() => this.markRevealed(titleChars), 0.1);
     } else switch (pattern) {
       case 'center-out':
         this.revealCenterOut(titleChars, tl, titlePos, titleLine, chapter.id === 0);

@@ -6,9 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lost in the Void — Event Horizon</title>
   <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Outfit:wght@200;300&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet" />
   <style>
     /* Cleanlystudio — Premium Web Development */
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Outfit:wght@200;300&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
@@ -25,125 +27,12 @@
       cursor: default;
     }
 
-    .void-bg {
+    canvas#bg {
       position: fixed;
       inset: 0;
       z-index: 0;
-      background: radial-gradient(ellipse at 50% 50%,
-        rgba(26, 15, 8, 0.4) 0%,
-        rgba(10, 10, 15, 0.2) 40%,
-        #050505 70%
-      );
-    }
-
-    .singularity {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 320px;
-      height: 320px;
-      border-radius: 50%;
-      background: radial-gradient(circle,
-        #000 0%,
-        #000 18%,
-        transparent 19%
-      );
-      z-index: 1;
-      animation: pulse 8s ease-in-out infinite;
-    }
-
-    .singularity::before {
-      content: '';
-      position: absolute;
-      inset: -30px;
-      border-radius: 50%;
-      background: conic-gradient(
-        from 0deg,
-        transparent 0%,
-        rgba(255, 179, 71, 0.08) 10%,
-        transparent 20%,
-        rgba(255, 179, 71, 0.05) 35%,
-        transparent 45%,
-        rgba(255, 179, 71, 0.1) 55%,
-        transparent 65%,
-        rgba(255, 179, 71, 0.06) 80%,
-        transparent 90%
-      );
-      animation: orbit 20s linear infinite;
-      filter: blur(8px);
-    }
-
-    .singularity::after {
-      content: '';
-      position: absolute;
-      inset: -6px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 179, 71, 0.12);
-      box-shadow:
-        0 0 30px rgba(255, 179, 71, 0.06),
-        0 0 60px rgba(255, 179, 71, 0.03),
-        inset 0 0 30px rgba(0, 0, 0, 0.8);
-      animation: ringPulse 4s ease-in-out infinite;
-    }
-
-    .photon-ring {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 380px;
-      height: 380px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 179, 71, 0.04);
-      z-index: 1;
-      animation: photonSpin 30s linear infinite;
-    }
-
-    .photon-ring::before {
-      content: '';
-      position: absolute;
-      inset: -20px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 204, 128, 0.02);
-      animation: photonSpin 45s linear infinite reverse;
-    }
-
-    .lensing {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 500px;
-      height: 260px;
-      border-radius: 50%;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(255, 179, 71, 0.015) 20%,
-        rgba(255, 179, 71, 0.03) 50%,
-        rgba(255, 179, 71, 0.015) 80%,
-        transparent 100%
-      );
-      z-index: 1;
-      filter: blur(12px);
-      animation: lensBreathe 6s ease-in-out infinite;
-    }
-
-    .stars {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-    }
-
-    .star {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      background: rgba(255, 245, 230, 0.5);
-      border-radius: 50%;
-      animation: twinkle var(--dur) ease-in-out infinite;
-      animation-delay: var(--delay);
+      width: 100%;
+      height: 100%;
     }
 
     .content {
@@ -154,42 +43,8 @@
       flex-direction: column;
       align-items: center;
       gap: 0;
-    }
-
-    .error-code {
-      font-family: 'Cinzel', Georgia, serif;
-      font-size: clamp(5rem, 12vw, 9rem);
-      font-weight: 600;
-      letter-spacing: 0.25em;
-      color: transparent;
-      background: linear-gradient(
-        180deg,
-        rgba(255, 179, 71, 0.5) 0%,
-        rgba(255, 179, 71, 0.15) 60%,
-        rgba(255, 179, 71, 0.03) 100%
-      );
-      -webkit-background-clip: text;
-      background-clip: text;
-      line-height: 1;
-      margin-bottom: 1.2rem;
-      animation: fadeIn 2s ease-out;
-      text-shadow: none;
-      position: relative;
-    }
-
-    .error-code::after {
-      content: '404';
-      position: absolute;
-      inset: 0;
-      color: transparent;
-      background: linear-gradient(
-        180deg,
-        rgba(255, 179, 71, 0.08) 0%,
-        transparent 100%
-      );
-      -webkit-background-clip: text;
-      background-clip: text;
-      filter: blur(20px);
+      pointer-events: none;
+      margin-top: 18vh;
     }
 
     .title {
@@ -216,39 +71,44 @@
     }
 
     .return-link {
+      pointer-events: all;
       font-family: 'Outfit', system-ui, sans-serif;
       font-weight: 300;
       font-size: 0.75rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: rgba(255, 179, 71, 0.5);
+      color: rgba(255, 179, 71, 0.6);
       text-decoration: none;
-      border: 1px solid rgba(255, 179, 71, 0.15);
-      padding: 0.75rem 2rem;
+      border: 1px solid rgba(255, 179, 71, 0.2);
+      padding: 0.85rem 2.2rem;
+      border-radius: 100px;
       transition: all 0.6s cubic-bezier(0.4, 0, 0, 1);
       animation: fadeIn 3.5s ease-out;
       position: relative;
       overflow: hidden;
+      backdrop-filter: blur(8px);
+      background: rgba(255, 179, 71, 0.03);
     }
 
     .return-link::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: rgba(255, 179, 71, 0.04);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.6s cubic-bezier(0.4, 0, 0, 1);
+      border-radius: 100px;
+      background: radial-gradient(circle at center, rgba(255, 179, 71, 0.08) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0, 1);
     }
 
     .return-link:hover {
-      color: rgba(255, 179, 71, 0.85);
-      border-color: rgba(255, 179, 71, 0.35);
-      box-shadow: 0 0 30px rgba(255, 179, 71, 0.06);
+      color: rgba(255, 179, 71, 0.9);
+      border-color: rgba(255, 179, 71, 0.4);
+      box-shadow: 0 0 40px rgba(255, 179, 71, 0.08), inset 0 0 20px rgba(255, 179, 71, 0.03);
+      transform: scale(1.02);
     }
 
     .return-link:hover::before {
-      transform: scaleX(1);
+      opacity: 1;
     }
 
     .return-link span {
@@ -261,7 +121,7 @@
       bottom: 2.5rem;
       left: 50%;
       transform: translateX(-50%);
-      font-family: 'JetBrains Mono', monospace;
+      font-family: monospace;
       font-size: 0.6rem;
       font-weight: 300;
       letter-spacing: 0.12em;
@@ -276,7 +136,7 @@
       inset: 0;
       z-index: 999;
       pointer-events: none;
-      opacity: 0.04;
+      opacity: 0.03;
       mix-blend-mode: overlay;
     }
 
@@ -296,63 +156,23 @@
       75% { transform: translate(-2%, 5%); }
     }
 
-    @keyframes pulse {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(1.04); }
-    }
-
-    @keyframes orbit {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes ringPulse {
-      0%, 100% { opacity: 0.6; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.02); }
-    }
-
-    @keyframes photonSpin {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-
-    @keyframes lensBreathe {
-      0%, 100% { opacity: 0.7; transform: translate(-50%, -50%) scaleX(1); }
-      50% { opacity: 1; transform: translate(-50%, -50%) scaleX(1.08); }
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: var(--base-opacity); }
-      50% { opacity: 0.1; }
-    }
-
     @keyframes fadeIn {
       0% { opacity: 0; filter: blur(8px); transform: translateY(10px); }
       100% { opacity: 1; filter: blur(0px); transform: translateY(0); }
     }
 
     @media (max-width: 640px) {
-      .singularity { width: 200px; height: 200px; }
-      .singularity::before { inset: -20px; }
-      .photon-ring { width: 240px; height: 240px; }
-      .lensing { width: 300px; height: 160px; }
-      .telemetry { font-size: 0.5rem; }
+      .telemetry { font-size: 0.5rem; bottom: 1.5rem; }
+      .subtitle { max-width: 260px; }
     }
   </style>
 </head>
 <body>
-  <div class="void-bg"></div>
-
-  <div class="stars" id="stars"></div>
-
-  <div class="lensing"></div>
-  <div class="singularity"></div>
-  <div class="photon-ring"></div>
+  <canvas id="bg"></canvas>
 
   <div class="content">
-    <div class="error-code">404</div>
     <div class="title">Lost Beyond the Horizon</div>
-    <div class="subtitle">This region of spacetime does not exist. The coordinates you seek have collapsed into the singularity.</div>
+    <div class="subtitle">This region of spacetime does not exist.<br>The coordinates you seek have collapsed into the singularity.</div>
     <a href="/" class="return-link"><span>Return to the Observable Universe</span></a>
   </div>
 
@@ -360,23 +180,278 @@
 
   <div class="grain"></div>
 
-  <script>
-    const stars = document.getElementById('stars');
-    for (let i = 0; i < 80; i++) {
-      const star = document.createElement('div');
-      star.className = 'star';
-      const baseOp = 0.2 + Math.random() * 0.6;
-      star.style.cssText = `
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        width: ${0.5 + Math.random() * 1.5}px;
-        height: ${0.5 + Math.random() * 1.5}px;
-        --dur: ${3 + Math.random() * 5}s;
-        --delay: ${Math.random() * 5}s;
-        --base-opacity: ${baseOp};
-        opacity: ${baseOp};
-      `;
-      stars.appendChild(star);
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+
+    const canvas = document.getElementById('bg');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x050505, 1);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 6;
+
+    const TEXT_PARTICLE_COUNT = 350;
+    const PARTICLE_COUNT = TEXT_PARTICLE_COUNT + 1800;
+
+    const textCanvas = document.createElement('canvas');
+    const textCtx = textCanvas.getContext('2d');
+    textCanvas.width = 512;
+    textCanvas.height = 256;
+    textCtx.fillStyle = '#000';
+    textCtx.fillRect(0, 0, 512, 256);
+    textCtx.fillStyle = '#fff';
+    textCtx.font = 'bold 140px Cinzel, Georgia, serif';
+    textCtx.textAlign = 'center';
+    textCtx.textBaseline = 'middle';
+    textCtx.fillText('404', 256, 128);
+
+    const textImageData = textCtx.getImageData(0, 0, 512, 256);
+    const textPositions = [];
+    for (let y = 0; y < 256; y += 3) {
+      for (let x = 0; x < 512; x += 3) {
+        const i = (y * 512 + x) * 4;
+        if (textImageData.data[i] > 128) {
+          textPositions.push({
+            x: (x / 512 - 0.5) * 7,
+            y: -(y / 256 - 0.5) * 3.5 + 1.5,
+          });
+        }
+      }
+    }
+
+    while (textPositions.length > TEXT_PARTICLE_COUNT) {
+      textPositions.splice(Math.floor(Math.random() * textPositions.length), 1);
+    }
+
+    const positions = new Float32Array(PARTICLE_COUNT * 3);
+    const targets = new Float32Array(PARTICLE_COUNT * 3);
+    const sizes = new Float32Array(PARTICLE_COUNT);
+    const alphas = new Float32Array(PARTICLE_COUNT);
+    const speeds = new Float32Array(PARTICLE_COUNT);
+
+    for (let i = 0; i < TEXT_PARTICLE_COUNT; i++) {
+      const tp = textPositions[i % textPositions.length];
+      targets[i * 3] = tp.x;
+      targets[i * 3 + 1] = tp.y;
+      targets[i * 3 + 2] = (Math.random() - 0.5) * 0.2;
+
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 6 + Math.random() * 10;
+      positions[i * 3] = Math.cos(angle) * radius;
+      positions[i * 3 + 1] = Math.sin(angle) * radius;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 8;
+
+      sizes[i] = 0.8 + Math.random() * 1.2;
+      alphas[i] = 0.2 + Math.random() * 0.45;
+      speeds[i] = 0.3 + Math.random() * 0.7;
+    }
+
+    for (let i = TEXT_PARTICLE_COUNT; i < PARTICLE_COUNT; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 3 + Math.random() * 25;
+      const height = (Math.random() - 0.5) * 15;
+      positions[i * 3] = Math.cos(angle) * radius;
+      positions[i * 3 + 1] = height;
+      positions[i * 3 + 2] = Math.sin(angle) * radius - 8;
+
+      targets[i * 3] = positions[i * 3];
+      targets[i * 3 + 1] = positions[i * 3 + 1];
+      targets[i * 3 + 2] = positions[i * 3 + 2];
+
+      sizes[i] = 0.3 + Math.random() * 1.0;
+      alphas[i] = 0.05 + Math.random() * 0.2;
+      speeds[i] = 0.05 + Math.random() * 0.15;
+    }
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('aTarget', new THREE.BufferAttribute(targets, 3));
+    geometry.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
+    geometry.setAttribute('aAlpha', new THREE.BufferAttribute(alphas, 1));
+    geometry.setAttribute('aSpeed', new THREE.BufferAttribute(speeds, 1));
+
+    const vertexShader = `
+      attribute float aSize;
+      attribute float aAlpha;
+      varying float vAlpha;
+      void main() {
+        vAlpha = aAlpha;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = aSize * (200.0 / -mvPosition.z);
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `;
+
+    const fragmentShader = `
+      varying float vAlpha;
+      void main() {
+        float d = length(gl_PointCoord - vec2(0.5));
+        if (d > 0.5) discard;
+        float glow = smoothstep(0.5, 0.05, d);
+        float core = smoothstep(0.12, 0.0, d);
+        vec3 warmColor = mix(vec3(0.9, 0.75, 0.55), vec3(1.0, 0.7, 0.28), d * 2.0);
+        vec3 color = mix(warmColor * 0.5, vec3(1.0, 0.95, 0.88), core * 0.7);
+        float alpha = glow * glow * vAlpha;
+        gl_FragColor = vec4(color, alpha);
+      }
+    `;
+
+    const material = new THREE.ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+
+    const particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+
+    const bgGeo = new THREE.BufferGeometry();
+    const bgCount = 500;
+    const bgPos = new Float32Array(bgCount * 3);
+    const bgSizes = new Float32Array(bgCount);
+    const bgAlphas = new Float32Array(bgCount);
+    for (let i = 0; i < bgCount; i++) {
+      bgPos[i * 3] = (Math.random() - 0.5) * 40;
+      bgPos[i * 3 + 1] = (Math.random() - 0.5) * 25;
+      bgPos[i * 3 + 2] = -5 - Math.random() * 30;
+      bgSizes[i] = 0.3 + Math.random() * 0.8;
+      bgAlphas[i] = 0.05 + Math.random() * 0.15;
+    }
+    bgGeo.setAttribute('position', new THREE.BufferAttribute(bgPos, 3));
+    bgGeo.setAttribute('aSize', new THREE.BufferAttribute(bgSizes, 1));
+    bgGeo.setAttribute('aAlpha', new THREE.BufferAttribute(bgAlphas, 1));
+
+    const bgVertShader = `
+      attribute float aSize;
+      attribute float aAlpha;
+      varying float vAlpha;
+      uniform float uTime;
+      void main() {
+        vAlpha = aAlpha * (0.5 + 0.5 * sin(uTime * 0.5 + position.x * 3.0));
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = aSize * (200.0 / -mvPosition.z);
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `;
+
+    const bgMat = new THREE.ShaderMaterial({
+      vertexShader: bgVertShader,
+      fragmentShader,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      uniforms: { uTime: { value: 0 } },
+    });
+
+    const bgStars = new THREE.Points(bgGeo, bgMat);
+    scene.add(bgStars);
+
+    let mouse = { x: 0, y: 0 };
+    let smoothMouse = { x: 0, y: 0 };
+    document.addEventListener('mousemove', (e) => {
+      mouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouse.y = -(e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    let formationProgress = 0;
+    const startTime = performance.now();
+    const FORMATION_DELAY = 1500;
+    const FORMATION_DURATION = 4000;
+
+    const posAttr = geometry.getAttribute('position');
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const now = performance.now();
+      const elapsed = (now - startTime);
+      const time = elapsed * 0.001;
+
+      bgMat.uniforms.uTime.value = time;
+
+      smoothMouse.x += (mouse.x - smoothMouse.x) * 0.03;
+      smoothMouse.y += (mouse.y - smoothMouse.y) * 0.03;
+
+      camera.position.x = smoothMouse.x * 0.3;
+      camera.position.y = smoothMouse.y * 0.2;
+      camera.lookAt(0, 0, 0);
+
+      if (elapsed > FORMATION_DELAY) {
+        formationProgress = Math.min(1, (elapsed - FORMATION_DELAY) / FORMATION_DURATION);
+      }
+
+      const eased = 1 - Math.pow(1 - formationProgress, 3);
+
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const i3 = i * 3;
+        const speed = speeds[i];
+
+        if (i < TEXT_PARTICLE_COUNT) {
+          const tx = targets[i3];
+          const ty = targets[i3 + 1];
+          const tz = targets[i3 + 2];
+
+          const progress = Math.min(1, eased * (0.5 + speed * 0.5));
+          const smoothP = progress * progress * (3 - 2 * progress);
+
+          const cx = positions[i3];
+          const cy = positions[i3 + 1];
+          const cz = positions[i3 + 2];
+
+          positions[i3] = cx + (tx - cx) * smoothP * 0.08;
+          positions[i3 + 1] = cy + (ty - cy) * smoothP * 0.08;
+          positions[i3 + 2] = cz + (tz - cz) * smoothP * 0.08;
+
+          if (formationProgress > 0.8) {
+            const drift = 0.003 * (1 - (formationProgress - 0.8) * 5);
+            positions[i3] += Math.sin(time * 2 + i) * drift;
+            positions[i3 + 1] += Math.cos(time * 1.5 + i * 0.7) * drift;
+          }
+
+          const breathe = Math.sin(time * 0.8 + i * 0.01) * 0.02;
+          positions[i3 + 2] += breathe * formationProgress;
+
+        } else {
+          const angle = time * speed * 0.2 + i;
+          const radius = 8 + Math.sin(time * 0.3 + i * 0.1) * 2;
+          positions[i3] += Math.cos(angle) * 0.002;
+          positions[i3 + 1] += Math.sin(time * 0.5 + i * 0.3) * 0.001;
+          positions[i3 + 2] += Math.sin(angle) * 0.001;
+        }
+      }
+
+      posAttr.needsUpdate = true;
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    try {
+      const gl = renderer.getContext();
+      if (!gl) throw new Error();
+    } catch {
+      canvas.style.display = 'none';
+      document.body.style.background = 'radial-gradient(ellipse at 50% 50%, rgba(26,15,8,0.4) 0%, #050505 70%)';
     }
   </script>
 </body>

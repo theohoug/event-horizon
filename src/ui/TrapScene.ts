@@ -6,9 +6,9 @@
 
 import * as THREE from 'three';
 
-const TEXT_PARTICLE_COUNT = 300;
-const BG_STAR_COUNT = 1200;
-const FORMATION_DURATION = 3.5;
+const TEXT_PARTICLE_COUNT = 800;
+const BG_STAR_COUNT = 1500;
+const FORMATION_DURATION = 4.0;
 
 interface Particle {
   targetX: number;
@@ -47,8 +47,8 @@ export class TrapScene {
     this.renderer.setClearColor(0x030305, 1);
 
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(60, 1, 0.1, 100);
-    this.camera.position.z = 5;
+    this.camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+    this.camera.position.z = 4;
 
     this.resize();
     this.createBgStars();
@@ -71,29 +71,29 @@ export class TrapScene {
 
   private sampleTextPositions(text: string): { x: number; y: number }[] {
     const offscreen = document.createElement('canvas');
-    const fontSize = 120;
-    offscreen.width = 1024;
-    offscreen.height = 256;
+    const fontSize = 160;
+    offscreen.width = 1200;
+    offscreen.height = 300;
     const ctx = offscreen.getContext('2d')!;
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, offscreen.width, offscreen.height);
     ctx.fillStyle = '#fff';
-    ctx.font = `700 ${fontSize}px "Cinzel", serif`;
+    ctx.font = `700 ${fontSize}px "Cinzel", Georgia, serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(text, offscreen.width / 2, offscreen.height / 2);
 
     const imageData = ctx.getImageData(0, 0, offscreen.width, offscreen.height);
     const positions: { x: number; y: number }[] = [];
-    const step = 3;
+    const step = 2;
 
     for (let y = 0; y < offscreen.height; y += step) {
       for (let x = 0; x < offscreen.width; x += step) {
         const i = (y * offscreen.width + x) * 4;
-        if (imageData.data[i] > 128) {
+        if (imageData.data[i] > 100) {
           positions.push({
-            x: (x / offscreen.width - 0.5) * 8,
-            y: -(y / offscreen.height - 0.5) * 2,
+            x: (x / offscreen.width - 0.5) * 6.5,
+            y: -(y / offscreen.height - 0.5) * 1.6 + 0.8,
           });
         }
       }
@@ -118,10 +118,10 @@ export class TrapScene {
       const tp = textPositions[idx];
 
       const angle = Math.random() * Math.PI * 2;
-      const radius = 4 + Math.random() * 6;
+      const radius = 3 + Math.random() * 5;
       const startX = Math.cos(angle) * radius;
       const startY = Math.sin(angle) * radius;
-      const startZ = (Math.random() - 0.5) * 4;
+      const startZ = (Math.random() - 0.5) * 3;
 
       const particle: Particle = {
         targetX: tp.x,
@@ -129,9 +129,9 @@ export class TrapScene {
         startX,
         startY,
         startZ,
-        size: 0.6 + Math.random() * 1.2,
-        alpha: 0.3 + Math.random() * 0.7,
-        delay: Math.random() * 0.6,
+        size: 1.5 + Math.random() * 2.5,
+        alpha: 0.5 + Math.random() * 0.5,
+        delay: Math.random() * 0.8,
       };
       this.particles.push(particle);
 
@@ -150,7 +150,6 @@ export class TrapScene {
     const material = new THREE.ShaderMaterial({
       uniforms: {
         uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
-        uColor: { value: new THREE.Color(0.85, 0.55, 0.2) },
       },
       vertexShader: `
         attribute float size;
@@ -161,18 +160,18 @@ export class TrapScene {
           vAlpha = alpha;
           vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
           gl_Position = projectionMatrix * mvPos;
-          gl_PointSize = size * uPixelRatio * (4.0 / -mvPos.z);
+          gl_PointSize = size * uPixelRatio * (5.0 / -mvPos.z);
         }
       `,
       fragmentShader: `
         varying float vAlpha;
-        uniform vec3 uColor;
         void main() {
           float d = length(gl_PointCoord - 0.5) * 2.0;
-          float glow = exp(-d * d * 3.0);
-          float core = smoothstep(0.6, 0.0, d);
-          float brightness = mix(glow * 0.4, 1.0, core);
-          gl_FragColor = vec4(uColor * brightness, vAlpha * brightness);
+          float core = smoothstep(0.5, 0.0, d);
+          float glow = exp(-d * d * 2.0);
+          float brightness = core + glow * 0.6;
+          vec3 warm = mix(vec3(0.9, 0.45, 0.15), vec3(1.0, 0.75, 0.35), core);
+          gl_FragColor = vec4(warm * brightness, vAlpha * brightness);
         }
       `,
       transparent: true,
@@ -190,10 +189,10 @@ export class TrapScene {
     const twinklePhases = new Float32Array(BG_STAR_COUNT);
 
     for (let i = 0; i < BG_STAR_COUNT; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 20;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 12;
-      positions[i * 3 + 2] = -2 - Math.random() * 8;
-      sizes[i] = 0.3 + Math.random() * 0.8;
+      positions[i * 3] = (Math.random() - 0.5) * 18;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
+      positions[i * 3 + 2] = -1 - Math.random() * 6;
+      sizes[i] = 0.3 + Math.random() * 1.0;
       twinklePhases[i] = Math.random() * Math.PI * 2;
     }
 
@@ -214,18 +213,18 @@ export class TrapScene {
         uniform float uTime;
         uniform float uPixelRatio;
         void main() {
-          vTwinkle = 0.4 + 0.6 * (0.5 + 0.5 * sin(uTime * 0.8 + phase));
+          vTwinkle = 0.3 + 0.7 * (0.5 + 0.5 * sin(uTime * 0.6 + phase));
           vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
           gl_Position = projectionMatrix * mvPos;
-          gl_PointSize = size * uPixelRatio * (3.0 / -mvPos.z);
+          gl_PointSize = size * uPixelRatio * (3.5 / -mvPos.z);
         }
       `,
       fragmentShader: `
         varying float vTwinkle;
         void main() {
           float d = length(gl_PointCoord - 0.5) * 2.0;
-          float a = smoothstep(1.0, 0.0, d) * vTwinkle * 0.35;
-          vec3 col = mix(vec3(0.5, 0.4, 0.3), vec3(0.7, 0.55, 0.35), d);
+          float a = smoothstep(1.0, 0.0, d) * vTwinkle * 0.25;
+          vec3 col = mix(vec3(0.4, 0.3, 0.2), vec3(0.6, 0.45, 0.25), d);
           gl_FragColor = vec4(col, a);
         }
       `,
@@ -269,20 +268,20 @@ export class TrapScene {
         pos.array[i * 3 + 2] = p.startZ * (1 - ease);
 
         if (ease >= 1) {
-          const drift = Math.sin(elapsed * 0.5 + i * 0.3) * 0.02;
+          const drift = Math.sin(elapsed * 0.4 + i * 0.3) * 0.025;
           pos.array[i * 3] += drift;
-          pos.array[i * 3 + 1] += Math.cos(elapsed * 0.4 + i * 0.2) * 0.015;
+          pos.array[i * 3 + 1] += Math.cos(elapsed * 0.35 + i * 0.2) * 0.018;
         }
 
-        alphaAttr.array[i] = Math.min(1, t * 2) * p.alpha;
+        alphaAttr.array[i] = Math.min(1, t * 1.5) * p.alpha;
       }
 
       pos.needsUpdate = true;
       alphaAttr.needsUpdate = true;
     }
 
-    this.camera.position.x += (this.mouse.x * 0.15 - this.camera.position.x) * 0.05;
-    this.camera.position.y += (this.mouse.y * 0.1 - this.camera.position.y) * 0.05;
+    this.camera.position.x += (this.mouse.x * 0.12 - this.camera.position.x) * 0.04;
+    this.camera.position.y += (this.mouse.y * 0.08 - this.camera.position.y) * 0.04;
     this.camera.lookAt(0, 0, 0);
 
     this.renderer.render(this.scene, this.camera);

@@ -67,6 +67,8 @@ export class Timeline {
     this.lockUntil = 0;
     this.gateCredits = false;
     this.creditsPending = false;
+    if (this.whisperInterval) { clearInterval(this.whisperInterval); this.whisperInterval = 0; }
+    document.querySelectorAll('.return-whisper').forEach(el => el.remove());
     if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
   }
 
@@ -134,6 +136,14 @@ export class Timeline {
     if (this.creditsPending) {
       this.creditsPending = false;
       this.showCredits();
+    }
+  }
+
+  checkPending() {
+    if (this.pendingChapter && performance.now() >= this.lockUntil) {
+      const next = this.pendingChapter;
+      this.pendingChapter = null;
+      this.showChapter(next);
     }
   }
 
@@ -224,7 +234,7 @@ export class Timeline {
       this.creditsTl.fromTo(shareSection,
         { opacity: 0 },
         { opacity: 1, duration: 0.01 },
-        9.0
+        8.0
       );
     }
     const shareBtn = document.getElementById('share-btn');
@@ -232,28 +242,77 @@ export class Timeline {
       this.creditsTl.fromTo(shareBtn,
         { opacity: 0, y: 10 },
         { opacity: 1, y: 0, duration: 1.0, ease: 'power2.out' },
-        9.0
+        8.0
       );
     }
     const returnBtn = document.getElementById('return-btn');
     if (returnBtn) {
-      const fullText = returnBtn.textContent || 'Return to surface';
-      returnBtn.textContent = '';
-      returnBtn.style.opacity = '1';
-      returnBtn.style.borderBottomColor = 'transparent';
-
-      const chars = fullText.split('');
-      chars.forEach((char, ci) => {
-        this.creditsTl!.call(() => {
-          returnBtn.textContent = fullText.slice(0, ci + 1);
-        }, [], 10.0 + ci * 0.06);
-      });
-
-      this.creditsTl.to(returnBtn,
-        { borderBottomColor: 'rgba(255, 180, 70, 0.2)', duration: 0.5, ease: 'power2.out' },
-        10.0 + chars.length * 0.06
+      this.creditsTl.fromTo(returnBtn,
+        { opacity: 0, scale: 0.9, filter: 'blur(4px)' },
+        { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power2.out' },
+        9.5
       );
+
+      this.creditsTl.call(() => {
+        this.startWhispers(returnBtn);
+      }, [], 11.0);
     }
+  }
+
+  private whisperInterval = 0;
+
+  private startWhispers(btn: HTMLElement) {
+    const whispers = [
+      'dare you?', 'click me', 'trapped forever',
+      'no escape', 'do it', 'you can\'t leave',
+      'try it', 'one way out', 'are you sure?',
+      'go ahead', 'we\'re waiting', 'no return',
+    ];
+    let idx = 0;
+
+    const spawnWhisper = () => {
+      const parent = btn.parentElement;
+      if (!parent) return;
+
+      const whisper = document.createElement('span');
+      whisper.className = 'return-whisper';
+      whisper.textContent = whispers[idx % whispers.length];
+      idx++;
+
+      const side = Math.random() > 0.5 ? 1 : -1;
+      const offsetX = side * (60 + Math.random() * 80);
+      const offsetY = -30 + Math.random() * 60;
+
+      whisper.style.left = `calc(50% + ${offsetX}px)`;
+      whisper.style.top = `calc(50% + ${offsetY}px)`;
+
+      parent.style.position = 'relative';
+      parent.appendChild(whisper);
+
+      gsap.fromTo(whisper,
+        { opacity: 0, scale: 0.7, filter: 'blur(3px)' },
+        {
+          opacity: 0.5 + Math.random() * 0.3,
+          scale: 1,
+          filter: 'blur(0px)',
+          duration: 0.8,
+          ease: 'power2.out',
+          onComplete: () => {
+            gsap.to(whisper, {
+              opacity: 0,
+              y: -10 + Math.random() * -15,
+              filter: 'blur(4px)',
+              duration: 1.5,
+              ease: 'power2.in',
+              onComplete: () => whisper.remove(),
+            });
+          },
+        }
+      );
+    };
+
+    spawnWhisper();
+    this.whisperInterval = window.setInterval(spawnWhisper, 2500 + Math.random() * 1500);
   }
 
   private hideCredits() {
@@ -263,6 +322,8 @@ export class Timeline {
     this.creditsVisible = false;
     this.activeChapter = -1;
     this.transitioning = false;
+    if (this.whisperInterval) { clearInterval(this.whisperInterval); this.whisperInterval = 0; }
+    document.querySelectorAll('.return-whisper').forEach(el => el.remove());
     if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
     credits.classList.remove('visible');
     gsap.set(credits.querySelectorAll('.credits-line'), { opacity: 0, y: 20 });
@@ -284,7 +345,10 @@ export class Timeline {
       return;
     }
 
-    if (performance.now() < this.lockUntil && chapter.id > this.activeChapter) return;
+    if (performance.now() < this.lockUntil && chapter.id > this.activeChapter) {
+      this.pendingChapter = chapter;
+      return;
+    }
 
     const container = document.getElementById('chapter-text');
     if (!container) return;

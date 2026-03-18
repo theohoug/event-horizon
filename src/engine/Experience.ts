@@ -2110,6 +2110,8 @@ gl_FragColor=vec4(col,1.0);}`;
       }
     }
 
+    this.timeline.checkPending();
+
     const timelineChapter = this.timeline.activeChapter;
     const triggerChapter = this.getChapterFromTrigger(this.state.scroll);
     if (timelineChapter >= 0 && triggerChapter > timelineChapter) {

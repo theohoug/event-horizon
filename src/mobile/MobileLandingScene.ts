@@ -6,7 +6,7 @@
 
 import * as THREE from 'three';
 
-const TEXT_PARTICLE_COUNT = 800;
+const TEXT_PARTICLE_COUNT = 900;
 const BG_STAR_COUNT = 1500;
 const FORMATION_DURATION = 3.5;
 const CAM_FOV = 50;
@@ -18,6 +18,9 @@ interface Particle {
   startX: number;
   startY: number;
   startZ: number;
+  scatterX: number;
+  scatterY: number;
+  scatterZ: number;
   size: number;
   alpha: number;
   delay: number;
@@ -36,7 +39,8 @@ export class MobileLandingScene {
   private rafId = 0;
   private gyro = { x: 0, y: 0 };
   private smoothGyro = { x: 0, y: 0 };
-  private scrollFade = 1;
+  private scrollProgress = 0;
+  private smoothScroll = 0;
   private onOrientation: ((e: DeviceOrientationEvent) => void) | null = null;
   private onResize: (() => void) | null = null;
   private scrollContainer: HTMLElement | null = null;
@@ -71,8 +75,8 @@ export class MobileLandingScene {
     if (this.scrollContainer) {
       this.onScroll = () => {
         const st = this.scrollContainer!.scrollTop;
-        const heroH = window.innerHeight * 0.55;
-        this.scrollFade = Math.max(0, 1 - st / heroH);
+        const heroH = window.innerHeight * 0.45;
+        this.scrollProgress = Math.min(1, st / heroH);
       };
       this.scrollContainer.addEventListener('scroll', this.onScroll, { passive: true });
     }
@@ -168,14 +172,20 @@ export class MobileLandingScene {
       const startY = Math.sin(angle) * radius;
       const startZ = (Math.random() - 0.5) * 2.5;
 
+      const scatterAngle = Math.atan2(tp.y, tp.x) + (Math.random() - 0.5) * 0.8;
+      const scatterDist = 2.5 + Math.random() * 4;
+
       const particle: Particle = {
         targetX: tp.x,
         targetY: tp.y,
         startX,
         startY,
         startZ,
-        size: 0.6 + Math.random() * 0.8,
-        alpha: 0.35 + Math.random() * 0.45,
+        scatterX: Math.cos(scatterAngle) * scatterDist,
+        scatterY: Math.sin(scatterAngle) * scatterDist - 1.5 - Math.random() * 2,
+        scatterZ: (Math.random() - 0.5) * 4,
+        size: 0.8 + Math.random() * 1.0,
+        alpha: 0.5 + Math.random() * 0.4,
         delay: Math.random() * 1.0,
       };
       this.particles.push(particle);
@@ -195,19 +205,17 @@ export class MobileLandingScene {
     const material = new THREE.ShaderMaterial({
       uniforms: {
         uPixelRatio: { value: Math.min(window.devicePixelRatio, 1.5) },
-        uFade: { value: 1.0 },
       },
       vertexShader: `
         attribute float size;
         attribute float alpha;
         varying float vAlpha;
         uniform float uPixelRatio;
-        uniform float uFade;
         void main() {
-          vAlpha = alpha * uFade;
+          vAlpha = alpha;
           vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
           gl_Position = projectionMatrix * mvPos;
-          gl_PointSize = size * uPixelRatio * (18.0 / -mvPos.z);
+          gl_PointSize = size * uPixelRatio * (22.0 / -mvPos.z);
         }
       `,
       fragmentShader: `
@@ -215,11 +223,11 @@ export class MobileLandingScene {
         void main() {
           float d = length(gl_PointCoord - vec2(0.5));
           if (d > 0.5) discard;
-          float glow = smoothstep(0.5, 0.05, d);
-          float core = smoothstep(0.12, 0.0, d);
-          vec3 warmColor = mix(vec3(0.95, 0.7, 0.4), vec3(1.0, 0.85, 0.55), core);
-          vec3 color = mix(warmColor * 0.6, vec3(1.0, 0.95, 0.88), core * 0.8);
-          float alpha = (core * 0.9 + glow * glow * 0.35) * vAlpha;
+          float glow = smoothstep(0.5, 0.02, d);
+          float core = smoothstep(0.15, 0.0, d);
+          vec3 warmColor = mix(vec3(1.0, 0.72, 0.38), vec3(1.0, 0.9, 0.65), core);
+          vec3 color = mix(warmColor * 0.7, vec3(1.0, 0.97, 0.92), core * 0.9);
+          float alpha = (core * 1.0 + glow * glow * 0.5) * vAlpha;
           gl_FragColor = vec4(color, alpha);
         }
       `,
@@ -254,6 +262,7 @@ export class MobileLandingScene {
       uniforms: {
         uTime: { value: 0 },
         uPixelRatio: { value: Math.min(window.devicePixelRatio, 1.5) },
+        uScroll: { value: 0 },
       },
       vertexShader: `
         attribute float size;
@@ -261,11 +270,15 @@ export class MobileLandingScene {
         varying float vTwinkle;
         uniform float uTime;
         uniform float uPixelRatio;
+        uniform float uScroll;
         void main() {
-          vTwinkle = 0.4 + 0.6 * (0.5 + 0.5 * sin(uTime * 0.5 + phase));
-          vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+          float speed = 0.5 + uScroll * 2.0;
+          vTwinkle = 0.4 + 0.6 * (0.5 + 0.5 * sin(uTime * speed + phase));
+          vec3 pos = position;
+          pos.y -= uScroll * 0.5;
+          vec4 mvPos = modelViewMatrix * vec4(pos, 1.0);
           gl_Position = projectionMatrix * mvPos;
-          gl_PointSize = size * uPixelRatio * (150.0 / -mvPos.z);
+          gl_PointSize = size * uPixelRatio * (150.0 / -mvPos.z) * (1.0 + uScroll * 0.3);
         }
       `,
       fragmentShader: `
@@ -302,38 +315,59 @@ export class MobileLandingScene {
 
     const elapsed = (performance.now() - this.startTime) / 1000;
 
+    this.smoothScroll += (this.scrollProgress - this.smoothScroll) * 0.08;
+
     if (this.bgStars) {
-      (this.bgStars.material as THREE.ShaderMaterial).uniforms.uTime.value = elapsed;
+      const bgMat = this.bgStars.material as THREE.ShaderMaterial;
+      bgMat.uniforms.uTime.value = elapsed;
+      bgMat.uniforms.uScroll.value = this.smoothScroll;
     }
 
     if (this.textParticles) {
-      const mat = this.textParticles.material as THREE.ShaderMaterial;
-      mat.uniforms.uFade.value = this.scrollFade;
-
       const geo = this.textParticles.geometry;
       const pos = geo.getAttribute('position') as THREE.BufferAttribute;
       const alphaAttr = geo.getAttribute('alpha') as THREE.BufferAttribute;
+      const sizeAttr = geo.getAttribute('size') as THREE.BufferAttribute;
+
+      const scatter = this.smoothScroll;
+      const scatterEase = scatter * scatter;
 
       for (let i = 0; i < this.particles.length; i++) {
         const p = this.particles[i];
         const t = Math.max(0, elapsed - p.delay) / FORMATION_DURATION;
-        const ease = t >= 1 ? 1 : 1 - Math.pow(1 - t, 3);
+        const formEase = t >= 1 ? 1 : 1 - Math.pow(1 - t, 3);
 
-        pos.array[i * 3] = p.startX + (p.targetX - p.startX) * ease;
-        pos.array[i * 3 + 1] = p.startY + (p.targetY - p.startY) * ease;
-        pos.array[i * 3 + 2] = p.startZ * (1 - ease);
+        let px = p.startX + (p.targetX - p.startX) * formEase;
+        let py = p.startY + (p.targetY - p.startY) * formEase;
+        let pz = p.startZ * (1 - formEase);
 
-        if (ease >= 1) {
+        if (formEase >= 1 && scatter < 0.01) {
           const drift = Math.sin(elapsed * 0.4 + i * 0.3) * 0.02;
-          pos.array[i * 3] += drift;
-          pos.array[i * 3 + 1] += Math.cos(elapsed * 0.35 + i * 0.2) * 0.015;
+          px += drift;
+          py += Math.cos(elapsed * 0.35 + i * 0.2) * 0.015;
         }
 
-        alphaAttr.array[i] = Math.min(1, t * 1.5) * p.alpha;
+        if (scatter > 0.01 && formEase >= 0.5) {
+          const scrollSpin = elapsed * 0.3 + i * 0.5;
+          px += p.scatterX * scatterEase + Math.sin(scrollSpin) * scatter * 0.3;
+          py += p.scatterY * scatterEase + Math.cos(scrollSpin * 0.7) * scatter * 0.2;
+          pz += p.scatterZ * scatterEase;
+        }
+
+        pos.array[i * 3] = px;
+        pos.array[i * 3 + 1] = py;
+        pos.array[i * 3 + 2] = pz;
+
+        const baseAlpha = Math.min(1, t * 1.5) * p.alpha;
+        const fadeOut = Math.max(0, 1 - scatter * 1.8);
+        alphaAttr.array[i] = baseAlpha * fadeOut;
+
+        sizeAttr.array[i] = p.size * (1 + scatter * 1.5);
       }
 
       pos.needsUpdate = true;
       alphaAttr.needsUpdate = true;
+      sizeAttr.needsUpdate = true;
     }
 
     this.smoothGyro.x += (this.gyro.x * 0.1 - this.smoothGyro.x) * 0.03;
@@ -374,6 +408,5 @@ export class MobileLandingScene {
     }
 
     this.renderer.dispose();
-    this.renderer.forceContextLoss();
   }
 }

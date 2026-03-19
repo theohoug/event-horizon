@@ -75,7 +75,11 @@ function render() {
       <div class="ml-hero-spacer"></div>
 
       <div class="ml-scroll-cue">
-        <div class="ml-scroll-cue-line"></div>
+        <span class="ml-scroll-cue-text">SCROLL</span>
+        <div class="ml-scroll-cue-arrow">
+          <span></span>
+          <span></span>
+        </div>
       </div>
 
       <div class="ml-main-message">

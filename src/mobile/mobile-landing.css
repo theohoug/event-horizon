@@ -107,24 +107,50 @@
 
 .ml-scroll-cue {
   display: flex;
-  justify-content: center;
-  margin-bottom: 2.5rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
   opacity: 0;
-  animation: ml-fade-in 1s ease 4.5s forwards;
+  animation: ml-fade-in 1.2s ease 4s forwards;
 }
 
-.ml-scroll-cue-line {
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(180deg, var(--ml-accent), transparent);
-  opacity: 0.4;
-  animation: ml-scroll-pulse 2.5s ease-in-out infinite;
-  animation-delay: 5s;
+.ml-scroll-cue-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.35em;
+  color: var(--ml-accent);
+  text-transform: uppercase;
+  opacity: 0.6;
 }
 
-@keyframes ml-scroll-pulse {
-  0%, 100% { opacity: 0.4; transform: scaleY(1); }
-  50% { opacity: 0.15; transform: scaleY(0.6); }
+.ml-scroll-cue-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  animation: ml-bounce 2s ease-in-out infinite;
+  animation-delay: 4.5s;
+}
+
+.ml-scroll-cue-arrow span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-right: 1px solid var(--ml-accent);
+  border-bottom: 1px solid var(--ml-accent);
+  transform: rotate(45deg);
+  opacity: 0.5;
+}
+
+.ml-scroll-cue-arrow span:nth-child(2) {
+  opacity: 0.3;
+  margin-top: -6px;
+}
+
+@keyframes ml-bounce {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(8px); opacity: 0.4; }
 }
 
 @keyframes ml-fade-in {

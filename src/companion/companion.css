@@ -177,17 +177,49 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
   gap: 0;
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.5rem 4rem;
   transition: opacity 0.6s ease;
+  position: relative;
 }
 
 #comp-waiting.hidden {
   opacity: 0;
   pointer-events: none;
   position: absolute;
+}
+
+/* ─── Waiting Stars Background ─── */
+
+#comp-waiting-stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.comp-wait-star {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 200, 150, 0.6);
+  box-shadow: 0 0 4px rgba(255, 179, 71, 0.3), 0 0 8px rgba(255, 179, 71, 0.15);
+  animation: comp-wait-star-twinkle 3s ease-in-out infinite;
+}
+
+@keyframes comp-wait-star-twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50% { opacity: 0.7; transform: scale(1.2); }
+}
+
+.comp-waiting-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 3rem;
+  position: relative;
+  z-index: 1;
 }
 
 .comp-waiting-signal {
@@ -289,27 +321,12 @@
   letter-spacing: 0.2em;
 }
 
-.comp-waiting-desc {
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.78rem;
-  line-height: 1.8;
-  color: rgba(255, 240, 224, 0.3);
-  max-width: 320px;
-  margin-bottom: 1.5rem;
-}
-
-.comp-waiting-line {
-  width: 30px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 179, 71, 0.15), transparent);
-  margin-bottom: 1.5rem;
-}
-
 .comp-waiting-hint {
   font-family: 'Outfit', sans-serif;
   font-size: 0.62rem;
   color: rgba(255, 240, 224, 0.2);
   letter-spacing: 0.06em;
+  margin-top: 1.2rem;
 }
 
 .comp-waiting-dots::after {
@@ -322,6 +339,159 @@
   25% { content: '.'; }
   50% { content: '..'; }
   75% { content: '...'; }
+}
+
+/* ─── Waiting Scroll Cue ─── */
+
+.comp-waiting-scroll-cue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 3rem;
+  position: relative;
+  z-index: 1;
+  animation: comp-scroll-cue-bounce 2s ease-in-out infinite;
+}
+
+.comp-waiting-scroll-cue span {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.45rem;
+  letter-spacing: 0.3em;
+  color: rgba(255, 179, 71, 0.25);
+}
+
+.comp-waiting-scroll-cue svg {
+  color: rgba(255, 179, 71, 0.2);
+}
+
+.comp-waiting-scroll-line {
+  width: 1px;
+  height: 30px;
+  background: linear-gradient(180deg, transparent, rgba(255, 179, 71, 0.2));
+}
+
+@keyframes comp-scroll-cue-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+/* ─── Waiting Scrollable Sections ─── */
+
+.comp-waiting-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2.5rem;
+  width: 100%;
+  max-width: 340px;
+  text-align: left;
+  position: relative;
+  z-index: 1;
+}
+
+.comp-waiting-section {
+  padding: 1.2rem;
+  border: 1px solid var(--comp-faint);
+  border-radius: 12px;
+  background: rgba(255, 240, 224, 0.015);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.comp-waiting-section-num {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--comp-accent);
+  opacity: 0.1;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.comp-waiting-section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--comp-accent);
+  opacity: 0.7;
+  margin-bottom: 0.6rem;
+}
+
+.comp-waiting-section-body {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.75;
+  color: rgba(255, 240, 224, 0.4);
+}
+
+/* ─── Waiting Bottom ─── */
+
+.comp-waiting-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.comp-waiting-desc {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.72rem;
+  line-height: 1.8;
+  color: rgba(255, 240, 224, 0.2);
+  max-width: 320px;
+  text-align: center;
+}
+
+.comp-waiting-line {
+  width: 30px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 179, 71, 0.15), transparent);
+  margin-bottom: 1.5rem;
+}
+
+/* ─── Warp Animation (Return to Surface) ─── */
+
+#comp-warp {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: radial-gradient(ellipse at center, rgba(5, 5, 8, 0.95) 0%, #030305 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+#comp-warp.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.comp-warp-star {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 220, 170, 0.9);
+  box-shadow: 0 0 4px rgba(255, 179, 71, 0.6), 0 0 12px rgba(255, 179, 71, 0.3);
+  animation: comp-warp-streak 2s ease-in infinite;
+}
+
+@keyframes comp-warp-streak {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scaleX(3);
+    opacity: 0;
+  }
 }
 
 /* ─── Main Content ─── */

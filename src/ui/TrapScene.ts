@@ -159,8 +159,8 @@ export class TrapScene {
         startX,
         startY,
         startZ,
-        size: 0.5 + Math.random() * 0.9,
-        alpha: 0.3 + Math.random() * 0.5,
+        size: 0.7 + Math.random() * 1.1,
+        alpha: 0.45 + Math.random() * 0.45,
         delay: Math.random() * 0.8,
       };
       this.particles.push(particle);

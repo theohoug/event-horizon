@@ -34,7 +34,7 @@ interface Translations {
   tryScrollBack: string;
   tutorial: { scrollDesktop: string; scrollMobile: string; arrows: string };
   pause: { paused: string; resume: string };
-  trap: { text: string; sub: string; accept: string; share: string };
+  trap: { text: string; sub: string; accept: string; share: string; return: string };
   alteredChapters: { title: string; subtitle: string }[];
   alteredChapterNames: string[];
   alteredInterstitials: string[];
@@ -159,7 +159,7 @@ const en: Translations = {
   tryScrollBack: 'Try scrolling back up...',
   tutorial: { scrollDesktop: 'Scroll to descend', scrollMobile: 'Swipe to descend', arrows: 'Arrow keys to navigate' },
   pause: { paused: 'PAUSED', resume: 'Press Space or tap to resume' },
-  trap: { text: 'You are trapped.\nThe surface no longer exists.\nNothing escapes this place.', sub: 'Not even you.', accept: 'Accept the void', share: 'Share to escape' },
+  trap: { text: 'You are trapped.\nThe surface no longer exists.\nNothing escapes this place.', sub: 'Not even you.', accept: 'Accept the void', share: 'Share to escape', return: 'Return to the Surface' },
   alteredChapters: [
     { title: 'YOU AGAIN', subtitle: 'You stood here before.\nThe atoms remember your shape.' },
     { title: 'THE PULL REMEMBERS', subtitle: 'It recognized you the moment you returned.\nGravity never forgets a face.' },
@@ -359,7 +359,7 @@ const fr: Translations = {
   tryScrollBack: 'Essayez de remonter...',
   tutorial: { scrollDesktop: 'Scrollez pour descendre', scrollMobile: 'Glissez pour descendre', arrows: 'Flèches pour naviguer' },
   pause: { paused: 'PAUSE', resume: 'Espace ou tap pour reprendre' },
-  trap: { text: 'Tu es piégé.\nLa surface n\'existe plus.\nRien ne s\'échappe d\'ici.', sub: 'Pas même toi.', accept: 'Accepter le vide', share: 'Partager pour s\'échapper' },
+  trap: { text: 'Tu es piégé.\nLa surface n\'existe plus.\nRien ne s\'échappe d\'ici.', sub: 'Pas même toi.', accept: 'Accepter le vide', share: 'Partager pour s\'échapper', return: 'Remonter à la Surface' },
   alteredChapters: [
     { title: 'TOI, ENCORE', subtitle: 'Tu étais déjà là.\nLes atomes se souviennent de ta forme.' },
     { title: 'L\'ATTRACTION SE SOUVIENT', subtitle: 'Elle t\'a reconnu dès ton retour.\nLa gravité n\'oublie jamais un visage.' },

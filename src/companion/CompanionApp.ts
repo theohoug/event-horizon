@@ -47,6 +47,15 @@ const LABELS = {
     waitingHint: 'Waiting for the desktop to begin the descent',
     waitingDesc: 'When the experience starts on desktop, this screen will transform into a live scientific companion. Real-time telemetry, chapter-by-chapter astrophysics documentation, and mission data synced to the journey.',
     waitingReady: 'SIGNAL LOCKED',
+    waitingScrollHint: 'SCROLL',
+    waitingSection1Title: 'THE EXPERIENCE',
+    waitingSection1: 'A real-time WebGL journey into a supermassive black hole. Every visual, every sound, every data point is computed live on your screen.',
+    waitingSection2Title: 'YOUR COMPANION',
+    waitingSection2: 'This phone becomes a live scientific console. Real-time telemetry, astrophysics documentation synced to each chapter of the descent.',
+    waitingSection3Title: 'THE SCIENCE',
+    waitingSection3: '9 chapters of real physics \u2014 from the photon sphere to the singularity. Schwarzschild metrics, Hawking radiation, spaghettification. All grounded in peer-reviewed research.',
+    waitingSection4Title: 'BEYOND THE HORIZON',
+    waitingSection4: 'What happens when you cross the point of no return? The experience doesn\u2019t end \u2014 it loops. Each visit reveals new layers, altered realities, hidden paths.',
     whatYouSee: 'WHAT YOU\u2019RE SEEING',
     funFact: 'DID YOU KNOW?',
     distance: 'DISTANCE',
@@ -78,6 +87,15 @@ const LABELS = {
     waitingHint: 'En attente du d\u00E9but de la descente sur le bureau',
     waitingDesc: 'Quand l\u2019exp\u00E9rience d\u00E9marre sur le bureau, cet \u00E9cran se transforme en compagnon scientifique. T\u00E9l\u00E9m\u00E9trie en direct, documentation astrophysique chapitre par chapitre, donn\u00E9es de mission synchronis\u00E9es.',
     waitingReady: 'SIGNAL VERROUILL\u00C9',
+    waitingScrollHint: 'D\u00C9FILER',
+    waitingSection1Title: 'L\u2019EXP\u00C9RIENCE',
+    waitingSection1: 'Un voyage WebGL en temps r\u00E9el au c\u0153ur d\u2019un trou noir supermassif. Chaque visuel, chaque son, chaque donn\u00E9e est calcul\u00E9 en direct sur votre \u00E9cran.',
+    waitingSection2Title: 'VOTRE COMPAGNON',
+    waitingSection2: 'Ce t\u00E9l\u00E9phone devient une console scientifique en direct. T\u00E9l\u00E9m\u00E9trie temps r\u00E9el, documentation astrophysique synchronis\u00E9e \u00E0 chaque chapitre de la descente.',
+    waitingSection3Title: 'LA SCIENCE',
+    waitingSection3: '9 chapitres de vraie physique \u2014 de la sph\u00E8re de photons \u00E0 la singularit\u00E9. M\u00E9triques de Schwarzschild, rayonnement de Hawking, spaghettification. Tout fond\u00E9 sur des recherches publi\u00E9es.',
+    waitingSection4Title: 'AU-DEL\u00C0 DE L\u2019HORIZON',
+    waitingSection4: 'Que se passe-t-il quand on franchit le point de non-retour ? L\u2019exp\u00E9rience ne s\u2019arr\u00EAte pas \u2014 elle boucle. Chaque visite r\u00E9v\u00E8le de nouvelles couches, des r\u00E9alit\u00E9s alt\u00E9r\u00E9es, des chemins cach\u00E9s.',
     whatYouSee: 'CE QUE VOUS VOYEZ',
     funFact: 'LE SAVIEZ-VOUS ?',
     distance: 'DISTANCE',
@@ -123,6 +141,8 @@ export async function init(roomId: string) {
   const burst = document.createElement('div');
   burst.id = 'comp-transition-burst';
   root.appendChild(burst);
+
+  createWaitingStars();
 
   const hub = new BroadcastHub();
   let currentChapter = -1;
@@ -177,6 +197,25 @@ export async function init(roomId: string) {
 
     if (navigator.vibrate) navigator.vibrate(50);
 
+    root.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  hub.on('scrollback', () => {
+    showWarpAnimation();
+  });
+
+  hub.on('surfaced', () => {
+    endWarpAnimation();
+    archiveShown = false;
+    currentChapter = -1;
+    receivedChapters.clear();
+    main.classList.add('hidden');
+    const archiveEl = document.getElementById('comp-archive');
+    if (archiveEl) archiveEl.classList.add('hidden');
+    waiting.classList.remove('hidden');
+    dot.classList.remove('live');
+    dot.classList.add('connected');
+    statusText.textContent = labels.waiting;
     root.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
@@ -358,6 +397,71 @@ function triggerChapterTransition(color: string) {
   }
 }
 
+function showWarpAnimation() {
+  let warp = document.getElementById('comp-warp');
+  if (!warp) {
+    warp = document.createElement('div');
+    warp.id = 'comp-warp';
+    document.getElementById('companion-root')?.appendChild(warp);
+  }
+
+  warp.innerHTML = '';
+
+  const starCount = 80;
+  for (let i = 0; i < starCount; i++) {
+    const star = document.createElement('div');
+    star.className = 'comp-warp-star';
+    const angle = Math.random() * Math.PI * 2;
+    const startDist = 5 + Math.random() * 15;
+    const endDist = 60 + Math.random() * 80;
+    const startX = 50 + Math.cos(angle) * startDist;
+    const startY = 50 + Math.sin(angle) * startDist;
+    const tx = Math.cos(angle) * endDist;
+    const ty = Math.sin(angle) * endDist;
+    const delay = Math.random() * 0.8;
+    const duration = 1.5 + Math.random() * 1.5;
+    const size = 1 + Math.random() * 2;
+    star.style.cssText = `left:${startX}%;top:${startY}%;width:${size}px;height:${size}px;--tx:${tx}vw;--ty:${ty}vh;animation-delay:${delay}s;animation-duration:${duration}s;`;
+    warp.appendChild(star);
+  }
+
+  warp.classList.add('active');
+
+  const main = document.getElementById('comp-main');
+  const archiveEl = document.getElementById('comp-archive');
+  if (main) main.classList.add('hidden');
+  if (archiveEl) archiveEl.classList.add('hidden');
+
+  const waiting = document.getElementById('comp-waiting');
+  if (waiting) waiting.classList.add('hidden');
+}
+
+function endWarpAnimation() {
+  const warp = document.getElementById('comp-warp');
+  if (warp) {
+    warp.classList.remove('active');
+    setTimeout(() => { warp.innerHTML = ''; }, 800);
+  }
+}
+
+function createWaitingStars() {
+  const container = document.getElementById('comp-waiting-stars');
+  if (!container) return;
+  const count = 50;
+  for (let i = 0; i < count; i++) {
+    const star = document.createElement('div');
+    star.className = 'comp-wait-star';
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.top = `${Math.random() * 100}%`;
+    star.style.animationDelay = `${Math.random() * 5}s`;
+    star.style.animationDuration = `${2 + Math.random() * 4}s`;
+    const size = 1 + Math.random() * 2;
+    star.style.width = `${size}px`;
+    star.style.height = `${size}px`;
+    container.appendChild(star);
+  }
+}
+
 function buildHTML(roomId: string, l: typeof LABELS['en']): string {
   return `
     <div id="comp-bg"></div>
@@ -372,21 +476,57 @@ function buildHTML(roomId: string, l: typeof LABELS['en']): string {
       </header>
 
       <div id="comp-waiting">
-        <div class="comp-waiting-signal">
-          <div class="comp-signal-ring comp-ring-1"></div>
-          <div class="comp-signal-ring comp-ring-2"></div>
-          <div class="comp-signal-ring comp-ring-3"></div>
-          <div class="comp-signal-core"></div>
+        <div id="comp-waiting-stars"></div>
+
+        <div class="comp-waiting-top">
+          <div class="comp-waiting-signal">
+            <div class="comp-signal-ring comp-ring-1"></div>
+            <div class="comp-signal-ring comp-ring-2"></div>
+            <div class="comp-signal-ring comp-ring-3"></div>
+            <div class="comp-signal-core"></div>
+          </div>
+          <div class="comp-waiting-badge">${l.waitingReady}</div>
+          <div class="comp-waiting-title">${l.waitingTitle}</div>
+          <div class="comp-waiting-room">
+            <span class="comp-waiting-room-label">${l.waitingSub}</span>
+            <span class="comp-waiting-room-code">${roomId}</span>
+          </div>
+          <div class="comp-waiting-hint">${l.waitingHint}<span class="comp-waiting-dots"></span></div>
         </div>
-        <div class="comp-waiting-badge">${l.waitingReady}</div>
-        <div class="comp-waiting-title">${l.waitingTitle}</div>
-        <div class="comp-waiting-room">
-          <span class="comp-waiting-room-label">${l.waitingSub}</span>
-          <span class="comp-waiting-room-code">${roomId}</span>
+
+        <div class="comp-waiting-scroll-cue">
+          <div class="comp-waiting-scroll-line"></div>
+          <span>${l.waitingScrollHint || 'SCROLL'}</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M7 13l5 5 5-5"/><path d="M7 6l5 5 5-5"/></svg>
         </div>
-        <div class="comp-waiting-desc">${l.waitingDesc}</div>
-        <div class="comp-waiting-line"></div>
-        <div class="comp-waiting-hint">${l.waitingHint}<span class="comp-waiting-dots"></span></div>
+
+        <div class="comp-waiting-sections">
+          <div class="comp-waiting-section">
+            <div class="comp-waiting-section-num">01</div>
+            <div class="comp-waiting-section-title">${l.waitingSection1Title || 'THE EXPERIENCE'}</div>
+            <div class="comp-waiting-section-body">${l.waitingSection1 || 'A real-time WebGL journey into a supermassive black hole. Every visual, every sound, every data point is computed live on your screen.'}</div>
+          </div>
+          <div class="comp-waiting-section">
+            <div class="comp-waiting-section-num">02</div>
+            <div class="comp-waiting-section-title">${l.waitingSection2Title || 'YOUR COMPANION'}</div>
+            <div class="comp-waiting-section-body">${l.waitingSection2 || 'This phone becomes a live scientific console. Real-time telemetry, astrophysics documentation synced to each chapter of the descent.'}</div>
+          </div>
+          <div class="comp-waiting-section">
+            <div class="comp-waiting-section-num">03</div>
+            <div class="comp-waiting-section-title">${l.waitingSection3Title || 'THE SCIENCE'}</div>
+            <div class="comp-waiting-section-body">${l.waitingSection3 || '9 chapters of real physics — from the photon sphere to the singularity. Schwarzschild metrics, Hawking radiation, spaghettification. All grounded in peer-reviewed research.'}</div>
+          </div>
+          <div class="comp-waiting-section">
+            <div class="comp-waiting-section-num">04</div>
+            <div class="comp-waiting-section-title">${l.waitingSection4Title || 'BEYOND THE HORIZON'}</div>
+            <div class="comp-waiting-section-body">${l.waitingSection4 || 'What happens when you cross the point of no return? The experience doesn\u2019t end \u2014 it loops. Each visit reveals new layers, altered realities, hidden paths.'}</div>
+          </div>
+        </div>
+
+        <div class="comp-waiting-bottom">
+          <div class="comp-waiting-line"></div>
+          <div class="comp-waiting-desc">${l.waitingDesc}</div>
+        </div>
       </div>
 
       <main id="comp-main" class="hidden">

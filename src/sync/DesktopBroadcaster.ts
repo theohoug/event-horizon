@@ -71,6 +71,14 @@ export class DesktopBroadcaster {
     this.hub.send('meta', data as unknown as Record<string, unknown>);
   }
 
+  sendScrollback() {
+    this.hub.send('scrollback', { timestamp: Date.now() });
+  }
+
+  sendSurfaced() {
+    this.hub.send('surfaced', { timestamp: Date.now() });
+  }
+
   destroy() {
     this.hub.destroy();
   }

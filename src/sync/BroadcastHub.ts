@@ -8,7 +8,7 @@
 const SUPABASE_URL = 'https://uqqdxumehqmhwotgggqi.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxcWR4dW1laHFtaHdvdGdnZ3FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1Mjg4ODIsImV4cCI6MjA4NTEwNDg4Mn0.9HXL-9ceR-zYISblHRMeYEMl-7Uis4RNMJoCCG00At8';
 
-export type BroadcastEvent = 'state' | 'chapter' | 'meta';
+export type BroadcastEvent = 'state' | 'chapter' | 'meta' | 'scrollback' | 'surfaced';
 export type PresenceEvent = 'companion_join' | 'companion_leave';
 export type BroadcastCallback = (payload: Record<string, unknown>) => void;
 export type PresenceCallback = () => void;
@@ -42,6 +42,12 @@ export class BroadcastHub {
     });
     this.channel.on('broadcast', { event: 'meta' }, ({ payload }) => {
       this.emit('meta', payload);
+    });
+    this.channel.on('broadcast', { event: 'scrollback' }, ({ payload }) => {
+      this.emit('scrollback', payload);
+    });
+    this.channel.on('broadcast', { event: 'surfaced' }, ({ payload }) => {
+      this.emit('surfaced', payload);
     });
 
     this.channel.on('presence', { event: 'join' }, ({ key }) => {

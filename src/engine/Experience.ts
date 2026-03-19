@@ -2797,7 +2797,6 @@ gl_FragColor=vec4(col,1.0);}`;
     const trapText = document.getElementById('trap-text');
     const trapSub = document.getElementById('trap-sub');
     const trapAccept = document.getElementById('trap-accept');
-    const trapShare = document.getElementById('trap-share');
     const trapChoices = document.getElementById('trap-choices');
 
     if (this.isHardcoreMode) {
@@ -2805,19 +2804,16 @@ gl_FragColor=vec4(col,1.0);}`;
       if (trapText) trapText.textContent = tr.hardcoreTrap.text;
       if (trapSub) trapSub.textContent = tr.hardcoreTrap.sub;
       if (trapAccept) trapAccept.textContent = tr.hardcoreTrap.accept;
-      if (trapShare) trapShare.style.display = 'none';
     } else if (this.isAlteredMode) {
       if (trapSubTop) trapSubTop.textContent = 'EVENT HORIZON';
       if (trapText) trapText.textContent = tr.alteredTrap.text;
       if (trapSub) trapSub.textContent = tr.alteredTrap.sub;
       if (trapAccept) trapAccept.textContent = tr.alteredTrap.accept;
-      if (trapShare) trapShare.style.display = 'none';
     } else {
       if (trapSubTop) trapSubTop.textContent = 'EVENT HORIZON';
       if (trapText) trapText.textContent = tr.trap.text;
       if (trapSub) trapSub.textContent = tr.trap.sub;
-      if (trapAccept) trapAccept.textContent = tr.trap.accept;
-      if (trapShare) trapShare.textContent = tr.trap.share;
+      if (trapAccept) trapAccept.textContent = tr.trap.return || 'Return to the Surface';
     }
 
     trap.classList.add('visible');
@@ -2854,42 +2850,6 @@ gl_FragColor=vec4(col,1.0);}`;
         this.trapScene = null;
       }
     };
-
-    if (trapShare) {
-      const handleShare = async () => {
-        const url = window.location.origin + window.location.pathname;
-        const anomalyMsg = tr.shareAnomaly;
-        const shareData = {
-          title: `Event Horizon — ${tr.introSubtitle}`,
-          text: tr.share.text,
-          url,
-        };
-        const onShared = () => {
-          const prev = parseInt(localStorage.getItem('eh_shares') || '0', 10);
-          localStorage.setItem('eh_shares', String(prev + 1));
-          this.updateShareCount();
-          dismissTrap();
-          this.startGlitchedScrollback();
-        };
-        if (navigator.share && navigator.canShare?.(shareData)) {
-          try {
-            await navigator.share(shareData);
-            onShared();
-          } catch {}
-        } else {
-          const clipText = `${url} ... ${anomalyMsg}`;
-          navigator.clipboard.writeText(clipText).then(() => {
-            trapShare.textContent = t().share.copied;
-            onShared();
-          }).catch(() => {
-            trapShare.textContent = url;
-            setTimeout(() => { trapShare.textContent = tr.trap.share; }, 3000);
-          });
-        }
-        trapShare.removeEventListener('click', handleShare);
-      };
-      trapShare.addEventListener('click', handleShare);
-    }
 
     if (trapAccept) {
       const handleAccept = () => {
@@ -2975,6 +2935,11 @@ gl_FragColor=vec4(col,1.0);}`;
       document.body.classList.remove('credits-white');
       this.whiteModeActive = false;
     }
+
+    const returnWrap = document.getElementById('return-wrap');
+    if (returnWrap) { returnWrap.style.display = 'none'; returnWrap.classList.remove('alive'); }
+
+    if (this.broadcaster) this.broadcaster.sendScrollback();
 
     const animateScrollback = (now: number) => {
       const elapsed = now - startTime;
@@ -3081,6 +3046,7 @@ gl_FragColor=vec4(col,1.0);}`;
         if (dataHud) dataHud.classList.add('visible');
         if (this.navEl) this.navEl.classList.add('visible');
 
+        if (this.broadcaster) this.broadcaster.sendSurfaced();
         setTimeout(() => this.showScrollOverlay(), 1000);
       }
     };

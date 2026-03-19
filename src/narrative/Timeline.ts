@@ -75,10 +75,10 @@ export class Timeline {
     const returnGlow = document.getElementById('return-glow');
     const returnRing = document.getElementById('return-ring');
     const returnBtn = document.getElementById('return-btn');
-    if (returnWrap) { returnWrap.classList.remove('alive'); gsap.set(returnWrap, { clearProps: 'all' }); }
-    if (returnGlow) gsap.set(returnGlow, { clearProps: 'all' });
-    if (returnRing) gsap.set(returnRing, { clearProps: 'all' });
-    if (returnBtn) gsap.set(returnBtn, { clearProps: 'all' });
+    if (returnWrap) { returnWrap.classList.remove('alive'); gsap.set(returnWrap, { clearProps: 'all', opacity: 0, display: 'none' }); }
+    if (returnGlow) gsap.set(returnGlow, { clearProps: 'all', opacity: 0 });
+    if (returnRing) gsap.set(returnRing, { clearProps: 'all', opacity: 0 });
+    if (returnBtn) gsap.set(returnBtn, { clearProps: 'all', opacity: 0 });
   }
 
   refreshCurrentChapter(scroll: number, chapterIndex?: number, lockMs?: number) {
@@ -253,6 +253,8 @@ export class Timeline {
     const returnBtn = document.getElementById('return-btn');
 
     if (returnWrap && returnBtn) {
+      gsap.set(returnWrap, { display: 'inline-block' });
+
       this.creditsTl.fromTo(returnGlow || returnWrap,
         { opacity: 0, scale: 0.3 },
         { opacity: 1, scale: 1, duration: 2.0, ease: 'power2.out' },
@@ -298,6 +300,15 @@ export class Timeline {
 
     const overlay = document.getElementById('overlay');
     if (overlay) overlay.classList.remove('hidden');
+
+    const returnWrap = document.getElementById('return-wrap');
+    const returnGlow = document.getElementById('return-glow');
+    const returnRing = document.getElementById('return-ring');
+    const returnBtn = document.getElementById('return-btn');
+    if (returnWrap) { returnWrap.classList.remove('alive'); gsap.set(returnWrap, { clearProps: 'all', opacity: 0, display: 'none' }); }
+    if (returnGlow) gsap.set(returnGlow, { clearProps: 'all', opacity: 0 });
+    if (returnRing) gsap.set(returnRing, { clearProps: 'all', opacity: 0 });
+    if (returnBtn) gsap.set(returnBtn, { clearProps: 'all', opacity: 0 });
   }
 
   private showChapter(chapter: Chapter) {

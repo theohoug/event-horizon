@@ -158,6 +158,9 @@ void main() {
   float motionBlurStrength = (min(absVel * 0.0008, 0.06) * uScroll + uScroll * 0.004) * uMotionBlur * scrollBlurBoost;
 
   vec3 color;
+  if (chromaticAmount < 0.001 && motionBlurStrength < 0.001) {
+    color = texture2D(tDiffuse, distortedUv).rgb;
+  } else {
 #ifdef QUALITY_MEDIUM
   if (motionBlurStrength > 0.001) {
     vec3 spectralM = vec3(0.0);
@@ -218,6 +221,7 @@ void main() {
     color = spectral / totalW;
   }
 #endif
+  }
 
   vec3 bloom = texture2D(tBloom, vUv).rgb;
   vec3 bloomEarly = vec3(1.05, 0.97, 0.92);

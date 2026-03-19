@@ -617,6 +617,12 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
     if (float(i) >= effectiveSteps) break;
     float r = length(pos);
 
+    // Early exit: if far away and moving outward, skip remaining steps
+    if (i > 10 && r > 25.0) {
+      float radialVel = dot(normalize(pos), vel);
+      if (radialVel > 0.5) break;
+    }
+
     float captureR = dynSR * 0.15;
     if (captureR > 0.005 && r < captureR) {
       vec3 velN = normalize(vel);

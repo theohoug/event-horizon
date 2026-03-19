@@ -1610,20 +1610,20 @@ gl_FragColor=vec4(col,1.0);}`;
       }
 
       const lerpRing = () => {
-        cursorPos.x += (mouseX - cursorPos.x) * 0.35;
-        cursorPos.y += (mouseY - cursorPos.y) * 0.35;
+        cursorPos.x += (mouseX - cursorPos.x) * 0.5;
+        cursorPos.y += (mouseY - cursorPos.y) * 0.5;
         if (this.cursor) {
           this.cursor.style.left = `${cursorPos.x}px`;
           this.cursor.style.top = `${cursorPos.y}px`;
         }
 
-        ringPos.x += (mouseX - ringPos.x) * 0.12;
-        ringPos.y += (mouseY - ringPos.y) * 0.12;
+        ringPos.x += (mouseX - ringPos.x) * 0.18;
+        ringPos.y += (mouseY - ringPos.y) * 0.18;
         ring.style.left = `${ringPos.x}px`;
         ring.style.top = `${ringPos.y}px`;
 
         this.trailFrame++;
-        if (this.trailFrame % 2 === 0) {
+        if (this.trailFrame % 2 === 0 && this.adaptiveLevel < 3) {
           const dx = mouseX - this.trailLastX;
           const dy = mouseY - this.trailLastY;
           const speed = Math.sqrt(dx * dx + dy * dy);
@@ -1940,14 +1940,14 @@ gl_FragColor=vec4(col,1.0);}`;
     const minDpr = this.isMobileDevice ? 0.75 : 1.0;
 
     switch (this.adaptiveLevel) {
-      case 1: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.25); break;
-      case 2: this.adaptiveBloomPasses = 3; this.adaptiveBloomScale = 0.40; break;
-      case 3: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.5); break;
-      case 4: this.adaptiveMaxSteps = 120; break;
-      case 5: this.adaptiveBloomPasses = 2; this.adaptiveBloomScale = 0.30; break;
-      case 6: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.75); this.adaptiveMaxSteps = 110; break;
-      case 7: this.adaptiveBloomPasses = 1; this.adaptiveBloomScale = 0.20; this.adaptiveMaxSteps = 100; break;
-      case 8: this.adaptiveDpr = minDpr; this.adaptiveMaxSteps = 100; break;
+      case 1: this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 120); break;
+      case 2: this.adaptiveBloomPasses = Math.min(this.adaptiveBloomPasses, 3); this.adaptiveBloomScale = Math.min(this.adaptiveBloomScale, 0.35); break;
+      case 3: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.25); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 100); break;
+      case 4: this.adaptiveBloomPasses = Math.min(this.adaptiveBloomPasses, 2); this.adaptiveBloomScale = Math.min(this.adaptiveBloomScale, 0.25); break;
+      case 5: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.5); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 80); break;
+      case 6: this.adaptiveBloomPasses = 1; this.adaptiveBloomScale = 0.20; break;
+      case 7: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.75); this.adaptiveMaxSteps = 64; break;
+      case 8: this.adaptiveDpr = minDpr; this.adaptiveMaxSteps = 48; break;
     }
     if (emergency && this.adaptiveLevel < 8) {
       this.adaptiveLevel++;
@@ -2015,7 +2015,7 @@ gl_FragColor=vec4(col,1.0);}`;
       return;
     }
 
-    if (now - this.fpsLastTime > 500) {
+    if (now - this.fpsLastTime > 300) {
       this.fpsValue = Math.round(this.fpsFrames * (1000 / (now - this.fpsLastTime)));
       this.fpsFrames = 0;
       this.fpsLastTime = now;
@@ -2029,13 +2029,13 @@ gl_FragColor=vec4(col,1.0);}`;
         this.fpsStableCount++;
       }
 
-      if (this.lowFpsCount >= (this.isMobileDevice ? 2 : 3) && this.adaptiveLevel < 8) {
+      if (this.lowFpsCount >= 2 && this.adaptiveLevel < 8) {
         this.adaptiveDowngrade(false);
         this.lowFpsCount = 0;
         this.fpsStableCount = 0;
       }
 
-      if (this.fpsStableCount >= 16 && this.adaptiveLevel > 0) {
+      if (this.fpsStableCount >= 24 && this.adaptiveLevel > 0) {
         this.adaptiveUpgrade();
         this.fpsStableCount = 0;
       }
@@ -2053,7 +2053,7 @@ gl_FragColor=vec4(col,1.0);}`;
       this.state.scroll = Math.max(0, Math.min(1, this.state.scroll));
     }
 
-    this.state.mouseSmooth.lerp(this.state.mouse, 0.08);
+    this.state.mouseSmooth.lerp(this.state.mouse, 0.12);
 
     if (this.cursor) {
       const creditsVisible = this.creditsEl?.classList.contains('visible') ?? false;
@@ -2186,7 +2186,10 @@ gl_FragColor=vec4(col,1.0);}`;
     (this.state as any).isHardcore = this.isHardcoreMode;
     (this.state as any).enterPulse = this.enterPulse;
     this.blackHole.update(this.state as any);
-    if (this.particles) this.particles.update(this.state);
+    if (this.particles) {
+      const skipGpgpu = this.adaptiveLevel >= 4 && (this.fpsFrames & 1) === 0;
+      if (!skipGpgpu) this.particles.update(this.state);
+    }
     this.starfield.update(this.state);
     this.postProcessing.updateCamera(this.state.scroll, elapsed, this.state.introProgress, this.state.mouseSmooth.x, this.state.mouseSmooth.y);
 
@@ -2196,7 +2199,9 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     this.textReveal.setMouse(this.state.mouseSmooth.x, 1 - this.state.mouseSmooth.y);
-    this.textReveal.update(this.state.scroll);
+    if (this.adaptiveLevel < 5 || (this.fpsFrames & 1) === 0) {
+      this.textReveal.update(this.state.scroll);
+    }
 
     const velocityShake = Math.min(Math.abs(this.state.scrollVelocity) * 0.0003, 0.002);
     const flashShake = this.chapterFlash * 0.004;

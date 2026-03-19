@@ -6,7 +6,7 @@
 
 import * as THREE from 'three';
 
-const TEXT_PARTICLE_COUNT = 800;
+const TEXT_PARTICLE_COUNT = 1200;
 const BG_STAR_COUNT = 2000;
 const FORMATION_DURATION = 4.0;
 const CAM_FOV = 50;
@@ -159,8 +159,8 @@ export class TrapScene {
         startX,
         startY,
         startZ,
-        size: 1.5 + Math.random() * 2.5,
-        alpha: 0.5 + Math.random() * 0.5,
+        size: 0.5 + Math.random() * 0.9,
+        alpha: 0.3 + Math.random() * 0.5,
         delay: Math.random() * 0.8,
       };
       this.particles.push(particle);
@@ -190,18 +190,20 @@ export class TrapScene {
           vAlpha = alpha;
           vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
           gl_Position = projectionMatrix * mvPos;
-          gl_PointSize = size * (200.0 / -mvPos.z);
+          gl_PointSize = size * uPixelRatio * (18.0 / -mvPos.z);
         }
       `,
       fragmentShader: `
         varying float vAlpha;
         void main() {
-          float d = length(gl_PointCoord - 0.5) * 2.0;
-          float core = smoothstep(0.5, 0.0, d);
-          float glow = exp(-d * d * 2.0);
-          float brightness = core + glow * 0.6;
-          vec3 warm = mix(vec3(0.9, 0.45, 0.15), vec3(1.0, 0.75, 0.35), core);
-          gl_FragColor = vec4(warm * brightness, vAlpha * brightness);
+          float d = length(gl_PointCoord - vec2(0.5));
+          if (d > 0.5) discard;
+          float glow = smoothstep(0.5, 0.05, d);
+          float core = smoothstep(0.12, 0.0, d);
+          vec3 warmColor = mix(vec3(0.95, 0.7, 0.4), vec3(1.0, 0.85, 0.55), core);
+          vec3 color = mix(warmColor * 0.6, vec3(1.0, 0.95, 0.88), core * 0.8);
+          float alpha = (core * 0.9 + glow * glow * 0.35) * vAlpha;
+          gl_FragColor = vec4(color, alpha);
         }
       `,
       transparent: true,

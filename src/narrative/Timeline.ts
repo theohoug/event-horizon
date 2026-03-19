@@ -633,27 +633,24 @@ export class Timeline {
 
     if (chapter.id === 5) {
       titleLine.className = 'line chapter-spaghetti';
-      titleLine.style.opacity = '1';
-      titleLine.style.filter = '';
       const el5 = titleLine;
       const chars5 = titleLine.querySelectorAll('.char');
       tl.fromTo(
         titleLine,
-        { scaleY: 0.3, scaleX: 1.6 },
-        { scaleY: 1, scaleX: 1, duration: 0.5, ease: 'elastic.out(1, 0.6)',
+        { opacity: 0, filter: 'blur(10px)', scaleY: 1.5, scaleX: 0.8 },
+        { opacity: 1, filter: 'blur(0px)', scaleY: 1, scaleX: 1, duration: 1.4, ease: 'power3.out',
           onComplete: () => this.clearInlineFilter(el5) },
         0
       );
-      chars5.forEach((c) => { (c as HTMLElement).style.opacity = '1'; });
       chars5.forEach((char, ci) => {
         tl.fromTo(char,
-          { scaleY: 2.5, scaleX: 0.4, y: -15 + Math.random() * 30 },
-          { scaleY: 1, scaleX: 1, y: 0, duration: 0.6 + Math.random() * 0.3,
-            ease: 'elastic.out(1, 0.5)', delay: ci * 0.02 },
-          0.05
+          { opacity: 0, scaleY: 2.0, scaleX: 0.5, y: -8 - ci * 1.5, filter: 'blur(3px)' },
+          { opacity: 1, scaleY: 1, scaleX: 1, y: 0, filter: 'blur(0px)',
+            duration: 0.9, ease: 'power2.out' },
+          0.2 + ci * 0.04
         );
       });
-      tl.add(() => this.markRevealed(chars5), 0.2);
+      tl.add(() => this.markRevealed(chars5), 1.0);
     } else if (chapter.id === 6) {
       titleLine.className = 'line chapter-vertical';
       const el6 = titleLine;

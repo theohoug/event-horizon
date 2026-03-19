@@ -742,17 +742,15 @@ body {
 }
 
 #chapter-text .line.chapter-spaghetti .char.revealed {
-  animation: char-spaghetti 2.8s ease-in-out infinite;
-  animation-delay: calc(var(--char-index, 0) * 0.08s);
+  animation: char-spaghetti 3.5s ease-in-out infinite;
+  animation-delay: calc(var(--char-index, 0) * 0.1s);
 }
 
 @keyframes char-spaghetti {
-  0%, 100% { transform: translateY(0) scaleY(1) scaleX(1); filter: blur(0px); }
-  15% { transform: translateY(-3px) scaleY(1.4) scaleX(0.75); filter: blur(0px); }
-  35% { transform: translateY(6px) scaleY(1.8) scaleX(0.6); filter: blur(0.4px); }
-  50% { transform: translateY(10px) scaleY(2.2) scaleX(0.5); filter: blur(0.6px); }
-  65% { transform: translateY(6px) scaleY(1.6) scaleX(0.7); filter: blur(0.3px); }
-  80% { transform: translateY(-2px) scaleY(1.2) scaleX(0.85); filter: blur(0px); }
+  0%, 100% { transform: translateY(0) scaleY(1) scaleX(1); }
+  20% { transform: translateY(-1px) scaleY(1.12) scaleX(0.93); }
+  45% { transform: translateY(2px) scaleY(1.22) scaleX(0.87); }
+  65% { transform: translateY(1px) scaleY(1.08) scaleX(0.96); }
 }
 
 .chapter[data-chapter="6"] #chapter-text .line .char.revealed {

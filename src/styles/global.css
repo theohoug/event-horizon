@@ -3909,10 +3909,18 @@ html.hardcore-mode .corner-ornament {
   }
 
   .cursor-trail,
+  .dust,
   #custom-cursor,
   #custom-cursor-ring,
-  #dust-layer {
+  #dust-layer,
+  #noise-grain {
     display: none !important;
+  }
+
+  #loader-star,
+  #loader-star::before,
+  #loader-star::after {
+    animation: none !important;
   }
 
   #chapter-text .line .char {
@@ -5030,38 +5038,6 @@ html.hardcore-mode .corner-ornament {
     text-shadow: none !important;
     animation: none !important;
     -webkit-text-fill-color: #111 !important;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  .dust,
-  .cursor-trail,
-  #custom-cursor,
-  #custom-cursor-ring,
-  #noise-grain {
-    display: none !important;
-  }
-
-  #loader-star {
-    animation: none !important;
-  }
-
-  #loader-star::before,
-  #loader-star::after {
-    animation: none !important;
-  }
-
-  #chapter-text .line .char {
-    animation: none !important;
-    opacity: 1 !important;
   }
 }
 

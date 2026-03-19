@@ -557,3 +557,13 @@
   line-height: 1.6;
   letter-spacing: 0.03em;
 }
+
+/* ─── Reduced Motion ─── */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

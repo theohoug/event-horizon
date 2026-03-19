@@ -1056,3 +1056,19 @@
   background: rgba(255, 179, 71, 0.2);
   border-radius: 2px;
 }
+
+/* ─── Reduced Motion ─── */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .comp-sparkle,
+  .comp-warp-star,
+  .comp-wait-star {
+    display: none !important;
+  }
+}

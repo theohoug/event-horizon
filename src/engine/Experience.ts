@@ -104,6 +104,7 @@ export class Experience {
   private hudContainerEl: HTMLElement | null = null;
   private creditsEl: HTMLElement | null = null;
   private themeColorMeta: HTMLMetaElement | null = null;
+  private prefersReducedMotion = false;
   private boundHandlers: { target: EventTarget; event: string; handler: EventListener }[] = [];
   private chapterBreaks: number[] = [];
 
@@ -488,6 +489,12 @@ gl_FragColor=vec4(col,1.0);}`;
         ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 80, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: true, gpuScore: 60, quality: 'high' }
         : { dpr: 1.0, maxSteps: 100, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 3000, bloomPasses: 2, bloomScale: 0.2, motionBlur: true, antialias: true, gpuScore: 25, quality: 'medium' };
     }
+    this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (this.prefersReducedMotion) {
+      this.perfConfig.motionBlur = false;
+      this.perfConfig.bloomPasses = Math.min(this.perfConfig.bloomPasses, 2);
+    }
+
     this.state.quality = this.perfConfig.quality;
     this.adaptiveDpr = this.perfConfig.dpr;
     this.adaptiveMaxSteps = this.perfConfig.maxSteps;

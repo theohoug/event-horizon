@@ -3173,17 +3173,17 @@ html:has(#sound-prompt.visible) {
 #return-wrap {
   position: relative;
   display: inline-block;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
 }
 
 #return-glow {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 200%;
-  height: 300%;
+  width: 250%;
+  height: 350%;
   transform: translate(-50%, -50%);
-  background: radial-gradient(ellipse at center, rgba(255, 140, 50, 0.08) 0%, rgba(255, 100, 30, 0.03) 40%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(255, 140, 50, 0.12) 0%, rgba(255, 100, 30, 0.05) 40%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
@@ -3220,18 +3220,18 @@ html:has(#sound-prompt.visible) {
   position: relative;
   z-index: 1;
   display: inline-block;
-  padding: 1rem 3.5rem;
-  border: 1px solid rgba(255, 140, 50, 0.12);
+  padding: 1.3rem 4.5rem;
+  border: 1px solid rgba(255, 140, 50, 0.18);
   border-radius: 999px;
-  background: rgba(255, 140, 50, 0.03);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  color: rgba(255, 200, 150, 0.55);
+  background: rgba(255, 140, 50, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(255, 200, 150, 0.7);
   font-family: var(--font-serif);
   font-weight: 400;
   font-style: italic;
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
+  font-size: 1.05rem;
+  letter-spacing: 0.14em;
   cursor: pointer;
   transition: all 0.6s cubic-bezier(0.4, 0, 0, 1);
 }
@@ -3242,26 +3242,26 @@ html:has(#sound-prompt.visible) {
 
 @keyframes return-btn-breathe {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.04), 0 0 40px rgba(255, 255, 255, 0.02);
-    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 20px rgba(255, 180, 80, 0.06), 0 0 50px rgba(255, 140, 50, 0.03);
+    border-color: rgba(255, 180, 80, 0.15);
   }
   50% {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 0 0 50px rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 180, 80, 0.12), 0 0 70px rgba(255, 140, 50, 0.06);
+    border-color: rgba(255, 180, 80, 0.3);
   }
 }
 
 #return-btn:hover {
-  border-color: rgba(255, 140, 50, 0.5);
-  color: rgba(255, 230, 200, 0.9);
-  background: rgba(255, 140, 50, 0.08);
-  box-shadow: 0 0 40px rgba(255, 140, 50, 0.25), 0 0 100px rgba(255, 100, 30, 0.1);
-  transform: scale(1.05);
-  letter-spacing: 0.16em;
+  border-color: rgba(255, 140, 50, 0.55);
+  color: rgba(255, 230, 200, 0.95);
+  background: rgba(255, 140, 50, 0.1);
+  box-shadow: 0 0 50px rgba(255, 140, 50, 0.3), 0 0 120px rgba(255, 100, 30, 0.12);
+  transform: scale(1.06);
+  letter-spacing: 0.18em;
 }
 
 #return-btn:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 
@@ -4071,9 +4071,9 @@ html.hardcore-mode .corner-ornament {
   }
 
   #return-btn {
-    padding: 0.6rem 1.8rem;
-    font-size: 0.55rem;
-    min-height: 44px;
+    padding: 1rem 3rem;
+    font-size: 0.85rem;
+    min-height: 48px;
   }
 
   #sound-prompt-inner {
@@ -4607,8 +4607,8 @@ html.hardcore-mode .corner-ornament {
   }
 
   #return-btn {
-    font-size: 0.5rem;
-    padding: 0.5rem 1.5rem;
+    font-size: 0.75rem;
+    padding: 0.9rem 2.5rem;
   }
 
   #intro-title {

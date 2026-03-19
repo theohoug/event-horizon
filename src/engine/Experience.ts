@@ -95,7 +95,6 @@ export class Experience {
   private chapterFlash: number = 0;
   private enterPulse: number = 0;
   private lastChapterIndex: number = -1;
-  private emptyContainerSince = 0;
   private lastChapterSyncTime: number = 0;
   private cursorRafId: number = 0;
   private overlayEl: HTMLElement | null = null;
@@ -2121,22 +2120,8 @@ gl_FragColor=vec4(col,1.0);}`;
       const canForce = gap >= 2 || now > this.timeline.lockUntil;
       if (canForce) {
         const nextCh = Math.min(triggerChapter, timelineChapter + 1);
-        const lock = nextCh < triggerChapter ? 200 : 1200;
+        const lock = nextCh < triggerChapter ? 800 : 1200;
         this.timeline.refreshCurrentChapter(this.state.scroll, nextCh, lock);
-      }
-    }
-
-    const chapterTextEl = document.getElementById('chapter-text');
-    if (chapterTextEl) {
-      const hasContent = chapterTextEl.children.length > 0;
-      if (!hasContent && !this.timeline.creditsVisible()) {
-        if (this.emptyContainerSince === 0) this.emptyContainerSince = performance.now();
-        else if (performance.now() - this.emptyContainerSince > 600) {
-          this.timeline.refreshCurrentChapter(this.state.scroll, triggerChapter, 1200);
-          this.emptyContainerSince = 0;
-        }
-      } else {
-        this.emptyContainerSince = 0;
       }
     }
     const currentChapter = this.timeline.activeChapter >= 0 ? this.timeline.activeChapter : triggerChapter;

@@ -120,6 +120,10 @@ export async function init(roomId: string) {
   root.innerHTML = buildHTML(roomId, labels);
   document.body.appendChild(root);
 
+  const burst = document.createElement('div');
+  burst.id = 'comp-transition-burst';
+  root.appendChild(burst);
+
   const hub = new BroadcastHub();
   let currentChapter = -1;
   let connected = false;
@@ -168,6 +172,8 @@ export async function init(roomId: string) {
 
     renderChapter(ch, scienceData[ch.index], labels, color);
     bg.style.background = `radial-gradient(ellipse at center, ${color}12 0%, transparent 70%)`;
+
+    triggerChapterTransition(color);
 
     if (navigator.vibrate) navigator.vibrate(50);
 
@@ -251,7 +257,7 @@ export async function init(roomId: string) {
       <div class="comp-archive-grid">
         ${scienceData.map((_, i) => `
           <button class="comp-archive-card" data-chapter="${i}" style="--card-color: ${CHAPTER_COLORS[i]}">
-            <span class="comp-archive-num">${String(i).padStart(2, '0')}</span>
+            <span class="comp-archive-num">${String(i + 1).padStart(2, '0')}</span>
             <span class="comp-archive-name">${chapterNames[i]}</span>
           </button>
         `).join('')}
@@ -323,6 +329,33 @@ export async function init(roomId: string) {
   await hub.join(roomId, 'companion');
   dot.classList.add('connected');
   statusText.textContent = labels.waiting;
+}
+
+function triggerChapterTransition(color: string) {
+  const burst = document.getElementById('comp-transition-burst');
+  if (burst) {
+    burst.classList.remove('active');
+    void burst.offsetWidth;
+    burst.style.setProperty('--comp-accent', color);
+    burst.classList.add('active');
+    setTimeout(() => burst.classList.remove('active'), 1300);
+  }
+
+  const count = 12;
+  for (let i = 0; i < count; i++) {
+    const spark = document.createElement('div');
+    spark.className = 'comp-sparkle';
+    const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+    const dist = 60 + Math.random() * 100;
+    spark.style.setProperty('--sx', `${Math.cos(angle) * dist}px`);
+    spark.style.setProperty('--sy', `${Math.sin(angle) * dist}px`);
+    spark.style.left = '50%';
+    spark.style.top = '35%';
+    spark.style.background = color;
+    spark.style.boxShadow = `0 0 6px ${color}, 0 0 12px ${color}`;
+    document.getElementById('companion-root')?.appendChild(spark);
+    setTimeout(() => spark.remove(), 1500);
+  }
 }
 
 function buildHTML(roomId: string, l: typeof LABELS['en']): string {

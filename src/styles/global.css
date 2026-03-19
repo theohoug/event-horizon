@@ -589,19 +589,11 @@ body {
 }
 
 #chapter-text .line.chapter-spaghetti {
-  font-size: clamp(1rem, 2.5vw, 2.2rem);
-  font-weight: 300;
+  font-size: clamp(1.6rem, 4.5vw, 3.8rem);
+  font-weight: 400;
   letter-spacing: 0.35em;
-  background: linear-gradient(180deg,
-    rgba(255, 180, 120, 0.95) 0%,
-    rgba(255, 240, 224, 1) 30%,
-    rgba(200, 220, 255, 0.9) 70%,
-    rgba(120, 160, 255, 0.7) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 20px rgba(255, 200, 150, 0.15));
+  color: rgba(255, 240, 224, 0.95);
+  text-shadow: 0 0 40px rgba(255, 180, 120, 0.5), 0 0 80px rgba(255, 150, 80, 0.25), 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 #chapter-text .line.chapter-spaghetti .char {
@@ -749,7 +741,7 @@ body {
   60% { transform: translateY(5px) scaleY(1.04) scaleX(0.99); filter: blur(0.2px); }
 }
 
-.chapter[data-chapter="5"] #chapter-text .line .char.revealed {
+#chapter-text .line.chapter-spaghetti .char.revealed {
   animation: char-spaghetti 2.8s ease-in-out infinite;
   animation-delay: calc(var(--char-index, 0) * 0.08s);
 }

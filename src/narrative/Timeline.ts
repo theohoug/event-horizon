@@ -288,6 +288,11 @@ export class Timeline {
       const parent = btn.parentElement;
       if (!parent) return;
 
+      const existing = parent.querySelectorAll('.return-whisper');
+      if (existing.length >= 3) {
+        existing[0].remove();
+      }
+
       const whisper = document.createElement('span');
       whisper.className = 'return-whisper';
       whisper.textContent = whispers[idx % whispers.length];

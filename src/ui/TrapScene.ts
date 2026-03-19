@@ -7,7 +7,7 @@
 import * as THREE from 'three';
 
 const TEXT_PARTICLE_COUNT = 800;
-const BG_STAR_COUNT = 1500;
+const BG_STAR_COUNT = 2000;
 const FORMATION_DURATION = 4.0;
 const CAM_FOV = 50;
 const CAM_Z = 4;
@@ -219,10 +219,10 @@ export class TrapScene {
     const twinklePhases = new Float32Array(BG_STAR_COUNT);
 
     for (let i = 0; i < BG_STAR_COUNT; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 18;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
-      positions[i * 3 + 2] = -1 - Math.random() * 6;
-      sizes[i] = 0.3 + Math.random() * 1.0;
+      positions[i * 3] = (Math.random() - 0.5) * 30;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 18;
+      positions[i * 3 + 2] = -2 - Math.random() * 20;
+      sizes[i] = 0.4 + Math.random() * 1.2;
       twinklePhases[i] = Math.random() * Math.PI * 2;
     }
 
@@ -243,19 +243,23 @@ export class TrapScene {
         uniform float uTime;
         uniform float uPixelRatio;
         void main() {
-          vTwinkle = 0.3 + 0.7 * (0.5 + 0.5 * sin(uTime * 0.6 + phase));
+          vTwinkle = 0.4 + 0.6 * (0.5 + 0.5 * sin(uTime * 0.5 + phase));
           vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
           gl_Position = projectionMatrix * mvPos;
-          gl_PointSize = size * uPixelRatio * (3.5 / -mvPos.z);
+          gl_PointSize = size * uPixelRatio * (150.0 / -mvPos.z);
         }
       `,
       fragmentShader: `
         varying float vTwinkle;
         void main() {
-          float d = length(gl_PointCoord - 0.5) * 2.0;
-          float a = smoothstep(1.0, 0.0, d) * vTwinkle * 0.25;
-          vec3 col = mix(vec3(0.4, 0.3, 0.2), vec3(0.6, 0.45, 0.25), d);
-          gl_FragColor = vec4(col, a);
+          float d = length(gl_PointCoord - vec2(0.5));
+          if (d > 0.5) discard;
+          float glow = smoothstep(0.5, 0.05, d);
+          float core = smoothstep(0.12, 0.0, d);
+          vec3 warmColor = mix(vec3(0.9, 0.75, 0.55), vec3(1.0, 0.7, 0.28), d * 2.0);
+          vec3 color = mix(warmColor * 0.5, vec3(1.0, 0.95, 0.88), core * 0.7);
+          float alpha = glow * glow * vTwinkle * 0.35;
+          gl_FragColor = vec4(color, alpha);
         }
       `,
       transparent: true,

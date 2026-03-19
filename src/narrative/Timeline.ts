@@ -71,14 +71,21 @@ export class Timeline {
     const chapterText = document.getElementById('chapter-text');
     if (chapterText) gsap.set(chapterText, { opacity: 1 });
 
+    const credits = document.getElementById('credits');
+    if (credits) {
+      credits.classList.remove('visible');
+      credits.classList.remove('white-mode');
+      credits.style.display = 'none';
+    }
+
     const returnWrap = document.getElementById('return-wrap');
     const returnGlow = document.getElementById('return-glow');
     const returnRing = document.getElementById('return-ring');
     const returnBtn = document.getElementById('return-btn');
-    if (returnWrap) { returnWrap.classList.remove('alive'); gsap.set(returnWrap, { clearProps: 'all', opacity: 0, display: 'none' }); }
-    if (returnGlow) gsap.set(returnGlow, { clearProps: 'all', opacity: 0 });
-    if (returnRing) gsap.set(returnRing, { clearProps: 'all', opacity: 0 });
-    if (returnBtn) gsap.set(returnBtn, { clearProps: 'all', opacity: 0 });
+    if (returnWrap) { returnWrap.classList.remove('alive'); gsap.set(returnWrap, { clearProps: 'all' }); returnWrap.style.display = 'none'; }
+    if (returnGlow) { gsap.set(returnGlow, { clearProps: 'all' }); returnGlow.style.opacity = '0'; }
+    if (returnRing) { gsap.set(returnRing, { clearProps: 'all' }); returnRing.style.opacity = '0'; }
+    if (returnBtn) { gsap.set(returnBtn, { clearProps: 'all' }); returnBtn.style.opacity = '0'; }
   }
 
   refreshCurrentChapter(scroll: number, chapterIndex?: number, lockMs?: number) {
@@ -184,6 +191,7 @@ export class Timeline {
     const overlay = document.getElementById('overlay');
     if (overlay) overlay.classList.add('hidden');
 
+    credits.style.display = '';
     credits.classList.add('visible');
 
     if (this.creditsTl) this.creditsTl.kill();
@@ -305,10 +313,10 @@ export class Timeline {
     const returnGlow = document.getElementById('return-glow');
     const returnRing = document.getElementById('return-ring');
     const returnBtn = document.getElementById('return-btn');
-    if (returnWrap) { returnWrap.classList.remove('alive'); gsap.set(returnWrap, { clearProps: 'all', opacity: 0, display: 'none' }); }
-    if (returnGlow) gsap.set(returnGlow, { clearProps: 'all', opacity: 0 });
-    if (returnRing) gsap.set(returnRing, { clearProps: 'all', opacity: 0 });
-    if (returnBtn) gsap.set(returnBtn, { clearProps: 'all', opacity: 0 });
+    if (returnWrap) { returnWrap.classList.remove('alive'); gsap.set(returnWrap, { clearProps: 'all' }); returnWrap.style.display = 'none'; }
+    if (returnGlow) { gsap.set(returnGlow, { clearProps: 'all' }); returnGlow.style.opacity = '0'; }
+    if (returnRing) { gsap.set(returnRing, { clearProps: 'all' }); returnRing.style.opacity = '0'; }
+    if (returnBtn) { gsap.set(returnBtn, { clearProps: 'all' }); returnBtn.style.opacity = '0'; }
   }
 
   private showChapter(chapter: Chapter) {

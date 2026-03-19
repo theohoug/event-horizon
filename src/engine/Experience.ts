@@ -2932,6 +2932,7 @@ gl_FragColor=vec4(col,1.0);}`;
     if (this.creditsEl) {
       this.creditsEl.classList.remove('visible');
       this.creditsEl.classList.remove('white-mode');
+      this.creditsEl.style.display = 'none';
       document.body.classList.remove('credits-white');
       this.whiteModeActive = false;
     }

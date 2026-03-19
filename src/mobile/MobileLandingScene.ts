@@ -1,14 +1,14 @@
 /**
- * @file TrapScene.ts
- * @description WebGL Three.js scene for the "Trapped" overlay — particles forming "TRAPPED"
+ * @file MobileLandingScene.ts
+ * @description WebGL star particle scene for mobile landing — particles forming "EVENT HORIZON"
  * @author Cleanlystudio
  */
 
 import * as THREE from 'three';
 
-const TEXT_PARTICLE_COUNT = 1200;
-const BG_STAR_COUNT = 2000;
-const FORMATION_DURATION = 4.0;
+const TEXT_PARTICLE_COUNT = 800;
+const BG_STAR_COUNT = 1500;
+const FORMATION_DURATION = 3.5;
 const CAM_FOV = 50;
 const CAM_Z = 4;
 
@@ -23,7 +23,7 @@ interface Particle {
   delay: number;
 }
 
-export class TrapScene {
+export class MobileLandingScene {
   private canvas: HTMLCanvasElement;
   private renderer: THREE.WebGLRenderer;
   private scene: THREE.Scene;
@@ -34,19 +34,24 @@ export class TrapScene {
   private startTime = 0;
   private animating = false;
   private rafId = 0;
-  private mouse = { x: 0, y: 0 };
-  private onMouseMove: ((e: MouseEvent) => void) | null = null;
+  private gyro = { x: 0, y: 0 };
+  private smoothGyro = { x: 0, y: 0 };
+  private scrollFade = 1;
+  private onOrientation: ((e: DeviceOrientationEvent) => void) | null = null;
   private onResize: (() => void) | null = null;
+  private scrollContainer: HTMLElement | null = null;
+  private onScroll: (() => void) | null = null;
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, scrollContainer?: HTMLElement) {
     this.canvas = canvas;
+    this.scrollContainer = scrollContainer || null;
 
     this.renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: true,
+      antialias: false,
       alpha: true,
     });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     this.renderer.setClearColor(0x030305, 1);
 
     this.scene = new THREE.Scene();
@@ -57,11 +62,20 @@ export class TrapScene {
     this.createBgStars();
     this.createTextParticles();
 
-    this.onMouseMove = (e: MouseEvent) => {
-      this.mouse.x = (e.clientX / window.innerWidth - 0.5) * 2;
-      this.mouse.y = -(e.clientY / window.innerHeight - 0.5) * 2;
+    this.onOrientation = (e: DeviceOrientationEvent) => {
+      if (e.gamma !== null) this.gyro.x = Math.max(-1, Math.min(1, e.gamma / 30));
+      if (e.beta !== null) this.gyro.y = Math.max(-1, Math.min(1, (e.beta! - 45) / 30));
     };
-    window.addEventListener('mousemove', this.onMouseMove);
+    window.addEventListener('deviceorientation', this.onOrientation);
+
+    if (this.scrollContainer) {
+      this.onScroll = () => {
+        const st = this.scrollContainer!.scrollTop;
+        const heroH = window.innerHeight * 0.55;
+        this.scrollFade = Math.max(0, 1 - st / heroH);
+      };
+      this.scrollContainer.addEventListener('scroll', this.onScroll, { passive: true });
+    }
 
     this.onResize = () => {
       this.resize();
@@ -85,15 +99,15 @@ export class TrapScene {
     return { w, h };
   }
 
-  private sampleTextPositions(text: string): { x: number; y: number }[] {
+  private sampleTextPositions(): { x: number; y: number }[] {
     const visible = this.getVisibleSize();
-    const spreadX = Math.min(6.5, visible.w * 0.82);
-    const spreadY = Math.min(1.6, visible.h * 0.35);
+    const spreadX = Math.min(5.5, visible.w * 0.88);
+    const spreadY = Math.min(2.8, visible.h * 0.45);
 
     const offscreen = document.createElement('canvas');
-    const fontSize = 160;
-    offscreen.width = 1200;
-    offscreen.height = 300;
+    const fontSize = 120;
+    offscreen.width = 900;
+    offscreen.height = 400;
     const ctx = offscreen.getContext('2d')!;
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, offscreen.width, offscreen.height);
@@ -101,11 +115,12 @@ export class TrapScene {
     ctx.font = `700 ${fontSize}px "Cinzel", Georgia, serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(text, offscreen.width / 2, offscreen.height / 2);
+    ctx.fillText('EVENT', offscreen.width / 2, offscreen.height * 0.38);
+    ctx.fillText('HORIZON', offscreen.width / 2, offscreen.height * 0.66);
 
     const imageData = ctx.getImageData(0, 0, offscreen.width, offscreen.height);
     const positions: { x: number; y: number }[] = [];
-    const step = 2;
+    const step = 3;
 
     for (let y = 0; y < offscreen.height; y += step) {
       for (let x = 0; x < offscreen.width; x += step) {
@@ -113,7 +128,7 @@ export class TrapScene {
         if (imageData.data[i] > 100) {
           positions.push({
             x: (x / offscreen.width - 0.5) * spreadX,
-            y: -(y / offscreen.height - 0.5) * spreadY + spreadY * 0.5,
+            y: -(y / offscreen.height - 0.5) * spreadY + spreadY * 0.15,
           });
         }
       }
@@ -133,7 +148,7 @@ export class TrapScene {
   }
 
   private createTextParticles() {
-    const textPositions = this.sampleTextPositions('TRAPPED');
+    const textPositions = this.sampleTextPositions();
     const count = Math.min(TEXT_PARTICLE_COUNT, textPositions.length);
 
     const stride = Math.max(1, Math.floor(textPositions.length / count));
@@ -148,10 +163,10 @@ export class TrapScene {
       const tp = textPositions[idx];
 
       const angle = Math.random() * Math.PI * 2;
-      const radius = 3 + Math.random() * 5;
+      const radius = 2.5 + Math.random() * 4;
       const startX = Math.cos(angle) * radius;
       const startY = Math.sin(angle) * radius;
-      const startZ = (Math.random() - 0.5) * 3;
+      const startZ = (Math.random() - 0.5) * 2.5;
 
       const particle: Particle = {
         targetX: tp.x,
@@ -159,9 +174,9 @@ export class TrapScene {
         startX,
         startY,
         startZ,
-        size: 0.5 + Math.random() * 0.9,
-        alpha: 0.3 + Math.random() * 0.5,
-        delay: Math.random() * 0.8,
+        size: 0.6 + Math.random() * 0.8,
+        alpha: 0.35 + Math.random() * 0.45,
+        delay: Math.random() * 1.0,
       };
       this.particles.push(particle);
 
@@ -179,15 +194,17 @@ export class TrapScene {
 
     const material = new THREE.ShaderMaterial({
       uniforms: {
-        uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+        uPixelRatio: { value: Math.min(window.devicePixelRatio, 1.5) },
+        uFade: { value: 1.0 },
       },
       vertexShader: `
         attribute float size;
         attribute float alpha;
         varying float vAlpha;
         uniform float uPixelRatio;
+        uniform float uFade;
         void main() {
-          vAlpha = alpha;
+          vAlpha = alpha * uFade;
           vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
           gl_Position = projectionMatrix * mvPos;
           gl_PointSize = size * uPixelRatio * (18.0 / -mvPos.z);
@@ -221,10 +238,10 @@ export class TrapScene {
     const twinklePhases = new Float32Array(BG_STAR_COUNT);
 
     for (let i = 0; i < BG_STAR_COUNT; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 30;
+      positions[i * 3] = (Math.random() - 0.5) * 25;
       positions[i * 3 + 1] = (Math.random() - 0.5) * 18;
-      positions[i * 3 + 2] = -2 - Math.random() * 20;
-      sizes[i] = 0.4 + Math.random() * 1.2;
+      positions[i * 3 + 2] = -2 - Math.random() * 18;
+      sizes[i] = 0.3 + Math.random() * 1.0;
       twinklePhases[i] = Math.random() * Math.PI * 2;
     }
 
@@ -236,7 +253,7 @@ export class TrapScene {
     const material = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
-        uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+        uPixelRatio: { value: Math.min(window.devicePixelRatio, 1.5) },
       },
       vertexShader: `
         attribute float size;
@@ -290,6 +307,9 @@ export class TrapScene {
     }
 
     if (this.textParticles) {
+      const mat = this.textParticles.material as THREE.ShaderMaterial;
+      mat.uniforms.uFade.value = this.scrollFade;
+
       const geo = this.textParticles.geometry;
       const pos = geo.getAttribute('position') as THREE.BufferAttribute;
       const alphaAttr = geo.getAttribute('alpha') as THREE.BufferAttribute;
@@ -304,9 +324,9 @@ export class TrapScene {
         pos.array[i * 3 + 2] = p.startZ * (1 - ease);
 
         if (ease >= 1) {
-          const drift = Math.sin(elapsed * 0.4 + i * 0.3) * 0.025;
+          const drift = Math.sin(elapsed * 0.4 + i * 0.3) * 0.02;
           pos.array[i * 3] += drift;
-          pos.array[i * 3 + 1] += Math.cos(elapsed * 0.35 + i * 0.2) * 0.018;
+          pos.array[i * 3 + 1] += Math.cos(elapsed * 0.35 + i * 0.2) * 0.015;
         }
 
         alphaAttr.array[i] = Math.min(1, t * 1.5) * p.alpha;
@@ -316,8 +336,10 @@ export class TrapScene {
       alphaAttr.needsUpdate = true;
     }
 
-    this.camera.position.x += (this.mouse.x * 0.12 - this.camera.position.x) * 0.04;
-    this.camera.position.y += (this.mouse.y * 0.08 - this.camera.position.y) * 0.04;
+    this.smoothGyro.x += (this.gyro.x * 0.1 - this.smoothGyro.x) * 0.03;
+    this.smoothGyro.y += (this.gyro.y * 0.06 - this.smoothGyro.y) * 0.03;
+    this.camera.position.x = this.smoothGyro.x;
+    this.camera.position.y = this.smoothGyro.y;
     this.camera.lookAt(0, 0, 0);
 
     this.renderer.render(this.scene, this.camera);
@@ -327,13 +349,17 @@ export class TrapScene {
     this.animating = false;
     cancelAnimationFrame(this.rafId);
 
-    if (this.onMouseMove) {
-      window.removeEventListener('mousemove', this.onMouseMove);
-      this.onMouseMove = null;
+    if (this.onOrientation) {
+      window.removeEventListener('deviceorientation', this.onOrientation);
+      this.onOrientation = null;
     }
     if (this.onResize) {
       window.removeEventListener('resize', this.onResize);
       this.onResize = null;
+    }
+    if (this.scrollContainer && this.onScroll) {
+      this.scrollContainer.removeEventListener('scroll', this.onScroll);
+      this.onScroll = null;
     }
 
     if (this.textParticles) {
@@ -348,5 +374,6 @@ export class TrapScene {
     }
 
     this.renderer.dispose();
+    this.renderer.forceContextLoss();
   }
 }

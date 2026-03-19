@@ -2823,8 +2823,12 @@ gl_FragColor=vec4(col,1.0);}`;
     trap.classList.add('visible');
     trap.setAttribute('aria-hidden', 'false');
 
-    const trapCanvas = document.getElementById('trap-canvas') as HTMLCanvasElement;
+    let trapCanvas = document.getElementById('trap-canvas') as HTMLCanvasElement;
     if (trapCanvas && !this.trapScene) {
+      const fresh = document.createElement('canvas');
+      fresh.id = 'trap-canvas';
+      trapCanvas.replaceWith(fresh);
+      trapCanvas = fresh;
       import('../ui/TrapScene').then(({ TrapScene }) => {
         this.trapScene = new TrapScene(trapCanvas);
         this.trapScene.start();

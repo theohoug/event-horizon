@@ -1,22 +1,24 @@
 /**
  * @file MobileLanding.ts
- * @description Mobile landing page — blocks WebGL, explains the experience, offers QR scanner
+ * @description Mobile landing page with WebGL star particle formation + companion mode
  * @author Cleanlystudio
- * @version 2.0.0
+ * @version 3.0.0
  */
 
 import './mobile-landing.css';
+import type { MobileLandingScene } from './MobileLandingScene';
 
 type Lang = 'en' | 'fr';
 
 const content = {
   en: {
-    subtitle: 'An Interactive Journey Into a Black Hole',
-    desc1: 'Event Horizon is an <span class="ml-highlight">immersive desktop experience</span> that simulates falling into a supermassive black hole through 9 scientifically documented chapters.',
-    desc2: 'Built with real-time raymarched GLSL shaders, procedural audio, and physics based on peer-reviewed astrophysics research.',
-    desktopOnly: 'Desktop experience only',
+    heroSub: 'An Interactive Journey Into a Black Hole',
+    mainMessage: 'This experience was designed for large screens.',
+    mainSub: 'Open Event Horizon on a desktop browser to begin your descent into a supermassive black hole.',
+    techLine: 'Real-time raymarched GLSL shaders \u00B7 Procedural audio \u00B7 9 chapters',
+    desktopOnly: 'Desktop experience',
     companionTitle: 'COMPANION MODE',
-    companionText: 'Turn your phone into a <span class="ml-highlight">live mission console</span>. Real-time telemetry and astrophysics documentation synced to the desktop experience.',
+    companionText: 'Turn your phone into a <span class="ml-highlight">live mission console</span>. Real-time telemetry synced to the desktop experience.',
     scanBtn: 'Scan QR Code',
     scanOr: 'or follow these steps',
     step1: 'Open the site on a desktop computer',
@@ -30,12 +32,13 @@ const content = {
     scannerDenied: 'Camera access denied. Use your native camera app to scan the QR code.',
   },
   fr: {
-    subtitle: 'Un Voyage Interactif Dans un Trou Noir',
-    desc1: 'Event Horizon est une <span class="ml-highlight">exp\u00E9rience immersive desktop</span> qui simule la chute dans un trou noir supermassif \u00E0 travers 9 chapitres document\u00E9s scientifiquement.',
-    desc2: 'Construit avec des shaders GLSL en temps r\u00E9el, un audio proc\u00E9dural, et une physique bas\u00E9e sur la recherche astrophysique.',
-    desktopOnly: 'Exp\u00E9rience desktop uniquement',
+    heroSub: 'Un Voyage Interactif Dans un Trou Noir',
+    mainMessage: 'Cette exp\u00E9rience a \u00E9t\u00E9 con\u00E7ue pour les grands \u00E9crans.',
+    mainSub: 'Ouvrez Event Horizon sur un navigateur desktop pour d\u00E9buter votre descente dans un trou noir supermassif.',
+    techLine: 'Shaders GLSL en temps r\u00E9el \u00B7 Audio proc\u00E9dural \u00B7 9 chapitres',
+    desktopOnly: 'Exp\u00E9rience desktop',
     companionTitle: 'MODE COMPAGNON',
-    companionText: 'Transformez votre t\u00E9l\u00E9phone en <span class="ml-highlight">console de mission</span>. D\u00E9marrez le voyage sur le navigateur desktop et votre mobile se synchronisera automatiquement avec votre descente.',
+    companionText: 'Transformez votre t\u00E9l\u00E9phone en <span class="ml-highlight">console de mission</span>. T\u00E9l\u00E9m\u00E9trie en temps r\u00E9el synchronis\u00E9e avec l\u2019exp\u00E9rience desktop.',
     scanBtn: 'Scanner le QR Code',
     scanOr: 'ou suivez ces \u00E9tapes',
     step1: 'D\u00E9marrez le site sur un navigateur desktop',
@@ -51,12 +54,14 @@ const content = {
 };
 
 let currentLang: Lang = (localStorage.getItem('eh_lang') as Lang) || 'en';
+let scene: MobileLandingScene | null = null;
 
 function render() {
   const t = content[currentLang];
   const root = document.getElementById('mobile-landing')!;
 
   root.innerHTML = `
+    <canvas id="ml-canvas"></canvas>
     <div id="ml-grain"></div>
     <div id="ml-content">
       <div class="ml-topbar">
@@ -67,24 +72,24 @@ function render() {
         </div>
       </div>
 
-      <div class="ml-hero">
-        <div class="ml-title">EVENT<br>HORIZON</div>
-        <div class="ml-line"></div>
-        <div class="ml-subtitle">${t.subtitle}</div>
+      <div class="ml-hero-spacer"></div>
+
+      <div class="ml-scroll-cue">
+        <div class="ml-scroll-cue-line"></div>
       </div>
 
-      <div class="ml-description">
-        <p>${t.desc1}</p>
-        <p>${t.desc2}</p>
-      </div>
-
-      <div class="ml-desktop-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-          <line x1="8" y1="21" x2="16" y2="21"></line>
-          <line x1="12" y1="17" x2="12" y2="21"></line>
-        </svg>
-        <span>${t.desktopOnly}</span>
+      <div class="ml-main-message">
+        <div class="ml-desktop-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span>${t.desktopOnly}</span>
+        </div>
+        <p class="ml-main-text">${t.mainMessage}</p>
+        <p class="ml-main-sub">${t.mainSub}</p>
+        <div class="ml-tech-line">${t.techLine}</div>
       </div>
 
       <div class="ml-companion">
@@ -149,11 +154,27 @@ function render() {
       currentLang = lang;
       localStorage.setItem('eh_lang', lang);
       render();
+      initScene();
     });
   });
 
   const scanBtn = document.getElementById('ml-scan-btn');
   if (scanBtn) scanBtn.addEventListener('click', openScanner);
+}
+
+function initScene() {
+  if (scene) {
+    scene.destroy();
+    scene = null;
+  }
+  const canvas = document.getElementById('ml-canvas') as HTMLCanvasElement;
+  const scrollContainer = document.getElementById('mobile-landing');
+  if (!canvas) return;
+
+  import('./MobileLandingScene').then(({ MobileLandingScene }) => {
+    scene = new MobileLandingScene(canvas, scrollContainer || undefined);
+    scene.start();
+  });
 }
 
 function openScanner() {
@@ -281,4 +302,5 @@ export function init() {
   document.body.appendChild(root);
 
   render();
+  initScene();
 }

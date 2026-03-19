@@ -419,7 +419,7 @@ function renderChapter(ch: ChapterData, science: ChapterScience | undefined, l: 
 
   void numEl.offsetWidth;
 
-  numEl.textContent = String(ch.index).padStart(2, '0');
+  numEl.textContent = String(ch.index + 1).padStart(2, '0');
   titleEl.textContent = ch.title;
   subEl.textContent = ch.subtitle.replace(/\\n/g, '\n');
   interEl.textContent = ch.interstitial || '';

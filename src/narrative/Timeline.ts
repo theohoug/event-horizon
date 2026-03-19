@@ -70,6 +70,15 @@ export class Timeline {
     if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
     const chapterText = document.getElementById('chapter-text');
     if (chapterText) gsap.set(chapterText, { opacity: 1 });
+
+    const returnWrap = document.getElementById('return-wrap');
+    const returnGlow = document.getElementById('return-glow');
+    const returnRing = document.getElementById('return-ring');
+    const returnBtn = document.getElementById('return-btn');
+    if (returnWrap) { returnWrap.classList.remove('alive'); gsap.set(returnWrap, { clearProps: 'all' }); }
+    if (returnGlow) gsap.set(returnGlow, { clearProps: 'all' });
+    if (returnRing) gsap.set(returnRing, { clearProps: 'all' });
+    if (returnBtn) gsap.set(returnBtn, { clearProps: 'all' });
   }
 
   refreshCurrentChapter(scroll: number, chapterIndex?: number, lockMs?: number) {

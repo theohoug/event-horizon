@@ -3244,12 +3244,12 @@ html:has(#sound-prompt.visible) {
 
 @keyframes return-btn-breathe {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(255, 140, 50, 0.06), 0 0 60px rgba(255, 100, 30, 0.03);
-    border-color: rgba(255, 140, 50, 0.12);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.04), 0 0 40px rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.1);
   }
   50% {
-    box-shadow: 0 0 30px rgba(255, 140, 50, 0.15), 0 0 80px rgba(255, 100, 30, 0.06), 0 0 120px rgba(255, 80, 20, 0.03);
-    border-color: rgba(255, 140, 50, 0.25);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 0 0 50px rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.2);
   }
 }
 
@@ -3266,18 +3266,6 @@ html:has(#sound-prompt.visible) {
   transform: scale(0.98);
 }
 
-.return-whisper {
-  position: absolute;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 0.5rem;
-  color: rgba(255, 180, 100, 0.3);
-  letter-spacing: 0.1em;
-  white-space: nowrap;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  z-index: 3;
-}
 
 #credits.white-mode #return-btn {
   border-color: rgba(80, 40, 10, 0.15);
@@ -3300,9 +3288,6 @@ html:has(#sound-prompt.visible) {
   background: rgba(80, 40, 10, 0.06);
 }
 
-#credits.white-mode .return-whisper {
-  color: rgba(80, 40, 10, 0.2);
-}
 
 /* ─── Chapter Navigation ─── */
 

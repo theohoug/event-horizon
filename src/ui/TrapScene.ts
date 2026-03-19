@@ -190,7 +190,7 @@ export class TrapScene {
           vAlpha = alpha;
           vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
           gl_Position = projectionMatrix * mvPos;
-          gl_PointSize = size * uPixelRatio * (5.0 / -mvPos.z);
+          gl_PointSize = size * (200.0 / -mvPos.z);
         }
       `,
       fragmentShader: `

@@ -67,8 +67,6 @@ export class Timeline {
     this.lockUntil = 0;
     this.gateCredits = false;
     this.creditsPending = false;
-    if (this.whisperInterval) { clearInterval(this.whisperInterval); this.whisperInterval = 0; }
-    document.querySelectorAll('.return-whisper').forEach(el => el.remove());
     if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
     const chapterText = document.getElementById('chapter-text');
     if (chapterText) gsap.set(chapterText, { opacity: 1 });
@@ -268,71 +266,10 @@ export class Timeline {
 
       this.creditsTl.call(() => {
         returnWrap.classList.add('alive');
-        this.startWhispers(returnWrap);
       }, [], 11.5);
     }
   }
 
-  private whisperInterval = 0;
-
-  private startWhispers(btn: HTMLElement) {
-    const whispers = [
-      'dare you?', 'click me', 'trapped forever',
-      'no escape', 'do it', 'you can\'t leave',
-      'try it', 'one way out', 'are you sure?',
-      'go ahead', 'we\'re waiting', 'no return',
-    ];
-    let idx = 0;
-
-    const spawnWhisper = () => {
-      const parent = btn.parentElement;
-      if (!parent) return;
-
-      const existing = parent.querySelectorAll('.return-whisper');
-      if (existing.length >= 3) {
-        existing[0].remove();
-      }
-
-      const whisper = document.createElement('span');
-      whisper.className = 'return-whisper';
-      whisper.textContent = whispers[idx % whispers.length];
-      idx++;
-
-      const side = Math.random() > 0.5 ? 1 : -1;
-      const offsetX = side * (60 + Math.random() * 80);
-      const offsetY = -30 + Math.random() * 60;
-
-      whisper.style.left = `calc(50% + ${offsetX}px)`;
-      whisper.style.top = `calc(50% + ${offsetY}px)`;
-
-      parent.style.position = 'relative';
-      parent.appendChild(whisper);
-
-      gsap.fromTo(whisper,
-        { opacity: 0, scale: 0.7, filter: 'blur(3px)' },
-        {
-          opacity: 0.5 + Math.random() * 0.3,
-          scale: 1,
-          filter: 'blur(0px)',
-          duration: 0.8,
-          ease: 'power2.out',
-          onComplete: () => {
-            gsap.to(whisper, {
-              opacity: 0,
-              y: -10 + Math.random() * -15,
-              filter: 'blur(4px)',
-              duration: 1.5,
-              ease: 'power2.in',
-              onComplete: () => whisper.remove(),
-            });
-          },
-        }
-      );
-    };
-
-    spawnWhisper();
-    this.whisperInterval = window.setInterval(spawnWhisper, 2500 + Math.random() * 1500);
-  }
 
   private hideCredits() {
     const credits = document.getElementById('credits');
@@ -341,8 +278,6 @@ export class Timeline {
     this.creditsVisible = false;
     this.activeChapter = -1;
     this.transitioning = false;
-    if (this.whisperInterval) { clearInterval(this.whisperInterval); this.whisperInterval = 0; }
-    document.querySelectorAll('.return-whisper').forEach(el => el.remove());
     if (this.creditsTl) { this.creditsTl.kill(); this.creditsTl = null; }
     credits.classList.remove('visible');
     gsap.set(credits.querySelectorAll('.credits-line'), { opacity: 0, y: 20 });

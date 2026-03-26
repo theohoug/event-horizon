@@ -2201,20 +2201,21 @@ html:has(#sound-prompt.visible) {
 }
 
 #sound-prompt-yes {
-  color: rgba(255, 240, 224, 0.9);
+  color: rgba(255, 240, 224, 0.95);
   font-weight: 300;
-  font-size: 0.78rem;
-  letter-spacing: 0.3em;
+  font-size: 1rem;
+  letter-spacing: 0.25em;
   position: relative;
-  padding: 1rem 3.2rem;
-  border: 1px solid rgba(255, 179, 71, 0.3);
+  padding: 1.3rem 4rem;
+  border: 1px solid rgba(255, 179, 71, 0.35);
   border-radius: 999px;
-  background: linear-gradient(135deg, rgba(255, 179, 71, 0.1) 0%, rgba(255, 240, 224, 0.03) 100%);
+  background: linear-gradient(135deg, rgba(255, 179, 71, 0.12) 0%, rgba(255, 240, 224, 0.04) 100%);
   box-shadow: 0 0 40px rgba(255, 179, 71, 0.08), 0 0 80px rgba(255, 179, 71, 0.03), inset 0 0 25px rgba(255, 179, 71, 0.04);
   animation: btn-breathe 3s ease-in-out infinite;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease, letter-spacing 0.4s ease, color 0.4s ease;
   overflow: hidden;
   will-change: transform;
+  min-height: 56px;
 }
 
 #btn-magnetic-glow {
@@ -4124,9 +4125,9 @@ html.hardcore-mode .corner-ornament {
   }
 
   #sound-prompt-yes {
-    font-size: 0.7rem;
-    padding: 0.9rem 2.2rem;
-    min-height: 48px;
+    font-size: 0.85rem;
+    padding: 1.1rem 3rem;
+    min-height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4561,8 +4562,9 @@ html.hardcore-mode .corner-ornament {
   }
 
   #sound-prompt-yes {
-    font-size: 0.65rem;
-    padding: 0.8rem 1.8rem;
+    font-size: 0.75rem;
+    padding: 1rem 2.5rem;
+    min-height: 48px;
   }
 
   #sound-prompt-no {

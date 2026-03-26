@@ -4706,3 +4706,71 @@ html.hardcore-mode .corner-ornament {
 #rotate-sub {
   display: none;
 }
+
+/* ─── Quality Low: kill animations, backdrop-blur, heavy CSS for weak GPUs ─── */
+
+.quality-low *,
+.quality-low *:before,
+.quality-low *:after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: .1s !important;
+}
+
+.quality-low #grain-overlay,
+.quality-low #dust-layer,
+.quality-low #ambient-leaks,
+.quality-low #scan-line,
+.quality-low #depth-aura,
+.quality-low #cinematic-vignette,
+.quality-low .corner-ornament,
+.quality-low .cursor-trail,
+.quality-low #custom-cursor,
+.quality-low #custom-cursor-ring {
+  display: none !important;
+}
+
+.quality-low #data-hud .hud-value {
+  text-shadow: none !important;
+}
+
+.quality-low #sound-prompt,
+.quality-low #loader,
+.quality-low #trap-overlay,
+.quality-low #escape-catcher,
+.quality-low #loop4-terminal,
+.quality-low #interstitial {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.quality-low #sound-prompt-inner {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: #050505f2 !important;
+}
+
+.quality-low #loader {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: #050505eb !important;
+}
+
+.quality-low * {
+  cursor: auto !important;
+}
+
+.quality-low #chapter-text,
+.quality-low #chapter-text .char {
+  will-change: auto !important;
+  filter: none !important;
+}
+
+.quality-low #overlay {
+  will-change: auto !important;
+}
+
+.quality-low #progress-bar:after {
+  animation: none !important;
+}

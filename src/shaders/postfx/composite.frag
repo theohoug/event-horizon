@@ -150,8 +150,36 @@ void main() {
   float motionBlurStrength = (min(absVel * 0.0008, 0.06) * uScroll + uScroll * 0.004) * uMotionBlur * scrollBlurBoost;
 
   vec3 color;
-#ifdef QUALITY_MEDIUM
+  if (chromaticAmount < 0.001 && motionBlurStrength < 0.001) {
+    color = texture2D(tDiffuse, distortedUv).rgb;
+  } else {
+#ifdef QUALITY_LOW
   {
+    vec2 uvR = distortedUv + chromaticOffset * 0.5;
+    vec2 uvB = distortedUv - chromaticOffset * 0.5;
+    color = vec3(
+      texture2D(tDiffuse, uvR).r,
+      texture2D(tDiffuse, distortedUv).g,
+      texture2D(tDiffuse, uvB).b
+    );
+  }
+#elif defined(QUALITY_MEDIUM)
+  if (motionBlurStrength > 0.001) {
+    vec3 spectralM = vec3(0.0);
+    for (int i = 0; i < 3; i++) {
+      float t = (float(i) - 1.0);
+      vec2 sampleUv = distortedUv + chromaticOffset * t;
+      vec2 blurDir = (sampleUv - vec2(0.5)) * motionBlurStrength;
+      vec3 s = vec3(0.0);
+      s += texture2D(tDiffuse, sampleUv).rgb * 0.5;
+      s += texture2D(tDiffuse, sampleUv + blurDir * 0.5).rgb * 0.25;
+      s += texture2D(tDiffuse, sampleUv - blurDir * 0.5).rgb * 0.25;
+      if (i == 0) spectralM.r = s.r;
+      else if (i == 1) spectralM.g = s.g;
+      else spectralM.b = s.b;
+    }
+    color = spectralM;
+  } else {
     vec2 uvR = distortedUv + chromaticOffset;
     vec2 uvB = distortedUv - chromaticOffset;
     vec3 sR = texture2D(tDiffuse, uvR).rgb;
@@ -195,6 +223,7 @@ void main() {
     color = spectral / totalW;
   }
 #endif
+  }
 
   vec3 bloom = texture2D(tBloom, vUv).rgb;
   vec3 bloomEarly = vec3(1.05, 0.97, 0.92);
@@ -211,6 +240,7 @@ void main() {
   float bloomSoftKnee = 1.0 / (1.0 + bloomLuma * 2.0);
   color += bloom * bloomTint * uBloomMix * bloomSoftKnee + dirtColor;
 
+#ifndef QUALITY_LOW
   float anamorphicScroll = smoothstep(0.35, 0.65, uScroll);
   if (anamorphicScroll > 0.01) {
     float anamorphicStreak = exp(-abs(center.y) * 8.0);
@@ -229,6 +259,7 @@ void main() {
     vec3 halationColor = mix(vec3(1.0, 0.88, 0.68), vec3(0.85, 0.65, 0.45), uScroll);
     color += halationColor * halation * 0.035 * halationPhase;
   }
+#endif
 
   float preExposure = 0.88 + uScroll * 0.06;
   color *= preExposure;

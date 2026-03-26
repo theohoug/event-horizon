@@ -34,7 +34,7 @@ export class PostProcessing {
   private bloomScaleValue: number;
   private shockwaves: { x: number; y: number; radius: number; strength: number; speed: number }[] = [];
 
-  constructor(renderer: THREE.WebGLRenderer, bloomPasses: number, bloomScale: number, qualityMedium: boolean, motionBlur: boolean) {
+  constructor(renderer: THREE.WebGLRenderer, bloomPasses: number, bloomScale: number, qualityMedium: boolean, motionBlur: boolean, qualityLow = false) {
     this.renderer = renderer;
     this.qualityMedium = qualityMedium;
 
@@ -95,7 +95,7 @@ export class PostProcessing {
       depthWrite: false,
     });
 
-    const compositePrefix = qualityMedium ? '#define QUALITY_MEDIUM 1\n' : '';
+    const compositePrefix = (qualityLow ? '#define QUALITY_LOW 1\n' : '') + (qualityMedium ? '#define QUALITY_MEDIUM 1\n' : '');
     this.compositeMaterial = new THREE.ShaderMaterial({
       vertexShader: fullscreenVert,
       fragmentShader: compositePrefix + compositeFrag,

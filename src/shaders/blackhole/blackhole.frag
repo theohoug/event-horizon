@@ -47,7 +47,30 @@ vec3 starfield(vec3 rd) {
   vec3 stretchDir = vec3(0.0, 0.0, -1.0);
   vec3 stretchedRd = normalize(rd + stretchDir * dot(rd, stretchDir) * scrollStretch);
 
-#ifdef QUALITY_MEDIUM
+#ifdef QUALITY_LOW
+  {
+    float scale = 60.0;
+    vec3 p = stretchedRd * scale;
+    vec3 id = floor(p);
+    vec3 fd = fract(p);
+    for (int ox = 0; ox <= 1; ox++) {
+    for (int oy = 0; oy <= 1; oy++) {
+    for (int oz = 0; oz <= 1; oz++) {
+      vec3 offset = vec3(float(ox), float(oy), float(oz));
+      vec3 nid = id + offset;
+      vec3 h3 = hash33(nid);
+      float dist = length(h3 + offset - fd);
+      float h = hash(dot(nid, vec3(127.1, 311.7, 74.7)));
+      if (h > 0.42) {
+        float magnitude = (h - 0.42) / 0.58;
+        float brightness = exp(-dist * dist * 350.0) * sqrt(magnitude);
+        col += vec3(1.0, 0.93, 0.86) * brightness * 0.9;
+      }
+    }
+    }
+    }
+  }
+#elif defined(QUALITY_MEDIUM)
   {
     float scale = 55.0;
     vec3 p = stretchedRd * scale;
@@ -188,7 +211,9 @@ vec3 starfield(vec3 rd) {
 
   float nebulaBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 1.5;
 
-#ifdef QUALITY_MEDIUM
+#ifdef QUALITY_LOW
+  col += vec3(0.06, 0.04, 0.025) * 0.04 * nebulaBoost;
+#elif defined(QUALITY_MEDIUM)
   float nebSeed = dot(rd * 5.0, vec3(127.1, 311.7, 74.7)) + uTime * 0.004;
   float _nb = hash(nebSeed); float _nb2m = _nb*_nb; float nebula = _nb2m * _nb2m * 0.12;
   col += vec3(0.11, 0.06, 0.04) * nebula * nebulaBoost;
@@ -215,6 +240,7 @@ vec3 starfield(vec3 rd) {
   col += vec3(0.05, 0.035, 0.025) * deepNebula * nebulaBoost;
 #endif
 
+#ifndef QUALITY_LOW
   float _cg = max(1.0 - abs(rd.y - 0.1) * 1.2, 0.0); float _cg2 = _cg*_cg; float cosmicGlow = _cg2 * sqrt(_cg) * 0.04;
   col += vec3(0.06, 0.04, 0.025) * cosmicGlow * nebulaBoost;
 
@@ -257,6 +283,7 @@ vec3 starfield(vec3 rd) {
   float _sc6 = hash(clusterSeed); float _sc6_2 = _sc6*_sc6; float starCluster = _sc6_2 * _sc6_2;
   float dustShimmer = sin(uTime * 2.0 + dot(rd, vec3(47.0, 13.0, 91.0))) * 0.5 + 0.5;
   col += vec3(0.85, 0.7, 0.5) * starCluster * dustShimmer * 0.05;
+#endif
 #endif
 
   return col;

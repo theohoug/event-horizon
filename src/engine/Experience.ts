@@ -36,7 +36,7 @@ interface PerfConfig {
   motionBlur: boolean;
   antialias: boolean;
   gpuScore: number;
-  quality: 'ultra' | 'high' | 'medium';
+  quality: 'ultra' | 'high' | 'medium' | 'low';
 }
 
 interface ExperienceState {
@@ -48,7 +48,7 @@ interface ExperienceState {
   mouseSmooth: THREE.Vector2;
   isReady: boolean;
   soundEnabled: boolean;
-  quality: 'ultra' | 'high' | 'medium';
+  quality: 'ultra' | 'high' | 'medium' | 'low';
   introProgress: number;
   introActive: boolean;
   chapterFlash: number;
@@ -163,9 +163,29 @@ export class Experience {
 
     const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v5') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v9') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
+    try { localStorage.removeItem('eh_perf_v5'); } catch {}
+    try { localStorage.removeItem('eh_perf_v6'); } catch {}
+    try { localStorage.removeItem('eh_perf_v7'); } catch {}
+    try { localStorage.removeItem('eh_perf_v8'); } catch {}
+
+    // --- Hardware detection: force low for known weak GPUs ---
+    const isIntelIntegrated = gpuRenderer.includes('intel') && !gpuRenderer.includes('arc')
+      && (gpuRenderer.includes('hd') || gpuRenderer.includes('uhd') || gpuRenderer.includes('iris'));
+    const isOldIntel = isIntelIntegrated && /(?:hd\s*(?:4[0-9]{3}|5[0-9]{2}|[23][0-9]{3})|gma)/.test(gpuRenderer);
+    const isVeryWeakHardware = (cores <= 2 && ram <= 4) || isOldIntel;
+
+    if (isVeryWeakHardware) {
+      const cfg: PerfConfig = {
+        dpr: 0.75, maxSteps: 24, qualityMedium: true, gpgpuTexSize: 0,
+        starfieldCount: 500, bloomPasses: 1, bloomScale: 0.15,
+        motionBlur: false, antialias: false, gpuScore: 5, quality: 'low',
+      };
+      try { localStorage.setItem('eh_perf_v9', JSON.stringify({ fp: fingerprint, cfg })); } catch {}
+      return cfg;
+    }
 
     let heuristicBonus = 0;
     if (gpuRenderer.includes('rtx 40') || gpuRenderer.includes('rtx 50')) heuristicBonus = 18;
@@ -175,7 +195,7 @@ export class Experience {
     else if (gpuRenderer.includes('apple m1')) heuristicBonus = 8;
     else if (gpuRenderer.includes('rx 7') || gpuRenderer.includes('rx 9')) heuristicBonus = 12;
     else if (gpuRenderer.includes('rx 6')) heuristicBonus = 8;
-    else if (gpuRenderer.includes('intel') && !gpuRenderer.includes('arc')) heuristicBonus = -12;
+    else if (isIntelIntegrated) heuristicBonus = -12;
     if (cores >= 8 && ram >= 16) heuristicBonus += 5;
     else if (cores <= 2 || ram <= 2) heuristicBonus -= 8;
 
@@ -242,25 +262,23 @@ gl_FragColor=vec4(col,1.0);}`;
     if (costPerPxStep <= 0) costPerPxStep = repMs192 / (px192 * benchSteps);
     const overhead = Math.max(0, repMs96 - costPerPxStep * px96 * benchSteps);
 
-    const thermalFactor = 0.95;
-    const bhBudget = 11.0 * thermalFactor;
+    const thermalFactor = 0.97;
+    const bhBudget = 13.0 * thermalFactor;
 
     const maxDpr = Math.min(nativeDpr, 2.0);
     const minDpr = 1.0;
     let bestDpr = minDpr;
-    let bestSteps = 36;
+    let bestSteps = 100;
 
     for (let tryDpr = maxDpr; tryDpr >= minDpr - 0.01; tryDpr -= 0.05) {
       const dprR = Math.round(tryDpr * 20) / 20;
       const affordable = (bhBudget - overhead) / Math.max(costPerPxStep * screenPx * dprR * dprR, 1e-12);
-      if (affordable >= 36) {
+      if (affordable >= 100) {
         bestDpr = dprR;
-        bestSteps = Math.min(160, Math.max(36, Math.round(affordable)));
+        bestSteps = Math.min(160, Math.max(100, Math.round(affordable)));
         break;
       }
     }
-
-    const qualityMedium = bestSteps < 40;
 
     const fullCost = costPerPxStep * screenPx * maxDpr * maxDpr * 160 + overhead;
     let gpuScore = Math.min(100, Math.max(0, (bhBudget / Math.max(fullCost, 0.01)) * 100));
@@ -269,21 +287,31 @@ gl_FragColor=vec4(col,1.0);}`;
     const lerp = (a: number, b: number, v: number) => a + (b - a) * Math.max(0, Math.min(1, v));
     const t01 = gpuScore / 100;
 
-    const gpgpuSizes = [64, 80, 96, 128, 160, 192, 224, 256];
-    const gpgpuTexSize = gpgpuSizes[Math.min(gpgpuSizes.length - 1, Math.floor(t01 * gpgpuSizes.length))];
-    const starfieldCount = Math.round(lerp(1500, 12000, t01));
-    const bloomPasses = gpuScore > 75 ? 4 : gpuScore > 50 ? 3 : gpuScore > 25 ? 2 : 1;
-    const bloomScale = Math.round(lerp(0.15, 0.5, t01) * 100) / 100;
-    const motionBlur = gpuScore > 15;
-    const antialias = gpuScore > 40;
-    const quality: 'ultra' | 'high' | 'medium' = gpuScore >= 50 ? 'ultra' : gpuScore >= 20 ? 'high' : 'medium';
+    const isLow = gpuScore < 10;
+    const isMed = gpuScore < 25;
+    const isHigh = gpuScore < 50;
 
-    const config: PerfConfig = { dpr: bestDpr, maxSteps: bestSteps, qualityMedium, gpgpuTexSize, starfieldCount, bloomPasses, bloomScale, motionBlur, antialias, gpuScore: Math.round(gpuScore), quality };
-    try { localStorage.setItem('eh_perf_v5', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    const gpgpuSizes = [128, 128, 160, 192, 224, 256, 256, 256];
+    const gpgpuTexSize = isLow ? 0 : gpgpuSizes[Math.min(gpgpuSizes.length - 1, Math.floor(t01 * gpgpuSizes.length))];
+    const starfieldCount = isLow ? 500 : Math.round(lerp(3000, 12000, t01));
+    const bloomPasses = isLow ? 1 : isMed ? 2 : isHigh ? 3 : 4;
+    const bloomScale = isLow ? 0.15 : isMed ? 0.2 : isHigh ? 0.35 : 0.5;
+    const qualityMedium = isMed;
+    const motionBlur = !isLow;
+    const antialias = !isLow;
+    const quality: PerfConfig['quality'] = isLow ? 'low' : isMed ? 'medium' : isHigh ? 'high' : 'ultra';
+
+    const config: PerfConfig = {
+      dpr: isLow ? Math.min(bestDpr, 0.75) : bestDpr,
+      maxSteps: isLow ? 24 : bestSteps,
+      qualityMedium, gpgpuTexSize, starfieldCount, bloomPasses, bloomScale,
+      motionBlur, antialias, gpuScore: Math.round(gpuScore), quality,
+    };
+    try { localStorage.setItem('eh_perf_v9', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
-      return { dpr: 1.5, maxSteps: 60, qualityMedium: false, gpgpuTexSize: 128, starfieldCount: 6000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: false, gpuScore: 50, quality: 'high' };
+      return { dpr: 1, maxSteps: 100, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 3000, bloomPasses: 2, bloomScale: 0.2, motionBlur: true, antialias: true, gpuScore: 25, quality: 'medium' };
     }
   }
 
@@ -397,15 +425,36 @@ gl_FragColor=vec4(col,1.0);}`;
     this.renderer.toneMapping = THREE.NoToneMapping;
 
     this.perfConfig = this.profileGpu(this.renderer);
+
+    // URL override: ?quality=low|medium|high|ultra
+    const urlQuality = new URL(window.location.href).searchParams.get('quality');
+    if (urlQuality === 'ultra' || urlQuality === 'high' || urlQuality === 'medium' || urlQuality === 'low') {
+      this.perfConfig = urlQuality === 'ultra'
+        ? { dpr: Math.min(window.devicePixelRatio, 2), maxSteps: 160, qualityMedium: false, gpgpuTexSize: 256, starfieldCount: 12000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 100, quality: 'ultra' }
+        : urlQuality === 'high'
+        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 80, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: true, gpuScore: 60, quality: 'high' }
+        : urlQuality === 'low'
+        ? { dpr: 0.75, maxSteps: 24, qualityMedium: true, gpgpuTexSize: 0, starfieldCount: 500, bloomPasses: 1, bloomScale: 0.15, motionBlur: false, antialias: false, gpuScore: 5, quality: 'low' }
+        : { dpr: 1, maxSteps: 100, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 3000, bloomPasses: 2, bloomScale: 0.2, motionBlur: true, antialias: true, gpuScore: 25, quality: 'medium' };
+    }
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      this.perfConfig.motionBlur = false;
+      this.perfConfig.bloomPasses = Math.min(this.perfConfig.bloomPasses, 2);
+    }
+
     this.state.quality = this.perfConfig.quality;
+    const isLow = this.perfConfig.quality === 'low';
+
+    if (isLow) document.body.classList.add('quality-low');
 
     this.renderer.setPixelRatio(this.perfConfig.dpr);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    this.postProcessing = new PostProcessing(this.renderer, this.perfConfig.bloomPasses, this.perfConfig.bloomScale, this.perfConfig.qualityMedium, this.perfConfig.motionBlur);
+    this.postProcessing = new PostProcessing(this.renderer, this.perfConfig.bloomPasses, this.perfConfig.bloomScale, this.perfConfig.qualityMedium || isLow, this.perfConfig.motionBlur, isLow);
 
-    this.blackHole = new BlackHole(this.postProcessing.bgScene, this.perfConfig.maxSteps, this.perfConfig.qualityMedium, this.perfConfig.dpr);
-    if (!isMobileDevice) {
+    this.blackHole = new BlackHole(this.postProcessing.bgScene, this.perfConfig.maxSteps, this.perfConfig.qualityMedium || isLow, this.perfConfig.dpr, isLow);
+    if (!isMobileDevice && this.perfConfig.gpgpuTexSize > 0) {
       this.particles = new GPGPUParticles(this.renderer, this.postProcessing.particleScene, this.perfConfig.gpgpuTexSize, this.perfConfig.dpr);
     }
     this.starfield = new Starfield(this.postProcessing.particleScene, this.perfConfig.starfieldCount);
@@ -414,7 +463,7 @@ gl_FragColor=vec4(col,1.0);}`;
     this.renderer.compile(this.postProcessing.particleScene, this.postProcessing.particleCamera);
 
     this.timeline = new Timeline();
-    this.textReveal = new TextReveal();
+    this.textReveal = new TextReveal(isLow);
     this.audio = new AudioEngine();
     this.syncAlteredMode();
     this.haptics = new Haptics();
@@ -1223,8 +1272,15 @@ gl_FragColor=vec4(col,1.0);}`;
     ScrollTrigger.defaults({ scroller: document.body });
   }
 
+  private lastMouseMove = 0;
   private setupMouse() {
+    const isLowQuality = this.perfConfig.quality === 'low';
     this.addTrackedListener(window, 'mousemove', ((e: MouseEvent) => {
+      if (isLowQuality) {
+        const now = performance.now();
+        if (now - this.lastMouseMove < 33) return;
+        this.lastMouseMove = now;
+      }
       this.state.mouse.set(e.clientX / window.innerWidth, 1.0 - e.clientY / window.innerHeight);
     }) as EventListener);
 
@@ -1351,6 +1407,7 @@ gl_FragColor=vec4(col,1.0);}`;
   }
 
   private setupCursor() {
+    if (this.perfConfig.quality === 'low') return;
     if (window.matchMedia('(pointer: fine)').matches) {
       this.cursor = document.createElement('div');
       this.cursor.id = 'custom-cursor';

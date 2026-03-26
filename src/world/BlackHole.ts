@@ -15,12 +15,13 @@ export class BlackHole {
   private resizeHandler: () => void;
   private pixelRatio: number;
 
-  constructor(scene: THREE.Scene, maxSteps: number, qualityMedium: boolean, pixelRatio: number) {
+  constructor(scene: THREE.Scene, maxSteps: number, qualityMedium: boolean, pixelRatio: number, qualityLow = false) {
     this.pixelRatio = pixelRatio;
 
     const defines: Record<string, string> = {};
-    defines['MAX_STEPS'] = String(maxSteps);
+    defines['MAX_STEPS'] = qualityLow ? '24' : String(maxSteps);
     if (qualityMedium) defines['QUALITY_MEDIUM'] = '1';
+    if (qualityLow) defines['QUALITY_LOW'] = '1';
 
     this.material = new THREE.ShaderMaterial({
       vertexShader: blackholeVert,

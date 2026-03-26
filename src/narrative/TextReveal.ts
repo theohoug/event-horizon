@@ -10,6 +10,7 @@ import gsap from 'gsap';
 export class TextReveal {
   isAlteredMode = false;
   isHardcoreMode = false;
+  private isLow = false;
   private started = false;
   private currentReveal: gsap.core.Timeline | null = null;
   private chars: HTMLElement[] = [];
@@ -24,6 +25,10 @@ export class TextReveal {
   private cachedSpaghettiTitle: HTMLElement | null = null;
   private cachedTitleLine: HTMLElement | null = null;
   private cachedSubtitleLine: HTMLElement | null = null;
+
+  constructor(isLow = false) {
+    this.isLow = isLow;
+  }
 
   start() {
     this.started = true;
@@ -88,6 +93,7 @@ export class TextReveal {
 
   update(scroll: number) {
     if (!this.started) return;
+    if (this.isLow) return;
     this.lastScroll = scroll;
 
     const container = document.getElementById('chapter-text');

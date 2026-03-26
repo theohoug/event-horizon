@@ -101,7 +101,7 @@ export class TextReveal {
     if (this.lowQuality) {
       const opacity = Math.max(0.3, 1 - scroll * 0.5);
       const translateY = scroll * -8;
-      container.style.transform = `translateY(${translateY}px)`;
+      container.style.transform = `translateX(-50%) translateY(${translateY}px)`;
       container.style.opacity = `${opacity}`;
       return;
     }

@@ -5249,6 +5249,10 @@ html.hardcore-mode .corner-ornament {
   background: rgba(5, 5, 5, 0.92) !important;
 }
 
+.quality-low * {
+  cursor: auto !important;
+}
+
 .quality-low #chapter-text {
   will-change: auto !important;
   filter: none !important;

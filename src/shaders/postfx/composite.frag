@@ -161,7 +161,17 @@ void main() {
   if (chromaticAmount < 0.001 && motionBlurStrength < 0.001) {
     color = texture2D(tDiffuse, distortedUv).rgb;
   } else {
-#ifdef QUALITY_MEDIUM
+#ifdef QUALITY_LOW
+  {
+    vec2 uvR = distortedUv + chromaticOffset * 0.5;
+    vec2 uvB = distortedUv - chromaticOffset * 0.5;
+    color = vec3(
+      texture2D(tDiffuse, uvR).r,
+      texture2D(tDiffuse, distortedUv).g,
+      texture2D(tDiffuse, uvB).b
+    );
+  }
+#elif defined(QUALITY_MEDIUM)
   if (motionBlurStrength > 0.001) {
     vec3 spectralM = vec3(0.0);
     for (int i = 0; i < 3; i++) {
@@ -238,6 +248,7 @@ void main() {
   float bloomSoftKnee = 1.0 / (1.0 + bloomLuma * 2.0);
   color += bloom * bloomTint * uBloomMix * bloomSoftKnee + dirtColor;
 
+#ifndef QUALITY_LOW
   float anamorphicScroll = smoothstep(0.35, 0.65, uScroll);
   if (anamorphicScroll > 0.01) {
     float anamorphicStreak = exp(-abs(center.y) * 8.0);
@@ -256,6 +267,7 @@ void main() {
     vec3 halationColor = mix(vec3(1.0, 0.88, 0.68), vec3(0.85, 0.65, 0.45), uScroll);
     color += halationColor * halation * 0.035 * halationPhase;
   }
+#endif
 
   float preExposure = 0.88 + uScroll * 0.06;
   color *= preExposure;

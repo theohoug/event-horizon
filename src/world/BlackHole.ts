@@ -15,10 +15,11 @@ export class BlackHole {
   private resizeHandler: () => void;
   private renderer: THREE.WebGLRenderer | null = null;
 
-  constructor(scene: THREE.Scene, maxSteps: number, qualityMedium: boolean, pixelRatio: number) {
+  constructor(scene: THREE.Scene, maxSteps: number, qualityMedium: boolean, pixelRatio: number, qualityLow = false) {
     const defines: Record<string, string> = {};
-    defines['MAX_STEPS'] = '160';
+    defines['MAX_STEPS'] = qualityLow ? '24' : '160';
     if (qualityMedium) defines['QUALITY_MEDIUM'] = '1';
+    if (qualityLow) defines['QUALITY_LOW'] = '1';
 
     const initW = (window.visualViewport?.width ?? window.innerWidth) * pixelRatio;
     const initH = (window.visualViewport?.height ?? window.innerHeight) * pixelRatio;

@@ -24,6 +24,11 @@ export class TextReveal {
   private cachedSpaghettiTitle: HTMLElement | null = null;
   private cachedTitleLine: HTMLElement | null = null;
   private cachedSubtitleLine: HTMLElement | null = null;
+  private lowQuality: boolean;
+
+  constructor(lowQuality = false) {
+    this.lowQuality = lowQuality;
+  }
 
   start() {
     this.started = true;
@@ -92,6 +97,14 @@ export class TextReveal {
 
     const container = document.getElementById('chapter-text');
     if (!container) return;
+
+    if (this.lowQuality) {
+      const opacity = Math.max(0.3, 1 - scroll * 0.5);
+      const translateY = scroll * -8;
+      container.style.transform = `translateY(${translateY}px)`;
+      container.style.opacity = `${opacity}`;
+      return;
+    }
 
     const tintOpacity = Math.min(0.45, 0.2 + scroll * 0.25);
     container.style.background = `radial-gradient(ellipse 80% 70% at center, rgba(2,2,8,${tintOpacity.toFixed(2)}) 0%, rgba(2,2,6,${(tintOpacity * 0.5).toFixed(2)}) 40%, transparent 75%)`;

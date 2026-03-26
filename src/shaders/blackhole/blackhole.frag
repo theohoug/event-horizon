@@ -50,7 +50,30 @@ vec3 starfield(vec3 rd) {
   vec3 stretchDir = vec3(0.0, 0.0, -1.0);
   vec3 stretchedRd = normalize(rd + stretchDir * dot(rd, stretchDir) * scrollStretch);
 
-#ifdef QUALITY_MEDIUM
+#ifdef QUALITY_LOW
+  {
+    float scale = 60.0;
+    vec3 p = stretchedRd * scale;
+    vec3 id = floor(p);
+    vec3 fd = fract(p);
+    for (int ox = 0; ox <= 1; ox++) {
+    for (int oy = 0; oy <= 1; oy++) {
+    for (int oz = 0; oz <= 1; oz++) {
+      vec3 offset = vec3(float(ox), float(oy), float(oz));
+      vec3 nid = id + offset;
+      vec3 h3 = hash33(nid);
+      float dist = length(h3 + offset - fd);
+      float h = hash(dot(nid, vec3(127.1, 311.7, 74.7)));
+      if (h > 0.42) {
+        float magnitude = (h - 0.42) / 0.58;
+        float brightness = exp(-dist * dist * 350.0) * sqrt(magnitude);
+        col += vec3(1.0, 0.93, 0.86) * brightness * 0.9;
+      }
+    }
+    }
+    }
+  }
+#elif defined(QUALITY_MEDIUM)
   for (int layer = 0; layer < 2; layer++) {
     float scale = 50.0 + float(layer) * 50.0;
     vec3 p = stretchedRd * scale;
@@ -208,7 +231,9 @@ vec3 starfield(vec3 rd) {
 
   float nebulaBoost = 1.0 + smoothstep(0.3, 0.0, uScroll) * 1.5;
 
-#ifdef QUALITY_MEDIUM
+#ifdef QUALITY_LOW
+  col += vec3(0.06, 0.04, 0.025) * 0.04 * nebulaBoost;
+#elif defined(QUALITY_MEDIUM)
   float n1m = snoise(rd * 2.5 + vec3(uTime * 0.008));
   float _nb1m = n1m * 0.5 + 0.5; float _nb1m2 = _nb1m*_nb1m; float nebulaM = _nb1m2 * sqrt(_nb1m) * 0.12;
   float nebSeedM = dot(rd * 5.0, vec3(127.1, 311.7, 74.7)) + uTime * 0.004;
@@ -240,6 +265,7 @@ vec3 starfield(vec3 rd) {
   col += vec3(0.05, 0.035, 0.025) * deepNebula * nebulaBoost;
 #endif
 
+#ifndef QUALITY_LOW
   float _cg = max(1.0 - abs(rd.y - 0.1) * 1.2, 0.0); float _cg2 = _cg*_cg; float cosmicGlow = _cg2 * sqrt(_cg) * 0.04;
   col += vec3(0.06, 0.04, 0.025) * cosmicGlow * nebulaBoost;
 
@@ -256,8 +282,11 @@ vec3 starfield(vec3 rd) {
   float milkyDetail = (hash(milkySeed * 8.0) - 0.5) * 0.5 + (hash(milkySeed * 16.0) - 0.5) * 0.25;
   float milkyBoost = 1.0 + smoothstep(0.2, 0.0, uScroll) * 0.8;
   col += vec3(0.045, 0.035, 0.025) * milkyWay * (0.5 + milkyDetail) * milkyBoost;
+#endif
 
-#ifdef QUALITY_MEDIUM
+#if defined(QUALITY_LOW)
+  // skip background dust stars in low quality
+#elif defined(QUALITY_MEDIUM)
   {
     float bgScale = 160.0;
     vec3 bgP = rd * bgScale;
@@ -335,7 +364,9 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   float rotAngle = angle + uTime * uDiskSpeed * orbitalSpeed;
 
   float turb1 = snoise(vec3(r * 2.0, rotAngle * 2.5, uTime * 0.25)) * 0.3;
-#ifdef QUALITY_MEDIUM
+#ifdef QUALITY_LOW
+  float turbulence = turb1;
+#elif defined(QUALITY_MEDIUM)
   float turb2m = snoise(vec3(r * 4.5, rotAngle * 4.0, uTime * 0.4 + 31.0)) * 0.10;
   float turbulence = turb1 + turb2m;
 #else
@@ -348,7 +379,9 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
   spiralArm = sqrt(spiralArm);
   float secondaryArm = sin(rotAngle * 5.0 + r * 2.8 - uTime * 0.3) * 0.5 + 0.5;
   spiralArm = mix(spiralArm, spiralArm * secondaryArm, 0.25);
-#ifdef QUALITY_MEDIUM
+#ifdef QUALITY_LOW
+  // skip tertiary arm detail
+#elif defined(QUALITY_MEDIUM)
   float tertiaryArmM = sin(rotAngle * 13.0 + r * 5.0 + uTime * 0.15) * 0.5 + 0.5;
   spiralArm = mix(spiralArm, spiralArm + tertiaryArmM * 0.10, 0.4);
 #else
@@ -391,7 +424,11 @@ vec4 accretionDisk(vec3 pos, vec3 rd) {
 
   diskColor *= 1.0 + turbulence * vec3(0.15, 0.05, -0.05);
 
-#ifdef QUALITY_MEDIUM
+#ifdef QUALITY_LOW
+  float waveLow = sin(rotAngle * 8.0 + r * 5.0 - uTime * 2.0) * 0.5 + 0.5;
+  float waveMaskLow = diskMask * smoothstep(DISK_INNER, DISK_INNER + 2.0, r) * smoothstep(DISK_OUTER, DISK_OUTER - 3.0, r);
+  diskColor += vec3(1.0, 0.9, 0.65) * waveLow * waveMaskLow * 0.35;
+#elif defined(QUALITY_MEDIUM)
   float waveM1 = sin(rotAngle * 8.0 + r * 5.0 - uTime * 2.0) * 0.5 + 0.5;
   float waveM2 = sin(rotAngle * 12.0 - r * 4.0 + uTime * 2.5 + 1.3) * 0.5 + 0.5;
   float waveM3 = sin(rotAngle * 18.0 + r * 8.0 + uTime * 1.2 + 2.7) * 0.5 + 0.5;

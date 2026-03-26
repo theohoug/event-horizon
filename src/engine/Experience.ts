@@ -53,7 +53,7 @@ interface PerfConfig {
   motionBlur: boolean;
   antialias: boolean;
   gpuScore: number;
-  quality: 'ultra' | 'high' | 'medium';
+  quality: 'ultra' | 'high' | 'medium' | 'low';
 }
 
 interface ExperienceState {
@@ -65,7 +65,7 @@ interface ExperienceState {
   mouseSmooth: THREE.Vector2;
   isReady: boolean;
   soundEnabled: boolean;
-  quality: 'ultra' | 'high' | 'medium';
+  quality: 'ultra' | 'high' | 'medium' | 'low';
   introProgress: number;
   introActive: boolean;
   chapterFlash: number;
@@ -347,20 +347,21 @@ gl_FragColor=vec4(col,1.0);}`;
     const gpgpuTexSize = gpgpuSizes[Math.min(gpgpuSizes.length - 1, Math.floor(t01 * gpgpuSizes.length))];
     const starfieldCount = Math.round(lerp(3000, 12000, t01));
 
+    const isPotato = gpuScore < 10;
     const isWeak = gpuScore < 25;
     const isMid = gpuScore < 50;
     const config: PerfConfig = {
-      dpr: bestDpr,
-      maxSteps: bestSteps,
+      dpr: isPotato ? Math.min(bestDpr, 0.75) : bestDpr,
+      maxSteps: isPotato ? 24 : bestSteps,
       qualityMedium: isWeak,
-      gpgpuTexSize,
-      starfieldCount,
-      bloomPasses: isWeak ? 2 : isMid ? 3 : 4,
-      bloomScale: isWeak ? 0.2 : isMid ? 0.35 : 0.5,
-      motionBlur: true,
-      antialias: true,
+      gpgpuTexSize: isPotato ? 0 : gpgpuTexSize,
+      starfieldCount: isPotato ? 500 : starfieldCount,
+      bloomPasses: isPotato ? 1 : isWeak ? 2 : isMid ? 3 : 4,
+      bloomScale: isPotato ? 0.15 : isWeak ? 0.2 : isMid ? 0.35 : 0.5,
+      motionBlur: !isPotato,
+      antialias: !isPotato,
       gpuScore: Math.round(gpuScore),
-      quality: isWeak ? 'medium' : isMid ? 'high' : 'ultra',
+      quality: isPotato ? 'low' : isWeak ? 'medium' : isMid ? 'high' : 'ultra',
     };
     try { localStorage.setItem('eh_perf_v9', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
@@ -481,12 +482,14 @@ gl_FragColor=vec4(col,1.0);}`;
     this.renderer.toneMapping = THREE.NoToneMapping;
 
     this.perfConfig = this.profileGpu(this.renderer);
-    const urlQuality = new URL(window.location.href).searchParams.get('quality') as 'ultra' | 'high' | 'medium' | null;
-    if (urlQuality === 'ultra' || urlQuality === 'high' || urlQuality === 'medium') {
+    const urlQuality = new URL(window.location.href).searchParams.get('quality') as 'ultra' | 'high' | 'medium' | 'low' | null;
+    if (urlQuality === 'ultra' || urlQuality === 'high' || urlQuality === 'medium' || urlQuality === 'low') {
       this.perfConfig = urlQuality === 'ultra'
         ? { dpr: Math.min(window.devicePixelRatio, 2), maxSteps: 160, qualityMedium: false, gpgpuTexSize: 256, starfieldCount: 12000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 100, quality: 'ultra' }
         : urlQuality === 'high'
         ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 80, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: true, gpuScore: 60, quality: 'high' }
+        : urlQuality === 'low'
+        ? { dpr: 0.75, maxSteps: 24, qualityMedium: true, gpgpuTexSize: 0, starfieldCount: 500, bloomPasses: 1, bloomScale: 0.15, motionBlur: false, antialias: false, gpuScore: 5, quality: 'low' }
         : { dpr: 1.0, maxSteps: 100, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 3000, bloomPasses: 2, bloomScale: 0.2, motionBlur: true, antialias: true, gpuScore: 25, quality: 'medium' };
     }
     this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -501,16 +504,21 @@ gl_FragColor=vec4(col,1.0);}`;
     this.adaptiveBloomPasses = this.perfConfig.bloomPasses;
     this.adaptiveBloomScale = this.perfConfig.bloomScale;
 
+    if (this.perfConfig.quality === 'low') {
+      document.body.classList.add('quality-low');
+    }
+
     this.renderer.setPixelRatio(this.perfConfig.dpr);
     this.renderer.setSize(initSize.w, initSize.h);
     this.canvas.style.width = '100vw';
     this.canvas.style.height = '100vh';
 
-    this.postProcessing = new PostProcessing(this.renderer, this.perfConfig.bloomPasses, this.perfConfig.bloomScale, this.perfConfig.qualityMedium, this.perfConfig.motionBlur);
+    const qualityLow = this.perfConfig.quality === 'low';
+    this.postProcessing = new PostProcessing(this.renderer, this.perfConfig.bloomPasses, this.perfConfig.bloomScale, this.perfConfig.qualityMedium || qualityLow, this.perfConfig.motionBlur, qualityLow);
 
-    this.blackHole = new BlackHole(this.postProcessing.bgScene, this.perfConfig.maxSteps, this.perfConfig.qualityMedium, this.perfConfig.dpr);
+    this.blackHole = new BlackHole(this.postProcessing.bgScene, this.perfConfig.maxSteps, this.perfConfig.qualityMedium || qualityLow, this.perfConfig.dpr, qualityLow);
     this.blackHole.setRenderer(this.renderer);
-    if (!isMobileDevice) {
+    if (!isMobileDevice && this.perfConfig.gpgpuTexSize > 0) {
       this.particles = new GPGPUParticles(this.renderer, this.postProcessing.particleScene, this.perfConfig.gpgpuTexSize, this.perfConfig.dpr);
     }
     this.starfield = new Starfield(this.postProcessing.particleScene, this.perfConfig.starfieldCount);
@@ -519,7 +527,7 @@ gl_FragColor=vec4(col,1.0);}`;
     this.renderer.compile(this.postProcessing.particleScene, this.postProcessing.particleCamera);
 
     this.timeline = new Timeline();
-    this.textReveal = new TextReveal();
+    this.textReveal = new TextReveal(this.perfConfig.quality === 'low');
     this.audio = new AudioEngine();
     this.syncAlteredMode();
     this.haptics = new Haptics();
@@ -1450,8 +1458,15 @@ gl_FragColor=vec4(col,1.0);}`;
     ScrollTrigger.defaults({ scroller: document.body });
   }
 
+  private lastMouseMove = 0;
   private setupMouse() {
+    const isLow = this.perfConfig.quality === 'low';
     this.addTrackedListener(window, 'mousemove', ((e: MouseEvent) => {
+      if (isLow) {
+        const now = performance.now();
+        if (now - this.lastMouseMove < 33) return;
+        this.lastMouseMove = now;
+      }
       this.state.mouse.set(e.clientX / window.innerWidth, 1.0 - e.clientY / window.innerHeight);
     }) as EventListener);
 
@@ -1578,6 +1593,7 @@ gl_FragColor=vec4(col,1.0);}`;
   }
 
   private setupCursor() {
+    if (this.perfConfig.quality === 'low') return;
     if (window.matchMedia('(pointer: fine)').matches) {
       this.cursor = document.createElement('div');
       this.cursor.id = 'custom-cursor';
@@ -2738,7 +2754,7 @@ gl_FragColor=vec4(col,1.0);}`;
         if (this.postCreditsTimer > 20) {
           this.postCreditsShown = true;
           const msg = document.createElement('div');
-          msg.style.cssText = 'position:fixed;bottom:8%;left:50%;transform:translateX(-50%);z-index:16;font-family:var(--font-serif);font-style:italic;font-size:clamp(0.55rem,0.9vw,0.75rem);color:rgba(100,100,120,0.3);letter-spacing:0.08em;pointer-events:none;opacity:0;transition:opacity 4s ease;text-align:center;max-width:280px;line-height:1.8';
+          msg.style.cssText = 'position:fixed;bottom:20%;left:50%;transform:translateX(-50%);z-index:16;font-family:var(--font-serif);font-style:italic;font-size:clamp(0.55rem,0.9vw,0.75rem);color:rgba(100,100,120,0.3);letter-spacing:0.08em;pointer-events:none;opacity:0;transition:opacity 4s ease;text-align:center;max-width:280px;line-height:1.8';
           msg.textContent = t().postCredits;
           document.body.appendChild(msg);
           requestAnimationFrame(() => { msg.style.opacity = '1'; });

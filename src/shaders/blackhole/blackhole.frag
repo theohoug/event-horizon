@@ -235,14 +235,20 @@ vec3 starfield(vec3 rd) {
   col += vec3(0.06, 0.04, 0.025) * 0.04 * nebulaBoost;
 #elif defined(QUALITY_MEDIUM)
   float n1m = snoise(rd * 2.5 + vec3(uTime * 0.008));
-  float _nb1m = n1m * 0.5 + 0.5; float _nb1m2 = _nb1m*_nb1m; float nebulaM = _nb1m2 * sqrt(_nb1m) * 0.12;
+  float _nb1m = n1m * 0.5 + 0.5; float _nb1m2 = _nb1m*_nb1m; float nebulaM = _nb1m2 * sqrt(_nb1m) * 0.14;
   float nebSeedM = dot(rd * 5.0, vec3(127.1, 311.7, 74.7)) + uTime * 0.004;
-  float _nbM = hash(nebSeedM); float _nbM2 = _nbM*_nbM; float nebulaM2 = _nbM2 * _nbM2 * 0.06;
-  col += vec3(0.11, 0.06, 0.04) * nebulaM * nebulaBoost;
-  col += vec3(0.09, 0.05, 0.03) * nebulaM2 * nebulaBoost;
+  float _nbM = hash(nebSeedM); float _nbM2 = _nbM*_nbM; float nebulaM2 = _nbM2 * _nbM2 * 0.07;
+  col += vec3(0.12, 0.06, 0.05) * nebulaM * nebulaBoost;
+  col += vec3(0.10, 0.06, 0.03) * nebulaM2 * nebulaBoost;
+
+  float n4m = snoise(rd * 3.8 + vec3(uTime * 0.006, 0.0, 42.0));
+  float _nb3m = n4m * 0.5 + 0.5; float nebula3m = _nb3m * _nb3m * _nb3m * 0.06;
+  col += vec3(0.07, 0.04, 0.04) * nebula3m * nebulaBoost;
+  float _nnm = n4m * 0.5 + 0.5; float nurseryM = _nnm * _nnm * _nnm * _nnm * 0.04;
+  col += vec3(0.10, 0.06, 0.03) * nurseryM * nebulaBoost;
 
   float n3m = snoise(rd * 1.2 + vec3(0.0, uTime * 0.003, 31.0));
-  float _dnm = n3m * 0.5 + 0.5; float deepNebulaM = _dnm * _dnm * _dnm * 0.06;
+  float _dnm = n3m * 0.5 + 0.5; float deepNebulaM = _dnm * _dnm * _dnm * 0.07;
   col += vec3(0.05, 0.035, 0.025) * deepNebulaM * nebulaBoost;
 #else
   float n1 = snoise(rd * 2.5 + vec3(uTime * 0.008));

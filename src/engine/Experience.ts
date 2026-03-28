@@ -676,9 +676,11 @@ gl_FragColor=vec4(col,1.0);}`;
           const warningEl = document.getElementById('sound-warning');
           if (warningEl) warningEl.textContent = t().accessWarning;
 
+          const soundPrompt = document.getElementById('sound-prompt');
+          if (soundPrompt) soundPrompt.classList.add('visible');
           this.lenis.stop();
+          this.setupSoundPrompt();
           loader.classList.add('hidden');
-          this.showQRGate();
       }, 400);
     }
   }
@@ -852,9 +854,8 @@ gl_FragColor=vec4(col,1.0);}`;
       gate.classList.add('dissolving');
       setTimeout(() => {
         gate.style.display = 'none';
-        const soundPrompt = document.getElementById('sound-prompt');
-        if (soundPrompt) soundPrompt.classList.add('visible');
-        this.setupSoundPrompt();
+        this.lenis.start();
+        this.playIntroCinematic();
       }, 800);
     };
     if (skipBtn) skipBtn.addEventListener('click', dismissGate);
@@ -920,11 +921,15 @@ gl_FragColor=vec4(col,1.0);}`;
         setTimeout(() => prompt.classList.remove('visible'), 50);
         setTimeout(() => { prompt.style.display = 'none'; }, 1200);
       }
-      this.lenis.start();
 
-      setTimeout(() => {
-        this.playIntroCinematic();
-      }, 500);
+      const isMob = /Android|iPhone|iPad/i.test(navigator.userAgent);
+      const gate = document.getElementById('qr-gate');
+      if (!isMob && gate) {
+        setTimeout(() => this.showQRGate(), 600);
+      } else {
+        this.lenis.start();
+        setTimeout(() => this.playIntroCinematic(), 500);
+      }
     };
 
     if (yesBtn) this.addTrackedListener(yesBtn, 'click', () => dismiss(true));

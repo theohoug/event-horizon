@@ -808,8 +808,8 @@ void traceRay(vec3 ro, vec3 rd, out vec3 color, out float glow) {
     float r5 = r2 * r2 * r;
     vec3 accel = -1.5 * h2 * pos / max(r5, 1e-8) * gravMult;
 
-    float nearDisk = exp(-currentY * currentY * 4.0);
-    float baseDt = clamp((r - max(dynSR, 0.1)) * 0.4, 0.03, mix(1.5, 0.5, nearDisk));
+    float nearDisk = exp(-currentY * currentY * 4.0) * smoothstep(DISK_OUTER + 5.0, DISK_OUTER - 2.0, r);
+    float baseDt = clamp((r - max(dynSR, 0.1)) * 0.4, 0.03, mix(1.5, 0.6, nearDisk));
     float exBoost = 1.0 + smoothstep(0.35, 0.65, ex) * (1.0 - bhLife) * 1.5;
     float adaptiveDt = dt * baseDt * exBoost;
     vel += accel * adaptiveDt;

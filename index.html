@@ -83,6 +83,31 @@
   <div id="app" role="main" aria-label="Event Horizon — Interactive Black Hole Experience">
     <canvas id="experience" aria-hidden="true"></canvas>
 
+    <div id="qr-gate" aria-label="Companion gate">
+      <div id="qr-gate-bg"></div>
+      <div id="qr-gate-content">
+        <div id="qr-gate-lang">
+          <button class="qr-gate-lang-btn active" data-lang="en">EN</button>
+          <span class="qr-gate-lang-sep">·</span>
+          <button class="qr-gate-lang-btn" data-lang="fr">FR</button>
+        </div>
+        <div id="qr-gate-badge">◈ INTERACTIVE DOCUMENTARY</div>
+        <h2 id="qr-gate-title">EVENT HORIZON</h2>
+        <p id="qr-gate-sub">A scientific journey into a black hole</p>
+        <div id="qr-gate-divider"></div>
+        <div id="qr-gate-qr-wrap">
+          <div id="qr-gate-qr"></div>
+        </div>
+        <p id="qr-gate-instruction">Scan with your phone to unlock the full experience</p>
+        <div id="qr-gate-features">
+          <span class="qr-gate-feat">◈ Live telemetry on your phone</span>
+          <span class="qr-gate-feat">◈ Haptic feedback synced to gravity</span>
+          <span class="qr-gate-feat">◈ 9 chapters of real astrophysics</span>
+        </div>
+        <button id="qr-gate-skip">Continue without phone</button>
+      </div>
+    </div>
+
     <div id="scroll-container">
       <section class="chapter" data-chapter="0" aria-label="Chapter: You"><h1 class="sr-only">Event Horizon — An Interactive Journey Into a Black Hole</h1><h2 class="sr-only">Chapter 0: You</h2></section>
       <section class="chapter" data-chapter="1" aria-label="Chapter: The Pull"><h2 class="sr-only">Chapter 1: The Pull</h2></section>

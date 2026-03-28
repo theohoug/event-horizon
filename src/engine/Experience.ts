@@ -676,11 +676,9 @@ gl_FragColor=vec4(col,1.0);}`;
           const warningEl = document.getElementById('sound-warning');
           if (warningEl) warningEl.textContent = t().accessWarning;
 
-          const soundPrompt = document.getElementById('sound-prompt');
-          if (soundPrompt) soundPrompt.classList.add('visible');
           this.lenis.stop();
-          this.setupSoundPrompt();
           loader.classList.add('hidden');
+          this.showQRGate();
       }, 400);
     }
   }
@@ -813,6 +811,88 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     this.playIntroCinematic();
+  }
+
+  private showQRGate() {
+    const gate = document.getElementById('qr-gate');
+    const isMob = /Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (!gate || isMob) {
+      const soundPrompt = document.getElementById('sound-prompt');
+      if (soundPrompt) soundPrompt.classList.add('visible');
+      this.setupSoundPrompt();
+      return;
+    }
+
+    gate.classList.add('visible');
+
+    const qrContainer = document.getElementById('qr-gate-qr');
+    if (qrContainer) {
+      const companionUrl = `${window.location.origin}${window.location.pathname}?companion=1`;
+      import('qrcode-generator').then(({ default: qrGen }) => {
+        const qr = qrGen(0, 'M');
+        qr.addData(companionUrl);
+        qr.make();
+        qrContainer.innerHTML = qr.createSvgTag({ scalable: true, margin: 0 });
+        const svg = qrContainer.querySelector('svg');
+        if (svg) {
+          svg.style.width = '100%';
+          svg.style.height = '100%';
+          svg.querySelectorAll('rect[fill="#000000"]').forEach(r => {
+            (r as SVGElement).setAttribute('fill', 'rgba(255, 240, 224, 0.8)');
+          });
+          svg.querySelectorAll('rect[fill="#ffffff"]').forEach(r => {
+            (r as SVGElement).setAttribute('fill', 'transparent');
+          });
+        }
+      }).catch(() => {});
+    }
+
+    const skipBtn = document.getElementById('qr-gate-skip');
+    const dismissGate = () => {
+      gate.classList.add('dissolving');
+      setTimeout(() => {
+        gate.style.display = 'none';
+        const soundPrompt = document.getElementById('sound-prompt');
+        if (soundPrompt) soundPrompt.classList.add('visible');
+        this.setupSoundPrompt();
+      }, 800);
+    };
+    if (skipBtn) skipBtn.addEventListener('click', dismissGate);
+
+    const langBtns = gate.querySelectorAll('.qr-gate-lang-btn');
+    const titleEl = document.getElementById('qr-gate-title');
+    const subEl = document.getElementById('qr-gate-sub');
+    const badgeEl = document.getElementById('qr-gate-badge');
+    const instrEl = document.getElementById('qr-gate-instruction');
+    const skipEl = document.getElementById('qr-gate-skip');
+    const feats = gate.querySelectorAll('.qr-gate-feat');
+
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = (btn as HTMLElement).dataset.lang;
+        langBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (lang === 'fr') {
+          if (badgeEl) badgeEl.textContent = '◈ DOCUMENTAIRE INTERACTIF';
+          if (titleEl) titleEl.textContent = 'EVENT HORIZON';
+          if (subEl) subEl.textContent = 'Un voyage scientifique au cœur d\'un trou noir';
+          if (instrEl) instrEl.textContent = 'Scannez avec votre téléphone pour débloquer l\'expérience complète';
+          if (skipEl) skipEl.textContent = 'Continuer sans téléphone';
+          if (feats[0]) feats[0].textContent = '◈ Télémétrie en temps réel sur votre téléphone';
+          if (feats[1]) feats[1].textContent = '◈ Retour haptique synchronisé à la gravité';
+          if (feats[2]) feats[2].textContent = '◈ 9 chapitres d\'astrophysique réelle';
+        } else {
+          if (badgeEl) badgeEl.textContent = '◈ INTERACTIVE DOCUMENTARY';
+          if (titleEl) titleEl.textContent = 'EVENT HORIZON';
+          if (subEl) subEl.textContent = 'A scientific journey into a black hole';
+          if (instrEl) instrEl.textContent = 'Scan with your phone to unlock the full experience';
+          if (skipEl) skipEl.textContent = 'Continue without phone';
+          if (feats[0]) feats[0].textContent = '◈ Live telemetry on your phone';
+          if (feats[1]) feats[1].textContent = '◈ Haptic feedback synced to gravity';
+          if (feats[2]) feats[2].textContent = '◈ 9 chapters of real astrophysics';
+        }
+      });
+    });
   }
 
   private setupSoundPrompt() {

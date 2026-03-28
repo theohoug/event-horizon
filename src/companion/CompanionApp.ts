@@ -7,6 +7,7 @@
 
 import { BroadcastHub } from '../sync/BroadcastHub';
 import { getScienceData, type ChapterScience } from './ScienceData';
+import { hapticPulse, hapticPattern } from './haptics-ios';
 import './companion.css';
 
 interface ChapterData {
@@ -195,7 +196,12 @@ export async function init(roomId: string) {
 
     triggerChapterTransition(color);
 
-    if (navigator.vibrate) navigator.vibrate(50);
+    const chapterPatterns = [
+      [30], [40, 30, 40], [50, 20, 50, 20, 80], [60, 30, 60, 30, 100],
+      [80, 20, 80, 20, 120, 40, 200], [20, 10, 20, 10, 20, 10, 20, 10],
+      [50, 400, 50, 800], [200, 50, 300, 50, 500], [500],
+    ];
+    hapticPattern(chapterPatterns[ch.index] || [50]);
 
     root.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -256,6 +262,10 @@ export async function init(roomId: string) {
     }
 
     if (currentChapter >= 0) updateHUD(s);
+
+    if (s.scroll > 0.3 && Math.random() < s.scroll * 0.08) {
+      hapticPulse(s.scroll * 0.6);
+    }
 
     if (s.scroll >= 0.97 && !archiveShown && receivedChapters.size > 0) {
       archiveShown = true;

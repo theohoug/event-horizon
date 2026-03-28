@@ -523,7 +523,7 @@ gl_FragColor=vec4(col,1.0);}`;
     this.renderer.setPixelRatio(this.adaptiveDpr);
     this.renderer.setSize(initSize.w, initSize.h);
     this.canvas.style.width = '100vw';
-    this.canvas.style.height = '100vh';
+    this.canvas.style.height = '100dvh';
 
     const qualityLow = this.perfConfig.quality === 'low';
     this.postProcessing = new PostProcessing(this.renderer, this.perfConfig.bloomPasses, this.perfConfig.bloomScale, this.perfConfig.qualityMedium || qualityLow, this.perfConfig.motionBlur, qualityLow);
@@ -1883,7 +1883,7 @@ gl_FragColor=vec4(col,1.0);}`;
       }
       this.renderer.setSize(w, h);
       this.canvas.style.width = '100vw';
-      this.canvas.style.height = '100vh';
+      this.canvas.style.height = '100dvh';
       this.postProcessing.resize();
       this.blackHole.syncResolution();
       this.computeChapterBreaks();

@@ -1623,6 +1623,7 @@ html:has(#sound-prompt.visible) {
   -ms-overflow-style: none;
   overscroll-behavior: contain;
   padding: 2.5rem 3rem;
+  padding-bottom: max(2.5rem, env(safe-area-inset-bottom, 0px));
 }
 
 #prompt-main {
@@ -2279,7 +2280,7 @@ html:has(#sound-prompt.visible) {
 
 #lang-btn {
   position: fixed;
-  bottom: 4.8rem;
+  bottom: calc(4.8rem + env(safe-area-inset-bottom, 0px));
   right: 1.5rem;
   z-index: 50;
   background: rgba(255, 240, 224, 0.04);
@@ -2735,7 +2736,7 @@ html:has(#sound-prompt.visible) {
 
 #fs-btn {
   position: fixed;
-  bottom: 7.3rem;
+  bottom: calc(7.3rem + env(safe-area-inset-bottom, 0px));
   right: 1.5rem;
   width: 36px;
   height: 36px;
@@ -2802,7 +2803,7 @@ html:has(#sound-prompt.visible) {
 
 #mute-btn {
   position: fixed;
-  bottom: 2.2rem;
+  bottom: calc(2.2rem + env(safe-area-inset-bottom, 0px));
   right: 1.5rem;
   width: 36px;
   height: 36px;

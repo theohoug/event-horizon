@@ -235,13 +235,13 @@ export class Experience {
 
     const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v9') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v10') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
-    // Clear old cache versions
     try { localStorage.removeItem('eh_perf_v6'); } catch {}
     try { localStorage.removeItem('eh_perf_v7'); } catch {}
     try { localStorage.removeItem('eh_perf_v8'); } catch {}
+    try { localStorage.removeItem('eh_perf_v9'); } catch {}
 
     let heuristicBonus = 0;
     if (gpuRenderer.includes('rtx 40') || gpuRenderer.includes('rtx 50')) heuristicBonus = 18;
@@ -347,7 +347,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const gpgpuTexSize = gpgpuSizes[Math.min(gpgpuSizes.length - 1, Math.floor(t01 * gpgpuSizes.length))];
     const starfieldCount = Math.round(lerp(3000, 12000, t01));
 
-    const isPotato = gpuScore < 10;
+    const isPotato = gpuScore < 15;
     const isWeak = gpuScore < 25;
     const isMid = gpuScore < 50;
     const config: PerfConfig = {
@@ -363,11 +363,11 @@ gl_FragColor=vec4(col,1.0);}`;
       gpuScore: Math.round(gpuScore),
       quality: isPotato ? 'low' : isWeak ? 'medium' : isMid ? 'high' : 'ultra',
     };
-    try { localStorage.setItem('eh_perf_v9', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v10', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
-      return { dpr: Math.min(window.devicePixelRatio, 2), maxSteps: 160, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 50, quality: 'ultra' };
+      return { dpr: 1.0, maxSteps: 48, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 3000, bloomPasses: 2, bloomScale: 0.2, motionBlur: false, antialias: false, gpuScore: 15, quality: 'medium' as const };
     }
   }
 
@@ -480,6 +480,14 @@ gl_FragColor=vec4(col,1.0);}`;
     this.renderer.setClearColor(0x050505, 1);
     this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
     this.renderer.toneMapping = THREE.NoToneMapping;
+
+    this.canvas.addEventListener('webglcontextlost', (e) => {
+      e.preventDefault();
+      try { localStorage.removeItem('eh_perf_v10'); } catch {}
+    });
+    this.canvas.addEventListener('webglcontextrestored', () => {
+      window.location.reload();
+    });
 
     this.perfConfig = this.profileGpu(this.renderer);
     const urlQuality = new URL(window.location.href).searchParams.get('quality') as 'ultra' | 'high' | 'medium' | 'low' | null;

@@ -17,9 +17,9 @@ void main() {
   float dist = length(center);
   if (dist > 0.5) discard;
 
-  float core = exp(-dist * dist * 90.0);
-  float glow = exp(-dist * dist * 16.0);
-  float outerGlow = exp(-dist * dist * 5.0) * 0.35;
+  float core = exp(-dist * dist * 200.0);
+  float glow = exp(-dist * dist * 35.0) * 0.5;
+  float outerGlow = exp(-dist * dist * 8.0) * 0.15;
 
   float crossX = exp(-center.y * center.y * 800.0) * exp(-center.x * center.x * 8.0);
   float crossY = exp(-center.x * center.x * 800.0) * exp(-center.y * center.y * 8.0);

@@ -1852,8 +1852,8 @@ html:has(#sound-prompt.visible) {
   gap: 0.6rem;
 }
 #sound-lang-toggle:hover {
-  color: rgba(200, 215, 255, 0.5);
-  border-color: rgba(255, 240, 224, 0.15);
+  color: rgba(200, 215, 255, 0.65);
+  border-color: rgba(255, 240, 224, 0.25);
   background: none;
   transform: none;
 }
@@ -2266,10 +2266,13 @@ html:has(#sound-prompt.visible) {
   font-size: 0.55rem;
   letter-spacing: 0.15em;
   padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s ease, letter-spacing 0.3s ease;
 }
 
 #sound-prompt-no:hover {
-  color: rgba(200, 215, 255, 0.3);
+  color: rgba(200, 215, 255, 0.55);
+  letter-spacing: 0.2em;
 }
 
 /* ─── Language Button ─── */

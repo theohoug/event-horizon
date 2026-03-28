@@ -2111,8 +2111,10 @@ gl_FragColor=vec4(col,1.0);}`;
     if (this.cursor) {
       const creditsVisible = this.creditsEl?.classList.contains('visible') ?? false;
       const hideCursor = this.state.scroll > 0.70 && !creditsVisible;
-      this.cursor.style.opacity = hideCursor ? '0' : '';
-      if (this.ringEl) this.ringEl.style.opacity = hideCursor ? '0' : '';
+      const useNativeCursor = this.adaptiveLevel >= 4;
+      const hide = hideCursor || useNativeCursor;
+      this.cursor.style.opacity = hide ? '0' : '';
+      if (this.ringEl) this.ringEl.style.opacity = hide ? '0' : '';
       document.body.style.cursor = hideCursor ? 'none' : '';
 
       if (!hideCursor && creditsVisible && this.ringEl) {

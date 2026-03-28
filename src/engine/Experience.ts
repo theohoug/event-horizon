@@ -100,6 +100,8 @@ export class Experience {
   private overlayEl: HTMLElement | null = null;
   private navEl: HTMLElement | null = null;
   private ringEl: HTMLElement | null = null;
+  private ringPosX = 0;
+  private ringPosY = 0;
   private navTrackFillEl: HTMLElement | null = null;
   private hudContainerEl: HTMLElement | null = null;
   private creditsEl: HTMLElement | null = null;
@@ -233,12 +235,12 @@ export class Experience {
     const cores = navigator.hardwareConcurrency || 2;
     const ram = (navigator as any).deviceMemory || 4;
 
-    const fingerprint = `eh_v13|${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
+    const fingerprint = `eh_v14|${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v13') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v14') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
-    for (let v = 6; v <= 12; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
+    for (let v = 6; v <= 13; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
 
     const isIntelIGPU = gpuRenderer.includes('intel') && !gpuRenderer.includes('arc');
     const isKnownWeak = isIntelIGPU
@@ -290,72 +292,68 @@ gl_FragColor=vec4(col,1.0);}`;
 
     const readbackBuf = new Uint8Array(4);
 
-    const rt256 = new THREE.WebGLRenderTarget(256, 256, fboOpts);
-    const mat256 = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(256), depthTest: false });
-    const rt512 = new THREE.WebGLRenderTarget(512, 512, fboOpts);
-    const mat512 = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(512), depthTest: false });
+    const rtSmall = new THREE.WebGLRenderTarget(512, 512, fboOpts);
+    const matSmall = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(512), depthTest: false });
+    const rtBig = new THREE.WebGLRenderTarget(1024, 1024, fboOpts);
+    const matBig = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(1024), depthTest: false });
 
     const runTest = (mat: THREE.ShaderMaterial, rt: THREE.WebGLRenderTarget, warmup: number, runs: number): number => {
       quad.material = mat;
       for (let w = 0; w < warmup; w++) { renderer.setRenderTarget(rt); renderer.render(benchScene, benchCam); }
-      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, readbackBuf);
+      gl.finish();
 
       const t0 = performance.now();
       for (let r = 0; r < runs; r++) { renderer.setRenderTarget(rt); renderer.render(benchScene, benchCam); }
-      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, readbackBuf);
+      gl.finish();
       return (performance.now() - t0) / runs;
     };
 
-    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, readbackBuf);
-    const benchMs256 = runTest(mat256, rt256, 3, 5);
-    const benchMs512 = runTest(mat512, rt512, 2, 5);
+    gl.finish();
+    const benchMs512 = runTest(matSmall, rtSmall, 3, 5);
+    const benchMs1024 = runTest(matBig, rtBig, 2, 5);
 
     renderer.setRenderTarget(null);
-    [rt256, rt512].forEach(r => r.dispose());
-    [mat256, mat512].forEach(m => m.dispose());
+    [rtSmall, rtBig].forEach(r => r.dispose());
+    [matSmall, matBig].forEach(m => m.dispose());
     geo.dispose();
 
-    const scalingRatio = benchMs512 / Math.max(benchMs256, 0.01);
-    const benchSuspicious = benchMs256 < 0.3 || benchMs512 < 0.5 || scalingRatio < 1.2;
+    const scalingRatio = benchMs1024 / Math.max(benchMs512, 0.01);
+    const benchSuspicious = benchMs512 < 0.3 || benchMs1024 < 0.8 || scalingRatio < 1.5;
+
+    const dprCap = Math.min(nativeDpr, 1.5, Math.sqrt(3_500_000 / Math.max(screenPx, 1)));
+    const estimatedDpr = Math.max(1.0, dprCap);
+    const screenFactor = (screenPx * estimatedDpr * estimatedDpr) / 2_073_600;
 
     let gpuScore: number;
     if (benchSuspicious) {
-      if (gpuCap === 'ultra') gpuScore = 75;
-      else if (gpuCap === 'high') gpuScore = 55;
-      else if (isKnownWeak) gpuScore = 25;
-      else gpuScore = 40;
+      if (gpuCap === 'ultra') gpuScore = 65;
+      else if (gpuCap === 'high') gpuScore = 48;
+      else if (isKnownWeak) gpuScore = 20;
+      else gpuScore = 35;
     } else {
-      const targetFrameMs = 13.0;
-      const renderPx = screenPx * Math.min(nativeDpr, 1.5);
-      const costPerPx = (benchMs512 - benchMs256) / ((512 * 512 - 256 * 256) * 40);
-      const estimatedFrameMs = costPerPx * renderPx * 100 + benchMs256 * 0.5;
-      gpuScore = Math.min(100, Math.max(0, (targetFrameMs / Math.max(estimatedFrameMs, 0.01)) * 60));
+      const adjustedMs = benchMs1024 * screenFactor;
+      gpuScore = 100 - Math.sqrt(adjustedMs) * 12;
 
-      if (isIntelIGPU) gpuScore = Math.min(gpuScore, 45);
-      if (isKnownWeak) gpuScore = Math.min(gpuScore, 50);
-      if (gpuCap === 'ultra' && gpuScore < 50) gpuScore = Math.max(gpuScore, 60);
-      if (gpuCap === 'high' && gpuScore < 35) gpuScore = Math.max(gpuScore, 40);
+      if (isIntelIGPU) gpuScore = Math.min(gpuScore, 40);
+      if (isKnownWeak) gpuScore = Math.min(gpuScore, 45);
     }
 
-    if (isIntelIGPU && gpuCap === 'medium') gpuScore = Math.min(gpuScore, 45);
     if (cores <= 2 || ram <= 2) gpuScore = Math.min(gpuScore, 25);
     gpuScore = Math.max(0, Math.min(100, gpuScore));
 
     const isPotato = gpuScore < 8;
     const isLow = gpuScore < 20;
-    const isMed = gpuScore < 45;
-    const isHigh = gpuScore < 70;
+    const isMed = gpuScore < 50;
+    const isHigh = gpuScore < 75;
 
-    const maxRenderPixels = 4_000_000;
-    const dprCap = Math.min(nativeDpr, 1.5, Math.sqrt(maxRenderPixels / Math.max(screenPx, 1)));
     const bestDpr = isPotato ? 0.75 : isLow ? 1.0 : Math.max(1.0, Math.round(dprCap * 20) / 20);
 
     const config: PerfConfig = {
       dpr: bestDpr,
       maxSteps: isPotato ? 24 : isLow ? 48 : isMed ? 80 : isHigh ? 100 : 128,
       qualityMedium: isLow || isMed,
-      gpgpuTexSize: isPotato ? 0 : isLow ? 96 : isMed ? 128 : isHigh ? 192 : 256,
-      starfieldCount: isPotato ? 1000 : isLow ? 3000 : 8000,
+      gpgpuTexSize: isPotato ? 0 : isLow ? 96 : isMed ? 128 : isHigh ? 160 : 192,
+      starfieldCount: isPotato ? 1000 : isLow ? 3000 : isMed ? 6000 : 8000,
       bloomPasses: isPotato ? 1 : isLow ? 2 : isMed ? 3 : 4,
       bloomScale: isPotato ? 0.15 : isLow ? 0.2 : isMed ? 0.3 : 0.5,
       motionBlur: !isPotato && !isLow,
@@ -363,8 +361,8 @@ gl_FragColor=vec4(col,1.0);}`;
       gpuScore: Math.round(gpuScore),
       quality: isPotato ? 'low' : (isLow || isMed) ? 'medium' : isHigh ? 'high' : 'ultra',
     };
-    console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | stars: ${config.starfieldCount} | gpgpu: ${config.gpgpuTexSize} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${benchMs256.toFixed(1)}/${benchMs512.toFixed(1)}ms (ratio: ${scalingRatio.toFixed(2)}${benchSuspicious ? ' SUSPICIOUS' : ''})`, 'color:#FFB347;font-weight:bold', 'color:#888');
-    try { localStorage.setItem('eh_perf_v13', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | stars: ${config.starfieldCount} | gpgpu: ${config.gpgpuTexSize} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${benchMs512.toFixed(1)}/${benchMs1024.toFixed(1)}ms (ratio: ${scalingRatio.toFixed(2)}${benchSuspicious ? ' SUSPICIOUS' : ''})`, 'color:#FFB347;font-weight:bold', 'color:#888');
+    try { localStorage.setItem('eh_perf_v14', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
@@ -494,12 +492,12 @@ gl_FragColor=vec4(col,1.0);}`;
     const urlQuality = new URL(window.location.href).searchParams.get('quality') as 'ultra' | 'high' | 'medium' | 'low' | null;
     if (urlQuality === 'ultra' || urlQuality === 'high' || urlQuality === 'medium' || urlQuality === 'low') {
       this.perfConfig = urlQuality === 'ultra'
-        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 128, qualityMedium: false, gpgpuTexSize: 256, starfieldCount: 8000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 100, quality: 'ultra' }
+        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 128, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 100, quality: 'ultra' }
         : urlQuality === 'high'
-        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 100, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: true, gpuScore: 60, quality: 'high' }
+        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 100, qualityMedium: false, gpgpuTexSize: 160, starfieldCount: 8000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: true, gpuScore: 60, quality: 'high' }
         : urlQuality === 'low'
         ? { dpr: 0.75, maxSteps: 24, qualityMedium: true, gpgpuTexSize: 0, starfieldCount: 1000, bloomPasses: 1, bloomScale: 0.15, motionBlur: false, antialias: false, gpuScore: 5, quality: 'low' }
-        : { dpr: 1.0, maxSteps: 80, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 8000, bloomPasses: 2, bloomScale: 0.2, motionBlur: true, antialias: true, gpuScore: 25, quality: 'medium' };
+        : { dpr: 1.0, maxSteps: 80, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 6000, bloomPasses: 2, bloomScale: 0.2, motionBlur: true, antialias: true, gpuScore: 25, quality: 'medium' };
     }
     this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (this.prefersReducedMotion) {
@@ -508,16 +506,18 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     this.state.quality = this.perfConfig.quality;
-    this.adaptiveDpr = this.perfConfig.dpr;
-    this.adaptiveMaxSteps = this.perfConfig.maxSteps;
-    this.adaptiveBloomPasses = this.perfConfig.bloomPasses;
-    this.adaptiveBloomScale = this.perfConfig.bloomScale;
+    const isProg = this.perfConfig.quality !== 'low';
+    this.adaptiveLevel = isProg ? 2 : 0;
+    this.adaptiveDpr = isProg ? Math.max(1.0, this.perfConfig.dpr - 0.25) : this.perfConfig.dpr;
+    this.adaptiveMaxSteps = isProg ? Math.min(this.perfConfig.maxSteps, 80) : this.perfConfig.maxSteps;
+    this.adaptiveBloomPasses = isProg ? Math.max(1, this.perfConfig.bloomPasses - 1) : this.perfConfig.bloomPasses;
+    this.adaptiveBloomScale = isProg ? Math.max(0.15, this.perfConfig.bloomScale - 0.1) : this.perfConfig.bloomScale;
 
     if (this.perfConfig.quality === 'low') {
       document.body.classList.add('quality-low');
     }
 
-    this.renderer.setPixelRatio(this.perfConfig.dpr);
+    this.renderer.setPixelRatio(this.adaptiveDpr);
     this.renderer.setSize(initSize.w, initSize.h);
     this.canvas.style.width = '100vw';
     this.canvas.style.height = '100vh';
@@ -1606,9 +1606,11 @@ gl_FragColor=vec4(col,1.0);}`;
     if (window.matchMedia('(pointer: fine)').matches) {
       this.cursor = document.createElement('div');
       this.cursor.id = 'custom-cursor';
+      this.cursor.style.willChange = 'transform';
 
       const ring = document.createElement('div');
       ring.id = 'custom-cursor-ring';
+      ring.style.willChange = 'transform';
 
       document.body.appendChild(this.cursor);
       document.body.appendChild(ring);
@@ -1626,6 +1628,7 @@ gl_FragColor=vec4(col,1.0);}`;
         const me = e as MouseEvent;
         mouseX = me.clientX;
         mouseY = me.clientY;
+        if (this.cursor) this.cursor.style.transform = `translate(${me.clientX}px, ${me.clientY}px) translate(-50%, -50%)`;
       };
       this.addTrackedListener(window, 'mousemove', onMouseMove);
 
@@ -1645,14 +1648,14 @@ gl_FragColor=vec4(col,1.0);}`;
         cursorPos.x += (mouseX - cursorPos.x) * 0.5;
         cursorPos.y += (mouseY - cursorPos.y) * 0.5;
         if (this.cursor) {
-          this.cursor.style.left = `${cursorPos.x}px`;
-          this.cursor.style.top = `${cursorPos.y}px`;
+          this.cursor.style.transform = `translate(${cursorPos.x}px, ${cursorPos.y}px) translate(-50%, -50%)`;
         }
 
         ringPos.x += (mouseX - ringPos.x) * 0.18;
         ringPos.y += (mouseY - ringPos.y) * 0.18;
-        ring.style.left = `${ringPos.x}px`;
-        ring.style.top = `${ringPos.y}px`;
+        this.ringPosX = ringPos.x;
+        this.ringPosY = ringPos.y;
+        ring.style.transform = `translate(${ringPos.x}px, ${ringPos.y}px) translate(-50%, -50%)`;
 
         this.trailFrame++;
         if (this.trailFrame % 2 === 0 && this.adaptiveLevel < 3) {
@@ -1954,6 +1957,8 @@ gl_FragColor=vec4(col,1.0);}`;
   private adaptiveMaxSteps = 80;
   private adaptiveBloomPasses = 2;
   private adaptiveBloomScale = 0.25;
+  private gpgpuSkipFrames = 1;
+  private gpgpuFrameCounter = 0;
 
   private applyAdaptiveQuality() {
     this.renderer.setPixelRatio(this.adaptiveDpr);
@@ -1976,10 +1981,10 @@ gl_FragColor=vec4(col,1.0);}`;
       case 2: this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 80); this.adaptiveBloomScale = Math.min(this.adaptiveBloomScale, 0.3); break;
       case 3: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.25); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 64); break;
       case 4: this.adaptiveBloomPasses = Math.min(this.adaptiveBloomPasses, 2); this.adaptiveBloomScale = Math.min(this.adaptiveBloomScale, 0.2); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 56); break;
-      case 5: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.5); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 48); break;
-      case 6: this.adaptiveBloomPasses = 1; this.adaptiveBloomScale = 0.15; this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 40); break;
-      case 7: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.75); this.adaptiveMaxSteps = 32; break;
-      case 8: this.adaptiveDpr = minDpr; this.adaptiveMaxSteps = 24; break;
+      case 5: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.5); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 48); this.gpgpuSkipFrames = 2; break;
+      case 6: this.adaptiveBloomPasses = 1; this.adaptiveBloomScale = 0.15; this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 40); this.gpgpuSkipFrames = 2; break;
+      case 7: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.75); this.adaptiveMaxSteps = 32; this.gpgpuSkipFrames = 3; break;
+      case 8: this.adaptiveDpr = minDpr; this.adaptiveMaxSteps = 24; this.gpgpuSkipFrames = 3; break;
     }
     if (emergency && this.adaptiveLevel < 8) {
       this.adaptiveLevel++;
@@ -1998,8 +2003,9 @@ gl_FragColor=vec4(col,1.0);}`;
     const capBloomP = cfg.bloomPasses;
     const capBloomS = cfg.bloomScale;
 
+    this.gpgpuSkipFrames = this.adaptiveLevel < 5 ? 1 : this.adaptiveLevel < 7 ? 2 : 3;
     switch (this.adaptiveLevel) {
-      case 0: this.adaptiveDpr = capDpr; this.adaptiveMaxSteps = capSteps; this.adaptiveBloomPasses = capBloomP; this.adaptiveBloomScale = capBloomS; break;
+      case 0: this.adaptiveDpr = capDpr; this.adaptiveMaxSteps = capSteps; this.adaptiveBloomPasses = capBloomP; this.adaptiveBloomScale = capBloomS; this.gpgpuSkipFrames = 1; break;
       case 1: this.adaptiveDpr = Math.max(1.0, capDpr - 0.25); this.adaptiveMaxSteps = capSteps; this.adaptiveBloomPasses = capBloomP; this.adaptiveBloomScale = capBloomS; break;
       case 2: this.adaptiveDpr = Math.max(1.0, capDpr - 0.25); this.adaptiveMaxSteps = capSteps; this.adaptiveBloomPasses = Math.min(capBloomP, 3); this.adaptiveBloomScale = Math.min(capBloomS, 0.40); break;
       case 3: this.adaptiveDpr = Math.max(1.0, capDpr - 0.5); this.adaptiveMaxSteps = capSteps; this.adaptiveBloomPasses = Math.min(capBloomP, 3); this.adaptiveBloomScale = Math.min(capBloomS, 0.40); break;
@@ -2022,8 +2028,8 @@ gl_FragColor=vec4(col,1.0);}`;
     this.fpsFrames++;
     const now = performance.now();
 
-    if (this.fpsFrames <= 5 && dt > 0.08) {
-      const skipTo = dt > 0.4 ? 6 : dt > 0.2 ? 4 : dt > 0.1 ? 2 : 1;
+    if (this.fpsFrames <= 15 && dt > 0.05) {
+      const skipTo = dt > 0.3 ? 6 : dt > 0.15 ? 4 : dt > 0.08 ? 3 : 2;
       for (let i = 0; i < skipTo && this.adaptiveLevel < 8; i++) this.adaptiveDowngrade(true);
     }
 
@@ -2063,22 +2069,24 @@ gl_FragColor=vec4(col,1.0);}`;
       } else if (this.fpsValue < 20) {
         this.lowFpsCount += 4;
       } else if (this.fpsValue < 30) {
-        this.lowFpsCount += this.isMobileDevice ? 3 : 2;
+        this.lowFpsCount += 3;
       } else if (this.fpsValue < 45) {
-        this.lowFpsCount += 1;
+        this.lowFpsCount += 2;
       } else if (this.fpsValue >= 55) {
         this.lowFpsCount = Math.max(0, this.lowFpsCount - 1);
         this.fpsStableCount++;
       }
 
-      if (this.lowFpsCount >= 2 && this.adaptiveLevel < 8) {
-        const downgrades = this.fpsValue < 12 ? 4 : this.fpsValue < 20 ? 3 : this.fpsValue < 30 ? 2 : 1;
+      if (this.lowFpsCount >= 1 && this.adaptiveLevel < 8) {
+        const downgrades = this.fpsValue < 12 ? 5 : this.fpsValue < 20 ? 4 : this.fpsValue < 30 ? 3 : this.fpsValue < 45 ? 2 : 1;
         for (let i = 0; i < downgrades; i++) this.adaptiveDowngrade(false);
         this.lowFpsCount = 0;
         this.fpsStableCount = 0;
       }
 
-      if (this.fpsStableCount >= 30 && this.adaptiveLevel > 0) {
+      const progressivePhase = elapsed < 5.0;
+      const upgradeThreshold = progressivePhase ? 4 : 40;
+      if (this.fpsStableCount >= upgradeThreshold && this.adaptiveLevel > 0) {
         this.adaptiveUpgrade();
         this.fpsStableCount = 0;
       }
@@ -2110,7 +2118,7 @@ gl_FragColor=vec4(col,1.0);}`;
         this.cursor.style.height = '6px';
         this.cursor.style.background = 'var(--cyan)';
         this.cursor.style.boxShadow = '0 0 8px var(--cyan), 0 0 16px rgba(255, 179, 71, 0.3)';
-        this.ringEl.style.transform = 'translate(-50%, -50%)';
+        this.ringEl.style.transform = `translate(${this.ringPosX}px, ${this.ringPosY}px) translate(-50%, -50%)`;
         this.ringEl.style.borderColor = 'rgba(255, 179, 71, 0.25)';
         this.ringEl.style.borderRadius = '';
       } else if (!hideCursor) {
@@ -2137,7 +2145,7 @@ gl_FragColor=vec4(col,1.0);}`;
           const squeeze = Math.max(0.5, 1 - gravPull * 0.4) / breathe;
           const orbitalSpin = elapsed * (0.5 + this.state.scroll * 6) * 57.2958 * proximity;
 
-          this.ringEl.style.transform = `translate(-50%, -50%) rotate(${(angle + orbitalSpin).toFixed(1)}deg) scale(${stretch.toFixed(3)}, ${squeeze.toFixed(3)})`;
+          this.ringEl.style.transform = `translate(${this.ringPosX}px, ${this.ringPosY}px) translate(-50%, -50%) rotate(${(angle + orbitalSpin).toFixed(1)}deg) scale(${stretch.toFixed(3)}, ${squeeze.toFixed(3)})`;
           this.ringEl.style.borderColor = `rgba(${Math.round(100 * gravPull)}, ${Math.round(245 * (1 - gravPull * 0.6))}, ${Math.round(212 * (1 - gravPull * 0.3))}, ${(0.35 + gravPull * 0.3).toFixed(2)})`;
           const frameDrag = gravPull * 0.3;
           this.ringEl.style.borderRadius = frameDrag > 0.02 ? `${(50 - frameDrag * 20).toFixed(0)}% ${(50 + frameDrag * 15).toFixed(0)}% ${(50 - frameDrag * 10).toFixed(0)}% ${(50 + frameDrag * 20).toFixed(0)}%` : '';
@@ -2230,8 +2238,11 @@ gl_FragColor=vec4(col,1.0);}`;
     (this.state as any).enterPulse = this.enterPulse;
     this.blackHole.update(this.state as any);
     if (this.particles) {
-      const skipGpgpu = this.adaptiveLevel >= 4 && (this.fpsFrames & 1) === 0;
-      if (!skipGpgpu) this.particles.update(this.state);
+      this.gpgpuFrameCounter++;
+      if (this.gpgpuFrameCounter >= this.gpgpuSkipFrames) {
+        this.particles.update(this.state);
+        this.gpgpuFrameCounter = 0;
+      }
     }
     this.starfield.update(this.state);
     this.postProcessing.updateCamera(this.state.scroll, elapsed, this.state.introProgress, this.state.mouseSmooth.x, this.state.mouseSmooth.y);

@@ -108,10 +108,10 @@ void main() {
 
   float proximityBoost = smoothstep(10.0, 0.3, camDist) * (1.5 + uScroll * 10.0);
 
-  gl_PointSize = aSize * sizeAttenuation * uPixelRatio * distFade * scrollGrow * speedSizeBoost * 1.35;
+  gl_PointSize = aSize * sizeAttenuation * uPixelRatio * distFade * scrollGrow * speedSizeBoost * 1.5;
   gl_PointSize *= (1.0 + proximityBoost);
   gl_PointSize *= (1.0 + mouseLens);
-  gl_PointSize = clamp(gl_PointSize, 0.8, 32.0);
+  gl_PointSize = clamp(gl_PointSize, 1.0, 34.0);
 
   float nearCamera = smoothstep(12.0, 1.5, camDist);
   float flybyBright = nearCamera * uScroll * 0.8;

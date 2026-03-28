@@ -2317,6 +2317,11 @@ html:has(#sound-prompt.visible) {
   transition: color 0.3s ease, opacity 0.3s ease;
   opacity: 0.3;
   color: rgba(255, 240, 224, 0.5);
+  cursor: pointer;
+}
+
+#lang-btn:hover .lang-opt {
+  opacity: 0.6;
 }
 
 #lang-btn .lang-opt.active {

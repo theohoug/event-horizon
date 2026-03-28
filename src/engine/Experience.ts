@@ -2798,6 +2798,12 @@ gl_FragColor=vec4(col,1.0);}`;
           }
           this.whiteModeDelayTimer = 0;
         }, 3500);
+      } else if (!shouldBeWhite && this.whiteModeActive) {
+        this.creditsEl.classList.remove('white-mode');
+        this.creditsEl.style.background = '';
+        document.body.classList.remove('credits-white');
+        document.body.style.background = '';
+        this.whiteModeActive = false;
       } else if (!shouldBeWhite && !this.whiteModeActive && this.whiteModeDelayTimer) {
         clearTimeout(this.whiteModeDelayTimer);
         this.whiteModeDelayTimer = 0;

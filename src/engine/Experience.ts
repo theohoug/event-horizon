@@ -25,8 +25,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Cap canvas CSS pixels — beyond this we scale the viewport down.
-const MAX_CANVAS_PIXELS = 2560 * 1440;
+// Cap canvas CSS pixels — keep viewport manageable for DOM/layout.
+const MAX_CANVAS_PIXELS = 1920 * 1200;
 
 function clampedViewportSize(): { w: number; h: number } {
   const vv = window.visualViewport;
@@ -236,10 +236,10 @@ export class Experience {
 
     const fingerprint = `eh_v15|${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v17') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v18') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
-    for (let v = 6; v <= 16; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
+    for (let v = 6; v <= 17; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
 
     const isIntelIGPU = gpuRenderer.includes('intel') && !gpuRenderer.includes('arc');
     const isKnownWeak = isIntelIGPU
@@ -349,7 +349,9 @@ gl_FragColor=vec4(col,1.0);}`;
     const isMed = gpuScore < 50;
     const isHigh = gpuScore < 75;
 
-    const bestDpr = isPotato ? 0.6 : Math.max(0.5, Math.round(dprCap * 20) / 20);
+    const renderBudget = isPotato ? 500_000 : isLow ? 800_000 : isMed ? 1_200_000 : isHigh ? 1_800_000 : 2_100_000;
+    const actualDprCap = Math.min(nativeDpr, 1.5, Math.sqrt(renderBudget / Math.max(screenPx, 1)));
+    const bestDpr = Math.max(isPotato ? 0.4 : 0.5, Math.round(actualDprCap * 20) / 20);
 
     const config: PerfConfig = {
       dpr: bestDpr,
@@ -365,7 +367,7 @@ gl_FragColor=vec4(col,1.0);}`;
       quality: isPotato ? 'low' : (isLow || isMed) ? 'medium' : isHigh ? 'high' : 'ultra',
     };
     console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | stars: ${config.starfieldCount} | gpgpu: ${config.gpgpuTexSize} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${benchMs512.toFixed(1)}/${benchMs1024.toFixed(1)}ms (ratio: ${scalingRatio.toFixed(2)}${benchSuspicious ? ' SUSPICIOUS' : ''})`, 'color:#FFB347;font-weight:bold', 'color:#888');
-    try { localStorage.setItem('eh_perf_v17', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v18', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
@@ -485,7 +487,7 @@ gl_FragColor=vec4(col,1.0);}`;
 
     this.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      try { localStorage.removeItem('eh_perf_v17'); } catch {}
+      try { localStorage.removeItem('eh_perf_v18'); } catch {}
     });
     this.canvas.addEventListener('webglcontextrestored', () => {
       window.location.reload();
@@ -1873,10 +1875,10 @@ gl_FragColor=vec4(col,1.0);}`;
     const onResize = () => {
       const { w, h } = clampedViewportSize();
       const newScreenPx = w * h;
-      const targetPx = 2_100_000;
-      const newDprCap = Math.min(window.devicePixelRatio, 1.5, Math.sqrt(targetPx / Math.max(newScreenPx, 1)));
+      const budget = this.perfConfig.gpuScore < 8 ? 500_000 : this.perfConfig.gpuScore < 20 ? 800_000 : this.perfConfig.gpuScore < 50 ? 1_200_000 : this.perfConfig.gpuScore < 75 ? 1_800_000 : 2_100_000;
+      const newDprCap = Math.min(window.devicePixelRatio, 1.5, Math.sqrt(budget / Math.max(newScreenPx, 1)));
       const newDpr = Math.max(0.5, Math.round(newDprCap * 20) / 20);
-      if (newDpr < this.adaptiveDpr - 0.05) {
+      if (Math.abs(newDpr - this.adaptiveDpr) > 0.05) {
         this.adaptiveDpr = newDpr;
         this.renderer.setPixelRatio(this.adaptiveDpr);
         this.applyAdaptiveQuality();

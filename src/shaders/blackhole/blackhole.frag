@@ -36,7 +36,7 @@ float g2(float x) { return exp(-x * x); }
 #define PHOTON_SPHERE 1.5
 #define DISK_INNER 3.0
 #define DISK_OUTER 16.0
-#define DISK_HEIGHT 0.2
+#define DISK_HEIGHT 0.35
 
 /* ─── Procedural Starfield — Photorealistic ─── */
 

@@ -2340,9 +2340,10 @@ html:has(#sound-prompt.visible) {
 }
 
 #lang-btn:hover {
-  border-color: rgba(255, 240, 224, 0.3);
-  transform: scale(1.08);
-  box-shadow: 0 0 12px rgba(255, 179, 71, 0.1);
+  border-color: rgba(255, 179, 71, 0.4);
+  transform: scale(1.12);
+  box-shadow: 0 0 16px rgba(255, 179, 71, 0.2);
+  background: rgba(255, 240, 224, 0.08);
 }
 
 #lang-btn:active {

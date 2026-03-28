@@ -235,7 +235,7 @@ export class Experience {
 
     const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v11') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v12') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
     try { localStorage.removeItem('eh_perf_v6'); } catch {}
@@ -243,16 +243,17 @@ export class Experience {
     try { localStorage.removeItem('eh_perf_v8'); } catch {}
     try { localStorage.removeItem('eh_perf_v9'); } catch {}
     try { localStorage.removeItem('eh_perf_v10'); } catch {}
+    try { localStorage.removeItem('eh_perf_v11'); } catch {}
 
     let heuristicBonus = 0;
-    if (gpuRenderer.includes('rtx 40') || gpuRenderer.includes('rtx 50')) heuristicBonus = 18;
-    else if (gpuRenderer.includes('rtx 30')) heuristicBonus = 14;
-    else if (gpuRenderer.includes('rtx 20')) heuristicBonus = 8;
-    else if (gpuRenderer.includes('apple m2') || gpuRenderer.includes('apple m3') || gpuRenderer.includes('apple m4')) heuristicBonus = 14;
-    else if (gpuRenderer.includes('apple m1')) heuristicBonus = 8;
-    else if (gpuRenderer.includes('rx 7') || gpuRenderer.includes('rx 9')) heuristicBonus = 12;
-    else if (gpuRenderer.includes('rx 6')) heuristicBonus = 8;
-    else if (gpuRenderer.includes('intel') && !gpuRenderer.includes('arc')) heuristicBonus = -12;
+    if (gpuRenderer.includes('rtx 40') || gpuRenderer.includes('rtx 50')) heuristicBonus = 10;
+    else if (gpuRenderer.includes('rtx 30')) heuristicBonus = 7;
+    else if (gpuRenderer.includes('rtx 20')) heuristicBonus = 4;
+    else if (gpuRenderer.includes('apple m2') || gpuRenderer.includes('apple m3') || gpuRenderer.includes('apple m4')) heuristicBonus = 7;
+    else if (gpuRenderer.includes('apple m1')) heuristicBonus = 4;
+    else if (gpuRenderer.includes('rx 7') || gpuRenderer.includes('rx 9')) heuristicBonus = 7;
+    else if (gpuRenderer.includes('rx 6')) heuristicBonus = 4;
+    else if (gpuRenderer.includes('intel') && !gpuRenderer.includes('arc')) heuristicBonus = -15;
     const likelyHasDiscreteGpu = cores >= 6 && ram >= 8 && gpuRenderer.includes('intel') && !gpuRenderer.includes('arc');
     if (likelyHasDiscreteGpu) {
       heuristicBonus = Math.max(heuristicBonus, -6);
@@ -328,7 +329,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const bhBudget = 13.0 * thermalFactor;
 
     const maxRenderPixels = 4_000_000;
-    const dprCap = Math.min(nativeDpr, 2.0, Math.sqrt(maxRenderPixels / Math.max(screenPx, 1)));
+    const dprCap = Math.min(nativeDpr, 1.5, Math.sqrt(maxRenderPixels / Math.max(screenPx, 1)));
     const maxDpr = Math.max(0.75, Math.round(dprCap * 20) / 20);
     const minDpr = screenPx > 3_000_000 ? 0.75 : 1.0;
     let bestDpr = minDpr;
@@ -339,7 +340,7 @@ gl_FragColor=vec4(col,1.0);}`;
       const affordable = (bhBudget - overhead) / Math.max(costPerPxStep * screenPx * dprR * dprR, 1e-12);
       if (affordable >= 100) {
         bestDpr = dprR;
-        bestSteps = Math.min(160, Math.max(100, Math.round(affordable)));
+        bestSteps = Math.min(128, Math.max(80, Math.round(affordable)));
         break;
       }
     }
@@ -356,8 +357,8 @@ gl_FragColor=vec4(col,1.0);}`;
     const starfieldCount = Math.round(lerp(3000, 12000, t01));
 
     const isPotato = gpuScore < 8;
-    const isWeak = gpuScore < 25;
-    const isMid = gpuScore < 50;
+    const isWeak = gpuScore < 30;
+    const isMid = gpuScore < 60;
     const config: PerfConfig = {
       dpr: isPotato ? Math.min(bestDpr, 0.75) : bestDpr,
       maxSteps: isPotato ? 24 : bestSteps,
@@ -372,7 +373,7 @@ gl_FragColor=vec4(col,1.0);}`;
       quality: isPotato ? 'low' : isWeak ? 'medium' : isMid ? 'high' : 'ultra',
     };
     console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${repMs96.toFixed(1)}ms/${repMs192.toFixed(1)}ms`, 'color:#FFB347;font-weight:bold', 'color:#888');
-    try { localStorage.setItem('eh_perf_v11', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v12', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
@@ -492,7 +493,7 @@ gl_FragColor=vec4(col,1.0);}`;
 
     this.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      try { localStorage.removeItem('eh_perf_v11'); } catch {}
+      try { localStorage.removeItem('eh_perf_v12'); } catch {}
     });
     this.canvas.addEventListener('webglcontextrestored', () => {
       window.location.reload();
@@ -502,7 +503,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const urlQuality = new URL(window.location.href).searchParams.get('quality') as 'ultra' | 'high' | 'medium' | 'low' | null;
     if (urlQuality === 'ultra' || urlQuality === 'high' || urlQuality === 'medium' || urlQuality === 'low') {
       this.perfConfig = urlQuality === 'ultra'
-        ? { dpr: Math.min(window.devicePixelRatio, 2), maxSteps: 160, qualityMedium: false, gpgpuTexSize: 256, starfieldCount: 12000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 100, quality: 'ultra' }
+        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 128, qualityMedium: false, gpgpuTexSize: 256, starfieldCount: 12000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 100, quality: 'ultra' }
         : urlQuality === 'high'
         ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 80, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: true, gpuScore: 60, quality: 'high' }
         : urlQuality === 'low'

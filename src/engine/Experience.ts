@@ -237,10 +237,10 @@ export class Experience {
 
     const fingerprint = `eh_v15|${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v14') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v16') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
-    for (let v = 6; v <= 14; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
+    for (let v = 6; v <= 15; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
 
     const isIntelIGPU = gpuRenderer.includes('intel') && !gpuRenderer.includes('arc');
     const isKnownWeak = isIntelIGPU
@@ -366,7 +366,7 @@ gl_FragColor=vec4(col,1.0);}`;
       quality: isPotato ? 'low' : (isLow || isMed) ? 'medium' : isHigh ? 'high' : 'ultra',
     };
     console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | stars: ${config.starfieldCount} | gpgpu: ${config.gpgpuTexSize} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${benchMs512.toFixed(1)}/${benchMs1024.toFixed(1)}ms (ratio: ${scalingRatio.toFixed(2)}${benchSuspicious ? ' SUSPICIOUS' : ''})`, 'color:#FFB347;font-weight:bold', 'color:#888');
-    try { localStorage.setItem('eh_perf_v14', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v16', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
@@ -486,7 +486,7 @@ gl_FragColor=vec4(col,1.0);}`;
 
     this.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      try { localStorage.removeItem('eh_perf_v13'); } catch {}
+      try { localStorage.removeItem('eh_perf_v16'); } catch {}
     });
     this.canvas.addEventListener('webglcontextrestored', () => {
       window.location.reload();

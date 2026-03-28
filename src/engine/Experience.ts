@@ -2079,16 +2079,16 @@ gl_FragColor=vec4(col,1.0);}`;
       case 1: this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 100); this.adaptiveBloomPasses = Math.min(this.adaptiveBloomPasses, 3); break;
       case 2: this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 80); this.adaptiveBloomScale = Math.min(this.adaptiveBloomScale, 0.3); break;
       case 3: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.25); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 64); break;
-      case 4: this.adaptiveBloomPasses = Math.min(this.adaptiveBloomPasses, 2); this.adaptiveBloomScale = Math.min(this.adaptiveBloomScale, 0.2); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 56); break;
-      case 5: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.5); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 48); this.gpgpuSkipFrames = 2; break;
-      case 6: this.adaptiveBloomPasses = 1; this.adaptiveBloomScale = 0.15; this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 40); this.gpgpuSkipFrames = 2; break;
-      case 7: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.75); this.adaptiveMaxSteps = 32; this.gpgpuSkipFrames = 3; break;
-      case 8: this.adaptiveDpr = minDpr; this.adaptiveMaxSteps = 24; this.gpgpuSkipFrames = 3; break;
+      case 4: this.adaptiveBloomPasses = Math.min(this.adaptiveBloomPasses, 2); this.adaptiveBloomScale = Math.min(this.adaptiveBloomScale, 0.2); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 64); break;
+      case 5: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.5); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 64); this.gpgpuSkipFrames = 2; break;
+      case 6: this.adaptiveBloomPasses = 1; this.adaptiveBloomScale = 0.15; this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 64); this.gpgpuSkipFrames = 2; break;
+      case 7: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.75); this.adaptiveMaxSteps = 64; this.gpgpuSkipFrames = 3; break;
+      case 8: this.adaptiveDpr = minDpr; this.adaptiveMaxSteps = 64; this.gpgpuSkipFrames = 3; break;
     }
     if (emergency && this.adaptiveLevel < 8) {
       this.adaptiveLevel++;
       this.adaptiveDpr = Math.max(minDpr, this.adaptiveDpr - 0.2);
-      this.adaptiveMaxSteps = Math.max(24, this.adaptiveMaxSteps - 16);
+      this.adaptiveMaxSteps = Math.max(64, this.adaptiveMaxSteps - 16);
     }
     this.applyAdaptiveQuality();
   }
@@ -2165,27 +2165,27 @@ gl_FragColor=vec4(col,1.0);}`;
       this.fpsLastTime = now;
 
       if (this.fpsValue < 12) {
-        this.lowFpsCount += 6;
-      } else if (this.fpsValue < 20) {
         this.lowFpsCount += 4;
-      } else if (this.fpsValue < 30) {
+      } else if (this.fpsValue < 20) {
         this.lowFpsCount += 3;
-      } else if (this.fpsValue < 45) {
+      } else if (this.fpsValue < 30) {
         this.lowFpsCount += 2;
-      } else if (this.fpsValue >= 55) {
+      } else if (this.fpsValue < 40) {
+        this.lowFpsCount += 1;
+      } else if (this.fpsValue >= 50) {
         this.lowFpsCount = Math.max(0, this.lowFpsCount - 1);
         this.fpsStableCount++;
       }
 
-      if (this.lowFpsCount >= 1 && this.adaptiveLevel < 8) {
-        const downgrades = this.fpsValue < 12 ? 5 : this.fpsValue < 20 ? 4 : this.fpsValue < 30 ? 3 : this.fpsValue < 45 ? 2 : 1;
+      if (this.lowFpsCount >= 3 && this.adaptiveLevel < 8) {
+        const downgrades = this.fpsValue < 12 ? 4 : this.fpsValue < 20 ? 3 : this.fpsValue < 30 ? 2 : 1;
         for (let i = 0; i < downgrades; i++) this.adaptiveDowngrade(false);
         this.lowFpsCount = 0;
         this.fpsStableCount = 0;
       }
 
       const progressivePhase = elapsed < 5.0;
-      const upgradeThreshold = progressivePhase ? 4 : 40;
+      const upgradeThreshold = progressivePhase ? 4 : 20;
       if (this.fpsStableCount >= upgradeThreshold && this.adaptiveLevel > 0) {
         this.adaptiveUpgrade();
         this.fpsStableCount = 0;

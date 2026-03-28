@@ -297,6 +297,10 @@ gl_FragColor=vec4(col,1.0);}`;
     const mat96 = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(96), depthTest: false });
     const rt192 = new THREE.WebGLRenderTarget(192, 192, fboOpts);
     const mat192 = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(192), depthTest: false });
+    const realW = Math.round(screenW * nativeDpr * 0.5);
+    const realH = Math.round(screenH * nativeDpr * 0.5);
+    const rtReal = new THREE.WebGLRenderTarget(realW, realH, fboOpts);
+    const matReal = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(Math.max(realW, realH)), depthTest: false });
 
     const runTest = (mat: THREE.ShaderMaterial, rt: THREE.WebGLRenderTarget, warmup: number, runs: number): number => {
       quad.material = mat;
@@ -311,18 +315,20 @@ gl_FragColor=vec4(col,1.0);}`;
     gl.finish();
     const repMs96 = runTest(mat96, rt96, 2, 4);
     const repMs192 = runTest(mat192, rt192, 1, 4);
+    const repMsReal = runTest(matReal, rtReal, 1, 2);
 
     renderer.setRenderTarget(null);
-    [rt96, rt192].forEach(r => r.dispose());
-    [mat96, mat192].forEach(m => m.dispose());
+    [rt96, rt192, rtReal].forEach(r => r.dispose());
+    [mat96, mat192, matReal].forEach(m => m.dispose());
     geo.dispose();
 
     const px96 = 96 * 96;
     const px192 = 192 * 192;
+    const pxReal = realW * realH;
     const benchSteps = 40;
 
-    let costPerPxStep = (repMs192 - repMs96) / ((px192 - px96) * benchSteps);
-    if (costPerPxStep <= 0) costPerPxStep = repMs192 / (px192 * benchSteps);
+    let costPerPxStep = (repMsReal - repMs96) / ((pxReal - px96) * benchSteps);
+    if (costPerPxStep <= 0) costPerPxStep = repMsReal / (pxReal * benchSteps);
     const overhead = Math.max(0, repMs96 - costPerPxStep * px96 * benchSteps);
 
     const thermalFactor = 0.97;
@@ -372,7 +378,7 @@ gl_FragColor=vec4(col,1.0);}`;
       gpuScore: Math.round(gpuScore),
       quality: isPotato ? 'low' : isWeak ? 'medium' : isMid ? 'high' : 'ultra',
     };
-    console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${repMs96.toFixed(1)}ms/${repMs192.toFixed(1)}ms`, 'color:#FFB347;font-weight:bold', 'color:#888');
+    console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${repMs96.toFixed(1)}/${repMs192.toFixed(1)}/${repMsReal.toFixed(1)}ms (${realW}x${realH})`, 'color:#FFB347;font-weight:bold', 'color:#888');
     try { localStorage.setItem('eh_perf_v12', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 

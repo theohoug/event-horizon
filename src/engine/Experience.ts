@@ -235,13 +235,14 @@ export class Experience {
 
     const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v10') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v11') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
     try { localStorage.removeItem('eh_perf_v6'); } catch {}
     try { localStorage.removeItem('eh_perf_v7'); } catch {}
     try { localStorage.removeItem('eh_perf_v8'); } catch {}
     try { localStorage.removeItem('eh_perf_v9'); } catch {}
+    try { localStorage.removeItem('eh_perf_v10'); } catch {}
 
     let heuristicBonus = 0;
     if (gpuRenderer.includes('rtx 40') || gpuRenderer.includes('rtx 50')) heuristicBonus = 18;
@@ -252,6 +253,11 @@ export class Experience {
     else if (gpuRenderer.includes('rx 7') || gpuRenderer.includes('rx 9')) heuristicBonus = 12;
     else if (gpuRenderer.includes('rx 6')) heuristicBonus = 8;
     else if (gpuRenderer.includes('intel') && !gpuRenderer.includes('arc')) heuristicBonus = -12;
+    const likelyHasDiscreteGpu = cores >= 6 && ram >= 8 && gpuRenderer.includes('intel') && !gpuRenderer.includes('arc');
+    if (likelyHasDiscreteGpu) {
+      heuristicBonus = Math.max(heuristicBonus, -6);
+      console.warn('◈ Event Horizon: Your browser may be using the integrated GPU instead of your dedicated GPU. For the best experience, set your browser to use the high-performance GPU in your system graphics settings.');
+    }
     if (cores >= 8 && ram >= 16) heuristicBonus += 5;
     else if (cores <= 2 || ram <= 2) heuristicBonus -= 8;
 
@@ -349,7 +355,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const gpgpuTexSize = gpgpuSizes[Math.min(gpgpuSizes.length - 1, Math.floor(t01 * gpgpuSizes.length))];
     const starfieldCount = Math.round(lerp(3000, 12000, t01));
 
-    const isPotato = gpuScore < 15;
+    const isPotato = gpuScore < 8;
     const isWeak = gpuScore < 25;
     const isMid = gpuScore < 50;
     const config: PerfConfig = {
@@ -366,7 +372,7 @@ gl_FragColor=vec4(col,1.0);}`;
       quality: isPotato ? 'low' : isWeak ? 'medium' : isMid ? 'high' : 'ultra',
     };
     console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${repMs96.toFixed(1)}ms/${repMs192.toFixed(1)}ms`, 'color:#FFB347;font-weight:bold', 'color:#888');
-    try { localStorage.setItem('eh_perf_v10', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v11', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
@@ -486,7 +492,7 @@ gl_FragColor=vec4(col,1.0);}`;
 
     this.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      try { localStorage.removeItem('eh_perf_v10'); } catch {}
+      try { localStorage.removeItem('eh_perf_v11'); } catch {}
     });
     this.canvas.addEventListener('webglcontextrestored', () => {
       window.location.reload();

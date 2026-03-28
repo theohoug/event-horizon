@@ -1873,6 +1873,14 @@ gl_FragColor=vec4(col,1.0);}`;
   private setupResize() {
     const onResize = () => {
       const { w, h } = clampedViewportSize();
+      const newScreenPx = w * h;
+      const targetPx = 3_000_000;
+      const newDprCap = Math.min(window.devicePixelRatio, 1.5, Math.sqrt(targetPx / Math.max(newScreenPx, 1)));
+      const newDpr = Math.max(0.5, Math.round(newDprCap * 20) / 20);
+      if (Math.abs(newDpr - this.adaptiveDpr) > 0.05) {
+        this.adaptiveDpr = Math.min(newDpr, this.adaptiveDpr);
+        this.renderer.setPixelRatio(this.adaptiveDpr);
+      }
       this.renderer.setSize(w, h);
       this.canvas.style.width = '100vw';
       this.canvas.style.height = '100vh';
@@ -3058,9 +3066,12 @@ gl_FragColor=vec4(col,1.0);}`;
         this.lenis.scrollTo(0, { immediate: true });
 
         if (this.creditsEl) {
+          this.creditsEl.style.display = '';
           this.creditsEl.classList.remove('visible');
           this.creditsEl.classList.remove('white-mode');
+          this.creditsEl.style.background = '';
           document.body.classList.remove('credits-white');
+          document.body.style.background = '';
           this.whiteModeActive = false;
         }
         if (this.whiteModeDelayTimer) {

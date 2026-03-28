@@ -236,10 +236,10 @@ export class Experience {
 
     const fingerprint = `eh_v15|${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v20') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v21') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
-    for (let v = 6; v <= 19; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
+    for (let v = 6; v <= 20; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
 
     const isIntelIGPU = gpuRenderer.includes('intel') && !gpuRenderer.includes('arc');
     const isKnownWeak = isIntelIGPU
@@ -367,7 +367,7 @@ gl_FragColor=vec4(col,1.0);}`;
       quality: isPotato ? 'low' : (isLow || isMed) ? 'medium' : isHigh ? 'high' : 'ultra',
     };
     console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | stars: ${config.starfieldCount} | gpgpu: ${config.gpgpuTexSize} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${benchMs512.toFixed(1)}/${benchMs1024.toFixed(1)}ms (ratio: ${scalingRatio.toFixed(2)}${benchSuspicious ? ' SUSPICIOUS' : ''})`, 'color:#FFB347;font-weight:bold', 'color:#888');
-    try { localStorage.setItem('eh_perf_v20', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v21', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
@@ -487,7 +487,7 @@ gl_FragColor=vec4(col,1.0);}`;
 
     this.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      try { localStorage.removeItem('eh_perf_v20'); } catch {}
+      try { localStorage.removeItem('eh_perf_v21'); } catch {}
     });
     this.canvas.addEventListener('webglcontextrestored', () => {
       window.location.reload();
@@ -513,7 +513,7 @@ gl_FragColor=vec4(col,1.0);}`;
     this.state.quality = this.perfConfig.quality;
     const canUpgrade = this.perfConfig.gpuScore >= 40 && this.perfConfig.quality !== 'low';
     this.adaptiveLevel = canUpgrade ? 2 : 0;
-    this.adaptiveDpr = canUpgrade ? Math.max(1.0, this.perfConfig.dpr - 0.25) : this.perfConfig.dpr;
+    this.adaptiveDpr = canUpgrade ? Math.max(this.perfConfig.dpr * 0.7, this.perfConfig.dpr - 0.25) : this.perfConfig.dpr;
     this.adaptiveMaxSteps = canUpgrade ? Math.min(this.perfConfig.maxSteps, 80) : this.perfConfig.maxSteps;
     this.adaptiveBloomPasses = canUpgrade ? Math.max(1, this.perfConfig.bloomPasses - 1) : this.perfConfig.bloomPasses;
     this.adaptiveBloomScale = canUpgrade ? Math.max(0.15, this.perfConfig.bloomScale - 0.1) : this.perfConfig.bloomScale;
@@ -1877,12 +1877,9 @@ gl_FragColor=vec4(col,1.0);}`;
       const newScreenPx = w * h;
       const budget = this.perfConfig.gpuScore < 8 ? 400_000 : this.perfConfig.gpuScore < 20 ? 700_000 : this.perfConfig.gpuScore < 50 ? 1_000_000 : this.perfConfig.gpuScore < 75 ? 1_500_000 : 2_100_000;
       const newDprCap = Math.min(window.devicePixelRatio, 1.5, Math.sqrt(budget / Math.max(newScreenPx, 1)));
-      const newDpr = Math.max(0.5, Math.round(newDprCap * 20) / 20);
-      if (Math.abs(newDpr - this.adaptiveDpr) > 0.05) {
-        this.adaptiveDpr = newDpr;
-        this.renderer.setPixelRatio(this.adaptiveDpr);
-        this.applyAdaptiveQuality();
-      }
+      const newDpr = Math.max(0.4, Math.round(newDprCap * 20) / 20);
+      this.adaptiveDpr = newDpr;
+      this.renderer.setPixelRatio(this.adaptiveDpr);
       this.renderer.setSize(w, h);
       this.canvas.style.width = '100vw';
       this.canvas.style.height = '100dvh';
@@ -1987,8 +1984,8 @@ gl_FragColor=vec4(col,1.0);}`;
   private adaptiveDowngrade(emergency: boolean) {
     if (this.adaptiveLevel >= 8) return;
     this.adaptiveLevel++;
-    const maxDpr = Math.min(this.perfConfig.dpr, this.isMobileDevice ? 1.0 : Math.min(window.devicePixelRatio, 2));
-    const minDpr = this.isMobileDevice ? 0.75 : 1.0;
+    const maxDpr = this.perfConfig.dpr;
+    const minDpr = Math.max(0.4, maxDpr * 0.4);
 
     switch (this.adaptiveLevel) {
       case 1: this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 100); this.adaptiveBloomPasses = Math.min(this.adaptiveBloomPasses, 3); break;
@@ -2017,12 +2014,13 @@ gl_FragColor=vec4(col,1.0);}`;
     const capBloomP = cfg.bloomPasses;
     const capBloomS = cfg.bloomScale;
 
+    const minUpDpr = Math.max(0.4, capDpr * 0.4);
     this.gpgpuSkipFrames = this.adaptiveLevel < 5 ? 1 : this.adaptiveLevel < 7 ? 2 : 3;
     switch (this.adaptiveLevel) {
       case 0: this.adaptiveDpr = capDpr; this.adaptiveMaxSteps = capSteps; this.adaptiveBloomPasses = capBloomP; this.adaptiveBloomScale = capBloomS; this.gpgpuSkipFrames = 1; break;
-      case 1: this.adaptiveDpr = Math.max(1.0, capDpr - 0.25); this.adaptiveMaxSteps = capSteps; this.adaptiveBloomPasses = capBloomP; this.adaptiveBloomScale = capBloomS; break;
-      case 2: this.adaptiveDpr = Math.max(1.0, capDpr - 0.25); this.adaptiveMaxSteps = capSteps; this.adaptiveBloomPasses = Math.min(capBloomP, 3); this.adaptiveBloomScale = Math.min(capBloomS, 0.40); break;
-      case 3: this.adaptiveDpr = Math.max(1.0, capDpr - 0.5); this.adaptiveMaxSteps = capSteps; this.adaptiveBloomPasses = Math.min(capBloomP, 3); this.adaptiveBloomScale = Math.min(capBloomS, 0.40); break;
+      case 1: this.adaptiveDpr = Math.max(minUpDpr, capDpr * 0.85); this.adaptiveMaxSteps = capSteps; this.adaptiveBloomPasses = capBloomP; this.adaptiveBloomScale = capBloomS; break;
+      case 2: this.adaptiveDpr = Math.max(minUpDpr, capDpr * 0.85); this.adaptiveMaxSteps = capSteps; this.adaptiveBloomPasses = Math.min(capBloomP, 3); this.adaptiveBloomScale = Math.min(capBloomS, 0.40); break;
+      case 3: this.adaptiveDpr = Math.max(minUpDpr, capDpr * 0.7); this.adaptiveMaxSteps = capSteps; this.adaptiveBloomPasses = Math.min(capBloomP, 3); this.adaptiveBloomScale = Math.min(capBloomS, 0.40); break;
       case 4: this.adaptiveMaxSteps = Math.min(capSteps, 120); break;
       case 5: this.adaptiveBloomPasses = Math.min(capBloomP, 2); this.adaptiveBloomScale = Math.min(capBloomS, 0.30); break;
       default: break;

@@ -28,18 +28,20 @@ function simulateScore({ gpu, cores, ram, screenW, screenH, dpr, benchMs512, ben
   const nativeDpr = Math.min(dpr, 2);
   const dprCap = Math.min(nativeDpr, 1.5, Math.sqrt(3_500_000 / Math.max(screenPx, 1)));
   const estimatedDpr = Math.max(1.0, dprCap);
-  const screenFactor = (screenPx * estimatedDpr * estimatedDpr) / 2_073_600;
-  const screenPenalty = Math.max(0, (screenFactor - 1) * 8);
+  const targetRenderPx = 3_000_000;
+  const dprCap2 = Math.min(nativeDpr, 1.5, Math.sqrt(targetRenderPx / Math.max(screenPx, 1)));
+  const renderPx = screenPx * dprCap2 * dprCap2;
+  const screenFactor = renderPx / 2_073_600;
 
   let gpuScore;
   let method;
   if (benchSuspicious) {
     method = 'SUSPICIOUS';
-    if (gpuCap === 'ultra') gpuScore = 80 - screenPenalty;
-    else if (gpuCap === 'high') gpuScore = 62 - screenPenalty;
-    else if (gpuCap === 'medium') gpuScore = 38 - screenPenalty;
+    if (gpuCap === 'ultra') gpuScore = 80;
+    else if (gpuCap === 'high') gpuScore = 62;
+    else if (gpuCap === 'medium') gpuScore = 38;
     else if (isKnownWeak) gpuScore = 15;
-    else gpuScore = 45 - screenPenalty;
+    else gpuScore = 45;
   } else {
     method = 'BENCHMARK';
     const adjustedMs = benchMs1024 * screenFactor;
@@ -57,11 +59,12 @@ function simulateScore({ gpu, cores, ram, screenW, screenH, dpr, benchMs512, ben
   const isHigh = gpuScore < 75;
   const quality = isPotato ? 'low' : (isLow || isMed) ? 'medium' : isHigh ? 'high' : 'ultra';
 
+  const bestDpr = isPotato ? 0.6 : Math.max(0.5, Math.round(dprCap2 * 20) / 20);
   const gpgpu = isPotato ? 0 : isLow ? 96 : isMed ? 128 : isHigh ? 160 : 192;
   const stars = isPotato ? 1000 : isLow ? 3000 : isMed ? 6000 : 8000;
   const steps = isPotato ? 24 : isLow ? 48 : isMed ? 80 : isHigh ? 100 : 128;
 
-  return { gpuScore: Math.round(gpuScore), quality, method, gpuCap, gpgpu, stars, steps, screenFactor: screenFactor.toFixed(2), benchSuspicious };
+  return { gpuScore: Math.round(gpuScore), quality, method, gpuCap, gpgpu, stars, steps, screenFactor: screenFactor.toFixed(2), bestDpr: bestDpr.toFixed(2), benchSuspicious };
 }
 
 const configs = [
@@ -90,9 +93,9 @@ const configs = [
 ];
 
 console.log('\n🔬 GPU Profiler Simulation — 22 hardware configs\n');
-console.log('┌─────────────────────────────────────┬───────┬─────────┬──────────────┬───────┬───────┬───────┬────────────┐');
-console.log('│ Config                              │ Score │ Quality │ Method       │ GPGPU │ Stars │ Steps │ ScreenFact │');
-console.log('├─────────────────────────────────────┼───────┼─────────┼──────────────┼───────┼───────┼───────┼────────────┤');
+console.log('┌─────────────────────────────────────┬───────┬─────────┬──────────────┬───────┬───────┬───────┬──────┬────────────┐');
+console.log('│ Config                              │ Score │ Quality │ Method       │ GPGPU │ Stars │ Steps │  DPR │ RenderPx   │');
+console.log('├─────────────────────────────────────┼───────┼─────────┼──────────────┼───────┼───────┼───────┼──────┼────────────┤');
 
 for (const cfg of configs) {
   const r = simulateScore(cfg);
@@ -103,11 +106,12 @@ for (const cfg of configs) {
   const gpgpu = String(r.gpgpu).padStart(5);
   const stars = String(r.stars).padStart(5);
   const steps = String(r.steps).padStart(5);
-  const sf = r.screenFactor.padStart(10);
-  console.log(`│ ${name} │ ${score} │ ${qual} │ ${method} │ ${gpgpu} │ ${stars} │ ${steps} │ ${sf} │`);
+  const dprStr = r.bestDpr.padStart(4);
+  const renderPxStr = String(Math.round(cfg.screenW * cfg.screenH * parseFloat(r.bestDpr) * parseFloat(r.bestDpr) / 1000) + 'K').padStart(10);
+  console.log(`│ ${name} │ ${score} │ ${qual} │ ${method} │ ${gpgpu} │ ${stars} │ ${steps} │ ${dprStr} │ ${renderPxStr} │`);
 }
 
-console.log('└─────────────────────────────────────┴───────┴─────────┴──────────────┴───────┴───────┴───────┴────────────┘');
+console.log('└─────────────────────────────────────┴───────┴─────────┴──────────────┴───────┴───────┴───────┴──────┴────────────┘');
 
 const issues = [];
 const expected = {

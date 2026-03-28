@@ -322,18 +322,18 @@ gl_FragColor=vec4(col,1.0);}`;
     const scalingRatio = benchMs1024 / Math.max(benchMs512, 0.01);
     const benchSuspicious = benchMs512 < 0.3 || benchMs1024 < 0.8 || scalingRatio < 1.5;
 
-    const dprCap = Math.min(nativeDpr, 1.5, Math.sqrt(3_500_000 / Math.max(screenPx, 1)));
-    const estimatedDpr = Math.max(1.0, dprCap);
-    const screenFactor = (screenPx * estimatedDpr * estimatedDpr) / 2_073_600;
+    const targetRenderPx = 3_000_000;
+    const dprCap = Math.min(nativeDpr, 1.5, Math.sqrt(targetRenderPx / Math.max(screenPx, 1)));
+    const renderPx = screenPx * dprCap * dprCap;
+    const screenFactor = renderPx / 2_073_600;
 
     let gpuScore: number;
-    const screenPenalty = Math.max(0, (screenFactor - 1) * 8);
     if (benchSuspicious) {
-      if (gpuCap === 'ultra') gpuScore = 80 - screenPenalty;
-      else if (gpuCap === 'high') gpuScore = 62 - screenPenalty;
-      else if (gpuCap === 'medium') gpuScore = 38 - screenPenalty;
+      if (gpuCap === 'ultra') gpuScore = 80;
+      else if (gpuCap === 'high') gpuScore = 62;
+      else if (gpuCap === 'medium') gpuScore = 38;
       else if (isKnownWeak) gpuScore = 15;
-      else gpuScore = 45 - screenPenalty;
+      else gpuScore = 45;
     } else {
       const adjustedMs = benchMs1024 * screenFactor;
       gpuScore = 100 - Math.sqrt(adjustedMs) * 12;
@@ -350,7 +350,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const isMed = gpuScore < 50;
     const isHigh = gpuScore < 75;
 
-    const bestDpr = isPotato ? 0.75 : isLow ? 1.0 : Math.max(1.0, Math.round(dprCap * 20) / 20);
+    const bestDpr = isPotato ? 0.6 : Math.max(0.5, Math.round(dprCap * 20) / 20);
 
     const config: PerfConfig = {
       dpr: bestDpr,

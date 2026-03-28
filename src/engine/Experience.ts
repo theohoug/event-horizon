@@ -25,9 +25,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Cap canvas resolution to prevent absurd pixel counts from browser zoom / unusual display configs.
-// 4096×2160 ≈ 8.8M pixels is generous enough for any real display; beyond that we scale down.
-const MAX_CANVAS_PIXELS = 4096 * 2160;
+// Cap canvas CSS pixels — beyond this we scale the viewport down.
+const MAX_CANVAS_PIXELS = 2560 * 1440;
 
 function clampedViewportSize(): { w: number; h: number } {
   const vv = window.visualViewport;
@@ -322,7 +321,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const scalingRatio = benchMs1024 / Math.max(benchMs512, 0.01);
     const benchSuspicious = benchMs512 < 0.3 || benchMs1024 < 0.8 || scalingRatio < 1.5;
 
-    const targetRenderPx = 3_000_000;
+    const targetRenderPx = 2_100_000;
     const dprCap = Math.min(nativeDpr, 1.5, Math.sqrt(targetRenderPx / Math.max(screenPx, 1)));
     const renderPx = screenPx * dprCap * dprCap;
     const screenFactor = renderPx / 2_073_600;
@@ -1874,12 +1873,13 @@ gl_FragColor=vec4(col,1.0);}`;
     const onResize = () => {
       const { w, h } = clampedViewportSize();
       const newScreenPx = w * h;
-      const targetPx = 3_000_000;
+      const targetPx = 2_100_000;
       const newDprCap = Math.min(window.devicePixelRatio, 1.5, Math.sqrt(targetPx / Math.max(newScreenPx, 1)));
       const newDpr = Math.max(0.5, Math.round(newDprCap * 20) / 20);
-      if (Math.abs(newDpr - this.adaptiveDpr) > 0.05) {
-        this.adaptiveDpr = Math.min(newDpr, this.adaptiveDpr);
+      if (newDpr < this.adaptiveDpr - 0.05) {
+        this.adaptiveDpr = newDpr;
         this.renderer.setPixelRatio(this.adaptiveDpr);
+        this.applyAdaptiveQuality();
       }
       this.renderer.setSize(w, h);
       this.canvas.style.width = '100vw';

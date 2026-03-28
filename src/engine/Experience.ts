@@ -363,6 +363,7 @@ gl_FragColor=vec4(col,1.0);}`;
       gpuScore: Math.round(gpuScore),
       quality: isPotato ? 'low' : isWeak ? 'medium' : isMid ? 'high' : 'ultra',
     };
+    console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | bench: ${repMs96.toFixed(1)}ms/${repMs192.toFixed(1)}ms`, 'color:#FFB347;font-weight:bold', 'color:#888');
     try { localStorage.setItem('eh_perf_v10', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
@@ -2041,7 +2042,8 @@ gl_FragColor=vec4(col,1.0);}`;
         (this.state as any).explosion = this.explosionProgress;
       }
       ScrollTrigger.update();
-      this.adaptiveDowngrade(true);
+      const skipLevels = this.emergencySlowFrames >= 4 ? 3 : 1;
+      for (let i = 0; i < skipLevels; i++) this.adaptiveDowngrade(true);
       this.emergencySlowFrames = Math.max(0, this.emergencySlowFrames - 1);
       return;
     }
@@ -2051,7 +2053,9 @@ gl_FragColor=vec4(col,1.0);}`;
       this.fpsFrames = 0;
       this.fpsLastTime = now;
 
-      if (this.fpsValue < 25) {
+      if (this.fpsValue < 15) {
+        this.lowFpsCount += 4;
+      } else if (this.fpsValue < 25) {
         this.lowFpsCount += this.isMobileDevice ? 3 : 2;
       } else if (this.fpsValue < 45) {
         this.lowFpsCount += this.isMobileDevice ? 2 : 1;
@@ -2061,7 +2065,8 @@ gl_FragColor=vec4(col,1.0);}`;
       }
 
       if (this.lowFpsCount >= 2 && this.adaptiveLevel < 8) {
-        this.adaptiveDowngrade(false);
+        const downgrades = this.fpsValue < 15 ? 3 : 1;
+        for (let i = 0; i < downgrades; i++) this.adaptiveDowngrade(false);
         this.lowFpsCount = 0;
         this.fpsStableCount = 0;
       }

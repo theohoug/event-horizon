@@ -206,7 +206,9 @@
 
     const canvas = document.getElementById('bg');
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const screenPx404 = window.innerWidth * window.innerHeight;
+    const dpr404 = Math.min(window.devicePixelRatio, 1.5, Math.sqrt(3000000 / Math.max(screenPx404, 1)));
+    renderer.setPixelRatio(Math.max(0.5, dpr404));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x050505, 1);
 

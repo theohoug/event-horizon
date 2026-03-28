@@ -46,7 +46,9 @@ export class TrapScene {
       antialias: true,
       alpha: true,
     });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const screenPx = window.innerWidth * window.innerHeight;
+    const normalizedDpr = Math.min(window.devicePixelRatio, 1.5, Math.sqrt(3_000_000 / Math.max(screenPx, 1)));
+    this.renderer.setPixelRatio(Math.max(0.5, normalizedDpr));
     this.renderer.setClearColor(0x030305, 1);
 
     this.scene = new THREE.Scene();

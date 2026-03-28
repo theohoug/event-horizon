@@ -2250,6 +2250,11 @@ gl_FragColor=vec4(col,1.0);}`;
     (this.state as any).isAltered = this.isAlteredMode;
     (this.state as any).isHardcore = this.isHardcoreMode;
     (this.state as any).enterPulse = this.enterPulse;
+    if (this.explosionActive && this.explosionProgress < 1.5) {
+      this.blackHole.setMaxSteps(Math.max(this.adaptiveMaxSteps, 110));
+    } else {
+      this.blackHole.setMaxSteps(this.adaptiveMaxSteps);
+    }
     this.blackHole.update(this.state as any);
     if (this.particles) {
       this.gpgpuFrameCounter++;

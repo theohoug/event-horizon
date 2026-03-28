@@ -236,10 +236,10 @@ export class Experience {
 
     const fingerprint = `eh_v15|${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v22') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v23') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
-    for (let v = 6; v <= 21; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
+    for (let v = 6; v <= 22; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
 
     const isIntelIGPU = gpuRenderer.includes('intel') && !gpuRenderer.includes('arc');
     const isKnownWeak = isIntelIGPU
@@ -321,7 +321,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const scalingRatio = benchMs1024 / Math.max(benchMs512, 0.01);
     const benchSuspicious = benchMs512 < 0.3 || benchMs1024 < 0.8 || scalingRatio < 1.5;
 
-    const targetRenderPx = 2_100_000;
+    const targetRenderPx = 2_000_000;
     const dprCap = Math.min(nativeDpr, 1.5, Math.sqrt(targetRenderPx / Math.max(screenPx, 1)));
     const renderPx = screenPx * dprCap * dprCap;
     const screenFactor = renderPx / 2_073_600;
@@ -349,7 +349,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const isMed = gpuScore < 50;
     const isHigh = gpuScore < 75;
 
-    const renderBudget = isPotato ? 400_000 : isLow ? 700_000 : isMed ? 1_000_000 : isHigh ? 1_500_000 : 2_100_000;
+    const renderBudget = isPotato ? 400_000 : isLow ? 600_000 : isMed ? 800_000 : isHigh ? 1_200_000 : 2_000_000;
     const actualDprCap = Math.min(nativeDpr, 1.5, Math.sqrt(renderBudget / Math.max(screenPx, 1)));
     const bestDpr = Math.max(isPotato ? 0.4 : 0.5, Math.round(actualDprCap * 20) / 20);
 
@@ -359,7 +359,7 @@ gl_FragColor=vec4(col,1.0);}`;
       qualityMedium: isLow || isMed,
       gpgpuTexSize: isPotato ? 0 : isLow ? 96 : isMed ? 128 : isHigh ? 160 : 192,
       starfieldCount: isPotato ? 1000 : isLow ? 3000 : isMed ? 6000 : 8000,
-      bloomPasses: isPotato ? 1 : isLow ? 2 : isMed ? 3 : 4,
+      bloomPasses: isPotato ? 1 : isLow ? 2 : isMed ? 2 : isHigh ? 3 : 4,
       bloomScale: isPotato ? 0.15 : isLow ? 0.2 : isMed ? 0.3 : 0.5,
       motionBlur: !isPotato && !isLow,
       antialias: !isPotato,
@@ -367,7 +367,7 @@ gl_FragColor=vec4(col,1.0);}`;
       quality: isPotato ? 'low' : (isLow || isMed) ? 'medium' : isHigh ? 'high' : 'ultra',
     };
     console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | stars: ${config.starfieldCount} | gpgpu: ${config.gpgpuTexSize} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${benchMs512.toFixed(1)}/${benchMs1024.toFixed(1)}ms (ratio: ${scalingRatio.toFixed(2)}${benchSuspicious ? ' SUSPICIOUS' : ''})`, 'color:#FFB347;font-weight:bold', 'color:#888');
-    try { localStorage.setItem('eh_perf_v22', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    try { localStorage.setItem('eh_perf_v23', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
@@ -487,7 +487,7 @@ gl_FragColor=vec4(col,1.0);}`;
 
     this.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      try { localStorage.removeItem('eh_perf_v22'); } catch {}
+      try { localStorage.removeItem('eh_perf_v23'); } catch {}
     });
     this.canvas.addEventListener('webglcontextrestored', () => {
       window.location.reload();
@@ -1878,7 +1878,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const onResize = () => {
       const { w, h } = clampedViewportSize();
       const newScreenPx = w * h;
-      const budget = this.perfConfig.gpuScore < 8 ? 400_000 : this.perfConfig.gpuScore < 20 ? 700_000 : this.perfConfig.gpuScore < 50 ? 1_000_000 : this.perfConfig.gpuScore < 75 ? 1_500_000 : 2_100_000;
+      const budget = this.perfConfig.gpuScore < 8 ? 400_000 : this.perfConfig.gpuScore < 20 ? 600_000 : this.perfConfig.gpuScore < 50 ? 800_000 : this.perfConfig.gpuScore < 75 ? 1_200_000 : 2_000_000;
       const newDprCap = Math.min(window.devicePixelRatio, 1.5, Math.sqrt(budget / Math.max(newScreenPx, 1)));
       const newDpr = Math.max(0.4, Math.round(newDprCap * 20) / 20);
       this.adaptiveDpr = newDpr;

@@ -349,7 +349,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const isMed = gpuScore < 50;
     const isHigh = gpuScore < 75;
 
-    const renderBudget = isPotato ? 500_000 : isLow ? 800_000 : isMed ? 1_200_000 : isHigh ? 1_800_000 : 2_100_000;
+    const renderBudget = isPotato ? 400_000 : isLow ? 700_000 : isMed ? 1_000_000 : isHigh ? 1_500_000 : 2_100_000;
     const actualDprCap = Math.min(nativeDpr, 1.5, Math.sqrt(renderBudget / Math.max(screenPx, 1)));
     const bestDpr = Math.max(isPotato ? 0.4 : 0.5, Math.round(actualDprCap * 20) / 20);
 
@@ -1875,7 +1875,7 @@ gl_FragColor=vec4(col,1.0);}`;
     const onResize = () => {
       const { w, h } = clampedViewportSize();
       const newScreenPx = w * h;
-      const budget = this.perfConfig.gpuScore < 8 ? 500_000 : this.perfConfig.gpuScore < 20 ? 800_000 : this.perfConfig.gpuScore < 50 ? 1_200_000 : this.perfConfig.gpuScore < 75 ? 1_800_000 : 2_100_000;
+      const budget = this.perfConfig.gpuScore < 8 ? 400_000 : this.perfConfig.gpuScore < 20 ? 700_000 : this.perfConfig.gpuScore < 50 ? 1_000_000 : this.perfConfig.gpuScore < 75 ? 1_500_000 : 2_100_000;
       const newDprCap = Math.min(window.devicePixelRatio, 1.5, Math.sqrt(budget / Math.max(newScreenPx, 1)));
       const newDpr = Math.max(0.5, Math.round(newDprCap * 20) / 20);
       if (Math.abs(newDpr - this.adaptiveDpr) > 0.05) {

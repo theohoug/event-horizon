@@ -252,6 +252,8 @@ export class Experience {
     let gpuCap: 'ultra' | 'high' | 'medium' | 'low' | null = null;
     if (gpuRenderer.includes('rtx 40') || gpuRenderer.includes('rtx 50') || gpuRenderer.includes('rx 9') || gpuRenderer.includes('apple m3') || gpuRenderer.includes('apple m4')) gpuCap = 'ultra';
     else if (gpuRenderer.includes('rtx 30') || gpuRenderer.includes('rtx 20') || gpuRenderer.includes('rx 7') || gpuRenderer.includes('rx 6') || gpuRenderer.includes('apple m2') || gpuRenderer.includes('apple m1') || gpuRenderer.includes('arc')) gpuCap = 'high';
+    else if (gpuRenderer.includes('gtx 16') || gpuRenderer.includes('gtx 1080') || gpuRenderer.includes('gtx 1070') || gpuRenderer.includes('rx 56') || gpuRenderer.includes('rx 57')) gpuCap = 'high';
+    else if (gpuRenderer.includes('gtx 10') || gpuRenderer.includes('gtx 9') || gpuRenderer.includes('rx 580') || gpuRenderer.includes('rx 570') || gpuRenderer.includes('rx 480')) gpuCap = 'medium';
     else if (isIntelIGPU) gpuCap = 'medium';
 
     const likelyHasDiscreteGpu = cores >= 6 && ram >= 8 && isIntelIGPU;

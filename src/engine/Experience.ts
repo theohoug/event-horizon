@@ -235,12 +235,12 @@ export class Experience {
     const cores = navigator.hardwareConcurrency || 2;
     const ram = (navigator as any).deviceMemory || 4;
 
-    const fingerprint = `eh_v14|${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
+    const fingerprint = `eh_v15|${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
       const data = JSON.parse(localStorage.getItem('eh_perf_v14') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
-    for (let v = 6; v <= 13; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
+    for (let v = 6; v <= 14; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
 
     const isIntelIGPU = gpuRenderer.includes('intel') && !gpuRenderer.includes('arc');
     const isKnownWeak = isIntelIGPU
@@ -327,11 +327,13 @@ gl_FragColor=vec4(col,1.0);}`;
     const screenFactor = (screenPx * estimatedDpr * estimatedDpr) / 2_073_600;
 
     let gpuScore: number;
+    const screenPenalty = Math.max(0, (screenFactor - 1) * 8);
     if (benchSuspicious) {
-      if (gpuCap === 'ultra') gpuScore = 65;
-      else if (gpuCap === 'high') gpuScore = 48;
-      else if (isKnownWeak) gpuScore = 20;
-      else gpuScore = 35;
+      if (gpuCap === 'ultra') gpuScore = 80 - screenPenalty;
+      else if (gpuCap === 'high') gpuScore = 62 - screenPenalty;
+      else if (gpuCap === 'medium') gpuScore = 38 - screenPenalty;
+      else if (isKnownWeak) gpuScore = 15;
+      else gpuScore = 45 - screenPenalty;
     } else {
       const adjustedMs = benchMs1024 * screenFactor;
       gpuScore = 100 - Math.sqrt(adjustedMs) * 12;
@@ -340,7 +342,7 @@ gl_FragColor=vec4(col,1.0);}`;
       if (isKnownWeak) gpuScore = Math.min(gpuScore, 45);
     }
 
-    if (cores <= 2 || ram <= 2) gpuScore = Math.min(gpuScore, 25);
+    if (cores <= 2 || ram <= 2) gpuScore = Math.min(gpuScore, 20);
     gpuScore = Math.max(0, Math.min(100, gpuScore));
 
     const isPotato = gpuScore < 8;
@@ -508,12 +510,12 @@ gl_FragColor=vec4(col,1.0);}`;
     }
 
     this.state.quality = this.perfConfig.quality;
-    const isProg = this.perfConfig.quality !== 'low';
-    this.adaptiveLevel = isProg ? 2 : 0;
-    this.adaptiveDpr = isProg ? Math.max(1.0, this.perfConfig.dpr - 0.25) : this.perfConfig.dpr;
-    this.adaptiveMaxSteps = isProg ? Math.min(this.perfConfig.maxSteps, 80) : this.perfConfig.maxSteps;
-    this.adaptiveBloomPasses = isProg ? Math.max(1, this.perfConfig.bloomPasses - 1) : this.perfConfig.bloomPasses;
-    this.adaptiveBloomScale = isProg ? Math.max(0.15, this.perfConfig.bloomScale - 0.1) : this.perfConfig.bloomScale;
+    const canUpgrade = this.perfConfig.gpuScore >= 40 && this.perfConfig.quality !== 'low';
+    this.adaptiveLevel = canUpgrade ? 2 : 0;
+    this.adaptiveDpr = canUpgrade ? Math.max(1.0, this.perfConfig.dpr - 0.25) : this.perfConfig.dpr;
+    this.adaptiveMaxSteps = canUpgrade ? Math.min(this.perfConfig.maxSteps, 80) : this.perfConfig.maxSteps;
+    this.adaptiveBloomPasses = canUpgrade ? Math.max(1, this.perfConfig.bloomPasses - 1) : this.perfConfig.bloomPasses;
+    this.adaptiveBloomScale = canUpgrade ? Math.max(0.15, this.perfConfig.bloomScale - 0.1) : this.perfConfig.bloomScale;
 
     if (this.perfConfig.quality === 'low') {
       document.body.classList.add('quality-low');

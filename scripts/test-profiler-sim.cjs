@@ -29,15 +29,17 @@ function simulateScore({ gpu, cores, ram, screenW, screenH, dpr, benchMs512, ben
   const dprCap = Math.min(nativeDpr, 1.5, Math.sqrt(3_500_000 / Math.max(screenPx, 1)));
   const estimatedDpr = Math.max(1.0, dprCap);
   const screenFactor = (screenPx * estimatedDpr * estimatedDpr) / 2_073_600;
+  const screenPenalty = Math.max(0, (screenFactor - 1) * 8);
 
   let gpuScore;
   let method;
   if (benchSuspicious) {
     method = 'SUSPICIOUS';
-    if (gpuCap === 'ultra') gpuScore = 65;
-    else if (gpuCap === 'high') gpuScore = 48;
-    else if (isKnownWeak) gpuScore = 20;
-    else gpuScore = 35;
+    if (gpuCap === 'ultra') gpuScore = 80 - screenPenalty;
+    else if (gpuCap === 'high') gpuScore = 62 - screenPenalty;
+    else if (gpuCap === 'medium') gpuScore = 38 - screenPenalty;
+    else if (isKnownWeak) gpuScore = 15;
+    else gpuScore = 45 - screenPenalty;
   } else {
     method = 'BENCHMARK';
     const adjustedMs = benchMs1024 * screenFactor;
@@ -46,7 +48,7 @@ function simulateScore({ gpu, cores, ram, screenW, screenH, dpr, benchMs512, ben
     if (isKnownWeak) gpuScore = Math.min(gpuScore, 45);
   }
 
-  if (cores <= 2 || ram <= 2) gpuScore = Math.min(gpuScore, 25);
+  if (cores <= 2 || ram <= 2) gpuScore = Math.min(gpuScore, 20);
   gpuScore = Math.max(0, Math.min(100, gpuScore));
 
   const isPotato = gpuScore < 8;

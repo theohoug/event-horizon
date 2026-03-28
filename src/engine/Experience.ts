@@ -2073,7 +2073,7 @@ gl_FragColor=vec4(col,1.0);}`;
     if (this.adaptiveLevel >= 8) return;
     this.adaptiveLevel++;
     const maxDpr = this.perfConfig.dpr;
-    const minDpr = Math.max(0.4, maxDpr * 0.4);
+    const minDpr = Math.max(0.5, maxDpr * 0.7);
 
     switch (this.adaptiveLevel) {
       case 1: this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 100); this.adaptiveBloomPasses = Math.min(this.adaptiveBloomPasses, 3); break;

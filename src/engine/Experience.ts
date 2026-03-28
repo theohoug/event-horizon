@@ -210,7 +210,7 @@ export class Experience {
         maxSteps: 48,
         qualityMedium: false,
         gpgpuTexSize: 64,
-        starfieldCount: 1500,
+        starfieldCount: 6000,
         bloomPasses: 2,
         bloomScale: 0.20,
         motionBlur: true,
@@ -233,34 +233,29 @@ export class Experience {
     const cores = navigator.hardwareConcurrency || 2;
     const ram = (navigator as any).deviceMemory || 4;
 
-    const fingerprint = `${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
+    const fingerprint = `eh_v13|${gpuRenderer}|${cores}|${ram}|${screenW}x${screenH}|${nativeDpr}`;
     try {
-      const data = JSON.parse(localStorage.getItem('eh_perf_v12') || '{}');
+      const data = JSON.parse(localStorage.getItem('eh_perf_v13') || '{}');
       if (data.fp === fingerprint) return data.cfg as PerfConfig;
     } catch {}
-    try { localStorage.removeItem('eh_perf_v6'); } catch {}
-    try { localStorage.removeItem('eh_perf_v7'); } catch {}
-    try { localStorage.removeItem('eh_perf_v8'); } catch {}
-    try { localStorage.removeItem('eh_perf_v9'); } catch {}
-    try { localStorage.removeItem('eh_perf_v10'); } catch {}
-    try { localStorage.removeItem('eh_perf_v11'); } catch {}
+    for (let v = 6; v <= 12; v++) { try { localStorage.removeItem(`eh_perf_v${v}`); } catch {} }
 
-    let heuristicBonus = 0;
-    if (gpuRenderer.includes('rtx 40') || gpuRenderer.includes('rtx 50')) heuristicBonus = 10;
-    else if (gpuRenderer.includes('rtx 30')) heuristicBonus = 7;
-    else if (gpuRenderer.includes('rtx 20')) heuristicBonus = 4;
-    else if (gpuRenderer.includes('apple m2') || gpuRenderer.includes('apple m3') || gpuRenderer.includes('apple m4')) heuristicBonus = 7;
-    else if (gpuRenderer.includes('apple m1')) heuristicBonus = 4;
-    else if (gpuRenderer.includes('rx 7') || gpuRenderer.includes('rx 9')) heuristicBonus = 7;
-    else if (gpuRenderer.includes('rx 6')) heuristicBonus = 4;
-    else if (gpuRenderer.includes('intel') && !gpuRenderer.includes('arc')) heuristicBonus = -15;
-    const likelyHasDiscreteGpu = cores >= 6 && ram >= 8 && gpuRenderer.includes('intel') && !gpuRenderer.includes('arc');
+    const isIntelIGPU = gpuRenderer.includes('intel') && !gpuRenderer.includes('arc');
+    const isKnownWeak = isIntelIGPU
+      || gpuRenderer.includes('mali')
+      || gpuRenderer.includes('adreno')
+      || gpuRenderer.includes('powervr')
+      || (gpuRenderer.includes('radeon') && (gpuRenderer.includes('vega') || gpuRenderer.includes('r5') || gpuRenderer.includes('r7 graphics')));
+
+    let gpuCap: 'ultra' | 'high' | 'medium' | 'low' | null = null;
+    if (gpuRenderer.includes('rtx 40') || gpuRenderer.includes('rtx 50') || gpuRenderer.includes('rx 9') || gpuRenderer.includes('apple m3') || gpuRenderer.includes('apple m4')) gpuCap = 'ultra';
+    else if (gpuRenderer.includes('rtx 30') || gpuRenderer.includes('rtx 20') || gpuRenderer.includes('rx 7') || gpuRenderer.includes('rx 6') || gpuRenderer.includes('apple m2') || gpuRenderer.includes('apple m1') || gpuRenderer.includes('arc')) gpuCap = 'high';
+    else if (isIntelIGPU) gpuCap = 'medium';
+
+    const likelyHasDiscreteGpu = cores >= 6 && ram >= 8 && isIntelIGPU;
     if (likelyHasDiscreteGpu) {
-      heuristicBonus = Math.max(heuristicBonus, -6);
       console.warn('◈ Event Horizon: Your browser may be using the integrated GPU instead of your dedicated GPU. For the best experience, set your browser to use the high-performance GPU in your system graphics settings.');
     }
-    if (cores >= 8 && ram >= 16) heuristicBonus += 5;
-    else if (cores <= 2 || ram <= 2) heuristicBonus -= 8;
 
     const benchScene = new THREE.Scene();
     const benchCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -293,97 +288,87 @@ float adt=0.3*clamp((r-1.0)*0.4,0.03,1.5);
 vel=normalize(vel+a*adt);pos+=vel*adt;}
 gl_FragColor=vec4(col,1.0);}`;
 
-    const rt96 = new THREE.WebGLRenderTarget(96, 96, fboOpts);
-    const mat96 = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(96), depthTest: false });
-    const rt192 = new THREE.WebGLRenderTarget(192, 192, fboOpts);
-    const mat192 = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(192), depthTest: false });
-    const realW = Math.round(screenW * nativeDpr * 0.5);
-    const realH = Math.round(screenH * nativeDpr * 0.5);
-    const rtReal = new THREE.WebGLRenderTarget(realW, realH, fboOpts);
-    const matReal = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(Math.max(realW, realH)), depthTest: false });
+    const readbackBuf = new Uint8Array(4);
+
+    const rt256 = new THREE.WebGLRenderTarget(256, 256, fboOpts);
+    const mat256 = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(256), depthTest: false });
+    const rt512 = new THREE.WebGLRenderTarget(512, 512, fboOpts);
+    const mat512 = new THREE.ShaderMaterial({ vertexShader: benchVert, fragmentShader: repFrag(512), depthTest: false });
 
     const runTest = (mat: THREE.ShaderMaterial, rt: THREE.WebGLRenderTarget, warmup: number, runs: number): number => {
       quad.material = mat;
       for (let w = 0; w < warmup; w++) { renderer.setRenderTarget(rt); renderer.render(benchScene, benchCam); }
-      gl.finish();
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, readbackBuf);
+
       const t0 = performance.now();
       for (let r = 0; r < runs; r++) { renderer.setRenderTarget(rt); renderer.render(benchScene, benchCam); }
-      gl.finish();
+      gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, readbackBuf);
       return (performance.now() - t0) / runs;
     };
 
-    gl.finish();
-    const repMs96 = runTest(mat96, rt96, 2, 4);
-    const repMs192 = runTest(mat192, rt192, 1, 4);
-    const repMsReal = runTest(matReal, rtReal, 1, 2);
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, readbackBuf);
+    const benchMs256 = runTest(mat256, rt256, 3, 5);
+    const benchMs512 = runTest(mat512, rt512, 2, 5);
 
     renderer.setRenderTarget(null);
-    [rt96, rt192, rtReal].forEach(r => r.dispose());
-    [mat96, mat192, matReal].forEach(m => m.dispose());
+    [rt256, rt512].forEach(r => r.dispose());
+    [mat256, mat512].forEach(m => m.dispose());
     geo.dispose();
 
-    const px96 = 96 * 96;
-    const px192 = 192 * 192;
-    const pxReal = realW * realH;
-    const benchSteps = 40;
+    const scalingRatio = benchMs512 / Math.max(benchMs256, 0.01);
+    const benchSuspicious = benchMs256 < 0.3 || benchMs512 < 0.5 || scalingRatio < 1.2;
 
-    let costPerPxStep = (repMsReal - repMs96) / ((pxReal - px96) * benchSteps);
-    if (costPerPxStep <= 0) costPerPxStep = repMsReal / (pxReal * benchSteps);
-    const overhead = Math.max(0, repMs96 - costPerPxStep * px96 * benchSteps);
+    let gpuScore: number;
+    if (benchSuspicious) {
+      if (gpuCap === 'ultra') gpuScore = 75;
+      else if (gpuCap === 'high') gpuScore = 55;
+      else if (isKnownWeak) gpuScore = 25;
+      else gpuScore = 40;
+    } else {
+      const targetFrameMs = 13.0;
+      const renderPx = screenPx * Math.min(nativeDpr, 1.5);
+      const costPerPx = (benchMs512 - benchMs256) / ((512 * 512 - 256 * 256) * 40);
+      const estimatedFrameMs = costPerPx * renderPx * 100 + benchMs256 * 0.5;
+      gpuScore = Math.min(100, Math.max(0, (targetFrameMs / Math.max(estimatedFrameMs, 0.01)) * 60));
 
-    const thermalFactor = 0.97;
-    const bhBudget = 13.0 * thermalFactor;
+      if (isIntelIGPU) gpuScore = Math.min(gpuScore, 45);
+      if (isKnownWeak) gpuScore = Math.min(gpuScore, 50);
+      if (gpuCap === 'ultra' && gpuScore < 50) gpuScore = Math.max(gpuScore, 60);
+      if (gpuCap === 'high' && gpuScore < 35) gpuScore = Math.max(gpuScore, 40);
+    }
+
+    if (isIntelIGPU && gpuCap === 'medium') gpuScore = Math.min(gpuScore, 45);
+    if (cores <= 2 || ram <= 2) gpuScore = Math.min(gpuScore, 25);
+    gpuScore = Math.max(0, Math.min(100, gpuScore));
+
+    const isPotato = gpuScore < 8;
+    const isLow = gpuScore < 20;
+    const isMed = gpuScore < 45;
+    const isHigh = gpuScore < 70;
 
     const maxRenderPixels = 4_000_000;
     const dprCap = Math.min(nativeDpr, 1.5, Math.sqrt(maxRenderPixels / Math.max(screenPx, 1)));
-    const maxDpr = Math.max(0.75, Math.round(dprCap * 20) / 20);
-    const minDpr = screenPx > 3_000_000 ? 0.75 : 1.0;
-    let bestDpr = minDpr;
-    let bestSteps = 100;
+    const bestDpr = isPotato ? 0.75 : isLow ? 1.0 : Math.max(1.0, Math.round(dprCap * 20) / 20);
 
-    for (let tryDpr = maxDpr; tryDpr >= minDpr - 0.01; tryDpr -= 0.05) {
-      const dprR = Math.round(tryDpr * 20) / 20;
-      const affordable = (bhBudget - overhead) / Math.max(costPerPxStep * screenPx * dprR * dprR, 1e-12);
-      if (affordable >= 100) {
-        bestDpr = dprR;
-        bestSteps = Math.min(128, Math.max(80, Math.round(affordable)));
-        break;
-      }
-    }
-
-    const fullCost = costPerPxStep * screenPx * maxDpr * maxDpr * 160 + overhead;
-    let gpuScore = Math.min(100, Math.max(0, (bhBudget / Math.max(fullCost, 0.01)) * 100));
-    gpuScore = Math.max(0, Math.min(100, gpuScore + heuristicBonus * 0.5));
-
-    const lerp = (a: number, b: number, v: number) => a + (b - a) * Math.max(0, Math.min(1, v));
-    const t01 = gpuScore / 100;
-
-    const gpgpuSizes = [128, 128, 160, 192, 224, 256, 256, 256];
-    const gpgpuTexSize = gpgpuSizes[Math.min(gpgpuSizes.length - 1, Math.floor(t01 * gpgpuSizes.length))];
-    const starfieldCount = Math.round(lerp(3000, 12000, t01));
-
-    const isPotato = gpuScore < 8;
-    const isWeak = gpuScore < 30;
-    const isMid = gpuScore < 60;
     const config: PerfConfig = {
-      dpr: isPotato ? Math.min(bestDpr, 0.75) : bestDpr,
-      maxSteps: isPotato ? 24 : bestSteps,
-      qualityMedium: isWeak,
-      gpgpuTexSize: isPotato ? 0 : gpgpuTexSize,
-      starfieldCount: isPotato ? 500 : starfieldCount,
-      bloomPasses: isPotato ? 1 : isWeak ? 2 : isMid ? 3 : 4,
-      bloomScale: isPotato ? 0.15 : isWeak ? 0.2 : isMid ? 0.35 : 0.5,
-      motionBlur: !isPotato,
+      dpr: bestDpr,
+      maxSteps: isPotato ? 24 : isLow ? 48 : isMed ? 80 : isHigh ? 100 : 128,
+      qualityMedium: isLow || isMed,
+      gpgpuTexSize: isPotato ? 0 : isLow ? 96 : isMed ? 128 : isHigh ? 192 : 256,
+      starfieldCount: isPotato ? 1000 : isLow ? 3000 : 8000,
+      bloomPasses: isPotato ? 1 : isLow ? 2 : isMed ? 3 : 4,
+      bloomScale: isPotato ? 0.15 : isLow ? 0.2 : isMed ? 0.3 : 0.5,
+      motionBlur: !isPotato && !isLow,
       antialias: !isPotato,
       gpuScore: Math.round(gpuScore),
-      quality: isPotato ? 'low' : isWeak ? 'medium' : isMid ? 'high' : 'ultra',
+      quality: isPotato ? 'low' : (isLow || isMed) ? 'medium' : isHigh ? 'high' : 'ultra',
     };
-    console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${repMs96.toFixed(1)}/${repMs192.toFixed(1)}/${repMsReal.toFixed(1)}ms (${realW}x${realH})`, 'color:#FFB347;font-weight:bold', 'color:#888');
-    try { localStorage.setItem('eh_perf_v12', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
+    console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | stars: ${config.starfieldCount} | gpgpu: ${config.gpgpuTexSize} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${benchMs256.toFixed(1)}/${benchMs512.toFixed(1)}ms (ratio: ${scalingRatio.toFixed(2)}${benchSuspicious ? ' SUSPICIOUS' : ''})`, 'color:#FFB347;font-weight:bold', 'color:#888');
+    try { localStorage.setItem('eh_perf_v13', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
     } catch {
-      return { dpr: 1.0, maxSteps: 48, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 3000, bloomPasses: 2, bloomScale: 0.2, motionBlur: false, antialias: false, gpuScore: 15, quality: 'medium' as const };
+      return { dpr: 1.0, maxSteps: 48, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 6000, bloomPasses: 2, bloomScale: 0.2, motionBlur: false, antialias: false, gpuScore: 15, quality: 'medium' as const };
     }
   }
 
@@ -499,7 +484,7 @@ gl_FragColor=vec4(col,1.0);}`;
 
     this.canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
-      try { localStorage.removeItem('eh_perf_v12'); } catch {}
+      try { localStorage.removeItem('eh_perf_v13'); } catch {}
     });
     this.canvas.addEventListener('webglcontextrestored', () => {
       window.location.reload();
@@ -509,12 +494,12 @@ gl_FragColor=vec4(col,1.0);}`;
     const urlQuality = new URL(window.location.href).searchParams.get('quality') as 'ultra' | 'high' | 'medium' | 'low' | null;
     if (urlQuality === 'ultra' || urlQuality === 'high' || urlQuality === 'medium' || urlQuality === 'low') {
       this.perfConfig = urlQuality === 'ultra'
-        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 128, qualityMedium: false, gpgpuTexSize: 256, starfieldCount: 12000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 100, quality: 'ultra' }
+        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 128, qualityMedium: false, gpgpuTexSize: 256, starfieldCount: 8000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 100, quality: 'ultra' }
         : urlQuality === 'high'
-        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 80, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: true, gpuScore: 60, quality: 'high' }
+        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 100, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: true, gpuScore: 60, quality: 'high' }
         : urlQuality === 'low'
-        ? { dpr: 0.75, maxSteps: 24, qualityMedium: true, gpgpuTexSize: 0, starfieldCount: 500, bloomPasses: 1, bloomScale: 0.15, motionBlur: false, antialias: false, gpuScore: 5, quality: 'low' }
-        : { dpr: 1.0, maxSteps: 100, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 3000, bloomPasses: 2, bloomScale: 0.2, motionBlur: true, antialias: true, gpuScore: 25, quality: 'medium' };
+        ? { dpr: 0.75, maxSteps: 24, qualityMedium: true, gpgpuTexSize: 0, starfieldCount: 1000, bloomPasses: 1, bloomScale: 0.15, motionBlur: false, antialias: false, gpuScore: 5, quality: 'low' }
+        : { dpr: 1.0, maxSteps: 80, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 8000, bloomPasses: 2, bloomScale: 0.2, motionBlur: true, antialias: true, gpuScore: 25, quality: 'medium' };
     }
     this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (this.prefersReducedMotion) {
@@ -1965,10 +1950,10 @@ gl_FragColor=vec4(col,1.0);}`;
   private fpsStableCount = 0;
   private emergencySlowFrames = 0;
   private adaptiveLevel = 0;
-  private adaptiveDpr = 2.0;
-  private adaptiveMaxSteps = 160;
-  private adaptiveBloomPasses = 4;
-  private adaptiveBloomScale = 0.5;
+  private adaptiveDpr = 1.0;
+  private adaptiveMaxSteps = 80;
+  private adaptiveBloomPasses = 2;
+  private adaptiveBloomScale = 0.25;
 
   private applyAdaptiveQuality() {
     this.renderer.setPixelRatio(this.adaptiveDpr);
@@ -1987,19 +1972,19 @@ gl_FragColor=vec4(col,1.0);}`;
     const minDpr = this.isMobileDevice ? 0.75 : 1.0;
 
     switch (this.adaptiveLevel) {
-      case 1: this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 120); break;
-      case 2: this.adaptiveBloomPasses = Math.min(this.adaptiveBloomPasses, 3); this.adaptiveBloomScale = Math.min(this.adaptiveBloomScale, 0.35); break;
-      case 3: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.25); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 100); break;
-      case 4: this.adaptiveBloomPasses = Math.min(this.adaptiveBloomPasses, 2); this.adaptiveBloomScale = Math.min(this.adaptiveBloomScale, 0.25); break;
-      case 5: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.5); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 80); break;
-      case 6: this.adaptiveBloomPasses = 1; this.adaptiveBloomScale = 0.20; break;
-      case 7: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.75); this.adaptiveMaxSteps = 64; break;
-      case 8: this.adaptiveDpr = minDpr; this.adaptiveMaxSteps = 48; break;
+      case 1: this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 100); this.adaptiveBloomPasses = Math.min(this.adaptiveBloomPasses, 3); break;
+      case 2: this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 80); this.adaptiveBloomScale = Math.min(this.adaptiveBloomScale, 0.3); break;
+      case 3: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.25); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 64); break;
+      case 4: this.adaptiveBloomPasses = Math.min(this.adaptiveBloomPasses, 2); this.adaptiveBloomScale = Math.min(this.adaptiveBloomScale, 0.2); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 56); break;
+      case 5: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.5); this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 48); break;
+      case 6: this.adaptiveBloomPasses = 1; this.adaptiveBloomScale = 0.15; this.adaptiveMaxSteps = Math.min(this.adaptiveMaxSteps, 40); break;
+      case 7: this.adaptiveDpr = Math.max(minDpr, maxDpr - 0.75); this.adaptiveMaxSteps = 32; break;
+      case 8: this.adaptiveDpr = minDpr; this.adaptiveMaxSteps = 24; break;
     }
     if (emergency && this.adaptiveLevel < 8) {
       this.adaptiveLevel++;
-      this.adaptiveDpr = Math.max(minDpr, this.adaptiveDpr - 0.15);
-      this.adaptiveMaxSteps = Math.max(100, this.adaptiveMaxSteps - 20);
+      this.adaptiveDpr = Math.max(minDpr, this.adaptiveDpr - 0.2);
+      this.adaptiveMaxSteps = Math.max(24, this.adaptiveMaxSteps - 16);
     }
     this.applyAdaptiveQuality();
   }
@@ -2037,12 +2022,12 @@ gl_FragColor=vec4(col,1.0);}`;
     this.fpsFrames++;
     const now = performance.now();
 
-    if (this.fpsFrames <= 3 && dt > 0.1) {
-      const skipTo = dt > 0.5 ? 5 : dt > 0.25 ? 3 : 1;
+    if (this.fpsFrames <= 5 && dt > 0.08) {
+      const skipTo = dt > 0.4 ? 6 : dt > 0.2 ? 4 : dt > 0.1 ? 2 : 1;
       for (let i = 0; i < skipTo && this.adaptiveLevel < 8; i++) this.adaptiveDowngrade(true);
     }
 
-    if (dt > 0.3) {
+    if (dt > 0.25) {
       this.emergencySlowFrames = (this.emergencySlowFrames || 0) + 1;
     } else {
       if (this.emergencySlowFrames > 0) this.emergencySlowFrames = Math.max(0, this.emergencySlowFrames - 1);
@@ -2062,7 +2047,7 @@ gl_FragColor=vec4(col,1.0);}`;
         (this.state as any).explosion = this.explosionProgress;
       }
       ScrollTrigger.update();
-      const skipLevels = this.emergencySlowFrames >= 4 ? 3 : 1;
+      const skipLevels = this.emergencySlowFrames >= 3 ? 4 : 2;
       for (let i = 0; i < skipLevels; i++) this.adaptiveDowngrade(true);
       this.emergencySlowFrames = Math.max(0, this.emergencySlowFrames - 1);
       return;
@@ -2073,25 +2058,27 @@ gl_FragColor=vec4(col,1.0);}`;
       this.fpsFrames = 0;
       this.fpsLastTime = now;
 
-      if (this.fpsValue < 15) {
+      if (this.fpsValue < 12) {
+        this.lowFpsCount += 6;
+      } else if (this.fpsValue < 20) {
         this.lowFpsCount += 4;
-      } else if (this.fpsValue < 25) {
+      } else if (this.fpsValue < 30) {
         this.lowFpsCount += this.isMobileDevice ? 3 : 2;
       } else if (this.fpsValue < 45) {
-        this.lowFpsCount += this.isMobileDevice ? 2 : 1;
+        this.lowFpsCount += 1;
       } else if (this.fpsValue >= 55) {
         this.lowFpsCount = Math.max(0, this.lowFpsCount - 1);
         this.fpsStableCount++;
       }
 
       if (this.lowFpsCount >= 2 && this.adaptiveLevel < 8) {
-        const downgrades = this.fpsValue < 15 ? 3 : 1;
+        const downgrades = this.fpsValue < 12 ? 4 : this.fpsValue < 20 ? 3 : this.fpsValue < 30 ? 2 : 1;
         for (let i = 0; i < downgrades; i++) this.adaptiveDowngrade(false);
         this.lowFpsCount = 0;
         this.fpsStableCount = 0;
       }
 
-      if (this.fpsStableCount >= 24 && this.adaptiveLevel > 0) {
+      if (this.fpsStableCount >= 30 && this.adaptiveLevel > 0) {
         this.adaptiveUpgrade();
         this.fpsStableCount = 0;
       }

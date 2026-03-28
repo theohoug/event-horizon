@@ -321,8 +321,10 @@ gl_FragColor=vec4(col,1.0);}`;
     const thermalFactor = 0.97;
     const bhBudget = 13.0 * thermalFactor;
 
-    const maxDpr = Math.min(nativeDpr, 2.0);
-    const minDpr = 1.0;
+    const maxRenderPixels = 4_000_000;
+    const dprCap = Math.min(nativeDpr, 2.0, Math.sqrt(maxRenderPixels / Math.max(screenPx, 1)));
+    const maxDpr = Math.max(0.75, Math.round(dprCap * 20) / 20);
+    const minDpr = screenPx > 3_000_000 ? 0.75 : 1.0;
     let bestDpr = minDpr;
     let bestSteps = 100;
 
@@ -363,7 +365,7 @@ gl_FragColor=vec4(col,1.0);}`;
       gpuScore: Math.round(gpuScore),
       quality: isPotato ? 'low' : isWeak ? 'medium' : isMid ? 'high' : 'ultra',
     };
-    console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | bench: ${repMs96.toFixed(1)}ms/${repMs192.toFixed(1)}ms`, 'color:#FFB347;font-weight:bold', 'color:#888');
+    console.log(`%c◈ GPU Profile %c${gpuRenderer || 'unknown'} | score: ${Math.round(gpuScore)} | quality: ${config.quality} | steps: ${config.maxSteps} | dpr: ${config.dpr} | bloom: ${config.bloomPasses} | ${screenW}x${screenH}@${nativeDpr} (${Math.round(screenPx * config.dpr * config.dpr / 1000)}Kpx) | bench: ${repMs96.toFixed(1)}ms/${repMs192.toFixed(1)}ms`, 'color:#FFB347;font-weight:bold', 'color:#888');
     try { localStorage.setItem('eh_perf_v10', JSON.stringify({ fp: fingerprint, cfg: config })); } catch {}
     return config;
 
@@ -2021,6 +2023,11 @@ gl_FragColor=vec4(col,1.0);}`;
 
     this.fpsFrames++;
     const now = performance.now();
+
+    if (this.fpsFrames <= 3 && dt > 0.1) {
+      const skipTo = dt > 0.5 ? 5 : dt > 0.25 ? 3 : 1;
+      for (let i = 0; i < skipTo && this.adaptiveLevel < 8; i++) this.adaptiveDowngrade(true);
+    }
 
     if (dt > 0.3) {
       this.emergencySlowFrames = (this.emergencySlowFrames || 0) + 1;

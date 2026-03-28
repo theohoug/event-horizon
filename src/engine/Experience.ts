@@ -478,7 +478,7 @@ gl_FragColor=vec4(col,1.0);}`;
       depth: true,
       preserveDrawingBuffer: !isMobileDevice,
     });
-    this.renderer.setPixelRatio(1);
+    this.renderer.setPixelRatio(0.5);
     const initSize = clampedViewportSize();
     this.renderer.setSize(initSize.w, initSize.h);
     this.renderer.setClearColor(0x050505, 1);
@@ -496,13 +496,16 @@ gl_FragColor=vec4(col,1.0);}`;
     this.perfConfig = this.profileGpu(this.renderer);
     const urlQuality = new URL(window.location.href).searchParams.get('quality') as 'ultra' | 'high' | 'medium' | 'low' | null;
     if (urlQuality === 'ultra' || urlQuality === 'high' || urlQuality === 'medium' || urlQuality === 'low') {
+      const sPx = window.innerWidth * window.innerHeight;
+      const urlBudget = urlQuality === 'ultra' ? 2_100_000 : urlQuality === 'high' ? 1_500_000 : urlQuality === 'medium' ? 1_000_000 : 400_000;
+      const urlDpr = Math.max(0.4, Math.min(window.devicePixelRatio, 1.5, Math.sqrt(urlBudget / Math.max(sPx, 1))));
       this.perfConfig = urlQuality === 'ultra'
-        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 128, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 100, quality: 'ultra' }
+        ? { dpr: urlDpr, maxSteps: 128, qualityMedium: false, gpgpuTexSize: 192, starfieldCount: 8000, bloomPasses: 4, bloomScale: 0.5, motionBlur: true, antialias: true, gpuScore: 100, quality: 'ultra' }
         : urlQuality === 'high'
-        ? { dpr: Math.min(window.devicePixelRatio, 1.5), maxSteps: 100, qualityMedium: false, gpgpuTexSize: 160, starfieldCount: 8000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: true, gpuScore: 60, quality: 'high' }
+        ? { dpr: urlDpr, maxSteps: 100, qualityMedium: false, gpgpuTexSize: 160, starfieldCount: 8000, bloomPasses: 3, bloomScale: 0.35, motionBlur: true, antialias: true, gpuScore: 60, quality: 'high' }
         : urlQuality === 'low'
-        ? { dpr: 0.75, maxSteps: 24, qualityMedium: true, gpgpuTexSize: 0, starfieldCount: 1000, bloomPasses: 1, bloomScale: 0.15, motionBlur: false, antialias: false, gpuScore: 5, quality: 'low' }
-        : { dpr: 1.0, maxSteps: 80, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 6000, bloomPasses: 2, bloomScale: 0.2, motionBlur: true, antialias: true, gpuScore: 25, quality: 'medium' };
+        ? { dpr: urlDpr, maxSteps: 24, qualityMedium: true, gpgpuTexSize: 0, starfieldCount: 1000, bloomPasses: 1, bloomScale: 0.15, motionBlur: false, antialias: false, gpuScore: 5, quality: 'low' }
+        : { dpr: urlDpr, maxSteps: 80, qualityMedium: true, gpgpuTexSize: 128, starfieldCount: 6000, bloomPasses: 2, bloomScale: 0.2, motionBlur: true, antialias: true, gpuScore: 25, quality: 'medium' };
     }
     this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (this.prefersReducedMotion) {

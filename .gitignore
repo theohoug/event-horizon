@@ -10,3 +10,8 @@ dist/
 !static/apple-touch-icon.png
 
 .vercel
+
+# Debug & audit artifacts
+debug-screenshots/
+logs/
+lighthouse-*.json
